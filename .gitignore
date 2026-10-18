@@ -1,0 +1,12 @@
+node_modules
+.turbo
+dist
+.next
+coverage
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.DS_Store
+packages/fixtures/youcam/*.json
+!packages/fixtures/youcam/.gitkeep

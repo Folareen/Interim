@@ -1,0 +1,20 @@
+{
+  "name": "@interim/rules",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@interim/eslint-config": "workspace:*",
+    "@interim/tsconfig": "workspace:*",
+    "eslint": "^10.13.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5"
+  }
+}
