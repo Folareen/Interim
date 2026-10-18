@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+/* Design tokens. Documented in docs/frontend/design-system.md. */
+@theme {
+  --color-bg: #fafaf9;
+  --color-surface: #ffffff;
+  --color-text: #1c1917;
+  --color-muted: #78716c;
+  --color-border: #e7e5e4;
+  --color-accent: #4f46e5;
+  --radius-card: 1rem;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
