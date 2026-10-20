@@ -144,8 +144,8 @@ BullMQ on Redis.
 * POST /profiles/:id/consent (grant or withdraw; the person only, never a partner key)
 * DELETE /profiles/:id
 * GET /profiles/:id/export
-* POST /profiles/:id/uploads (returns presigned links)
-* POST /profiles/:id/snapshots (upload ids and self report)
+* POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
+* POST /profiles/:id/snapshots (upload ids with kinds, and self report; normalises, stores, then deletes the raw uploads)
 * POST /snapshots/:id/runs (starts the agent)
 * GET /runs/:id/events (server sent events)
 * GET /runs/:id/card
