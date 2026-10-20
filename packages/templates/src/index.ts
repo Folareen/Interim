@@ -8,9 +8,11 @@ export interface Template {
   sensitive: boolean;
   usesFit: boolean;
   unitBudgetPerRun: number;
+  version: number;
+  remeasureEvery: number;
 }
 
-// Labels follow docs/product/spec.md section 13. Stage thresholds are tuned in the spike.
+// Labels follow docs/product/overview.md. Stage keys are internal and never shown. Stage thresholds are tuned in the spike.
 export const templates: Record<TemplateKey, Template> = {
   weight_change: {
     key: 'weight_change',
@@ -20,6 +22,8 @@ export const templates: Record<TemplateKey, Template> = {
     sensitive: true,
     usesFit: true,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
   midlife_change: {
     key: 'midlife_change',
@@ -29,15 +33,19 @@ export const templates: Record<TemplateKey, Template> = {
     sensitive: true,
     usesFit: false,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
   after_a_baby: {
     key: 'after_a_baby',
     label: 'After a baby',
-    stages: ['full', 'shedding', 'regrowing'],
+    stages: ['full', 'shedding', 'growing_in'],
     checkInEveryDays: 30,
     sensitive: true,
     usesFit: false,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
   going_grey: {
     key: 'going_grey',
@@ -47,6 +55,8 @@ export const templates: Record<TemplateKey, Template> = {
     sensitive: false,
     usesFit: false,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
   textured_growth: {
     key: 'textured_growth',
@@ -56,6 +66,8 @@ export const templates: Record<TemplateKey, Template> = {
     sensitive: false,
     usesFit: false,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
   beard_growth: {
     key: 'beard_growth',
@@ -65,14 +77,18 @@ export const templates: Record<TemplateKey, Template> = {
     sensitive: false,
     usesFit: false,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
   hair_loss_ahead: {
     key: 'hair_loss_ahead',
     label: 'Hair loss ahead',
-    stages: ['full', 'thinning', 'short', 'none', 'regrowing'],
+    stages: ['full', 'thinning', 'short', 'none', 'growing_in'],
     checkInEveryDays: 14,
     sensitive: true,
     usesFit: false,
     unitBudgetPerRun: 50,
+    version: 1,
+    remeasureEvery: 3,
   },
 };

@@ -1,26 +1,42 @@
 import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-// docs/architecture.md section 5. Hard delete cascades from profile.
+// docs/architecture.md section 5. Hard delete cascades from profile, except the ledger,
+// budget counters and deletion requests, which hold no personal data.
 const id = () => uuid('id').primaryKey().defaultRandom();
 const createdAt = () => timestamp('created_at').notNull().defaultNow();
 
-export const photoKind = pgEnum('photo_kind', [
-  'front',
-  'left',
-  'right',
-  'top',
-  'full_length',
-  'body',
+export const photoKind = pgEnum('photo_kind', ['front', 'left', 'right', 'top', 'body']);
+export const ledgerKind = pgEnum('ledger_kind', ['reserve', 'settle', 'release']);
+export const cacheOutcome = pgEnum('cache_outcome', ['success', 'blocked']);
+export const retention = pgEnum('retention', ['standard', 'extended']);
+export const consentAction = pgEnum('consent_action', ['grant', 'withdraw']);
+export const changeReport = pgEnum('change_report', ['none', 'some', 'lot']);
+export const taskState = pgEnum('task_state', [
+  'intent',
+  'created',
+  'polling',
+  'done',
+  'failed',
+  'unknown',
 ]);
-export const ledgerKind = pgEnum('ledger_kind', ['estimate', 'settle']);
-export const cacheOutcome = pgEnum('cache_outcome', ['success', 'blocked', 'failed']);
 
 export const profile = pgTable('profile', {
   id: id(),
   templateKey: text('template_key').notNull(),
+  // Hash of the owner cookie token, `partner:<id>`, or `sample`.
+  ownerRef: text('owner_ref').notNull(),
   consentVersion: text('consent_version').notNull(),
-  consentedAt: timestamp('consented_at').notNull(),
+  consentedAt: timestamp('consented_at'), // null until the person consents
+  retention: retention('retention').notNull().default('standard'),
   judgeSample: boolean('judge_sample').notNull().default(false),
+  createdAt: createdAt(),
+});
+
+export const consentEvent = pgTable('consent_event', {
+  id: id(),
+  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+  version: text('version').notNull(),
+  action: consentAction('action').notNull(),
   createdAt: createdAt(),
 });
 
@@ -34,12 +50,21 @@ export const snapshot = pgTable('snapshot', {
   createdAt: createdAt(),
 });
 
+export const selfReport = pgTable('self_report', {
+  id: id(),
+  snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
+  changed: changeReport('changed').notNull(),
+  reportedSize: text('reported_size'),
+  createdAt: createdAt(),
+});
+
 export const photo = pgTable('photo', {
   id: id(),
   snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
   kind: photoKind('kind').notNull(),
   s3Key: text('s3_key').notNull(),
-  sha256: text('sha256').notNull(),
+  sha256: text('sha256').notNull(), // of the normalised file
+  expiresAt: timestamp('expires_at').notNull(),
   createdAt: createdAt(),
 });
 
@@ -48,8 +73,7 @@ export const measurement = pgTable('measurement', {
   snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
   tool: text('tool').notNull(),
   value: jsonb('value_json').notNull(),
-  unitsSettled: integer('units_settled').notNull().default(0),
-  youcamTaskId: text('youcam_task_id'),
+  youcamTaskId: text('youcam_task_id'), // cost is read from the ledger through this id
   createdAt: createdAt(),
 });
 
@@ -58,19 +82,20 @@ export const render = pgTable('render', {
   snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
   tool: text('tool').notNull(),
   inputHash: text('input_hash').notNull(),
-  s3Key: text('s3_key').notNull(),
+  s3Key: text('s3_key'), // null once the image has expired
   label: text('label').notNull(), // preview | earlier look
-  unitsSettled: integer('units_settled').notNull().default(0),
+  expiresAt: timestamp('expires_at').notNull(),
   createdAt: createdAt(),
 });
 
 export const run = pgTable('run', {
   id: id(),
   snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
+  templateKey: text('template_key').notNull(),
+  templateVersion: integer('template_version').notNull(),
   status: text('status').notNull(),
   stopReason: text('stop_reason'),
-  budgetUnits: integer('budget_units').notNull(),
-  spentUnits: integer('spent_units').notNull().default(0),
+  budgetUnits: integer('budget_units').notNull(), // spent units are summed from the ledger
   createdAt: createdAt(),
 });
 
@@ -94,10 +119,22 @@ export const stageCard = pgTable('stage_card', {
   createdAt: createdAt(),
 });
 
-export const ledgerEntry = pgTable('ledger_entry', {
-  id: id(),
+export const youcamTask = pgTable('youcam_task', {
+  id: id(), // our request id, written before the create call is sent
   profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
   runId: uuid('run_id').references(() => run.id, { onDelete: 'set null' }),
+  tool: text('tool').notNull(),
+  state: taskState('state').notNull().default('intent'),
+  youcamTaskId: text('youcam_task_id'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: createdAt(),
+});
+
+// No personal data and no foreign keys, so it survives profile deletion.
+export const ledgerEntry = pgTable('ledger_entry', {
+  id: id(),
+  profileRef: uuid('profile_ref').notNull(),
+  runId: uuid('run_id'),
   tool: text('tool').notNull(),
   kind: ledgerKind('kind').notNull(),
   units: integer('units').notNull(),
@@ -105,16 +142,45 @@ export const ledgerEntry = pgTable('ledger_entry', {
   createdAt: createdAt(),
 });
 
+// Reserved under a row lock so concurrent runs cannot overspend a cap.
+export const budgetCounter = pgTable('budget_counter', {
+  scope: text('scope').primaryKey(), // day:<date> | profile:<id> | source:<hash>:<date> | partner:<id>
+  reservedUnits: integer('reserved_units').notNull().default(0),
+  settledUnits: integer('settled_units').notNull().default(0),
+});
+
 export const callCache = pgTable('call_cache', {
-  key: text('key').primaryKey(), // photo hash + tool + parameters hash
+  key: text('key').primaryKey(), // normalised photo hash + tool + API version + parameters hash
   outcome: cacheOutcome('outcome').notNull(),
   resultRef: text('result_ref'),
   createdAt: createdAt(),
 });
 
+export const catalogItem = pgTable('catalog_item', {
+  sku: text('sku').primaryKey(),
+  name: text('name').notNull(),
+  sizeChart: jsonb('size_chart_json').notNull(),
+});
+
 export const garment = pgTable('garment', {
   id: id(),
   profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
-  catalogSku: text('catalog_sku').notNull(),
+  catalogSku: text('catalog_sku').notNull().references(() => catalogItem.sku),
   savedAt: timestamp('saved_at').notNull().defaultNow(),
+});
+
+export const shareLink = pgTable('share_link', {
+  id: id(),
+  cardId: uuid('card_id').notNull().references(() => stageCard.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  revokedAt: timestamp('revoked_at'),
+  createdAt: createdAt(),
+});
+
+// Holds no profile reference.
+export const deletionRequest = pgTable('deletion_request', {
+  id: id(),
+  requestedAt: timestamp('requested_at').notNull().defaultNow(),
+  completedAt: timestamp('completed_at'),
 });
