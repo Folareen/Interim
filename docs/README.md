@@ -18,3 +18,10 @@ Each topic has one owner doc. Link to it instead of repeating it.
 | [git.md](git.md) | Branches, commits, pull requests |
 
 When a doc conflicts with code, fix whichever is wrong in the same change.
+
+## Keeping docs short
+- Say each thing once, in its owner doc, and link to it from everywhere else.
+- Do not describe what the code already shows. Docs hold decisions, rules, contracts and open questions.
+- Change an existing sentence before adding a new one. Delete text that is no longer true.
+- No status logs, change history or meeting notes. Git history and pull requests hold those.
+- Code comments and JSDoc follow [typescript.md](typescript.md#comments-and-jsdoc).
