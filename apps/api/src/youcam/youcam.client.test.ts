@@ -188,6 +188,66 @@ describe('live calls', () => {
   });
 });
 
+describe('more tools', () => {
+  const task = (results: unknown) => json({ status: 200, data: { task_status: 'success', results } });
+  const ref = (tool: 'skin_tone' | 'face_shape' | 'hat' | 'makeup_brows') => ({ tool, fixtureKey: 'k', taskId: 't' });
+
+  it('parses facial colour tones and tolerates colours the face does not have', async () => {
+    fetchMock.mockResolvedValueOnce(
+      task({ face_quality: { has_face: true, lighting: 'good' }, color: { skin_color: '#b9947c', eye_color_name: 'Brown' } }),
+    );
+    const status = await client().getTask(ref('skin_tone'));
+    expect(status).toEqual({
+      state: 'success',
+      result: { face_quality: { has_face: true, lighting: 'good' }, color: { skin_color: '#b9947c', eye_color_name: 'Brown' } },
+    });
+  });
+
+  it('only allows the face shape feature, never age or gender', async () => {
+    fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
+    await client().createTask('face_shape', { src_file_id: 'f1', features: ['faceShape'] }, 'k1');
+    for (const feature of ['age', 'gender']) {
+      const body = { src_file_id: 'f1', features: [feature] } as never;
+      await expect(client().createTask('face_shape', body, 'k2')).rejects.toThrow();
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('needs a gender for hat try on, as YouCam does', async () => {
+    const body = { src_file_id: 'f1', ref_file_id: 'h1' } as never;
+    await expect(client().createTask('hat', body, 'k1')).rejects.toThrow();
+    fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
+    await client().createTask('hat', { src_file_id: 'f1', ref_file_id: 'h1', gender: 'female' }, 'k1');
+    const [url] = fetchMock.mock.calls[0] ?? [];
+    expect(url).toBe('https://yce.example.test/s2s/v2.0/task/hat');
+  });
+
+  it('sends a colour only brow effect to makeup VTO and reads either result shape', async () => {
+    fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
+    await client().createTask(
+      'makeup_brows',
+      {
+        src_file_id: 'f1',
+        effects: [{ category: 'eyebrows', pattern: { type: 'color' }, palettes: [{ color: '#3b2f2f', colorIntensity: 60, texture: 'matte' }] }],
+      },
+      'k1',
+    );
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('https://yce.example.test/s2s/v2.0/task/makeup-vto');
+
+    fetchMock.mockResolvedValueOnce(task({ url: 'https://cdn.example.test/a.jpg' }));
+    fetchMock.mockResolvedValueOnce(task([{ download_url: 'https://cdn.example.test/b.jpg' }]));
+    expect(await client().getTask(ref('makeup_brows'))).toMatchObject({ state: 'success' });
+    expect(await client().getTask(ref('makeup_brows'))).toMatchObject({ state: 'success' });
+  });
+
+  it('treats the queued and processing states as still running', async () => {
+    for (const task_status of ['queued', 'processing']) {
+      fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_status } }));
+      expect(await client().getTask(ref('makeup_brows'))).toEqual({ state: 'running' });
+    }
+  });
+});
+
 describe('record and replay', () => {
   it('records a finished task without the signed link query and replays it offline', async () => {
     const result = {
@@ -262,6 +322,13 @@ describe('task error actions', () => {
     ['error_no_face', 'new_photo'],
     ['error_insufficient_lighting', 'new_photo'],
     ['error_nsfw_content_detected', 'new_photo'],
+    ['error_face_angle_upward', 'new_photo'],
+    ['error_face_not_forward_facing', 'new_photo'],
+    ['error_multi_person', 'new_photo'],
+    ['error_invalid_src', 'new_photo'],
+    ['error_apply_region_mismatch', 'block_tool'],
+    ['error_editing_failed', 'block_tool'],
+    ['error_invalid_ref', 'fault'],
     ['error_inference', 'fault'],
     ['something_new', 'fault'],
   ] as const)('%s -> %s', (code, action) => {
