@@ -10,7 +10,6 @@ This spec covers the hackathon build. It defines what the product does, what it 
 ## 2. Users
 
 * **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards.
-* **Partner agent.** Another agent calling Interim over MCP with a partner key. It never sees photos and cannot give consent for a person (section 15).
 
 There are no admin or care team roles in this build.
 
@@ -132,7 +131,7 @@ Rules, in order of evaluation:
 7. Beard style is allowed only in the beard template, or when the user marks beard as a goal.
 8. Hair volume previews are allowed only when density is present and are always labelled as visual previews.
 9. Clothes try on is allowed only when the body photo passes capture checks.
-10. A tool is blocked when its estimated cost would exceed any remaining cap (run, profile, day, source, partner).
+10. A tool is blocked when its estimated cost would exceed any remaining cap (run, profile, day, source).
 
 Short or shaved hair, head coverings and no hair are normal inputs. They block hair tools with neutral wording and never an error tone, and the face based flows still run.
 
@@ -184,7 +183,7 @@ Words for today is shown on the home screen, not on the card, so a shared card n
 
 * Every YouCam call first reserves its estimated cost, from Get_Feature_Cost where available. After the task ends the reservation is settled at the actual cost or released.
 * The reserve step runs in one database transaction against a budget counter row per scope, so two runs cannot both spend the last units.
-* Caps, all in config: per run, per profile, per day (global), per source address per day, and per partner. Caps are checked at reserve time.
+* Caps, all in config: per run, per profile, per day (global) and per source address per day. Caps are checked at reserve time.
 * A global switch (`LIVE_CALLS_ENABLED`) turns off all live calls at once. It is off unless set. When the YouCam account reports that it is out of units, the switch is turned off automatically and an alert is raised.
 * Units are expected to be charged only on success and a failed task to settle at zero. This is to verify in the spike, including moderation and error cases. Until verified, settlement uses the actual charge observed.
 * Errors can arrive as HTTP 200 with a task status of error. The client must treat those as failures.
@@ -231,7 +230,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * People must confirm they are 18 or older before the first upload.
 * Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos. Each is a separate line the person accepts.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
-* The words for today choice can imply a person's religion. It is stored on the profile, never sent to the model or a partner, never shown on a share link, and deleted with the profile.
+* The words for today choice can imply a person's religion. It is stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
 * Reflection text stays on the device. It is never uploaded, logged or sent to the model.
 * Retention has two modes, and the person chooses on the consent screen with neither preselected. Standard: photos and renders are deleted 30 days after capture. Keep my history: photos and renders are kept until the person deletes them, or until 24 months after the last check in, whichever comes first. Every new check in restarts the 24 months. The setting can be switched off at any time, and then the 30 days count from each photo's capture date. For the templates that run over months (weight_change, hair_loss_ahead, textured_growth) the screen explains that keeping history is what makes comparisons and earlier looks possible. In both modes measurements, stage, self report and card text stay until the profile is deleted.
 * Photos are stored encrypted. A render that expires keeps its card text and trace but not its image.
@@ -284,19 +283,9 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * There is no switch for live mode in judge mode. Judges cannot spend units.
 * Sample profiles are labelled as demo profiles, with simulated stages marked as such.
 
-## 15. MCP tools
+## 15. Other agents
 
-The same engine is exposed over MCP, with a partner key per caller.
-
-* create_profile(template): returns a profile id and a consent link. The profile cannot be used until the person has opened the link and consented.
-* create_upload(profile_id, kind): returns an upload link for one photo. The photo goes from the person to Interim. The partner agent never receives image data.
-* add_snapshot(profile_id, upload_ids)
-* run_checkin(profile_id, snapshot_id)
-* get_stage_card(run_id): returns card text and render links with the same trace and measurement references as the app.
-* eligible_tools(snapshot_id)
-* unit_ledger(profile_id)
-
-A partner agent cannot bypass eligibility, consent or budgets. Each partner has its own cap and its own share of the YouCam rate limit.
+No MCP server and no partner keys. Every caller is the person, through the app, so no third party can create a profile, read a card or reach data that can imply someone's health.
 
 ## 16. Acceptance tests
 
@@ -319,9 +308,8 @@ A partner agent cannot bypass eligibility, consent or budgets. Each partner has 
 13. A worker crash between sending a create call and storing the task id does not send a second create call. The task becomes `unknown` and holds its reservation.
 14. Model text containing a digit, a number word or an unknown placeholder is rejected.
 15. A HEIC photo is accepted, converted, and stored without EXIF data.
-16. A profile made by a partner agent cannot take a snapshot before consent, and no MCP tool returns image data.
-17. Profile creation and uploads are rate limited per source address.
-18. The capture checks pass photos of the same quality across the skin tone and hair type panel at a similar rate.
+16. Profile creation and uploads are rate limited per source address.
+17. The capture checks pass photos of the same quality across the skin tone and hair type panel at a similar rate.
 
 ## 17. First 48 hours: spike plan
 

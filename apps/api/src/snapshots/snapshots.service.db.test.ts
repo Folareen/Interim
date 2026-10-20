@@ -8,7 +8,7 @@ import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
 import { SnapshotsService } from './snapshots.service';
 
-const owner = { kind: 'person', ref: 'alice' } as const;
+const owner = { ref: 'alice' };
 const consent = (retention: 'standard' | 'extended') =>
   ({
     action: 'grant',

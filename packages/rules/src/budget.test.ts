@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { budgetScopes, fitsCap } from './budget';
 
-const caps = { perProfile: 500, perDay: 2000, perSourcePerDay: 100, perPartner: 1000 };
+const caps = { perProfile: 500, perDay: 2000, perSourcePerDay: 100 };
 const context = { profileId: 'p1', runId: 'r1', runBudgetUnits: 50 };
 
 describe('budgetScopes', () => {
@@ -13,20 +13,14 @@ describe('budgetScopes', () => {
     ]);
   });
 
-  it('adds source and partner caps only when the call has them', () => {
-    const keys = budgetScopes({ ...context, sourceHash: 'abc', partnerId: 'acme' }, caps, '2026-10-20');
-    expect(keys.map((s) => s.key)).toEqual([
-      'day:2026-10-20',
-      'partner:acme',
-      'profile:p1',
-      'run:r1',
-      'source:abc:2026-10-20',
-    ]);
-    expect(keys.find((s) => s.key === 'partner:acme')?.cap).toBe(1000);
+  it('adds the source cap only when the call has a source', () => {
+    const keys = budgetScopes({ ...context, sourceHash: 'abc' }, caps, '2026-10-20');
+    expect(keys.map((s) => s.key)).toEqual(['day:2026-10-20', 'profile:p1', 'run:r1', 'source:abc:2026-10-20']);
+    expect(keys.find((s) => s.key === 'source:abc:2026-10-20')?.cap).toBe(100);
   });
 
   it('returns keys in a fixed order whatever the input', () => {
-    const a = budgetScopes({ ...context, partnerId: 'x' }, caps, 'd').map((s) => s.key);
+    const a = budgetScopes({ ...context, sourceHash: 'x' }, caps, 'd').map((s) => s.key);
     expect(a).toEqual([...a].sort());
   });
 });

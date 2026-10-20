@@ -20,7 +20,6 @@ Components, from the user inward:
 * **API (NestJS, on a VPS or AWS ECS).** Profiles, snapshots, runs, ledger, templates. Long running, not serverless, because YouCam tasks are asynchronous.
 * **Worker (NestJS process with BullMQ).** Uploads, task creation, polling, backoff, retries.
 * **Agent module.** Planner, eligibility rules, composer, trace writer.
-* **MCP server (TypeScript MCP SDK).** Exposes the engine to other agents.
 * **PostgreSQL.** All records.
 * **Redis.** Queues, the shared rate limit bucket and short lived locks.
 * **Object storage (S3 compatible).** Encrypted photos and renders. Cloudflare R2 in production, MinIO locally.
@@ -43,7 +42,6 @@ interim/
   apps/
     web/            Next.js PWA
     api/            NestJS API and worker entry points
-    mcp/            MCP server
   packages/
     types/          Shared types and zod schemas
     templates/      Template configuration files and stage definitions
@@ -68,13 +66,12 @@ interim/
 * **youcam.** The only module allowed to talk to YouCam. See section 6.
 * **agent.** Planner, rules, composer, trace. See section 7.
 * **guard.** Consent checks, request limits, banned word scan, privacy deletion jobs.
-* **mcp.** Adapter that maps MCP tool calls to the same services.
 
 ## 5. Data model (PostgreSQL)
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (hash of the owner token, `partner:<id>`, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (planned languages; only live ones are accepted), tone (practical, warm or light), words_set (null while off; read only on person-only routes), body_photos (starts from the template), judge_sample flag.
+* **profile.** id, template_key, owner_ref (hash of the owner token, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (planned languages; only live ones are accepted), tone (practical, warm or light), words_set (null while off; read only on person-only routes), body_photos (starts from the template), judge_sample flag.
 * **consent_event.** id, profile_id, version, action (grant or withdraw), created.
 * **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
@@ -86,7 +83,7 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **stage_card.** id, run_id, card_json, approved_at.
 * **youcam_task.** id (our request id), profile_id, run_id, tool, state (intent, created, polling, done, failed, unknown), youcam_task_id, updated.
 * **ledger_entry.** id, profile_ref, run_id, tool, kind (reserve, settle or release), units, task_id. `profile_ref` is a random id with no foreign key. Ledger rows hold no personal data and are not deleted with the profile.
-* **budget_counter.** scope (run, profile, day, source, partner), reserved_units, settled_units. Locked in a transaction while reserving.
+* **budget_counter.** scope (run, profile, day, source), reserved_units, settled_units. Locked in a transaction while reserving.
 * **call_cache.** key (normalised photo hash, tool, API version, parameters hash), outcome (success or blocked), result_ref. Transient failures are never cached.
 * **catalog_item.** sku, name, size chart (sample catalog).
 * **garment.** id, profile_id, catalog_sku, saved_at.
@@ -105,7 +102,7 @@ Single module, single entry point. Nothing else imports an HTTP client for YouCa
 * **Polling.** BullMQ job with growing delay. Stop on success, error or timeout.
 * **Errors.** HTTP errors and task level errors are both parsed. A task status of error inside an HTTP 200 is a failure. Mapped error codes follow the spec.
 * **Unknown tasks.** A task left in `intent` after a crash, timeout or 5xx becomes `unknown`. A reconcile job resolves it (to verify whether YouCam lists tasks) and the reservation stays held until then. It is never created again automatically. A 429 is the only create failure that is retried.
-* **Rate limit.** A token bucket in Redis, sized to the documented limit of 250 requests per 300 seconds, shared by every worker. No profile or partner may take more than its configured share. Random jitter on a 429 because there is no Retry After header.
+* **Rate limit.** A token bucket in Redis, sized to the documented limit of 250 requests per 300 seconds, shared by every worker. No profile may take more than its configured share. Random jitter on a 429 because there is no Retry After header.
 * **Duplicates.** There is no idempotency key. The cache key is the normalised photo hash, tool, API version and parameter hash.
 * **Cost.** A cost function calls Get_Feature_Cost where available and falls back to the config table in the spec.
 * **Live switch.** `LIVE_CALLS_ENABLED` must be true for any live call. It is turned off automatically when YouCam reports no units or rejects the key.
@@ -141,7 +138,7 @@ BullMQ on Redis.
 
 * POST /profiles with a template key and an age confirmation (open; mints the owner cookie for a new person)
 * GET /profiles (the caller's own) and GET /profiles/:id
-* POST /profiles/:id/consent (grant or withdraw; the person only, never a partner key)
+* POST /profiles/:id/consent (grant or withdraw)
 * GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos; the person only)
 * GET /profiles/:id/words?date=YYYY-MM-DD (today's passage in the profile's language or English, or null while off; the person only)
 * DELETE /profiles/:id
@@ -169,16 +166,16 @@ All routes check consent version and ownership. Share links expire, can be revok
 * **Ledger view.** Every call, its cost and the reason it was made.
 * **Mobile first.** Designed and filmed on a phone. Installable as a PWA.
 
-## 11. MCP server
+## 11. YouCam access
 
-A separate process using the TypeScript MCP SDK over streamable HTTP, authenticated with a partner key. It maps these tools to the same services the API uses: create_profile, create_upload, add_snapshot, run_checkin, get_stage_card, eligible_tools, unit_ledger. It applies the same consent, eligibility and budget checks. A partner agent cannot bypass them, cannot read image data, and cannot consent for a person. Each partner has its own unit cap and its own share of the YouCam rate limit.
+Interim exposes no MCP server or partner API: every caller is the person, through the app.
 
 Interim also needs to call YouCam's own hosted MCP servers or REST. The beauty server holds the hair and beard tools. The fashion server holds clothes, hats and scarves. A head to toe flow needs both, or direct REST calls. The simplest plan is direct REST for everything the worker calls, and the hosted MCP servers only as a documented option.
 
 ## 12. Security and privacy
 
 * Secrets in environment variables on the server only.
-* **Owner identity.** A new profile gets a random owner token in an httpOnly, Secure, SameSite=Lax cookie. Only its hash is stored (`profile.owner_ref`). The web app proxies `/api/*` so the cookie is first party and also works for server sent events. There is no recovery if the cookie is lost, and the consent screen says so. Partner agents act under a partner key and own only the profiles they created.
+* **Owner identity.** A new profile gets a random owner token in an httpOnly, Secure, SameSite=Lax cookie. Only its hash is stored (`profile.owner_ref`). The web app proxies `/api/*` so the cookie is first party and also works for server sent events. There is no recovery if the cookie is lost, and the consent screen says so.
 * **Abuse limits.** Rate limits per source address and per owner token, a bot check on profile creation, a daily unit budget per source address, a maximum upload size and type checked by file signature, and image size limits that guard against decompression bombs.
 * Photos encrypted at rest with a key managed outside the code.
 * Signed, short lived URLs for photo and render access.
@@ -197,16 +194,16 @@ Server environment variables, by name:
 * REDIS_URL
 * S3_ENDPOINT, S3_BUCKET, S3_REGION, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY
 * GOOGLE_GENERATIVE_AI_API_KEY and LLM_MODEL (Gemini through the Vercel AI SDK)
-* UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY, UNIT_BUDGET_PER_PARTNER
+* UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY
 * YOUCAM_MODE with values live, record or replay
 * LIVE_CALLS_ENABLED, false unless set
 * JUDGE_MODE_FORCE_REPLAY
-* SESSION_SECRET, MAX_UPLOAD_BYTES, PARTNER_API_KEYS, TURNSTILE_SECRET_KEY
+* SESSION_SECRET, MAX_UPLOAD_BYTES, TURNSTILE_SECRET_KEY
 
 ## 14. Deployment
 
 * **Web.** Vercel.
-* **API, worker and MCP.** One VPS or AWS ECS service with three processes. Not serverless.
+* **API and worker.** One VPS or AWS ECS service with two processes. Not serverless.
 * **Database.** Managed PostgreSQL.
 * **Redis.** Managed or on the same host for the hackathon.
 * **Object storage.** Cloudflare R2, one bucket. Expiry is enforced by the cleanup queue from each row's `expires_at`, because retention can slide and a bucket lifecycle rule cannot. Accessed through the S3 API, so the provider can change with env vars only.
@@ -239,9 +236,8 @@ Server environment variables, by name:
 4. Agent loop with the planner, composer and trace.
 5. Stage Card and the web app flow.
 6. Judge mode and sample profiles.
-7. MCP server.
-8. Banned word scan, deletion jobs, and polish.
-9. Measurements for the readme and the video.
+7. Banned word scan, deletion jobs, and polish.
+8. Measurements for the readme and the video.
 
 ## 18. Open technical questions
 

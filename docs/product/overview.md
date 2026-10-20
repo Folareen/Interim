@@ -115,7 +115,7 @@ The output of every check in. It opens with the companion note, then shows what 
 ## Where it lives
 
 * **The app.** A mobile first web app (PWA). The user picks a situation and a tone, takes photos at each check in and reads Stage Cards. This avoids an empty chat box for a first time user.
-* **The tool layer.** The same engine is exposed as an MCP server, so a telehealth platform, a retailer or another agent can call it.
+* **For programs and retailers.** A white label version of the app, not an agent interface. Interim keeps one way in, the person's own app, because what it holds can imply someone's health.
 
 ## Who pays
 
@@ -130,7 +130,7 @@ Charities and cancer centres (for example Look Good Feel Better programs) are di
 
 ## Why it fits this hackathon
 
-* **Technological Implementation.** A stage state machine, eligibility rules driven by API errors, language and safety rules in code, a unit ledger with duplicate protection, chaining across clothes, hair and makeup, and an MCP server.
+* **Technological Implementation.** A stage state machine, eligibility rules driven by API errors, language and safety rules in code, a unit ledger with duplicate protection, chaining across clothes, hair and makeup.
 * **Design.** One Stage Card per check in that opens with a human note, a clear capture wizard, and a visible unit cost for every call.
 * **Potential Impact.** 18.6 million cancer survivors in the US alone, evidence that practical appearance support reduces distress, measurable return costs, and named business buyers.
 * **Quality of Idea.** No visible Round 2 entry follows a person's appearance through illness over time, together with clothing fit and the moments they are dressing for. The hair APIs used are the newest part of the platform.

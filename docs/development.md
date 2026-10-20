@@ -12,7 +12,7 @@ pnpm build                  # builds shared packages once
 pnpm --filter @interim/db db:generate
 pnpm dev                    # web :3000, api :4000
 ```
-The worker and MCP server are separate processes: `pnpm --filter @interim/api dev:worker`, `pnpm --filter @interim/mcp dev`.
+The worker is a separate process: `pnpm --filter @interim/api dev:worker`.
 
 ## Commands
 `pnpm build | lint | typecheck | test | format` run through Turborepo across all workspaces. Use `--filter @interim/<name>` for one.

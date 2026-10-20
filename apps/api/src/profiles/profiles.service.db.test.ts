@@ -1,15 +1,14 @@
 import { type Db, consentEvent, deletionRequest, photo, profile, snapshot } from '@interim/db';
 import type { ConsentRequest } from '@interim/types';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
 import { ProfilesService } from './profiles.service';
 
-const alice = { kind: 'person', ref: 'alice' } as const;
-const bob = { kind: 'person', ref: 'bob' } as const;
-const partner = { kind: 'partner', ref: 'partner:clinic' } as const;
+const alice = { ref: 'alice' };
+const bob = { ref: 'bob' };
 const grant = (retention: 'standard' | 'extended'): ConsentRequest => ({
   action: 'grant',
   version: '2',
@@ -114,13 +113,11 @@ describe('preferences', () => {
     expect(seen).not.toHaveProperty('wordsSet');
   });
 
-  it('is for the person only', async () => {
+  it('is for the profile owner only', async () => {
     const { id } = await create();
     await expect(profiles.setPreferences(id, bob, { locale: 'en', tone: 'light', wordsSet: null, bodyPhotos: true })).rejects.toThrow(
       NotFoundException,
     );
-    await expect(profiles.preferences(id, partner)).rejects.toThrow(ForbiddenException);
-    await expect(profiles.words(id, partner, '2026-10-20')).rejects.toThrow(ForbiddenException);
   });
 });
 

@@ -5,7 +5,7 @@ import type { ProfilesService } from '../profiles/profiles.service';
 import type { StorageService } from '../storage/storage.service';
 import { SnapshotsService } from './snapshots.service';
 
-const owner = { kind: 'person', ref: 'abc' } as const;
+const owner = { ref: 'abc' };
 const profileId = '3f2b8a0e-7c2d-4a39-9d57-0d7a6a1f2b11';
 
 function build(consentCurrent: boolean) {

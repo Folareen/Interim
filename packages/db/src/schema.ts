@@ -36,14 +36,14 @@ export const taskState = pgEnum('task_state', [
 export const profile = pgTable('profile', {
   id: id(),
   templateKey: text('template_key').notNull(),
-  // Hash of the owner cookie token, `partner:<id>`, or `sample`.
+  // Hash of the owner cookie token, or `sample`.
   ownerRef: text('owner_ref').notNull(),
   consentVersion: text('consent_version').notNull(),
   consentedAt: timestamp('consented_at'), // null until the person consents
   retention: retention('retention').notNull().default('standard'),
   locale: locale('locale').notNull().default('en'),
   tone: tone('tone').notNull().default('warm'),
-  // Can imply a religion: never sent to the model or a partner (docs/product/spec.md section 12).
+  // Can imply a religion: never sent to the model (docs/product/spec.md section 12).
   wordsSet: wordsSet('words_set'), // null while words for today is off
   // New profiles copy the template's default; rows from before the setting existed keep body photos on.
   bodyPhotos: boolean('body_photos').notNull().default(true),
@@ -169,7 +169,7 @@ export const ledgerEntry = pgTable(
 
 // Reserved under a row lock so concurrent runs cannot overspend a cap.
 export const budgetCounter = pgTable('budget_counter', {
-  scope: text('scope').primaryKey(), // run:<id> | profile:<id> | day:<date> | source:<hash>:<date> | partner:<id>
+  scope: text('scope').primaryKey(), // run:<id> | profile:<id> | day:<date> | source:<hash>:<date>
   reservedUnits: integer('reserved_units').notNull().default(0),
   settledUnits: integer('settled_units').notNull().default(0),
 });
