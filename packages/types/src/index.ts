@@ -55,6 +55,34 @@ export type YoucamErrorCode = z.infer<typeof youcamErrorCodeSchema>;
 export const youcamModeSchema = z.enum(['live', 'record', 'replay']);
 export type YoucamMode = z.infer<typeof youcamModeSchema>;
 
+export const retentionSchema = z.enum(['standard', 'extended']);
+export type Retention = z.infer<typeof retentionSchema>;
+
+/** Body of POST /profiles. The age confirmation must be an explicit `true`. */
+export const createProfileSchema = z.object({
+  templateKey: templateKeySchema,
+  ageConfirmed: z.literal(true),
+});
+export type CreateProfileInput = z.infer<typeof createProfileSchema>;
+
+/**
+ * Body of POST /profiles/:id/consent. Each processor line is accepted separately and
+ * retention has no default: the person must choose (docs/product/spec.md section 12).
+ */
+export const consentRequestSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('grant'),
+    version: z.string().min(1),
+    retention: retentionSchema,
+    acceptStorage: z.literal(true),
+    acceptYoucam: z.literal(true),
+    acceptGemini: z.literal(true),
+    acceptOwnPhotosOnly: z.literal(true),
+  }),
+  z.object({ action: z.literal('withdraw'), version: z.string().min(1) }),
+]);
+export type ConsentRequest = z.infer<typeof consentRequestSchema>;
+
 export const photoKindSchema = z.enum(['front', 'left', 'right', 'top', 'body']);
 export type PhotoKind = z.infer<typeof photoKindSchema>;
 

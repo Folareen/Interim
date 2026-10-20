@@ -139,8 +139,9 @@ BullMQ on Redis.
 
 ## 9. HTTP API
 
-* POST /profiles with a template key and an age confirmation
-* POST /profiles/:id/consent
+* POST /profiles with a template key and an age confirmation (open; mints the owner cookie for a new person)
+* GET /profiles (the caller's own) and GET /profiles/:id
+* POST /profiles/:id/consent (grant or withdraw; the person only, never a partner key)
 * DELETE /profiles/:id
 * GET /profiles/:id/export
 * POST /profiles/:id/uploads (returns presigned links)
