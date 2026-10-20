@@ -1,6 +1,6 @@
-import { type Db, consentEvent, deletionRequest, profile } from '@interim/db';
-import { CONSENT_VERSION, hasCurrentConsent } from '@interim/rules';
-import type { ConsentRequest, CreateProfileInput } from '@interim/types';
+import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
+import { CONSENT_VERSION, expiresAt, hasCurrentConsent } from '@interim/rules';
+import type { ConsentRequest, CreateProfileInput, Retention } from '@interim/types';
 import {
   ConflictException,
   ForbiddenException,
@@ -8,9 +8,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, inArray, max, sql } from 'drizzle-orm';
 import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
+import { StorageService } from '../storage/storage.service';
 
 // owner_ref is a credential hash and never leaves the API.
 const visible = {
@@ -26,7 +27,10 @@ const visible = {
 /** Profile lifecycle for one owner: create, consent, read, export and hard delete. */
 @Injectable()
 export class ProfilesService {
-  constructor(@Inject(DB) private readonly db: Db) {}
+  constructor(
+    @Inject(DB) private readonly db: Db,
+    @Inject(StorageService) private readonly storage: StorageService,
+  ) {}
 
   async create(owner: Owner, input: CreateProfileInput) {
     const [row] = await this.db
@@ -71,7 +75,7 @@ export class ProfilesService {
     if (input.action === 'grant' && input.version !== CONSENT_VERSION) {
       throw new ConflictException(`Current consent version is ${CONSENT_VERSION}`);
     }
-    await this.get(id, owner);
+    const current = await this.get(id, owner);
 
     const change =
       input.action === 'grant'
@@ -80,11 +84,17 @@ export class ProfilesService {
     await this.db.transaction(async (tx) => {
       await tx.insert(consentEvent).values({ profileId: id, version: input.version, action: input.action });
       await tx.update(profile).set(change).where(eq(profile.id, id));
+      if (input.action === 'grant' && input.retention !== current.retention) {
+        await this.reapplyRetention(tx, id, input.retention);
+      }
     });
     return this.get(id, owner);
   }
 
-  /** Hard deletes the profile; foreign keys cascade. S3 objects are removed by the cleanup job. */
+  /**
+   * Hard deletes the profile; foreign keys cascade. Its files go straight away, and the cleanup
+   * sweep removes anything this misses and then completes the deletion request.
+   */
   async remove(id: string, owner: Owner): Promise<void> {
     await this.db.transaction(async (tx) => {
       const deleted = await tx
@@ -95,6 +105,37 @@ export class ProfilesService {
       // Holds no profile reference; the cleanup job marks it complete once the objects are gone.
       await tx.insert(deletionRequest).values({});
     });
+    // The rows are gone, so a failed delete must not fail the request: the sweep finds the files.
+    await Promise.allSettled([
+      this.storage.deletePrefix(`photos/${id}/`),
+      this.storage.deletePrefix(`raw/${id}/`),
+    ]);
+  }
+
+  /**
+   * Switching retention changes when existing files expire (spec section 12). Standard counts 30
+   * days from each capture date; keep history counts 24 months from the last check in.
+   */
+  private async reapplyRetention(tx: Parameters<Parameters<Db['transaction']>[0]>[0], id: string, to: Retention) {
+    const snapshotIds = tx.select({ id: snapshot.id }).from(snapshot).where(eq(snapshot.profileId, id));
+    if (to === 'extended') {
+      const [{ last } = { last: null }] = await tx
+        .select({ last: max(snapshot.takenAt) })
+        .from(snapshot)
+        .where(eq(snapshot.profileId, id));
+      if (!last) return;
+      const until = expiresAt('extended', last);
+      await tx.update(photo).set({ expiresAt: until }).where(inArray(photo.snapshotId, snapshotIds));
+      await tx.update(render).set({ expiresAt: until }).where(inArray(render.snapshotId, snapshotIds));
+      return;
+    }
+    // Per row, from its own snapshot's capture date.
+    await tx.execute(sql`
+      update ${photo} set expires_at = s.taken_at + interval '30 days'
+      from ${snapshot} s where ${photo.snapshotId} = s.id and s.profile_id = ${id}`);
+    await tx.execute(sql`
+      update ${render} set expires_at = s.taken_at + interval '30 days'
+      from ${snapshot} s where ${render.snapshotId} = s.id and s.profile_id = ${id}`);
   }
 
   /** Everything stored about the profile. Grows as snapshots, measurements and cards land. */

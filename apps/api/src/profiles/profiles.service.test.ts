@@ -3,10 +3,11 @@ import { CONSENT_VERSION } from '@interim/rules';
 import type { ConsentRequest } from '@interim/types';
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
+import type { StorageService } from '../storage/storage.service';
 import { ProfilesService } from './profiles.service';
 
 // These checks run before any query, so the service never touches the database here.
-const service = new ProfilesService({} as Db);
+const service = new ProfilesService({} as Db, {} as StorageService);
 const id = '3f2b8a0e-7c2d-4a39-9d57-0d7a6a1f2b11';
 
 const grant = (version: string): ConsentRequest => ({
