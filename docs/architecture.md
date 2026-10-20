@@ -86,7 +86,7 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **stage_card.** id, run_id, card_json, approved_at.
 * **youcam_task.** id (our request id), profile_id, run_id, tool, state (intent, created, polling, done, failed, unknown), youcam_task_id, updated.
 * **ledger_entry.** id, profile_ref, run_id, tool, kind (reserve, settle or release), units, task_id. `profile_ref` is a random id with no foreign key. Ledger rows hold no personal data and are not deleted with the profile.
-* **budget_counter.** scope (day, profile, source, partner), reserved_units, settled_units. Locked in a transaction while reserving.
+* **budget_counter.** scope (run, profile, day, source, partner), reserved_units, settled_units. Locked in a transaction while reserving.
 * **call_cache.** key (normalised photo hash, tool, API version, parameters hash), outcome (success or blocked), result_ref. Transient failures are never cached.
 * **catalog_item.** sku, name, size chart (sample catalog).
 * **garment.** id, profile_id, catalog_sku, saved_at.
@@ -152,7 +152,7 @@ BullMQ on Redis.
 * POST /cards/:id/approve
 * POST /cards/:id/share (creates an expiring link)
 * DELETE /shares/:id (revokes a link)
-* GET /profiles/:id/ledger
+* GET /profiles/:id/ledger (the profile's ledger rows and held and spent totals)
 * GET /templates
 * GET /judge/sample (opens a sample profile, replay only)
 
@@ -195,7 +195,7 @@ Server environment variables, by name:
 * REDIS_URL
 * S3_ENDPOINT, S3_BUCKET, S3_REGION, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY
 * GOOGLE_GENERATIVE_AI_API_KEY and LLM_MODEL (Gemini through the Vercel AI SDK)
-* UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY
+* UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY, UNIT_BUDGET_PER_PARTNER
 * YOUCAM_MODE with values live, record or replay
 * LIVE_CALLS_ENABLED, false unless set
 * JUDGE_MODE_FORCE_REPLAY

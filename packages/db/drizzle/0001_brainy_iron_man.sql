@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "ledger_entry_task_kind" ON "ledger_entry" USING btree ("task_id","kind");

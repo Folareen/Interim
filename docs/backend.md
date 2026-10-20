@@ -17,7 +17,7 @@ System design, module list, data model and HTTP routes are in [architecture.md](
 - Drizzle, schema in `packages/db/src/schema.ts`, mirroring architecture section 5.
 - Migrations: `pnpm --filter @interim/db db:generate` then `db:migrate`. Commit generated SQL.
 - Profile deletion is a hard delete that cascades through foreign keys; S3 objects are removed by the cleanup job. The ledger, budget counters and deletion requests hold no personal data and are not part of the cascade (`ledger_entry.profile_ref` has no foreign key).
-- The ledger is append only: `reserve`, `settle` and `release` rows. Never update or delete them. Reserve units in one transaction that locks the `budget_counter` row for each scope.
+- The ledger is append only: `reserve`, `settle` and `release` rows. Never update or delete them. Reserve units in one transaction that locks the `budget_counter` row for each scope, in key order. Scopes are `run:<id>`, `profile:<id>`, `day:<date>`, `source:<hash>:<date>` and `partner:<id>`. `LedgerService` (`reserve`, `settle`, `release`) is keyed by the `youcam_task.id` the caller generates, so a retried job never counts a task twice; `ledger_entry` has a unique index on task and kind. `profile_ref` is the profile id: once the profile is deleted nothing links the rows to a person.
 
 ## Queues
 BullMQ: `run`, `poll`, `cleanup`. Jobs must be idempotent: read the ledger, the `youcam_task` row and `call_cache` before acting. Write the task row as `intent` before sending a create call. Never re-send a create call unless the earlier task is known to have failed; a task stuck in `intent` becomes `unknown` and is reconciled, not recreated. Only a 429 is retried on create.
