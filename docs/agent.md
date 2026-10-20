@@ -10,4 +10,6 @@ Code: `apps/api/src/agent`. Eligibility and banned-word logic: `packages/rules`.
 ## TODO
 - Step union (`observe | measure | place | decide | act | compose | stop`) in `packages/types`.
 - Hard step and budget limit constants.
-- Card validator: reject any number not found in measurement records.
+- Card validator: model text must contain no digit and no number word, and every `{m:<id>}` placeholder must name an existing measurement. Retry once, then use the fixed stage text.
+- Planner record and replay, so judge mode and end to end tests are deterministic.
+- Self report input and the re-measure rule (`remeasure_every`) in `place`.

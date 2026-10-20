@@ -1,6 +1,6 @@
 # Interim: Product Overview
 
-Version 1, October 18, 2026
+Version 1.1, October 20, 2026
 Built for the YouCam API Skin AI and eCommerce VTO Hackathon (Perfect Corp, Devpost). Submissions close Nov 2, 2026 at 11:45am EST.
 
 ## One liner
@@ -15,7 +15,7 @@ Almost every beauty and fashion tool assumes a fixed person. The same face, the 
 * Hair changes during and after many life events, including midlife, a new baby, chemotherapy, going grey, growing out a relaxer or growing a beard. A 2022 single site study in Menopause found female pattern hair loss in 52.2% of 178 postmenopausal women. A 2023 review in Current Oncology says chemotherapy causes substantial hair loss in about 65% of people who receive it.
 * Online stores lose money on this. NRF and Happy Returns estimate 19.3% of online sales were returned in 2025, and size and fit is the top reason sellers give for apparel returns.
 
-Figures above come from secondary sources and should be rechecked before they appear in any public copy.
+Figures above come from secondary sources and were not rechecked against the originals (last verified: never; drafted October 18, 2026). Check each one and record the date here before it appears in any public copy.
 
 ## Who it serves
 
@@ -27,9 +27,9 @@ One engine, not seven apps.
 
 **The Change Ledger.** A dated, measured record of how someone looks: hair density grade, hair length stage, hair type, skin tone, face shape, a full body photo, and the garments they saved. Each check in adds a snapshot.
 
-**The stage model.** For each situation, a template defines the expected path (for example full hair, thinning, short, none, regrowing), how often to check in, which YouCam tools are valid at each stage, and what to do when a tool stops working. The stage decides the tools, not the situation.
+**The stage model.** For each situation, a template defines the expected path (for example full hair, thinning, short, none, growing in), how often to check in, which YouCam tools are valid at each stage, and what to do when a tool stops working. The stage decides the tools, not the situation.
 
-This is how the YouCam hair APIs, which reject bald and very short hair, become part of the product logic instead of a limit. When hair transfer stops being valid, the agent switches to hat, brow or colour matching, and uses the baseline renders from earlier, fuller photos.
+This is how the YouCam hair APIs, which reject bald and very short hair, become part of the product logic instead of a limit. When hair transfer stops being valid, the agent switches to hat, brow or colour matching, and uses the baseline renders from earlier, fuller photos for as long as those photos are kept (30 days in standard mode, or until the person deletes them or 24 months after the last check in if they choose to keep their history).
 
 ## Templates
 
@@ -60,7 +60,7 @@ The eligibility rules are plain code, built from the real error behaviour of the
 
 ## The Stage Card
 
-The output of every check in. It shows what changed (measured, with the tool that measured it), what to wear and how to style it now, what to hold off buying, and a shopping list with sizes. Each card has a short trace of what the agent decided and why. A user can approve the list and send it to a cart, or share a link with a stylist or barber.
+The output of every check in. It shows what changed (measured, with the tool that measured it), what to wear and how to style it now, what to hold off buying, and a shopping list with sizes. Each card has a short trace of what the agent decided and why. A user can approve the list and share a link with a stylist or barber. Handing the list to a real cart is out of scope.
 
 ## Where it lives
 
@@ -69,11 +69,11 @@ The output of every check in. It shows what changed (measured, with the tool tha
 
 ## Who pays
 
-These prices are estimates anchored on public Shopify try on app pricing. They have not been checked with buyers.
+These prices are estimates anchored on public Shopify try on app pricing. They have not been checked with buyers, and the unit cost of a baseline and a check in is not known yet (spec section 17).
 
-* **Weight management and telehealth programs.** A white label appearance companion that supports retention. Roughly 0.50 to 2 dollars per active member per month.
-* **Apparel retailers.** A size bridge module that tries saved items on the new photo at each check in and recommends the hold size, priced per try on or as a software tier. Public Shopify try on apps price at about 0.09 to 0.16 dollars per try on.
-* **Haircare brands.** Sponsored templates for midlife and after a baby, paid per qualified lead.
+* **Weight management and telehealth programs.** A white label appearance companion that supports retention. Roughly 0.50 to 2 dollars per active member per month. A buyer like this will need data processing terms with Perfect Corp and Google, and possibly health privacy contracts. This build does not claim that compliance. It is an assumption to test with a real buyer.
+* **Apparel retailers.** A size bridge module that shows saved items on the new photo at each check in as a preview. The size comes from the size the person reports and the retailer's size chart, not from the render. Priced per try on or as a software tier. Public Shopify try on apps price at about 0.09 to 0.16 dollars per try on.
+* **Haircare brands.** Sponsored content inside a template, paid per placement. Interim never sells profile data or leads, and never targets by situation.
 * **Consumers.** About 6 dollars a month, mainly to prove pull.
 
 ## Why it fits this hackathon
@@ -85,12 +85,13 @@ These prices are estimates anchored on public Shopify try on app pricing. They h
 
 ## Language and safety rules
 
-Interim is cosmetic. It never diagnoses, never names a cause, never talks about medication and never suggests treatment.
+Interim is cosmetic. It never diagnoses, never names a cause, never talks about medication and never suggests treatment. This section owns these rules. The spec (section 13) describes how they are enforced.
 
-* Product copy never uses the words patient, treatment, diagnosis, cure, heal or regrow.
+* Product copy never uses the words patient, treatment, diagnosis, cure, heal or regrow, or their usual forms. The scan matches whole words, so "health" is fine. Internal stage keys are not user facing and are not scanned.
 * Users choose a situation from a fixed list. There are no condition fields and no medication fields.
 * Density grades are described as visual categories, not health findings.
-* Every card that touches a sensitive situation carries one short line suggesting a professional for health questions.
+* Every card for a sensitive situation (weight change, midlife change, after a baby, hair loss ahead) carries one short line suggesting a professional for health questions.
+* Body image: Interim never shows or asks for weight, BMI or a target, and never shows a goal, streak or progress score. Fit templates show saved clothes on the person as they are today. A person can turn off body photos at any time.
 * The Body Reshape API is not used to show a future thinner person. Renders are only made on real check in photos.
 * Previews are labelled as previews. They do not promise a result.
 * A test in the build fails when banned words appear in user facing copy.
@@ -104,14 +105,13 @@ Interim is cosmetic. It never diagnoses, never names a cause, never talks about 
 
 ## Risks and open questions
 
-* Hair Density Detection returns four grades. They may be too coarse to show change over a few weeks.
-* Hair transfer rejects bald and very short hair. The exact threshold is not known yet.
-* Chaining a clothes render into hair transfer is unproven.
-* Unit costs for density, length, volume, hair transfer v2.1 and clothes v4 are not confirmed.
+* Technical unknowns (density grades, hair transfer limits, chaining, unit costs, billing on failure, fairness across skin tones and hair types) are tracked in spec section 17, which owns them.
+* No user research yet. The plan is in spec section 18.
+* Photographing yourself six ways at every check in may be too much. The check in set is kept small for that reason.
 * A believable demo needs dated photos of one consenting person.
 * Medical and body image sensitivity needs careful wording on every screen.
 
-The first 48 hours of the build exist to answer the first four. The plan for that is in the spec.
+The first 48 hours of the build exist to answer the technical unknowns.
 
 ## Out of scope for the hackathon build
 

@@ -4,8 +4,8 @@ Each topic has one owner doc. Link to it instead of repeating it.
 
 | Doc | Owns |
 | --- | --- |
-| [product/overview.md](product/overview.md) | What Interim is, who it serves, language and safety rules |
-| [product/spec.md](product/spec.md) | Behaviour: templates, eligibility rules, agent loop, Stage Card, acceptance tests |
+| [product/overview.md](product/overview.md) | What Interim is, who it serves, the language and safety rules themselves |
+| [product/spec.md](product/spec.md) | Behaviour: templates, eligibility rules, agent loop, Stage Card, privacy, acceptance tests, and the open questions (section 17) |
 | [architecture.md](architecture.md) | System design: components, data model, queues, HTTP API, deployment |
 | [typescript.md](typescript.md) | TypeScript rules for all code in this repo |
 | [frontend/README.md](frontend/README.md) | Web app rules and conventions |

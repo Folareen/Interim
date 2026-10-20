@@ -30,6 +30,7 @@ Adapted from [this gist](https://gist.github.com/pipethedev/ff13d98a5b626f985708
 - No `utils`/`helpers`/`common` dumping grounds. Put code in the domain that owns it.
 - Do not duplicate near-identical DTO/model/payload types or write mappers between them.
 - Plain functions over static-method classes. Duplication is cheaper than a wrong abstraction.
+- NestJS dependency injection is the framework's, and is fine. Do not add your own containers, factories or single-implementation interfaces on top of it.
 
 ## Control flow and style
 - Early returns. No nested ternaries.
