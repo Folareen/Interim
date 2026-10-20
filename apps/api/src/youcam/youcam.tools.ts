@@ -148,8 +148,9 @@ export const tools = {
     request: srcFile,
     result: z.object({ fitzpatrick_scale: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']) }),
   },
-  // Facial colour tones: hex colours of skin, eyes, brows, lips and hair. 20 units, charged only
-  // on success. One front photo, hair worn down, face width over 60 percent of the image.
+  // Facial colour tones, 20 units, charged only on success. Only `skin_color` is reliable: in the
+  // spike it moved about 2 hex units when a photo was dimmed, brightened or warmed, while the eye
+  // and hair colour names changed with the light and a bald man read as "Blonde".
   skin_tone: {
     version: 'v2.0',
     path: 'skin-tone-analysis',
@@ -167,13 +168,14 @@ export const tools = {
       }),
     }),
   },
-  // Only face shape is allowed. The analyser can also return age and gender, which Interim never
-  // asks for (docs/product/overview.md, Language and safety rules). 10 units for 1 to 5 features.
+  // Only face shape and its aspect ratio are allowed. The analyser can also return age and gender,
+  // which Interim never asks for (docs/product/overview.md, Language and safety rules). 10 units
+  // for 1 to 5 features.
   face_shape: {
     version: 'v2.0',
     path: 'face-attr-analysis',
     request: srcFile.extend({
-      features: z.tuple([z.literal('faceShape')]),
+      features: z.array(z.enum(['faceShape', 'faceAspectRatio'])).min(1).max(2),
       face_angle_strictness_level: faceAngleStrictness.optional(),
     }),
     result: z.object({
@@ -196,25 +198,13 @@ export const tools = {
     }),
     result: singleUrl,
   },
-  // Hat try on, 2 units. YouCam requires a gender of female or male, which Interim does not ask
-  // for, so the caller must decide what to send (docs/product/spec.md section 17). The docs do
-  // not say whether it works on bald or very short hair.
-  hat: {
-    version: 'v2.0',
-    path: 'hat',
-    request: srcFile.extend({ ref_file_id: z.string().min(1), gender: z.enum(['female', 'male']) }),
-    result: singleUrl,
-  },
   // Brow makeup, the fallback when hair tools are blocked. 1 unit. The docs show the result both
-  // as `{ url }` and as a list of `{ download_url }`; both parse until the spike settles which.
+  // as `{ url }` and as a list of `{ download_url }`; the live API returned `{ url }` every time.
   makeup_brows: {
     version: 'v2.0',
     path: 'makeup-vto',
     request: srcFile.extend({ effects: z.tuple([browEffect]) }),
-    result: z.union([
-      singleUrl,
-      z.array(z.object({ download_url: z.string().url() })).min(1),
-    ]),
+    result: singleUrl,
   },
 } as const;
 

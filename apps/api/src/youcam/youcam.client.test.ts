@@ -179,7 +179,7 @@ describe('live calls', () => {
   });
 
   it('pages through feature costs', async () => {
-    const sku = { description: 'd', amount: 2, unit: 'unit', proc_unit: null, run_task_url: null };
+    const sku = { description: 'd', amount: 2, unit: 'unit', proc_unit: 1, run_task_url: null };
     fetchMock
       .mockResolvedValueOnce(json({ status: 200, result: { next_token: 'n2', skus: [sku] } }))
       .mockResolvedValueOnce(json({ status: 200, result: { next_token: null, skus: [sku] } }));
@@ -190,7 +190,7 @@ describe('live calls', () => {
 
 describe('more tools', () => {
   const task = (results: unknown) => json({ status: 200, data: { task_status: 'success', results } });
-  const ref = (tool: 'skin_tone' | 'face_shape' | 'hat' | 'makeup_brows') => ({ tool, fixtureKey: 'k', taskId: 't' });
+  const ref = (tool: 'skin_tone' | 'face_shape' | 'makeup_brows') => ({ tool, fixtureKey: 'k', taskId: 't' });
 
   it('parses facial colour tones and tolerates colours the face does not have', async () => {
     fetchMock.mockResolvedValueOnce(
@@ -203,7 +203,7 @@ describe('more tools', () => {
     });
   });
 
-  it('only allows the face shape feature, never age or gender', async () => {
+  it('only allows the face shape features, never age or gender', async () => {
     fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
     await client().createTask('face_shape', { src_file_id: 'f1', features: ['faceShape'] }, 'k1');
     for (const feature of ['age', 'gender']) {
@@ -213,16 +213,7 @@ describe('more tools', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('needs a gender for hat try on, as YouCam does', async () => {
-    const body = { src_file_id: 'f1', ref_file_id: 'h1' } as never;
-    await expect(client().createTask('hat', body, 'k1')).rejects.toThrow();
-    fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
-    await client().createTask('hat', { src_file_id: 'f1', ref_file_id: 'h1', gender: 'female' }, 'k1');
-    const [url] = fetchMock.mock.calls[0] ?? [];
-    expect(url).toBe('https://yce.example.test/s2s/v2.0/task/hat');
-  });
-
-  it('sends a colour only brow effect to makeup VTO and reads either result shape', async () => {
+  it('sends a colour only brow effect to makeup VTO', async () => {
     fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
     await client().createTask(
       'makeup_brows',
@@ -235,8 +226,6 @@ describe('more tools', () => {
     expect(fetchMock.mock.calls[0]?.[0]).toBe('https://yce.example.test/s2s/v2.0/task/makeup-vto');
 
     fetchMock.mockResolvedValueOnce(task({ url: 'https://cdn.example.test/a.jpg' }));
-    fetchMock.mockResolvedValueOnce(task([{ download_url: 'https://cdn.example.test/b.jpg' }]));
-    expect(await client().getTask(ref('makeup_brows'))).toMatchObject({ state: 'success' });
     expect(await client().getTask(ref('makeup_brows'))).toMatchObject({ state: 'success' });
   });
 

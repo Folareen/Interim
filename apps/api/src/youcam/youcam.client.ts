@@ -70,7 +70,7 @@ const creditSchema = z.object({
   results: z.array(z.object({ type: z.string(), amount: z.number() })),
 });
 
-// Not documented as stable; verify in the spike (docs/product/spec.md section 17).
+// Checked against the live API on 2026-10-21; the docs do not describe this response.
 const featureCostSchema = z.object({
   result: z.object({
     next_token: z.string().nullish(),
@@ -79,7 +79,7 @@ const featureCostSchema = z.object({
         description: z.string(),
         amount: z.number(),
         unit: z.string(),
-        proc_unit: z.string().nullish(),
+        proc_unit: z.number().nullish(), // units of measure per charge, such as images; seen as a number in the live API
         run_task_url: z.string().nullish(),
       }),
     ),
@@ -191,6 +191,14 @@ export class YoucamClient {
     this.assertLive();
     const credit = creditSchema.parse(await this.request('GET', '/s2s/v1.0/client/credit', 'read'));
     return credit.results.filter((batch) => batch.type.startsWith('Api')).reduce((sum, batch) => sum + batch.amount, 0);
+  }
+
+  // One page of a template list, such as `hair-transfer`. Free, live only. The response shape is
+  // not yet confirmed, so the spike prints it raw and the schema is written from what it shows.
+  async getTemplatePage(feature: string, version: string, startingToken?: string): Promise<unknown> {
+    this.assertLive();
+    const query = startingToken ? `&starting_token=${encodeURIComponent(startingToken)}` : '';
+    return this.request('GET', `/s2s/${version}/task/template/${encodeURIComponent(feature)}?page_size=20${query}`, 'read');
   }
 
   // Live only. Replay has no cost fixture; use the table in youcam.constants.ts.

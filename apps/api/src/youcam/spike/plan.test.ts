@@ -27,25 +27,25 @@ describe('example manifest', () => {
 });
 
 describe('bodyFor', () => {
-  it('builds a single photo, a three photo and a reference body', () => {
+  it('builds a single photo, a three photo and a garment body', () => {
     const single = manifestSchema.parse({ runs: [run] }).runs[0];
     expect(single && bodyFor(single, ['f1'], undefined)).toEqual({ src_file_id: 'f1' });
 
     const three = manifestSchema.parse({ runs: [{ label: 't', tool: 'hair_type', photos: ['a', 'b', 'c'] }] }).runs[0];
     expect(three && bodyFor(three, ['1', '2', '3'], undefined)).toEqual({ src_file_ids: ['1', '2', '3'] });
 
-    const hat = manifestSchema.parse({
-      runs: [{ label: 'h', tool: 'hat', photo: 'a.jpg', ref: 'hat.jpg', params: { gender: 'female' } }],
+    const cloth = manifestSchema.parse({
+      runs: [{ label: 'c', tool: 'cloth_v4', photo: 'a.jpg', ref: 'jacket.jpg', params: { garment_category: 'outer' } }],
     }).runs[0];
-    expect(hat && bodyFor(hat, ['f1'], 'h1')).toEqual({ src_file_id: 'f1', ref_file_id: 'h1', gender: 'female' });
+    expect(cloth && bodyFor(cloth, ['f1'], 'j1')).toEqual({ src_file_id: 'f1', ref_file_id: 'j1', garment_category: 'outer' });
   });
 });
 
 describe('estimateUnits', () => {
-  it('adds known costs and counts the tools with none apart', () => {
+  it('adds up the costs of the runs', () => {
     const { runs } = manifestSchema.parse({
       runs: [run, { ...run, label: 'd2' }, { label: 'c', tool: 'cloth_v4', photo: 'a.jpg' }],
     });
-    expect(estimateUnits(runs)).toEqual({ units: 2, unpriced: 1 });
+    expect(estimateUnits(runs)).toEqual({ units: 4, unpriced: 0 });
   });
 });

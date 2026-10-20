@@ -20,6 +20,15 @@ const runSchema = z
   })
   .refine((run) => (run.photo === undefined) !== (run.photos === undefined), 'Give photo or photos, not both');
 
+/** One line of `results.jsonl`, as the runner wrote it. */
+export const resultRowSchema = z.object({
+  label: z.string(),
+  tool: toolSchema,
+  state: z.string(),
+  taskId: z.string().nullable(),
+  fixture: z.string().nullable(),
+});
+
 /** A list of YouCam calls to run in order, read from a JSON file (docs/integrations/youcam.md, Spike runner). */
 export const manifestSchema = z.object({ runs: z.array(runSchema).min(1) });
 export type Run = z.infer<typeof runSchema>;

@@ -1,16 +1,18 @@
 import { createHash } from 'node:crypto';
-import { appendFile, mkdir, readFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { normalisePhoto } from '../../snapshots/photo';
 import { YoucamClient, type TaskRef, type TaskStatus } from '../youcam.client';
 import { YoucamError } from '../youcam.errors';
 import { unitCosts } from '../youcam.constants';
-import type { ToolName, ToolRequest } from '../youcam.tools';
-import { bodyFor, estimateUnits, manifestSchema, type Run } from './plan';
+import type { ToolName, ToolRequest, ToolResult } from '../youcam.tools';
+import { bodyFor, estimateUnits, manifestSchema, resultRowSchema, type Run } from './plan';
 
 // The first-48-hours spike (docs/product/spec.md section 17), run by hand against the live API.
 //   pnpm --filter @interim/api spike credit
-//   pnpm --filter @interim/api spike costs
+//   pnpm --filter @interim/api spike costs [filter]
+//   pnpm --filter @interim/api spike templates <feature> <version> [starting_token]
+//   pnpm --filter @interim/api spike renders [label-filter]
 //   pnpm --filter @interim/api spike batch <manifest.json> [--yes]
 // Output goes to apps/api/.spike (ignored by git): fixtures/ and results.jsonl.
 // `batch` is a dry run unless --yes is given, and spends units only with all three switches set.
@@ -64,6 +66,32 @@ async function finish(client: YoucamClient, ref: TaskRef): Promise<TaskStatus<To
   return { state: 'running' };
 }
 
+/** The result image link, for the tools that return one. Links are signed and expire in about two hours. */
+function imageUrl(result: ToolResult<ToolName>): string | undefined {
+  return 'url' in result ? result.url : undefined;
+}
+
+async function saveRender(label: string, result: ToolResult<ToolName>) {
+  const url = imageUrl(result);
+  if (!url) return;
+  const response = await fetch(url);
+  if (!response.ok) return console.error(`${label}: the render download failed with ${response.status}`);
+  await mkdir(path.join(spikeDir, 'renders'), { recursive: true });
+  await writeFile(path.join(spikeDir, 'renders', `${label}.jpg`), Buffer.from(await response.arrayBuffer()));
+}
+
+/** Saves the image of every finished run whose task is still within its 24 hours. Polling is free. */
+async function renders(filter: string | undefined) {
+  const client = liveClient();
+  const lines = (await readFile(path.join(spikeDir, 'results.jsonl'), 'utf8')).split('\n').filter(Boolean);
+  for (const line of lines) {
+    const row = resultRowSchema.parse(JSON.parse(line));
+    if (row.state !== 'success' || !row.taskId || !row.fixture || (filter && !row.label.includes(filter))) continue;
+    const status = await client.getTask({ tool: row.tool, fixtureKey: row.fixture, taskId: row.taskId });
+    if (status.state === 'success') await saveRender(row.label, status.result);
+  }
+}
+
 async function runOne(client: YoucamClient, run: Run, base: string) {
   const files = run.photos ?? (run.photo ? [run.photo] : []);
   const photos = await Promise.all(files.map((file) => loadPhoto(file, base)));
@@ -104,6 +132,7 @@ async function batch(manifestPath: string, confirmed: boolean) {
     let row: Record<string, unknown>;
     try {
       const done = await runOne(client, run, base);
+      if (done.status.state === 'success') await saveRender(run.label, done.status.result);
       // The balance can lag a moment behind a finished task.
       await sleep(2_000);
       const spent = before - (await client.getSpendableUnits());
@@ -127,13 +156,19 @@ async function main() {
   if (command === 'credit') {
     console.log(`${await liveClient().getSpendableUnits()} units can be spent`);
   } else if (command === 'costs') {
+    const filter = argument?.toLowerCase();
     for (const sku of await liveClient().getFeatureCosts()) {
+      if (filter && !`${sku.description} ${sku.run_task_url ?? ''}`.toLowerCase().includes(filter)) continue;
       console.log(`${String(sku.amount).padStart(4)} ${sku.unit.padEnd(10)} ${sku.description}  ${sku.run_task_url ?? ''}`);
     }
+  } else if (command === 'templates' && argument && flags[0]) {
+    console.log(JSON.stringify(await liveClient().getTemplatePage(argument, flags[0], flags[1]), null, 1));
+  } else if (command === 'renders') {
+    await renders(argument);
   } else if (command === 'batch' && argument) {
     await batch(argument, flags.includes('--yes'));
   } else {
-    stop('Usage: spike credit | spike costs | spike batch <manifest.json> [--yes]');
+    stop('Usage: spike credit | spike costs [filter] | spike templates <feature> <version> [token] | spike renders [filter] | spike batch <manifest.json> [--yes]');
   }
 }
 

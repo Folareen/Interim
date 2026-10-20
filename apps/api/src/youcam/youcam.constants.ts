@@ -1,5 +1,4 @@
-// docs/product/spec.md section 10. Costs marked null are unconfirmed (verify in the spike).
-// Confirmed against docs.perfectcorp.com on 2026-10-20 unless noted. Keys are tool names in youcam.tools.ts.
+// docs/product/spec.md section 10. Confirmed against Get_Feature_Cost on 2026-10-21. Keys are tool names in youcam.tools.ts.
 export const unitCosts: Record<string, number | null> = {
   hair_type: 2,
   hair_density: 1,
@@ -11,9 +10,8 @@ export const unitCosts: Record<string, number | null> = {
   fitzpatrick: 10, // charged only when the task succeeds
   skin_tone: 20, // facial colour tones, charged only when the task succeeds
   face_shape: 10, // one feature; 6 to 14 features cost 20, 15 to 28 cost 30
-  hat: 2,
   makeup_brows: 1, // charged only when the task succeeds
-  cloth_v4: null, // v2.0 and v3.0 cost 2; v4.0 is not in the docs table
+  cloth_v4: 2,
 };
 
 // Skin analysis is priced by the number of concerns and the tier: [max concerns, SD, HD].

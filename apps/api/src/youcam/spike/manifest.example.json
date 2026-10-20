@@ -15,8 +15,6 @@
     { "label": "shape-front", "tool": "face_shape", "photo": "photos/full-front.jpg", "params": { "features": ["faceShape"] } },
     { "label": "cloth-body-a", "tool": "cloth_v4", "photo": "photos/body-a.jpg", "ref": "photos/jacket.jpg", "params": { "garment_category": "upper_body" } },
     { "label": "cloth-body-b", "tool": "cloth_v4", "photo": "photos/body-b.jpg", "ref": "photos/jacket.jpg", "params": { "garment_category": "upper_body" } },
-    { "label": "hat-bald-f", "tool": "hat", "photo": "photos/bald-front.jpg", "ref": "photos/hat.jpg", "params": { "gender": "female" } },
-    { "label": "hat-bald-m", "tool": "hat", "photo": "photos/bald-front.jpg", "ref": "photos/hat.jpg", "params": { "gender": "male" } },
     { "label": "brows-bald", "tool": "makeup_brows", "photo": "photos/bald-front.jpg", "params": { "effects": [{ "category": "eyebrows", "pattern": { "type": "color" }, "palettes": [{ "color": "#3b2f2f", "colorIntensity": 60, "texture": "matte" }] }] } }
   ]
 }
