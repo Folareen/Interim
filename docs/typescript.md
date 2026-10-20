@@ -34,7 +34,15 @@ Adapted from [this gist](https://gist.github.com/pipethedev/ff13d98a5b626f985708
 ## Control flow and style
 - Early returns. No nested ternaries.
 - No needless `async`, `new Promise` wrappers, spreads or clones.
-- Comments explain why (business rule, external quirk, invariant), never what. No per-step debug logging.
+- No per-step debug logging.
+
+## Comments and JSDoc
+- A `//` comment says why: a business rule, an external quirk, an invariant, a trade-off. Never what the next line does. If a comment restates the code, delete it or rename the code.
+- No commented-out code, no TODOs without an owner or issue, no change history (git has it).
+- JSDoc is required on every exported function, class, schema and type that other modules use, and on public methods. It is how the next reader learns the contract without opening the body.
+- A JSDoc block starts with one sentence on what the thing is for. Add only what the signature cannot say: `@param` for units, ranges or meaning that the name does not carry, `@returns` when the result is not obvious, `@throws` for errors callers must handle, `@example` for a non-obvious call. Do not repeat types, they are in the signature.
+- Keep it short. A block longer than the code it describes is a sign to simplify the code. Do not add JSDoc to private helpers whose name and types already say it all.
+- When behaviour changes, update the JSDoc in the same change. A wrong doc is worse than none.
 
 ## Review checklist
 Before editing, name the trust boundaries and root-cause any broad type. After editing, ask of every helper, cast, branch and check whether it can be deleted. Refactors must not change behaviour, public APIs, event names, persistence formats or security checks.
