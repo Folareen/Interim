@@ -12,7 +12,8 @@ export const templateKeys = [
 export const templateKeySchema = z.enum(templateKeys);
 export type TemplateKey = z.infer<typeof templateKeySchema>;
 
-// docs/product/spec.md section 11
+// docs/product/spec.md section 11. Codes published in the YouCam docs; how each is handled
+// lives in apps/api/src/youcam/youcam.errors.ts.
 export const youcamErrorCodes = [
   'error_hair_too_short',
   'error_bald_image',
@@ -20,6 +21,33 @@ export const youcamErrorCodes = [
   'error_insufficient_lighting',
   'error_no_face',
   'error_large_face_angle',
+  'error_multiple_people',
+  'error_no_shoulder',
+  'error_pose',
+  'error_face_pose',
+  'error_insufficient_landmarks',
+  'error_face_parsing',
+  'error_face_position_invalid',
+  'error_face_position_too_small',
+  'error_face_position_out_of_boundary',
+  'error_src_face_too_small',
+  'error_src_face_out_of_bound',
+  'error_lighting_dark',
+  'error_below_min_image_size',
+  'error_exceed_max_image_size',
+  'error_mismatch_image_size',
+  'error_unsupport_ratio',
+  'error_nsfw_content_detected',
+  'exceed_nsfw_retry_limits',
+  'exceed_max_filesize',
+  'invalid_parameter',
+  'error_download_image',
+  'error_decode_image',
+  'error_download_mask',
+  'error_decode_mask',
+  'error_inference',
+  'error_upload',
+  'unknown_internal_error',
 ] as const;
 export const youcamErrorCodeSchema = z.enum(youcamErrorCodes);
 export type YoucamErrorCode = z.infer<typeof youcamErrorCodeSchema>;
