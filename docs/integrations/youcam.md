@@ -52,10 +52,9 @@ Thrown `YoucamError` kinds: `live_disabled`, `replay_missing`, `auth`, `out_of_u
 | `beard_style` | v2.0 `beard-style` | photo plus `template_id` | `url` | 2 |
 | `fitzpatrick` | v2.0 `fitzpatrick-scale-analyzer` | one jpg | `fitzpatrick_scale` I to VI | 10 |
 | `skin_tone` | v2.0 `skin-tone-analysis` | one front photo | `color.skin_color` and eye, brow, lip, hair colours as hex, plus `face_quality` | 20, on success only |
-| `face_shape` | v2.0 `face-attr-analysis` | one front photo, `features: ['faceShape']` only | `faceshape` (Triangle, Diamond, Heart, InvTriangle, Oblong, Oval, Round, Square, Unknown), plus `face_quality` | 10 for 1 to 5 features, on success only |
-| `cloth_v4` | v2.0 `cloth-v4` | person photo, `ref_file_id`, `garment_category` (`full_body`, `lower_body`, `upper_body`, `shoes`, `auto`, `outer`) | `url` | not in the docs table |
-| `hat` | v2.0 `hat` | selfie, `ref_file_id`, `gender` (`female` or `male`, required) | `url` | 2 |
-| `makeup_brows` | v2.0 `makeup-vto` | photo, one `eyebrows` effect (colour only, or a named shape) | `url` or a list of `download_url` (the docs show both) | 1, on success only |
+| `face_shape` | v2.0 `face-attr-analysis` | one front photo, `features` from `faceShape` and `faceAspectRatio` only | `faceshape` (Triangle, Diamond, Heart, InvTriangle, Oblong, Oval, Round, Square, Unknown), `facialratio.face_aspect_ratio` as `[1, ratio]`, and `face_quality` | 10 for 1 to 5 features, on success only |
+| `cloth_v4` | v2.0 `cloth-v4` | person photo, `ref_file_id`, `garment_category` (`full_body`, `lower_body`, `upper_body`, `shoes`, `auto`, `outer`) | `url` | 2 |
+| `makeup_brows` | v2.0 `makeup-vto` | photo, one `eyebrows` effect (colour only, or a named shape) | `url` | 1, on success only |
 
 Template lists: `GET /s2s/v2.1/task/template/hair-transfer`, `/s2s/v2.0/task/template/beard-style`, `/s2s/v2.0/task/template/hair-vol`. Not wrapped yet.
 
@@ -70,8 +69,7 @@ Template lists: `GET /s2s/v2.1/task/template/hair-transfer`, `/s2s/v2.0/task/tem
 | fitzpatrick | jpg, jpeg | under 10 MB | 320 to 4096 px |
 | skin analysis | jpg, jpeg, png | under 10 MB | short side 480 px (SD) or 1080 px (HD), face over 60 percent of width |
 | skin tone, face shape | jpg, jpeg, png | under 10 MB | 320 to 4096 px, one person, face fully visible and forward-facing, face width over 60 percent of the image, hair worn down (brushed back for face shape so the forehead shows). Angle strictness is a parameter (`strict` is within 4 to 6 degrees, `high` 10, `flexible` 30) |
-| clothes v4 | jpg, png | under 10 MB | 512 x 384 minimum, 4096 px long side, recommended 1024 x 768, person fills 80 percent of the frame, standing, facing forward, face visible. The docs disagree on full body or chest up. `filter_multi_person` can reject other people |
-| hat | jpg, jpeg, png | under 10 MB | selfie at least 512 x 512, head to chest at minimum, face over 15 percent of image height. Hat image: product at least 512 x 512, worn at least 800 x 800 |
+| clothes v4 | jpg, png | under 10 MB | 512 x 384 minimum, 4096 px long side, recommended 1024 x 768, person fills 80 percent of the frame, standing, facing forward, face visible. Chest up and waist up photos worked in the spike. `filter_multi_person` can reject other people |
 | makeup VTO | jpg, jpeg, png | under 10 MB | face fully visible, front within 10 degrees. The docs give conflicting size limits (long side under 1920 or width under 1920 and height under 1080) |
 
 Normalisation must produce a JPEG within the strictest limit a photo is sent to.
@@ -79,14 +77,33 @@ Normalisation must produce a JPEG within the strictest limit a photo is sent to.
 The face analysers return `face_quality` (`has_face`, `area`, `frontal`, `lighting`, `faceangle`, each such as "good"), which is YouCam's own read of the photo. It arrives with the result, so it is not a free pre-check.
 
 ## Status
-Done: transport, tool registry for the eight tools above, error mapping, record and replay, live switch, 429 handling, tests with a mocked `fetch`.
+Done: transport, tool registry for the tools above, error mapping, record and replay, live switch, 429 handling, tests with a mocked `fetch`, and the spike runner. Confirmed against the live API on 2026-10-21: upload with `content_type` `image/jpg`, hair length, hairstyle with `template_id` and `hair_color: src`, hair volume with `template_id`, skin tone, face shape and ratio, clothes v4, brow makeup, Get_Feature_Cost and the credit balance.
 
 Not done:
 - The Redis token bucket shared by all workers (architecture.md section 6). `YoucamClient` only backs off on 429.
 - The reserve, task row, call_cache and poll queue steps that wrap the client.
 - Skin analysis (`skin-analysis`, SD and HD, with `dst_actions`) has a cost table in `youcam.constants.ts` but no tool entry; add it when a template needs it.
-- Not wrapped: bg-replace, image-to-video, look-vto, scarf, and the template list endpoints for hat and clothes.
-- No call has been made against the live API. Request and result schemas follow the docs and must be checked in the spike. Items marked unconfirmed: the `hair_volume` request fields, `content_type` spelling (`image/jpg` follows the examples), the Get_Feature_Cost response types, and whether `fitzpatrick` accepts a single `src_file_id`.
+- Not wrapped: bg-replace, image-to-video, look-vto, hat and scarf (generative scenes, see below), and the template list endpoints, which only the spike runner reads.
+- Not yet seen succeed live: hair density (needs the head lowered pose), hair type (needs three angle photos), hair color, beard style and Fitzpatrick.
+
+## Observed live
+From 83 runs on 18 freely licensed portraits and 2 product photos on 2026-10-21 (352 units). The portraits are professional photos, not selfies.
+
+- **Errors cost nothing.** Face angle (`error_face_angle_invalid`, `_downward`, `_leftward`, `_rightward`) and `error_face_position_too_small` changed the balance by 0. Moderation and timeouts are untested.
+- **Timing.** Detections, hair transfer and brows took about 10 to 20 seconds, clothes 25 to 40 seconds. Poll about every 5 seconds.
+- **Result links are signed** and last about two hours. The fixture writer cuts the signature, so the runner saves each render as soon as a task finishes (`.spike/renders`).
+- **Get_Feature_Cost** returns `proc_unit` as a number. Every price in the docs matched.
+- **Hair transfer works on any hair.** 11 of 11 succeeded with `hair_color: src`: two bald men, two shaved women, a very short grey haired woman, short, long and afro hair, and a hijab and a head wrap. On a bald head it adds the template hair. On a covered head it **replaces the covering** with hair. The result keeps the person's face, pose, clothes and background. It matched grey hair colour. Templates have ids like `male_short_curly` and `female_blunt_bob`, a title, `category_name` (Male or Female) and `keep_users_color`.
+- **Hair volume works** with `template_id` on short, long and afro hair, and shows a visibly fuller look. Its five templates are all Female (`female_subtle`, `_natural`, `_medium`, `_high`, `_maximized`).
+- **Hair length** reads a covered head, a bald head and a shaved head all as "above the ears". It cannot tell them apart.
+- **Hair density** returned `error_face_angle_invalid` on all ten frontal photos. It needs the head lowered about 45 degrees.
+- **Face tools reject at the default angle.** At the default strictness (`high`, about 10 degrees) all six portraits tried, and three lighting copies of one, failed with an angle or size error. At `flexible` every one succeeded. `face_quality` still flags a poor photo (`area: toosmall`, `frontal: notgood`) on a result that succeeded.
+- **Skin colour is steady, other colours are not.** `skin_color` moved about 2 hex units when a photo was dimmed, brightened or warmed. Eye colour names changed with the light, and hair colour was wrong for bald heads ("Blonde"). Use only `skin_color`.
+- **Face aspect ratio is a usable number.** The same face gave 1.346 to 1.361 across four lighting versions, about 1 percent. The face shape label is coarser.
+- **Clothes v4 is faithful.** It keeps the face, pose and background and changes the garment, with `garment_category` `outer` and `upper_body`. It works on chest up and waist up photos, and costs 2 units.
+- **Chaining works.** A clothes render fed to hair transfer, and that render fed to brow makeup, each kept the earlier changes and found the face.
+- **Brow makeup works** on bald and shaved heads. The change is subtle.
+- **Hat try on is not usable.** It returns a new picture of a styled person in a different scene, wearing the hat. The face is not reliably the person's, and `gender` (required, `female` or `male`) changes who is generated. The scarf tool is assumed to behave the same.
 
 ## Safety rules for calls
 - Nothing is sent unless `LIVE_CALLS_ENABLED=true`. Replay never touches the network, and a missing fixture is an error.
@@ -101,9 +118,11 @@ Runs the live part of the spike plan ([product/spec.md](../product/spec.md) sect
 
 ```bash
 pnpm --filter @interim/api spike credit                      # units left, free
-pnpm --filter @interim/api spike costs                       # Get_Feature_Cost, free
+pnpm --filter @interim/api spike costs [filter]              # Get_Feature_Cost, free
+pnpm --filter @interim/api spike templates hair-transfer v2.1  # template list, free
+pnpm --filter @interim/api spike renders [filter]             # save the image of finished runs, free (tasks last 24 hours)
 pnpm --filter @interim/api spike batch .spike/manifest.json  # dry run: estimate, checks photos, sends nothing
 pnpm --filter @interim/api spike batch .spike/manifest.json --yes
 ```
 
-Photos are processed the way the app stores them (orientation applied, EXIF removed, long side capped). Each run records the task state, error code, units spent (balance before and after) and seconds to `apps/api/.spike/results.jsonl`, and the final response to `.spike/fixtures/<tool>/<label>-<hash>.json`. A create that times out is never repeated. `.spike/` is ignored by git. Copy a fixture to `packages/fixtures/youcam` only after checking it is synthetic or from someone who gave written consent. `spike/manifest.example.json` covers the plan's experiments.
+Photos are processed the way the app stores them (orientation applied, EXIF removed, long side capped). Each run records the task state, error code, units spent (balance before and after) and seconds to `apps/api/.spike/results.jsonl`, and the final response to `.spike/fixtures/<tool>/<label>-<hash>.json`. Each success also saves its render to `.spike/renders/<label>.jpg`, so a run can be fed another run's output. A create that times out is never repeated. `.spike/` is ignored by git. Copy a fixture to `packages/fixtures/youcam` only after checking it is synthetic or from someone who gave written consent. `spike/manifest.example.json` covers the plan's experiments.
