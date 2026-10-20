@@ -1,6 +1,6 @@
 # Interim: Product Specification
 
-Version 1.2, October 20, 2026
+Version 1.3, October 20, 2026
 Companion documents: overview.md, ../architecture.md
 
 ## 1. Scope
@@ -10,7 +10,6 @@ This spec covers the hackathon build. It defines what the product does, what it 
 ## 2. Users
 
 * **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards.
-* **Partner agent.** Another agent calling Interim over MCP with a partner key. It never sees photos and cannot give consent for a person (section 15).
 
 There are no admin or care team roles in this build.
 
@@ -19,9 +18,10 @@ There are no admin or care team roles in this build.
 * **Profile.** One person's ledger, created from a situation template.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
-* **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot), for fit templates their current size, and optionally the moment coming up.
-* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile.
-* **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday.
+* **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot) and, for fit templates, their current size.
+* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile with the language, the body photo setting and the words for today choice.
+* **Language.** The profile's language, from the live languages (section 13). English by default.
+* **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday. Optional on any snapshot, the baseline included.
 * **Companion note.** The first block of a Stage Card. Rules in [overview.md](overview.md#the-companion).
 * **Words for today.** One passage a day from a fixed library, from the set the person chose (off by default).
 * **Stage.** A named point on the template path. Each template defines its own stages.
@@ -57,7 +57,7 @@ Every run stores the template key and version it used, so an old card can be exp
 * after_surgery: recovering, settling, settled
 * skin_colour: usual, changing, settled
 * after_a_baby: full, shedding, growing_in
-* weight_change: baseline size, size down one, size down two, stable
+* weight_change: usual_size, one_size_away, two_sizes_away, settled (either direction, from the reported size)
 * beard_growth: clean, stubble, short, full
 * going_grey: mostly coloured, mixed, mostly grey
 
@@ -131,7 +131,7 @@ Rules, in order of evaluation:
 7. Beard style is allowed only in the beard template, or when the user marks beard as a goal.
 8. Hair volume previews are allowed only when density is present and are always labelled as visual previews.
 9. Clothes try on is allowed only when the body photo passes capture checks.
-10. A tool is blocked when its estimated cost would exceed any remaining cap (run, profile, day, source, partner).
+10. A tool is blocked when its estimated cost would exceed any remaining cap (run, profile, day, source).
 
 Short or shaved hair, head coverings and no hair are normal inputs. They block hair tools with neutral wording and never an error tone, and the face based flows still run.
 
@@ -159,7 +159,7 @@ Every step is stored as a trace entry with the tool, inputs, outputs, cost and a
 * The planner never mentions causes, medication or health findings.
 * The planner receives the situation key, stage, measurements, self report, moment and tone. It never receives photos, reflection text or the words for today choice.
 * The companion note is at most three sentences, in the order notice, normalise, one thing for today. With the practical tone it skips feelings language and keeps the change and the step.
-* If model text fails the language scan, the companion phrase scan or the placeholder check, it is retried once. A second failure uses the fixed text for that stage and tone from template config, and the trace records it.
+* If model text fails the language scan, the companion phrase scan or the placeholder check, it is retried once. A second failure uses the fixed text for the profile's tone from template config, and the trace records it.
 
 ## 9. Stage Card
 
@@ -183,7 +183,7 @@ Words for today is shown on the home screen, not on the card, so a shared card n
 
 * Every YouCam call first reserves its estimated cost, from Get_Feature_Cost where available. After the task ends the reservation is settled at the actual cost or released.
 * The reserve step runs in one database transaction against a budget counter row per scope, so two runs cannot both spend the last units.
-* Caps, all in config: per run, per profile, per day (global), per source address per day, and per partner. Caps are checked at reserve time.
+* Caps, all in config: per run, per profile, per day (global) and per source address per day. Caps are checked at reserve time.
 * A global switch (`LIVE_CALLS_ENABLED`) turns off all live calls at once. It is off unless set. When the YouCam account reports that it is out of units, the switch is turned off automatically and an alert is raised.
 * Units are expected to be charged only on success and a failed task to settle at zero. This is to verify in the spike, including moderation and error cases. Until verified, settlement uses the actual charge observed.
 * Errors can arrive as HTTP 200 with a task status of error. The client must treat those as failures.
@@ -230,7 +230,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * People must confirm they are 18 or older before the first upload.
 * Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos. Each is a separate line the person accepts.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
-* The words for today choice can imply a person's religion. It is stored on the profile, never sent to the model or a partner, never shown on a share link, and deleted with the profile.
+* The words for today choice can imply a person's religion. It is stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
 * Reflection text stays on the device. It is never uploaded, logged or sent to the model.
 * Retention has two modes, and the person chooses on the consent screen with neither preselected. Standard: photos and renders are deleted 30 days after capture. Keep my history: photos and renders are kept until the person deletes them, or until 24 months after the last check in, whichever comes first. Every new check in restarts the 24 months. The setting can be switched off at any time, and then the 30 days count from each photo's capture date. For the templates that run over months (weight_change, hair_loss_ahead, textured_growth) the screen explains that keeping history is what makes comparisons and earlier looks possible. In both modes measurements, stage, self report and card text stay until the profile is deleted.
 * Photos are stored encrypted. A render that expires keeps its card text and trace but not its image.
@@ -252,6 +252,14 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * A worker job runs every hour and sends to subscriptions whose local time matches. The passage comes from the same fixed library as the app.
 * Notification text passes both language scans in every language it is sent in.
 
+## 12b. Read aloud
+
+* Every card, the words for today screen and each capture step has a read aloud control. The capture wizard can speak its instructions as the person takes each photo.
+* The browser's own voice (speechSynthesis) is used when the device has one for the profile's language. Otherwise the API returns audio.
+* Fixed copy (capture steps, what to say lines, fallback notes, words for today) is turned into audio once per language and voice, stored, and served from storage. Only the companion note and card explanations are made on request, then cached with the card and deleted with it.
+* Only text Interim already shows is sent to the voice service, never photos or reflection text. Vendors per language are chosen by native speaker listening tests: Gemini TTS for the languages it supports, Spitch for Yoruba, and a Nigerian English voice tested for Pidgin. A vendor that is not already a processor gets its own consent line, asked the first time read aloud is used.
+* There is no voice input.
+
 ## 13. Language and safety rules
 
 The rules themselves (banned words, labels, previews, professional line, body image rules) are owned by [overview.md](overview.md). This section is how they are enforced.
@@ -262,8 +270,8 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * A test scans all user facing strings in the app, templates and words for today library, and fails the build on a banned word or companion phrase.
 * Which cards carry the professional line and the someone to talk to link is decided by the template's sensitive flag (section 4).
 * **Distress handoff.** `packages/rules` holds a plain phrase check for crisis or self-harm language and a table of crisis contacts by region (US, Canada, UK, Ireland, Australia, with findahelpline.com for everywhere else). The device runs it on reflection text before anything else. A match replaces the screen with the contacts. The region comes from the browser locale and the person can change it.
-* Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. Trailing punctuation of an excerpt may become a full stop. Nothing else is edited.
-* **Languages.** Each language has its own banned word and companion phrase lists in `packages/rules`, reviewed by a native speaker. A language without both lists is not offered. The scans run on text in the language it is shown in. Model output is checked in the person's language, and the fallback is that language's fixed text.
+* Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. An excerpt may start with a capital letter and end with a full stop. Nothing else is edited.
+* **Languages.** Each language has its own banned word, companion phrase and crisis phrase lists in `packages/rules`, reviewed by a native speaker, and its own copy file in `packages/templates`. Only languages in `liveLocales` (`packages/types`) are offered. The catalogs are typed by that list, so adding a language fails the build until every list and copy file has it. The scans run on text in the language it is shown in, and match whole words across scripts, including letters with tone marks. Model output is checked in the person's language, and the fallback is that language's fixed text. The crisis check also runs the English list, because people mix languages.
 * Body Reshape is not called. Renders only use real photos from check ins.
 * Fit templates never show or ask for weight, BMI or a target. Cards show no goal, streak or progress score. A person can turn off body photos at any time and still use the hair features.
 
@@ -275,19 +283,9 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * There is no switch for live mode in judge mode. Judges cannot spend units.
 * Sample profiles are labelled as demo profiles, with simulated stages marked as such.
 
-## 15. MCP tools
+## 15. Other agents
 
-The same engine is exposed over MCP, with a partner key per caller.
-
-* create_profile(template): returns a profile id and a consent link. The profile cannot be used until the person has opened the link and consented.
-* create_upload(profile_id, kind): returns an upload link for one photo. The photo goes from the person to Interim. The partner agent never receives image data.
-* add_snapshot(profile_id, upload_ids)
-* run_checkin(profile_id, snapshot_id)
-* get_stage_card(run_id): returns card text and render links with the same trace and measurement references as the app.
-* eligible_tools(snapshot_id)
-* unit_ledger(profile_id)
-
-A partner agent cannot bypass eligibility, consent or budgets. Each partner has its own cap and its own share of the YouCam rate limit.
+No MCP server and no partner keys. Every caller is the person, through the app, so no third party can create a profile, read a card or reach data that can imply someone's health.
 
 ## 16. Acceptance tests
 
@@ -310,9 +308,8 @@ A partner agent cannot bypass eligibility, consent or budgets. Each partner has 
 13. A worker crash between sending a create call and storing the task id does not send a second create call. The task becomes `unknown` and holds its reservation.
 14. Model text containing a digit, a number word or an unknown placeholder is rejected.
 15. A HEIC photo is accepted, converted, and stored without EXIF data.
-16. A profile made by a partner agent cannot take a snapshot before consent, and no MCP tool returns image data.
-17. Profile creation and uploads are rate limited per source address.
-18. The capture checks pass photos of the same quality across the skin tone and hair type panel at a similar rate.
+16. Profile creation and uploads are rate limited per source address.
+17. The capture checks pass photos of the same quality across the skin tone and hair type panel at a similar rate.
 
 ## 17. First 48 hours: spike plan
 
@@ -354,4 +351,4 @@ Before submission, talk to at least five people in two of the situations, at lea
 
 ## 19. Out of scope
 
-Native apps, voice, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.
+Native apps, voice input, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.

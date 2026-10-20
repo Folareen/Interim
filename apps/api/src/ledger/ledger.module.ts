@@ -15,7 +15,6 @@ import { LEDGER_CAPS, LedgerService } from './ledger.service';
         perProfile: env.UNIT_BUDGET_PER_PROFILE,
         perDay: env.UNIT_BUDGET_PER_DAY,
         perSourcePerDay: env.UNIT_BUDGET_PER_SOURCE_PER_DAY,
-        perPartner: env.UNIT_BUDGET_PER_PARTNER,
       },
     },
     LedgerService,

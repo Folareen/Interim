@@ -72,7 +72,13 @@ Not done:
 - The Redis token bucket shared by all workers (architecture.md section 6). `YoucamClient` only backs off on 429.
 - The reserve, task row, call_cache and poll queue steps that wrap the client.
 - Skin analysis (`skin-analysis`, SD and HD, with `dst_actions`) has a cost table in `youcam.constants.ts` but no tool entry; add it when a template needs it.
-- Makeup try on, clothes v4, face attributes and face tone: the docs pages could not be read or do not exist at the paths tried. No tool entries.
+- Makeup try on, clothes v4, face attributes and face tone have no tool entries yet. Their paths, from YouCam's own [agent skills](https://github.com/YouCam-API/skills) (API snapshot of 2026-10-01) and the Markdown docs (append `.md` to a `docs.perfectcorp.com/reference/…` page), read 2026-10-20:
+  - `skin-tone-analysis` v2.0 (Facial Color Tones Analyzer): one front photo, returns `data.results.color` with hex `skin_color`, `eye_color`, `eyebrow_color`, `lip_color`, `hair_color`, plus eye and hair colour names. 20 units, charged only on success. The skin_colour template's measurement.
+  - `face-attr-analysis` v2.0: face shape, features and ratios, selected through `features`. It can also return age and gender. Interim never requests those.
+  - `cloth-v4` v2.0: `src_file_id`, `ref_file_id` or `template_id`, and `garment_category` (`full_body`, `lower_body`, and others not listed). Cost not in the docs table. The doc contradicts itself on framing (full body in the steps, chest up in the file specs).
+  - `makeup-vto` and `look-vto` v2.0 for brow and makeup fallbacks.
+  - Free account calls: `/s2s/v1.0/client/credit` (balance) and `/s2s/v2.0/credit/feature-cost`.
+- Error codes in those docs that `youcamErrorCodes` does not list yet: `error_face_not_forward_facing`, `error_face_angle_upward`, `error_face_angle_downward`, `error_face_angle_leftward`, `error_face_angle_rightward`, `error_face_angle_left_tilt`, `error_face_angle_right_tilt`, `error_invalid_ref`, `error_apply_region_mismatch`, `error_invalid_src`, `error_editing_failed`, `error_multi_person`. Add them with their mapping before these tools are called.
 - No call has been made against the live API. Request and result schemas follow the docs and must be checked in the spike. Items marked unconfirmed: the `hair_volume` request fields, `content_type` spelling (`image/jpg` follows the examples), the Get_Feature_Cost response types, and whether `fitzpatrick` accepts a single `src_file_id`.
 
 ## Safety rules for calls

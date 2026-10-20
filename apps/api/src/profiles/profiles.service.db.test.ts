@@ -7,11 +7,11 @@ import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
 import { ProfilesService } from './profiles.service';
 
-const alice = { kind: 'person', ref: 'alice' } as const;
-const bob = { kind: 'person', ref: 'bob' } as const;
+const alice = { ref: 'alice' };
+const bob = { ref: 'bob' };
 const grant = (retention: 'standard' | 'extended'): ConsentRequest => ({
   action: 'grant',
-  version: '1',
+  version: '2',
   retention,
   acceptStorage: true,
   acceptYoucam: true,
@@ -56,9 +56,9 @@ describe('consent', () => {
     const { id } = await create();
 
     const granted = await profiles.consent(id, alice, grant('extended'));
-    expect(granted).toMatchObject({ consentCurrent: true, retention: 'extended', consentVersion: '1' });
+    expect(granted).toMatchObject({ consentCurrent: true, retention: 'extended', consentVersion: '2' });
 
-    const withdrawn = await profiles.consent(id, alice, { action: 'withdraw', version: '1' });
+    const withdrawn = await profiles.consent(id, alice, { action: 'withdraw', version: '2' });
     expect(withdrawn).toMatchObject({ consentCurrent: false, consentedAt: null });
 
     const events = await db.select().from(consentEvent);
@@ -93,12 +93,54 @@ describe('consent', () => {
   });
 });
 
+describe('preferences', () => {
+  it('starts warm, with words for today off and body photos from the template', async () => {
+    const { id } = await create();
+    expect(await profiles.preferences(id, alice)).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true });
+
+    const surgery = await profiles.create(alice, { templateKey: 'after_surgery', ageConfirmed: true });
+    expect(surgery.bodyPhotos).toBe(false);
+  });
+
+  it('saves a change and keeps the words set out of the profile view', async () => {
+    const { id } = await create();
+    const next = { locale: 'en', tone: 'practical', wordsSet: 'muslim', bodyPhotos: false } as const;
+    expect(await profiles.setPreferences(id, alice, next)).toEqual(next);
+    expect(await profiles.preferences(id, alice)).toEqual(next);
+
+    const seen = await profiles.get(id, alice);
+    expect(seen).toMatchObject({ tone: 'practical', bodyPhotos: false });
+    expect(seen).not.toHaveProperty('wordsSet');
+  });
+
+  it('is for the profile owner only', async () => {
+    const { id } = await create();
+    await expect(profiles.setPreferences(id, bob, { locale: 'en', tone: 'light', wordsSet: null, bodyPhotos: true })).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+});
+
+describe('words for today', () => {
+  it('returns nothing while off, then the passage for the chosen set and date', async () => {
+    const { id } = await create();
+    expect(await profiles.words(id, alice, '2026-10-20')).toEqual({ words: null });
+
+    await profiles.setPreferences(id, alice, { locale: 'en', tone: 'warm', wordsSet: 'jewish', bodyPhotos: true });
+    const { words } = await profiles.words(id, alice, '2026-10-20');
+    expect(words).toMatchObject({ set: 'jewish', label: 'Tanakh verses', translation: 'JPS 1917', locale: 'en' });
+    expect(words?.text).toBeTruthy();
+    expect(words?.source).toBeTruthy();
+  });
+});
+
 describe('export', () => {
-  it('returns the profile and its consent history', async () => {
+  it('returns the profile, its preferences and its consent history', async () => {
     const { id } = await create();
     await profiles.consent(id, alice, grant('standard'));
     const exported = await profiles.export(id, alice);
     expect(exported.profile.id).toBe(id);
+    expect(exported.preferences).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true });
     expect(exported.consentEvents).toHaveLength(1);
     await expect(profiles.export(id, bob)).rejects.toThrow(NotFoundException);
   });

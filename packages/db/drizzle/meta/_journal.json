@@ -15,6 +15,20 @@
       "when": 1792503880143,
       "tag": "0001_brainy_iron_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792531139588,
+      "tag": "0002_regular_baron_strucker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792533979997,
+      "tag": "0003_natural_wolfsbane",
+      "breakpoints": true
     }
   ]
 }

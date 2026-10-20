@@ -1,9 +1,10 @@
 import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
 import { CONSENT_VERSION, expiresAt, hasCurrentConsent } from '@interim/rules';
-import type { ConsentRequest, CreateProfileInput, Retention } from '@interim/types';
+import { templates, wordsForDay } from '@interim/templates';
+import { liveLocaleSchema } from '@interim/types';
+import type { ConsentRequest, CreateProfileInput, Preferences, Retention } from '@interim/types';
 import {
   ConflictException,
-  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -13,13 +14,17 @@ import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { StorageService } from '../storage/storage.service';
 
-// owner_ref is a credential hash and never leaves the API.
+// owner_ref is a credential hash and never leaves the API. words_set can imply a religion, so it
+// is only read through the preferences, words and export paths.
 const visible = {
   id: profile.id,
   templateKey: profile.templateKey,
   consentVersion: profile.consentVersion,
   consentedAt: profile.consentedAt,
   retention: profile.retention,
+  locale: profile.locale,
+  tone: profile.tone,
+  bodyPhotos: profile.bodyPhotos,
   judgeSample: profile.judgeSample,
   createdAt: profile.createdAt,
 };
@@ -39,6 +44,7 @@ export class ProfilesService {
         templateKey: input.templateKey,
         ownerRef: owner.ref,
         consentVersion: CONSENT_VERSION,
+        bodyPhotos: templates[input.templateKey].bodyPhotosByDefault,
       })
       .returning(visible);
     if (!row) throw new Error('Profile insert returned no row');
@@ -65,13 +71,11 @@ export class ProfilesService {
   }
 
   /**
-   * Records a consent grant or withdrawal. Only the person can consent: a partner key cannot,
-   * and a grant for an outdated text is refused so the person always sees the current one.
-   * @throws ForbiddenException for partner owners.
+   * Records a consent grant or withdrawal. A grant for an outdated text is refused so the person
+   * always sees the current one.
    * @throws ConflictException when a grant names a version other than the current one.
    */
   async consent(id: string, owner: Owner, input: ConsentRequest) {
-    if (owner.kind === 'partner') throw new ForbiddenException('Only the person can consent');
     if (input.action === 'grant' && input.version !== CONSENT_VERSION) {
       throw new ConflictException(`Current consent version is ${CONSENT_VERSION}`);
     }
@@ -89,6 +93,38 @@ export class ProfilesService {
       }
     });
     return this.get(id, owner);
+  }
+
+  /** The person's companion settings, including the words for today set. */
+  async preferences(id: string, owner: Owner): Promise<Preferences> {
+    const [row] = await this.db
+      .select({ locale: profile.locale, tone: profile.tone, wordsSet: profile.wordsSet, bodyPhotos: profile.bodyPhotos })
+      .from(profile)
+      .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)));
+    if (!row) throw new NotFoundException();
+    // A language can only be stored through preferencesSchema, which accepts live locales only.
+    return { ...row, locale: liveLocaleSchema.parse(row.locale) };
+  }
+
+  /** Replaces the person's companion settings. */
+  async setPreferences(id: string, owner: Owner, input: Preferences): Promise<Preferences> {
+    const updated = await this.db
+      .update(profile)
+      .set(input)
+      .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)))
+      .returning({ id: profile.id });
+    if (updated.length === 0) throw new NotFoundException();
+    return input;
+  }
+
+  /**
+   * Today's words for the person in their language, or null while words for today is off.
+   * @param date The person's local date as YYYY-MM-DD.
+   */
+  async words(id: string, owner: Owner, date: string) {
+    const { wordsSet, locale } = await this.preferences(id, owner);
+    if (!wordsSet) return { words: null };
+    return { words: wordsForDay(wordsSet, date, locale) };
   }
 
   /**
@@ -146,7 +182,8 @@ export class ProfilesService {
       .from(consentEvent)
       .where(eq(consentEvent.profileId, id))
       .orderBy(consentEvent.createdAt);
-    return { exportedAt: new Date(), profile: current, consentEvents };
+    const preferences = await this.preferences(id, owner);
+    return { exportedAt: new Date(), profile: current, preferences, consentEvents };
   }
 }
 

@@ -2,8 +2,10 @@ import type { PhotoKind } from '@interim/types';
 
 export interface SnapshotContext {
   isBaseline: boolean;
-  /** Fit templates need a body photo and a reported size (docs/product/spec.md section 5). */
+  /** Fit templates need a reported size, and a body photo while body photos are on (docs/product/spec.md section 5). */
   usesFit: boolean;
+  /** The profile's body photo setting. Off means no body photo is asked for or accepted. */
+  bodyPhotos: boolean;
 }
 
 /**
@@ -19,9 +21,11 @@ export function photoSetProblem(kinds: readonly PhotoKind[], context: SnapshotCo
     return 'The side photos are only needed for the first set.';
   }
 
+  if (!context.bodyPhotos && present.has('body')) return 'Body photos are off. Turn them on to add one.';
+
   const required: PhotoKind[] = ['front'];
   if (context.isBaseline) required.push('left', 'right');
-  if (context.usesFit) required.push('body');
+  if (context.usesFit && context.bodyPhotos) required.push('body');
 
   const missing = required.filter((kind) => !present.has(kind));
   if (missing.length > 0) return `Add the ${missing.join(', ')} photo${missing.length > 1 ? 's' : ''}.`;

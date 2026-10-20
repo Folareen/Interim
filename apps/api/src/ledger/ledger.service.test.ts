@@ -5,8 +5,8 @@ import type { ProfilesService } from '../profiles/profiles.service';
 import { createTestDb } from '../test/test-db';
 import { BudgetExceededError, LedgerService } from './ledger.service';
 
-const caps = { perProfile: 500, perDay: 2000, perSourcePerDay: 100, perPartner: 1000 };
-const owner = { kind: 'person', ref: 'abc' } as const;
+const caps = { perProfile: 500, perDay: 2000, perSourcePerDay: 100 };
+const owner = { ref: 'abc' };
 const profileId = '3f2b8a0e-7c2d-4a39-9d57-0d7a6a1f2b11';
 const runId = '9a1c2d3e-4b5f-4a6b-8c7d-0e1f2a3b4c5d';
 const context = { profileId, runId, runBudgetUnits: 50 };
@@ -70,11 +70,10 @@ describe('reserve', () => {
     await ledger.reserve({ ...context, taskId: 't3', tool: 'fitzpatrick', units: 20, now: day1 });
   });
 
-  it('applies source and partner caps when the call has them', async () => {
-    const withSource = { ...context, runBudgetUnits: 500, sourceHash: 'abc', partnerId: 'acme' };
+  it('applies the source cap when the call has a source', async () => {
+    const withSource = { ...context, runBudgetUnits: 500, sourceHash: 'abc' };
     await ledger.reserve({ ...withSource, taskId: 't1', tool: 'x', units: 90, now: day1 });
     expect(await counter('source:abc:2026-10-20')).toEqual({ reserved: 90, settled: 0 });
-    expect(await counter('partner:acme')).toEqual({ reserved: 90, settled: 0 });
     await expect(ledger.reserve({ ...withSource, taskId: 't2', tool: 'x', units: 11, now: day1 })).rejects.toMatchObject({
       scope: 'source:abc:2026-10-20',
     });

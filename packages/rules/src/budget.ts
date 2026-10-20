@@ -4,8 +4,6 @@ export interface BudgetContext {
   runId: string;
   /** This run's own cap, from the template and config. */
   runBudgetUnits: number;
-  /** Set when a partner key made the profile. */
-  partnerId?: string;
   /** Hash of the caller's address, never the address itself. */
   sourceHash?: string;
 }
@@ -14,11 +12,10 @@ export interface BudgetCaps {
   perProfile: number;
   perDay: number;
   perSourcePerDay: number;
-  perPartner: number;
 }
 
 export interface BudgetScope {
-  /** Key of the `budget_counter` row: `run:<id>`, `profile:<id>`, `day:<date>`, `source:<hash>:<date>`, `partner:<id>`. */
+  /** Key of the `budget_counter` row: `run:<id>`, `profile:<id>`, `day:<date>`, `source:<hash>:<date>`. */
   key: string;
   cap: number;
 }
@@ -35,7 +32,6 @@ export function budgetScopes(context: BudgetContext, caps: BudgetCaps, day: stri
     { key: `day:${day}`, cap: caps.perDay },
   ];
   if (context.sourceHash) scopes.push({ key: `source:${context.sourceHash}:${day}`, cap: caps.perSourcePerDay });
-  if (context.partnerId) scopes.push({ key: `partner:${context.partnerId}`, cap: caps.perPartner });
   return scopes.sort((a, b) => (a.key < b.key ? -1 : 1));
 }
 

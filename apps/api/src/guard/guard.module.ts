@@ -9,7 +9,6 @@ import { OwnerGuard } from './owner.guard';
       provide: OWNER_CONFIG,
       useValue: {
         secret: env.SESSION_SECRET,
-        partnerKeys: env.PARTNER_API_KEYS,
         secureCookie: env.NODE_ENV === 'production',
       },
     },

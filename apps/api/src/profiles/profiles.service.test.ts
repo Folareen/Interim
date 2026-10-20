@@ -1,7 +1,6 @@
 import type { Db } from '@interim/db';
-import { CONSENT_VERSION } from '@interim/rules';
 import type { ConsentRequest } from '@interim/types';
-import { ConflictException, ForbiddenException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 import type { StorageService } from '../storage/storage.service';
 import { ProfilesService } from './profiles.service';
@@ -21,13 +20,8 @@ const grant = (version: string): ConsentRequest => ({
 });
 
 describe('ProfilesService.consent', () => {
-  it('refuses consent from a partner key', async () => {
-    const partner = { kind: 'partner', ref: 'partner:acme' } as const;
-    await expect(service.consent(id, partner, grant(CONSENT_VERSION))).rejects.toThrow(ForbiddenException);
-  });
-
   it('refuses a grant for an outdated consent text', async () => {
-    const person = { kind: 'person', ref: 'abc' } as const;
+    const person = { ref: 'abc' };
     await expect(service.consent(id, person, grant('0'))).rejects.toThrow(ConflictException);
   });
 });
