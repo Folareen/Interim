@@ -97,7 +97,7 @@ describe('consent', () => {
 describe('preferences', () => {
   it('starts warm, with words for today off and body photos from the template', async () => {
     const { id } = await create();
-    expect(await profiles.preferences(id, alice)).toEqual({ tone: 'warm', wordsSet: null, bodyPhotos: true });
+    expect(await profiles.preferences(id, alice)).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true });
 
     const surgery = await profiles.create(alice, { templateKey: 'after_surgery', ageConfirmed: true });
     expect(surgery.bodyPhotos).toBe(false);
@@ -105,7 +105,7 @@ describe('preferences', () => {
 
   it('saves a change and keeps the words set out of the profile view', async () => {
     const { id } = await create();
-    const next = { tone: 'practical', wordsSet: 'muslim', bodyPhotos: false } as const;
+    const next = { locale: 'en', tone: 'practical', wordsSet: 'muslim', bodyPhotos: false } as const;
     expect(await profiles.setPreferences(id, alice, next)).toEqual(next);
     expect(await profiles.preferences(id, alice)).toEqual(next);
 
@@ -116,7 +116,7 @@ describe('preferences', () => {
 
   it('is for the person only', async () => {
     const { id } = await create();
-    await expect(profiles.setPreferences(id, bob, { tone: 'light', wordsSet: null, bodyPhotos: true })).rejects.toThrow(
+    await expect(profiles.setPreferences(id, bob, { locale: 'en', tone: 'light', wordsSet: null, bodyPhotos: true })).rejects.toThrow(
       NotFoundException,
     );
     await expect(profiles.preferences(id, partner)).rejects.toThrow(ForbiddenException);
@@ -129,9 +129,9 @@ describe('words for today', () => {
     const { id } = await create();
     expect(await profiles.words(id, alice, '2026-10-20')).toEqual({ words: null });
 
-    await profiles.setPreferences(id, alice, { tone: 'warm', wordsSet: 'jewish', bodyPhotos: true });
+    await profiles.setPreferences(id, alice, { locale: 'en', tone: 'warm', wordsSet: 'jewish', bodyPhotos: true });
     const { words } = await profiles.words(id, alice, '2026-10-20');
-    expect(words).toMatchObject({ set: 'jewish', label: 'Tanakh verses', translation: 'JPS 1917' });
+    expect(words).toMatchObject({ set: 'jewish', label: 'Tanakh verses', translation: 'JPS 1917', locale: 'en' });
     expect(words?.text).toBeTruthy();
     expect(words?.source).toBeTruthy();
   });
@@ -143,7 +143,7 @@ describe('export', () => {
     await profiles.consent(id, alice, grant('standard'));
     const exported = await profiles.export(id, alice);
     expect(exported.profile.id).toBe(id);
-    expect(exported.preferences).toEqual({ tone: 'warm', wordsSet: null, bodyPhotos: true });
+    expect(exported.preferences).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true });
     expect(exported.consentEvents).toHaveLength(1);
     await expect(profiles.export(id, bob)).rejects.toThrow(NotFoundException);
   });

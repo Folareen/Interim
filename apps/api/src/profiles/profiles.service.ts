@@ -1,6 +1,7 @@
 import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
 import { CONSENT_VERSION, expiresAt, hasCurrentConsent } from '@interim/rules';
-import { templates, wordsForDay, wordsSets } from '@interim/templates';
+import { templates, wordsForDay } from '@interim/templates';
+import { liveLocaleSchema } from '@interim/types';
 import type { ConsentRequest, CreateProfileInput, Preferences, Retention } from '@interim/types';
 import {
   ConflictException,
@@ -22,6 +23,7 @@ const visible = {
   consentVersion: profile.consentVersion,
   consentedAt: profile.consentedAt,
   retention: profile.retention,
+  locale: profile.locale,
   tone: profile.tone,
   bodyPhotos: profile.bodyPhotos,
   judgeSample: profile.judgeSample,
@@ -103,11 +105,12 @@ export class ProfilesService {
   async preferences(id: string, owner: Owner): Promise<Preferences> {
     if (owner.kind === 'partner') throw new ForbiddenException('Only the person can see these settings');
     const [row] = await this.db
-      .select({ tone: profile.tone, wordsSet: profile.wordsSet, bodyPhotos: profile.bodyPhotos })
+      .select({ locale: profile.locale, tone: profile.tone, wordsSet: profile.wordsSet, bodyPhotos: profile.bodyPhotos })
       .from(profile)
       .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();
-    return row;
+    // A language can only be stored through preferencesSchema, which accepts live locales only.
+    return { ...row, locale: liveLocaleSchema.parse(row.locale) };
   }
 
   /**
@@ -126,14 +129,13 @@ export class ProfilesService {
   }
 
   /**
-   * Today's words for the person, or null while words for today is off.
+   * Today's words for the person in their language, or null while words for today is off.
    * @param date The person's local date as YYYY-MM-DD.
    */
   async words(id: string, owner: Owner, date: string) {
-    const { wordsSet } = await this.preferences(id, owner);
+    const { wordsSet, locale } = await this.preferences(id, owner);
     if (!wordsSet) return { words: null };
-    const { label, translation } = wordsSets[wordsSet];
-    return { words: { set: wordsSet, label, translation, ...wordsForDay(wordsSet, date) } };
+    return { words: wordsForDay(wordsSet, date, locale) };
   }
 
   /**

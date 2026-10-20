@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Interim',
-  description: 'Keeps you looking like yourself while your hair, skin and body change.',
+  description: 'Helps you feel like yourself while your body changes.',
 };
 
 export const viewport: Viewport = { themeColor: '#4f46e5', width: 'device-width', initialScale: 1 };

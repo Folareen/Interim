@@ -1,9 +1,13 @@
+import type { LiveLocale } from '@interim/types';
+import { wholeWords } from './whole-words';
+
 // docs/product/overview.md (Language and safety rules) owns these; spec section 13 describes the scan.
-// Forced positivity, battle and journey framing, and talking about an earlier look as better.
-// Runs beside findBannedWord on companion text, what to say lines and the words for today library.
+// Forced positivity, battle and journey framing, an earlier look as better, and a smaller or larger
+// body as the goal. Runs beside findBannedWord on companion text, what to say lines and the words
+// for today library. Each language's list is written and reviewed by a native speaker.
 const apostrophe = "['’]?";
-const pattern = new RegExp(
-  [
+const patterns: Record<LiveLocale, RegExp> = {
+  en: wholeWords([
     'stay positive',
     'think positive',
     'be strong',
@@ -25,13 +29,16 @@ const pattern = new RegExp(
     'old self',
     'back to normal',
     'used to look',
-  ]
-    .map((phrase) => `\\b${phrase}\\b`)
-    .join('|'),
-  'i',
-);
+    'slimming',
+    'slimmer',
+    'thinner',
+    'hide (?:your|the)',
+    'disguis(?:e|es|ed|ing)',
+    'problem areas?',
+  ]),
+};
 
-/** Finds the first companion phrase in user facing text, or undefined when the text is clean. */
-export function findCompanionPhrase(text: string): string | undefined {
-  return pattern.exec(text)?.[0];
+/** Finds the first companion phrase in user facing text in that language, or undefined when it is clean. */
+export function findCompanionPhrase(text: string, locale: LiveLocale): string | undefined {
+  return patterns[locale].exec(text)?.[0];
 }

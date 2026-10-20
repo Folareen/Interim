@@ -11,6 +11,8 @@ export const cacheOutcome = pgEnum('cache_outcome', ['success', 'blocked']);
 export const retention = pgEnum('retention', ['standard', 'extended']);
 export const consentAction = pgEnum('consent_action', ['grant', 'withdraw']);
 export const changeReport = pgEnum('change_report', ['none', 'some', 'lot']);
+// Every planned language, so turning one on needs no migration; the API accepts only live ones.
+export const locale = pgEnum('locale', ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig', 'pcm']);
 export const tone = pgEnum('tone', ['practical', 'warm', 'light']);
 export const wordsSet = pgEnum('words_set', ['gentle', 'christian', 'muslim', 'jewish']);
 export const moment = pgEnum('moment', [
@@ -39,6 +41,7 @@ export const profile = pgTable('profile', {
   consentVersion: text('consent_version').notNull(),
   consentedAt: timestamp('consented_at'), // null until the person consents
   retention: retention('retention').notNull().default('standard'),
+  locale: locale('locale').notNull().default('en'),
   tone: tone('tone').notNull().default('warm'),
   // Can imply a religion: never sent to the model or a partner (docs/product/spec.md section 12).
   wordsSet: wordsSet('words_set'), // null while words for today is off

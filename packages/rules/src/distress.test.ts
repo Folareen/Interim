@@ -14,7 +14,7 @@ describe('soundsLikeCrisis', () => {
       'I can’t go on like this',
       'everyone would be better off without me',
     ]) {
-      expect(soundsLikeCrisis(text), text).toBe(true);
+      expect(soundsLikeCrisis(text, 'en'), text).toBe(true);
     }
   });
 
@@ -25,7 +25,7 @@ describe('soundsLikeCrisis', () => {
       'I want to go out but I am scared people will stare',
       'I could die of embarrassment at work',
     ]) {
-      expect(soundsLikeCrisis(text), text).toBe(false);
+      expect(soundsLikeCrisis(text, 'en'), text).toBe(false);
     }
   });
 });
@@ -44,8 +44,8 @@ describe('crisis contacts', () => {
     for (const contacts of Object.values(crisisContacts)) {
       expect(contacts.length).toBeGreaterThan(0);
       for (const c of contacts) {
-        expect(findBannedWord(`${c.name} ${c.how}`)).toBeUndefined();
-        expect(findCompanionPhrase(`${c.name} ${c.how}`)).toBeUndefined();
+        expect(findBannedWord(`${c.name} ${c.how.en}`, 'en')).toBeUndefined();
+        expect(findCompanionPhrase(`${c.name} ${c.how.en}`, 'en')).toBeUndefined();
       }
     }
   });

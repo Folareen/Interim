@@ -1,17 +1,31 @@
+import type { LiveLocale } from '@interim/types';
+import { wholeWords } from './whole-words';
+
 // docs/product/overview.md owns the rules; docs/product/spec.md section 13 describes the scan.
-// User facing text must never contain these. Whole words only, so "health" is fine.
-export const bannedWords = [
-  'patient',
-  'treatment',
-  'diagnosis',
-  'cure',
-  'heal',
-  'regrow',
-] as const;
+// User facing text must never contain these. Whole words only, so "health" is fine. Each
+// language's list is written and reviewed by a native speaker before the language goes live.
 
-const pattern =
-  /\b(patients?|treatments?|diagnos(?:is|es|e|ed|ing)|cures?|cured|curing|heal(?:s|ed|ing|er|ers)?|regrow(?:s|n|ing|th)?|regrew)\b/i;
+/** The banned words per language, as the planner prompt lists them. */
+export const bannedWords: Record<LiveLocale, readonly string[]> = {
+  en: ['patient', 'treatment', 'diagnosis', 'cure', 'heal', 'regrow'],
+};
 
-export function findBannedWord(text: string): string | undefined {
-  return pattern.exec(text)?.[0];
+// The words above with their usual inflections.
+const patterns: Record<LiveLocale, RegExp> = {
+  en: wholeWords([
+    'patients?',
+    'treatments?',
+    'diagnos(?:is|es|e|ed|ing)',
+    'cures?',
+    'cured',
+    'curing',
+    'heal(?:s|ed|ing|er|ers)?',
+    'regrow(?:s|n|ing|th)?',
+    'regrew',
+  ]),
+};
+
+/** Finds the first banned word in user facing text in that language, or undefined when it is clean. */
+export function findBannedWord(text: string, locale: LiveLocale): string | undefined {
+  return patterns[locale].exec(text)?.[0];
 }

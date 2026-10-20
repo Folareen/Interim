@@ -97,6 +97,20 @@ export const createUploadsSchema = z.object({
 });
 export type CreateUploadsInput = z.infer<typeof createUploadsSchema>;
 
+/** Every language Interim plans to offer (docs/product/overview.md, Languages). */
+export const locales = ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig', 'pcm'] as const;
+export const localeSchema = z.enum(locales);
+export type Locale = z.infer<typeof localeSchema>;
+
+/**
+ * The languages offered today. A language joins only when its reviewed banned word and companion
+ * phrase lists and all its copy exist. Catalogs are typed `Record<LiveLocale, …>`, so adding a
+ * language here fails the build until every catalog has it.
+ */
+export const liveLocales = ['en'] as const satisfies readonly Locale[];
+export const liveLocaleSchema = z.enum(liveLocales);
+export type LiveLocale = z.infer<typeof liveLocaleSchema>;
+
 /** How the companion talks to a profile (docs/product/overview.md, The companion). */
 export const toneSchema = z.enum(['practical', 'warm', 'light']);
 export type Tone = z.infer<typeof toneSchema>;
@@ -122,6 +136,7 @@ export type WordsSet = z.infer<typeof wordsSetSchema>;
  * imply a religion, so only the person reads or sets it (docs/product/spec.md section 12).
  */
 export const preferencesSchema = z.object({
+  locale: liveLocaleSchema,
   tone: toneSchema,
   wordsSet: wordsSetSchema.nullable(),
   bodyPhotos: z.boolean(),
