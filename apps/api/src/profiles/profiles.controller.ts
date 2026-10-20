@@ -1,5 +1,5 @@
-import { consentRequestSchema, createProfileSchema } from '@interim/types';
-import type { ConsentRequest, CreateProfileInput } from '@interim/types';
+import { consentRequestSchema, createProfileSchema, preferencesSchema, wordsQuerySchema } from '@interim/types';
+import type { ConsentRequest, CreateProfileInput, Preferences, WordsQuery } from '@interim/types';
 import {
   Body,
   Controller,
@@ -9,6 +9,8 @@ import {
   Inject,
   Param,
   Post,
+  Put,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -61,6 +63,32 @@ export class ProfilesController {
     @CurrentOwner() owner: Owner,
   ) {
     return this.profiles.consent(id, owner, body);
+  }
+
+  @UseGuards(OwnerGuard)
+  @Get(':id/preferences')
+  preferences(@Param('id', idPipe) id: string, @CurrentOwner() owner: Owner) {
+    return this.profiles.preferences(id, owner);
+  }
+
+  @UseGuards(OwnerGuard)
+  @Put(':id/preferences')
+  setPreferences(
+    @Param('id', idPipe) id: string,
+    @Body(new ZodPipe(preferencesSchema)) body: Preferences,
+    @CurrentOwner() owner: Owner,
+  ) {
+    return this.profiles.setPreferences(id, owner, body);
+  }
+
+  @UseGuards(OwnerGuard)
+  @Get(':id/words')
+  words(
+    @Param('id', idPipe) id: string,
+    @Query(new ZodPipe(wordsQuerySchema)) query: WordsQuery,
+    @CurrentOwner() owner: Owner,
+  ) {
+    return this.profiles.words(id, owner, query.date);
   }
 
   @UseGuards(OwnerGuard)

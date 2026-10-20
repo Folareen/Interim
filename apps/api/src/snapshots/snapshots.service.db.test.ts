@@ -12,7 +12,7 @@ const owner = { kind: 'person', ref: 'alice' } as const;
 const consent = (retention: 'standard' | 'extended') =>
   ({
     action: 'grant',
-    version: '1',
+    version: '2',
     retention,
     acceptStorage: true,
     acceptYoucam: true,
@@ -38,8 +38,11 @@ beforeEach(async () => {
   snapshots = new SnapshotsService(db, profiles, storage.asService(), { maxUploadBytes: 12 * 1024 * 1024 });
 });
 
-async function newProfile(retention: 'standard' | 'extended' = 'standard') {
-  const { id } = await profiles.create(owner, { templateKey: 'going_grey', ageConfirmed: true });
+async function newProfile(
+  retention: 'standard' | 'extended' = 'standard',
+  templateKey: 'going_grey' | 'after_surgery' = 'going_grey',
+) {
+  const { id } = await profiles.create(owner, { templateKey, ageConfirmed: true });
   await profiles.consent(id, owner, consent(retention));
   return id;
 }
@@ -124,6 +127,31 @@ describe('check in', () => {
     });
     expect(saved.isBaseline).toBe(false);
     expect(await db.select().from(selfReport).where(eq(selfReport.snapshotId, saved.id))).toHaveLength(1);
+  });
+
+  it('saves the moment, at the baseline too', async () => {
+    const id = await newProfile();
+    const saved = await snapshots.create(id, owner, {
+      uploads: await upload(id, ['front', 'left', 'right']),
+      moment: 'back_to_work',
+    });
+    expect(saved.moment).toBe('back_to_work');
+    const [row] = await db.select({ moment: snapshot.moment }).from(snapshot).where(eq(snapshot.id, saved.id));
+    expect(row?.moment).toBe('back_to_work');
+  });
+
+  it('after surgery, takes no body photo until the person turns body photos on', async () => {
+    const id = await newProfile('standard', 'after_surgery');
+    await expect(
+      snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right', 'body']) }),
+    ).rejects.toThrow(/Body photos are off/);
+
+    await snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right']) });
+
+    await profiles.setPreferences(id, owner, { tone: 'warm', wordsSet: null, bodyPhotos: true });
+    await expect(
+      snapshots.create(id, owner, { uploads: await upload(id, ['front']), selfReport: { changed: 'some', reportedSize: 'M' } }),
+    ).rejects.toThrow(/body photo/);
   });
 
   it('refuses side photos after the first set', async () => {

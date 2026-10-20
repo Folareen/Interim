@@ -40,7 +40,7 @@ export interface CrisisContact {
   url: string;
 }
 
-// Check each entry against the official service before launch (docs/product/research.md section 8).
+// Check each entry against the official service before launch.
 /** Crisis contacts per region. `other` points to a directory of helplines by country. */
 export const crisisContacts: Record<CrisisRegion, readonly CrisisContact[]> = {
   us: [{ name: '988 Suicide & Crisis Lifeline', phone: '988', how: 'Call or text 988, any time.', url: 'https://988lifeline.org' }],

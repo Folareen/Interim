@@ -1,6 +1,7 @@
 import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
 import { CONSENT_VERSION, expiresAt, hasCurrentConsent } from '@interim/rules';
-import type { ConsentRequest, CreateProfileInput, Retention } from '@interim/types';
+import { templates, wordsForDay, wordsSets } from '@interim/templates';
+import type { ConsentRequest, CreateProfileInput, Preferences, Retention } from '@interim/types';
 import {
   ConflictException,
   ForbiddenException,
@@ -13,13 +14,16 @@ import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { StorageService } from '../storage/storage.service';
 
-// owner_ref is a credential hash and never leaves the API.
+// owner_ref is a credential hash and never leaves the API. words_set can imply a religion, so it
+// is only read through the person-only preferences, words and export paths.
 const visible = {
   id: profile.id,
   templateKey: profile.templateKey,
   consentVersion: profile.consentVersion,
   consentedAt: profile.consentedAt,
   retention: profile.retention,
+  tone: profile.tone,
+  bodyPhotos: profile.bodyPhotos,
   judgeSample: profile.judgeSample,
   createdAt: profile.createdAt,
 };
@@ -39,6 +43,7 @@ export class ProfilesService {
         templateKey: input.templateKey,
         ownerRef: owner.ref,
         consentVersion: CONSENT_VERSION,
+        bodyPhotos: templates[input.templateKey].bodyPhotosByDefault,
       })
       .returning(visible);
     if (!row) throw new Error('Profile insert returned no row');
@@ -89,6 +94,46 @@ export class ProfilesService {
       }
     });
     return this.get(id, owner);
+  }
+
+  /**
+   * The person's companion settings, including the words for today set.
+   * @throws ForbiddenException for partner owners, because the set can imply a religion.
+   */
+  async preferences(id: string, owner: Owner): Promise<Preferences> {
+    if (owner.kind === 'partner') throw new ForbiddenException('Only the person can see these settings');
+    const [row] = await this.db
+      .select({ tone: profile.tone, wordsSet: profile.wordsSet, bodyPhotos: profile.bodyPhotos })
+      .from(profile)
+      .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)));
+    if (!row) throw new NotFoundException();
+    return row;
+  }
+
+  /**
+   * Replaces the person's companion settings.
+   * @throws ForbiddenException for partner owners.
+   */
+  async setPreferences(id: string, owner: Owner, input: Preferences): Promise<Preferences> {
+    if (owner.kind === 'partner') throw new ForbiddenException('Only the person can change these settings');
+    const updated = await this.db
+      .update(profile)
+      .set(input)
+      .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)))
+      .returning({ id: profile.id });
+    if (updated.length === 0) throw new NotFoundException();
+    return input;
+  }
+
+  /**
+   * Today's words for the person, or null while words for today is off.
+   * @param date The person's local date as YYYY-MM-DD.
+   */
+  async words(id: string, owner: Owner, date: string) {
+    const { wordsSet } = await this.preferences(id, owner);
+    if (!wordsSet) return { words: null };
+    const { label, translation } = wordsSets[wordsSet];
+    return { words: { set: wordsSet, label, translation, ...wordsForDay(wordsSet, date) } };
   }
 
   /**
@@ -146,7 +191,8 @@ export class ProfilesService {
       .from(consentEvent)
       .where(eq(consentEvent.profileId, id))
       .orderBy(consentEvent.createdAt);
-    return { exportedAt: new Date(), profile: current, consentEvents };
+    const preferences = owner.kind === 'person' ? await this.preferences(id, owner) : null;
+    return { exportedAt: new Date(), profile: current, preferences, consentEvents };
   }
 }
 

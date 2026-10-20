@@ -74,9 +74,9 @@ interim/
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (hash of the owner token, `partner:<id>`, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), judge_sample flag.
+* **profile.** id, template_key, owner_ref (hash of the owner token, `partner:<id>`, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), tone (practical, warm or light), words_set (null while off; read only on person-only routes), body_photos (starts from the template), judge_sample flag.
 * **consent_event.** id, profile_id, version, action (grant or withdraw), created.
-* **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, capture_check_json.
+* **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
 * **photo.** id, snapshot_id, kind (front, left, right, top, body), s3_key, sha256 of the normalised file, expires_at.
 * **measurement.** id, snapshot_id, tool, value_json, youcam_task_id. Cost is read from the ledger through the task id.
@@ -142,10 +142,12 @@ BullMQ on Redis.
 * POST /profiles with a template key and an age confirmation (open; mints the owner cookie for a new person)
 * GET /profiles (the caller's own) and GET /profiles/:id
 * POST /profiles/:id/consent (grant or withdraw; the person only, never a partner key)
+* GET and PUT /profiles/:id/preferences (tone, words for today set, body photos; the person only)
+* GET /profiles/:id/words?date=YYYY-MM-DD (today's passage, or null while off; the person only)
 * DELETE /profiles/:id
 * GET /profiles/:id/export
 * POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
-* POST /profiles/:id/snapshots (upload ids with kinds, and self report; normalises, stores, then deletes the raw uploads)
+* POST /profiles/:id/snapshots (upload ids with kinds, self report and an optional moment; normalises, stores, then deletes the raw uploads)
 * POST /snapshots/:id/runs (starts the agent)
 * GET /runs/:id/events (server sent events)
 * GET /runs/:id/card

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { photoSetProblem, selfReportProblem } from './capture';
 
-const baseline = { isBaseline: true, usesFit: false };
-const checkIn = { isBaseline: false, usesFit: false };
+const baseline = { isBaseline: true, usesFit: false, bodyPhotos: true };
+const checkIn = { isBaseline: false, usesFit: false, bodyPhotos: true };
 
 describe('photoSetProblem', () => {
   it('accepts a baseline of front, left and right, with top optional', () => {
@@ -19,6 +19,12 @@ describe('photoSetProblem', () => {
     expect(photoSetProblem(['front'], checkIn)).toBeUndefined();
     expect(photoSetProblem(['front'], fit)).toBe('Add the body photo.');
     expect(photoSetProblem(['front', 'body'], fit)).toBeUndefined();
+  });
+
+  it('neither asks for nor accepts a body photo while body photos are off', () => {
+    const fitOff = { ...checkIn, usesFit: true, bodyPhotos: false };
+    expect(photoSetProblem(['front'], fitOff)).toBeUndefined();
+    expect(photoSetProblem(['front', 'body'], fitOff)).toBe('Body photos are off. Turn them on to add one.');
   });
 
   it('rejects side photos at a check in', () => {

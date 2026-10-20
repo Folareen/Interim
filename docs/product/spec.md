@@ -19,9 +19,9 @@ There are no admin or care team roles in this build.
 * **Profile.** One person's ledger, created from a situation template.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
-* **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot), for fit templates their current size, and optionally the moment coming up.
-* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile.
-* **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday.
+* **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot) and, for fit templates, their current size.
+* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile with the body photo setting and the words for today choice.
+* **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday. Optional on any snapshot, the baseline included.
 * **Companion note.** The first block of a Stage Card. Rules in [overview.md](overview.md#the-companion).
 * **Words for today.** One passage a day from a fixed library, from the set the person chose (off by default).
 * **Stage.** A named point on the template path. Each template defines its own stages.
@@ -159,7 +159,7 @@ Every step is stored as a trace entry with the tool, inputs, outputs, cost and a
 * The planner never mentions causes, medication or health findings.
 * The planner receives the situation key, stage, measurements, self report, moment and tone. It never receives photos, reflection text or the words for today choice.
 * The companion note is at most three sentences, in the order notice, normalise, one thing for today. With the practical tone it skips feelings language and keeps the change and the step.
-* If model text fails the language scan, the companion phrase scan or the placeholder check, it is retried once. A second failure uses the fixed text for that stage and tone from template config, and the trace records it.
+* If model text fails the language scan, the companion phrase scan or the placeholder check, it is retried once. A second failure uses the fixed text for the profile's tone from template config, and the trace records it.
 
 ## 9. Stage Card
 
@@ -262,7 +262,7 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * A test scans all user facing strings in the app, templates and words for today library, and fails the build on a banned word or companion phrase.
 * Which cards carry the professional line and the someone to talk to link is decided by the template's sensitive flag (section 4).
 * **Distress handoff.** `packages/rules` holds a plain phrase check for crisis or self-harm language and a table of crisis contacts by region (US, Canada, UK, Ireland, Australia, with findahelpline.com for everywhere else). The device runs it on reflection text before anything else. A match replaces the screen with the contacts. The region comes from the browser locale and the person can change it.
-* Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. Trailing punctuation of an excerpt may become a full stop. Nothing else is edited.
+* Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. An excerpt may start with a capital letter and end with a full stop. Nothing else is edited.
 * **Languages.** Each language has its own banned word and companion phrase lists in `packages/rules`, reviewed by a native speaker. A language without both lists is not offered. The scans run on text in the language it is shown in. Model output is checked in the person's language, and the fallback is that language's fixed text.
 * Body Reshape is not called. Renders only use real photos from check ins.
 * Fit templates never show or ask for weight, BMI or a target. Cards show no goal, streak or progress score. A person can turn off body photos at any time and still use the hair features.

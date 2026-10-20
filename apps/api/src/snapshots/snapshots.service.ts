@@ -75,7 +75,7 @@ export class SnapshotsService {
       .select({ existing: count() })
       .from(snapshot)
       .where(eq(snapshot.profileId, profileId));
-    const context = { isBaseline: existing === 0, usesFit: template.usesFit };
+    const context = { isBaseline: existing === 0, usesFit: template.usesFit, bodyPhotos: current.bodyPhotos };
 
     const problem =
       photoSetProblem(input.uploads.map((u) => u.kind), context) ??
@@ -121,6 +121,7 @@ export class SnapshotsService {
         profileId,
         takenAt,
         isBaseline: context.isBaseline,
+        moment: input.moment ?? null,
         captureCheck: {
           source: 'server',
           photos: normalised.map(({ kind, photo: p }) => ({ kind, format: p.format, width: p.width, height: p.height })),
@@ -154,6 +155,7 @@ export class SnapshotsService {
       isBaseline: context.isBaseline,
       photos: normalised.map(({ kind, photo: p }) => ({ kind, sha256: p.sha256, expiresAt: photoExpiry })),
       selfReport: input.selfReport ?? null,
+      moment: input.moment ?? null,
     };
   }
 
