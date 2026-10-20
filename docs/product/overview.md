@@ -1,11 +1,19 @@
 # Interim: Product Overview
 
-Version 1.2, October 20, 2026
+Version 1.3, October 20, 2026
 Built for the YouCam API Skin AI and eCommerce VTO Hackathon (Perfect Corp, Devpost). Submissions close Nov 2, 2026 at 11:45am EST.
 
 ## One liner
 
-Interim helps you feel like yourself while illness changes how you look.
+Interim helps you feel like yourself while your body changes.
+
+## In short
+
+Serious illness can change how someone looks within weeks: hair falls out, the face fills out, surgery leaves a new shape, skin changes colour. People still have to go to work, see family and be photographed, and almost nothing helps them through those months. Interim is built for them first.
+
+At each check in it takes a few photos, measures what changed with YouCam's hair, skin and try on AI, and returns one Stage Card. The card has a short, honest note in the tone the person chose. It says what to wear and how to style hair and makeup for what is coming up, what to hold off buying, and which sizes to buy now.
+
+The same engine helps anyone whose body is changing fast: gaining or losing weight, on purpose or not, a new baby, midlife, going grey, growing out hair or a beard. It works in ten languages, can read every screen aloud, and stays practical and kind, never medical.
 
 ## The problem
 
@@ -20,7 +28,7 @@ Figures above come from secondary sources and were not rechecked against the ori
 
 ## Who it serves
 
-Built first for people whose appearance is changing because of serious illness or its care: hair loss, face and body shape changes, scars, skin colour changes. It also serves anyone in a fast change, such as weight change, a new baby, midlife, going grey or a grow out.
+Built first for people whose appearance is changing because of serious illness or its care: hair loss, face and body shape changes, scars, skin colour changes. It serves anyone in a fast change just as well: weight gain or loss in either direction and for any reason, a new baby, midlife, going grey or a grow out.
 
 Today they guess, buy the wrong size, book the wrong cut, or stop going out for a while because nothing feels like them this month. Nobody builds for the in between months.
 
@@ -50,7 +58,7 @@ Built first for:
 
 Also for:
 
-6. Weight change (GLP 1 and other weight loss). Size drops over months. Hair shedding can follow fast loss.
+6. Weight change. Gaining or losing, on purpose or not, including GLP 1 medicines. Size moves over months in either direction, and the card plans clothes for the size the person is now. Hair shedding can follow fast loss.
 7. Midlife change (menopause). Density drifts down slowly. Volume and cut strategy matter most.
 8. After a baby (postpartum shedding). Temporary. The agent steers away from drastic cuts during it.
 9. Going grey. Plan the grow out with colour stages instead of dyeing.
@@ -74,12 +82,15 @@ This section owns what the companion says and does. The spec (sections 9 and 13)
 * **Notifications.** Two kinds, each off until the person turns it on: words for today at a time they pick, and a check in reminder on the template's cadence. By default the notification says only that something is ready, because lock screens are seen by others and a verse can reveal faith. The person can choose to show the words on the lock screen. Notifications never name the situation and never count days or streaks.
 * **Someone to talk to.** Every sensitive card links to crisis contacts for the person's region. If anything the person writes on the device suggests crisis or self-harm, Interim stops and shows those contacts first. That check is plain code.
 
-## Languages
+## Languages and read aloud
 
 Free in every language, like the rest of the companion. The person picks a language at setup and can change it any time.
 
-* **First set:** English, French, Spanish, Italian, Portuguese, Swahili, Yoruba, Hausa, Igbo and Nigerian Pidgin. Arabic follows once the app supports right to left layout.
-* **What changes per language:** app copy, template labels, fixed companion text and what to say lines come from translated message files. The model writes the companion note and explanations in the person's language.
+* **Ten languages:** English, French, Spanish, Italian, Portuguese and Swahili first, then Hausa, Yoruba, Igbo and Nigerian Pidgin once native speakers have reviewed them. Arabic follows once the app supports right to left layout.
+* **What changes per language:** app copy, template labels, fixed companion text and what to say lines come from translated copy files. The model writes the companion note and explanations in the person's language. Yoruba text keeps its tone marks.
+* **Read aloud.** Every screen can be read aloud: the card, words for today and each capture step, which guides the person through the photos by voice. It uses the phone's own voice when it has one for the language, and Interim's voice service when it does not. This matters for people who are too tired to read, whose eyesight blurs, or who speak Yoruba, Hausa or Igbo more easily than they read it.
+* **No voice input.** Almost everything is a tap or a photo, with large, clearly labelled choices and the read aloud guide. The one free text field, the reflection, can use the phone keyboard's own microphone, so Interim never receives audio.
+* **Screen readers.** Pages are built for VoiceOver and TalkBack, with the page language set to the person's language and every control labelled.
 * **Safety travels with the language.** A language goes live only when it has its own banned word list and companion phrase list, reviewed by a native speaker, and its fixed copy passes both. Until then the language is not offered. English lists stay the reference.
 * **Words for today per language** come only from public domain translations in that language, checked like the English ones. Where a set has none yet, the person sees it in English or picks another set, with a plain note saying why.
 * **Crisis contacts** follow the person's region, not their language.
@@ -132,6 +143,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * No forced positivity: never "stay positive", "be strong", "you've got this", "everything happens for a reason" or "look on the bright side".
 * No battle words: never fight, battle, beat, warrior or survivor, and no journey framing.
 * Earlier photos are a reference, never a goal. Interim never describes a change as a loss or the person's earlier look as better.
+* No body is the goal. Interim never calls clothes slimming, never offers to hide or disguise part of the body, and never talks about problem areas. Weight gain and weight loss get the same tone.
 * Users choose a situation from a fixed list. There are no condition fields and no medication fields.
 * Density grades are described as visual categories, not health findings.
 * Every card for a sensitive situation (templates 1 to 8) carries one short line suggesting a professional for health questions, and a link to someone to talk to.
@@ -159,10 +171,6 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 The first 48 hours of the build exist to answer the technical unknowns.
 
-## Later
-
-**Voice.** Reading cards and words for today aloud, and speaking instead of typing. Reflection voice input must stay on the device like reflection text, so it can only use on-device recognition. Interim's own server never receives audio of a reflection.
-
 ## Out of scope for the hackathon build
 
-Native apps, voice, accounts for care teams, any health data, insurance features, real checkout and payments, and live retailer catalog sync. A sample catalog is enough.
+Native apps, voice input, accounts for care teams, any health data, insurance features, real checkout and payments, and live retailer catalog sync. A sample catalog is enough.

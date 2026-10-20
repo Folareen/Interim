@@ -1,6 +1,6 @@
 # Interim: Product Specification
 
-Version 1.2, October 20, 2026
+Version 1.3, October 20, 2026
 Companion documents: overview.md, ../architecture.md
 
 ## 1. Scope
@@ -20,7 +20,8 @@ There are no admin or care team roles in this build.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
 * **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot) and, for fit templates, their current size.
-* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile with the body photo setting and the words for today choice.
+* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile with the language, the body photo setting and the words for today choice.
+* **Language.** The profile's language, from the live languages (section 13). English by default.
 * **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday. Optional on any snapshot, the baseline included.
 * **Companion note.** The first block of a Stage Card. Rules in [overview.md](overview.md#the-companion).
 * **Words for today.** One passage a day from a fixed library, from the set the person chose (off by default).
@@ -57,7 +58,7 @@ Every run stores the template key and version it used, so an old card can be exp
 * after_surgery: recovering, settling, settled
 * skin_colour: usual, changing, settled
 * after_a_baby: full, shedding, growing_in
-* weight_change: baseline size, size down one, size down two, stable
+* weight_change: usual_size, one_size_away, two_sizes_away, settled (either direction, from the reported size)
 * beard_growth: clean, stubble, short, full
 * going_grey: mostly coloured, mixed, mostly grey
 
@@ -252,6 +253,14 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * A worker job runs every hour and sends to subscriptions whose local time matches. The passage comes from the same fixed library as the app.
 * Notification text passes both language scans in every language it is sent in.
 
+## 12b. Read aloud
+
+* Every card, the words for today screen and each capture step has a read aloud control. The capture wizard can speak its instructions as the person takes each photo.
+* The browser's own voice (speechSynthesis) is used when the device has one for the profile's language. Otherwise the API returns audio.
+* Fixed copy (capture steps, what to say lines, fallback notes, words for today) is turned into audio once per language and voice, stored, and served from storage. Only the companion note and card explanations are made on request, then cached with the card and deleted with it.
+* Only text Interim already shows is sent to the voice service, never photos or reflection text. Vendors per language are chosen by native speaker listening tests: Gemini TTS for the languages it supports, Spitch for Yoruba, and a Nigerian English voice tested for Pidgin. A vendor that is not already a processor gets its own consent line, asked the first time read aloud is used.
+* There is no voice input.
+
 ## 13. Language and safety rules
 
 The rules themselves (banned words, labels, previews, professional line, body image rules) are owned by [overview.md](overview.md). This section is how they are enforced.
@@ -263,7 +272,7 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * Which cards carry the professional line and the someone to talk to link is decided by the template's sensitive flag (section 4).
 * **Distress handoff.** `packages/rules` holds a plain phrase check for crisis or self-harm language and a table of crisis contacts by region (US, Canada, UK, Ireland, Australia, with findahelpline.com for everywhere else). The device runs it on reflection text before anything else. A match replaces the screen with the contacts. The region comes from the browser locale and the person can change it.
 * Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. An excerpt may start with a capital letter and end with a full stop. Nothing else is edited.
-* **Languages.** Each language has its own banned word and companion phrase lists in `packages/rules`, reviewed by a native speaker. A language without both lists is not offered. The scans run on text in the language it is shown in. Model output is checked in the person's language, and the fallback is that language's fixed text.
+* **Languages.** Each language has its own banned word, companion phrase and crisis phrase lists in `packages/rules`, reviewed by a native speaker, and its own copy file in `packages/templates`. Only languages in `liveLocales` (`packages/types`) are offered. The catalogs are typed by that list, so adding a language fails the build until every list and copy file has it. The scans run on text in the language it is shown in, and match whole words across scripts, including letters with tone marks. Model output is checked in the person's language, and the fallback is that language's fixed text. The crisis check also runs the English list, because people mix languages.
 * Body Reshape is not called. Renders only use real photos from check ins.
 * Fit templates never show or ask for weight, BMI or a target. Cards show no goal, streak or progress score. A person can turn off body photos at any time and still use the hair features.
 
@@ -354,4 +363,4 @@ Before submission, talk to at least five people in two of the situations, at lea
 
 ## 19. Out of scope
 
-Native apps, voice, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.
+Native apps, voice input, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.
