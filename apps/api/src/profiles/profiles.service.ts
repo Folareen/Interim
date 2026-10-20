@@ -1,0 +1,114 @@
+import { type Db, consentEvent, deletionRequest, profile } from '@interim/db';
+import { CONSENT_VERSION, hasCurrentConsent } from '@interim/rules';
+import type { ConsentRequest, CreateProfileInput } from '@interim/types';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { and, desc, eq } from 'drizzle-orm';
+import { DB } from '../db/db.token';
+import type { Owner } from '../guard/owner.service';
+
+// owner_ref is a credential hash and never leaves the API.
+const visible = {
+  id: profile.id,
+  templateKey: profile.templateKey,
+  consentVersion: profile.consentVersion,
+  consentedAt: profile.consentedAt,
+  retention: profile.retention,
+  judgeSample: profile.judgeSample,
+  createdAt: profile.createdAt,
+};
+
+/** Profile lifecycle for one owner: create, consent, read, export and hard delete. */
+@Injectable()
+export class ProfilesService {
+  constructor(@Inject(DB) private readonly db: Db) {}
+
+  async create(owner: Owner, input: CreateProfileInput) {
+    const [row] = await this.db
+      .insert(profile)
+      .values({
+        templateKey: input.templateKey,
+        ownerRef: owner.ref,
+        consentVersion: CONSENT_VERSION,
+      })
+      .returning(visible);
+    if (!row) throw new Error('Profile insert returned no row');
+    return withConsentState(row);
+  }
+
+  async list(owner: Owner) {
+    const rows = await this.db
+      .select(visible)
+      .from(profile)
+      .where(eq(profile.ownerRef, owner.ref))
+      .orderBy(desc(profile.createdAt));
+    return rows.map(withConsentState);
+  }
+
+  /** Looks a profile up for its owner. Another owner's profile answers 404, not 403, so ids do not leak. */
+  async get(id: string, owner: Owner) {
+    const [row] = await this.db
+      .select(visible)
+      .from(profile)
+      .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)));
+    if (!row) throw new NotFoundException();
+    return withConsentState(row);
+  }
+
+  /**
+   * Records a consent grant or withdrawal. Only the person can consent: a partner key cannot,
+   * and a grant for an outdated text is refused so the person always sees the current one.
+   * @throws ForbiddenException for partner owners.
+   * @throws ConflictException when a grant names a version other than the current one.
+   */
+  async consent(id: string, owner: Owner, input: ConsentRequest) {
+    if (owner.kind === 'partner') throw new ForbiddenException('Only the person can consent');
+    if (input.action === 'grant' && input.version !== CONSENT_VERSION) {
+      throw new ConflictException(`Current consent version is ${CONSENT_VERSION}`);
+    }
+    await this.get(id, owner);
+
+    const change =
+      input.action === 'grant'
+        ? { consentedAt: new Date(), consentVersion: input.version, retention: input.retention }
+        : { consentedAt: null };
+    await this.db.transaction(async (tx) => {
+      await tx.insert(consentEvent).values({ profileId: id, version: input.version, action: input.action });
+      await tx.update(profile).set(change).where(eq(profile.id, id));
+    });
+    return this.get(id, owner);
+  }
+
+  /** Hard deletes the profile; foreign keys cascade. S3 objects are removed by the cleanup job. */
+  async remove(id: string, owner: Owner): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      const deleted = await tx
+        .delete(profile)
+        .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)))
+        .returning({ id: profile.id });
+      if (deleted.length === 0) throw new NotFoundException();
+      // Holds no profile reference; the cleanup job marks it complete once the objects are gone.
+      await tx.insert(deletionRequest).values({});
+    });
+  }
+
+  /** Everything stored about the profile. Grows as snapshots, measurements and cards land. */
+  async export(id: string, owner: Owner) {
+    const current = await this.get(id, owner);
+    const consentEvents = await this.db
+      .select({ version: consentEvent.version, action: consentEvent.action, createdAt: consentEvent.createdAt })
+      .from(consentEvent)
+      .where(eq(consentEvent.profileId, id))
+      .orderBy(consentEvent.createdAt);
+    return { exportedAt: new Date(), profile: current, consentEvents };
+  }
+}
+
+function withConsentState<T extends { consentedAt: Date | null; consentVersion: string }>(row: T) {
+  return { ...row, consentCurrent: hasCurrentConsent(row) };
+}

@@ -30,4 +30,4 @@ Photos and renders go to S3-compatible object storage through `@aws-sdk/client-s
 - Log at one boundary, structured, with run id and task id. Never log photo contents or personal text.
 
 ## Identity
-A profile's owner is identified by a cookie token (hash stored in `profile.owner_ref`), or by a partner key. Check ownership in every controller that takes a profile, snapshot, run or card id. Public endpoints that can spend units sit behind the rate limits in architecture section 12.
+A profile's owner is identified by a cookie token (hash stored in `profile.owner_ref`), or by a partner key. Check ownership in every controller that takes a profile, snapshot, run or card id. `OwnerGuard` resolves the caller (`Authorization: Bearer <partner key>`, else the `interim_owner` cookie); the owner hash is an HMAC keyed with `SESSION_SECRET`. Services look rows up by id and `owner_ref` together and answer 404 for anyone else's, so ids do not leak. `PARTNER_API_KEYS` is `id:key` pairs, comma separated. Public endpoints that can spend units sit behind the rate limits in architecture section 12.
