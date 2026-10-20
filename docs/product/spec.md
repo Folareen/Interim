@@ -243,6 +243,15 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * A privacy policy and terms page are part of the app. A suspected breach is reported to affected people within 72 hours.
 * Logs hold ids only, never photo contents or personal text, and are kept for 14 days.
 
+## 12a. Notifications
+
+* Web push from the PWA, through a service worker. On iPhone it works only once the app is added to the home screen (iOS 16.4 or later), so the setup screen explains that step.
+* Two opt-in kinds per profile: words for today at a local time the person picks (default 08:00), and a check in reminder when the template's cadence is due. Each has its own switch. Neither is on by default.
+* Default text is neutral: "Your words for today are ready" and "Time for a check in when you're ready". Showing the passage itself on the lock screen is a separate opt-in. No notification names the situation, a stage or a count of days.
+* A push subscription is stored per profile with the person's time zone. It is deleted with the profile, when the person turns notifications off, and when the push service reports it expired.
+* A worker job runs every hour and sends to subscriptions whose local time matches. The passage comes from the same fixed library as the app.
+* Notification text passes both language scans in every language it is sent in.
+
 ## 13. Language and safety rules
 
 The rules themselves (banned words, labels, previews, professional line, body image rules) are owned by [overview.md](overview.md). This section is how they are enforced.
@@ -254,6 +263,7 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * Which cards carry the professional line and the someone to talk to link is decided by the template's sensitive flag (section 4).
 * **Distress handoff.** `packages/rules` holds a plain phrase check for crisis or self-harm language and a table of crisis contacts by region (US, Canada, UK, Ireland, Australia, with findahelpline.com for everywhere else). The device runs it on reflection text before anything else. A match replaces the screen with the contacts. The region comes from the browser locale and the person can change it.
 * Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. Trailing punctuation of an excerpt may become a full stop. Nothing else is edited.
+* **Languages.** Each language has its own banned word and companion phrase lists in `packages/rules`, reviewed by a native speaker. A language without both lists is not offered. The scans run on text in the language it is shown in. Model output is checked in the person's language, and the fallback is that language's fixed text.
 * Body Reshape is not called. Renders only use real photos from check ins.
 * Fit templates never show or ask for weight, BMI or a target. Cards show no goal, streak or progress score. A person can turn off body photos at any time and still use the hair features.
 
@@ -344,4 +354,4 @@ Before submission, talk to at least five people in two of the situations, at lea
 
 ## 19. Out of scope
 
-Native apps, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.
+Native apps, voice, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.

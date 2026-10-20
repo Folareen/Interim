@@ -16,7 +16,7 @@ Almost every beauty and fashion tool assumes a fixed person. The same face, the 
 * What helps is practical and kind, not cheerful. One-off appearance workshops, a single self-compassion writing exercise (tested in a randomised trial) and practice in handling other people's reactions all reduce distress. Forced positivity and battle language can make it worse.
 * The same gap exists for other fast changes. 73% of current GLP 1 users reported a meaningful change in clothing size (PwC, 3,089 consumers, May 2026), and NRF and Happy Returns estimate 19.3% of online sales were returned in 2025, with size and fit the top apparel reason.
 
-Sources and caveats for every figure: [research.md](research.md). They come from secondary sources and were not rechecked against the originals (last verified: never). Check each one and record the date here before it appears in any public copy.
+Figures above come from secondary sources and were not rechecked against the originals (last verified: never). Check each one and record the date here before it appears in any public copy.
 
 ## Who it serves
 
@@ -70,8 +70,19 @@ This section owns what the companion says and does. The spec (sections 9 and 13)
 * **Moments.** At a check in the person can name what is coming up: back at work, a family event, a date, photos, a video call, going out, or just everyday. Strategy, renders and the note plan for that moment. Moments come from a fixed list, with no free text.
 * **What to say.** For moments with other people, the card can offer two or three short, fixed lines for when someone stares or asks. They are based on published social-skills approaches for visible difference.
 * **Reflection.** After a check in where the person reports a lot of change, Interim offers, never pushes, one short self-compassion prompt such as "What would you say to a friend going through this?". What they write stays on their device. It is never sent to the server or the model.
-* **Words for today.** Off unless the person turns it on. They pick one set: *Gentle words* (public domain quotes and lines written for Interim), *Christian* (King James Version), *Muslim* (Pickthall's translation of the Qur'an) or *Jewish* (JPS 1917 Tanakh). One passage a day, the same for everyone who chose that set, shown in the app. It never depends on the situation. Passages come only from a fixed, reviewed library and are never written, paraphrased or chosen by the model. More traditions are added once passages have been checked by someone from that tradition.
+* **Words for today.** Off unless the person turns it on. They pick one set: *Gentle words* (public domain quotes and lines written for Interim), *Christian* (King James Version), *Muslim* (Pickthall's translation of the Qur'an) or *Jewish* (JPS 1917 Tanakh). One passage a day, the same for everyone who chose that set, shown in the app and, if the person also turns it on, as a daily notification. It never depends on the situation. Passages come only from a fixed, reviewed library and are never written, paraphrased or chosen by the model. More traditions are added once passages have been checked by someone from that tradition.
+* **Notifications.** Two kinds, each off until the person turns it on: words for today at a time they pick, and a check in reminder on the template's cadence. By default the notification says only that something is ready, because lock screens are seen by others and a verse can reveal faith. The person can choose to show the words on the lock screen. Notifications never name the situation and never count days or streaks.
 * **Someone to talk to.** Every sensitive card links to crisis contacts for the person's region. If anything the person writes on the device suggests crisis or self-harm, Interim stops and shows those contacts first. That check is plain code.
+
+## Languages
+
+Free in every language, like the rest of the companion. The person picks a language at setup and can change it any time.
+
+* **First set:** English, French, Spanish, Italian, Portuguese, Swahili, Yoruba, Hausa, Igbo and Nigerian Pidgin. Arabic follows once the app supports right to left layout.
+* **What changes per language:** app copy, template labels, fixed companion text and what to say lines come from translated message files. The model writes the companion note and explanations in the person's language.
+* **Safety travels with the language.** A language goes live only when it has its own banned word list and companion phrase list, reviewed by a native speaker, and its fixed copy passes both. Until then the language is not offered. English lists stay the reference.
+* **Words for today per language** come only from public domain translations in that language, checked like the English ones. Where a set has none yet, the person sees it in English or picks another set, with a plain note saying why.
+* **Crisis contacts** follow the person's region, not their language.
 
 ## What the agent does
 
@@ -148,6 +159,10 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 The first 48 hours of the build exist to answer the technical unknowns.
 
+## Later
+
+**Voice.** Reading cards and words for today aloud, and speaking instead of typing. Reflection voice input must stay on the device like reflection text, so it can only use on-device recognition. Interim's own server never receives audio of a reflection.
+
 ## Out of scope for the hackathon build
 
-Native apps, push notifications, accounts for care teams, any health data, insurance features, real checkout and payments, and live retailer catalog sync. A sample catalog is enough.
+Native apps, voice, accounts for care teams, any health data, insurance features, real checkout and payments, and live retailer catalog sync. A sample catalog is enough.
