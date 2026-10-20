@@ -144,14 +144,17 @@ export const wordsSetSchema = z.enum(['gentle', 'christian', 'muslim', 'jewish']
 export type WordsSet = z.infer<typeof wordsSetSchema>;
 
 /**
- * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off. The set can
- * imply a religion, so only the person reads or sets it (docs/product/spec.md section 12).
+ * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off. `headCovering`
+ * means the person covers their hair, which turns hair try on off. The set and the covering can
+ * imply a religion or culture, so only the person reads or sets them (docs/product/spec.md
+ * section 12).
  */
 export const preferencesSchema = z.object({
   locale: liveLocaleSchema,
   tone: toneSchema,
   wordsSet: wordsSetSchema.nullable(),
   bodyPhotos: z.boolean(),
+  headCovering: z.boolean(),
 });
 export type Preferences = z.infer<typeof preferencesSchema>;
 

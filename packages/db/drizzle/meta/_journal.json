@@ -29,6 +29,13 @@
       "when": 1792533979997,
       "tag": "0003_natural_wolfsbane",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792538539137,
+      "tag": "0004_tough_marrow",
+      "breakpoints": true
     }
   ]
 }
