@@ -75,5 +75,10 @@ Not done:
 - Makeup try on, clothes v4, face attributes and face tone: the docs pages could not be read or do not exist at the paths tried. No tool entries.
 - No call has been made against the live API. Request and result schemas follow the docs and must be checked in the spike. Items marked unconfirmed: the `hair_volume` request fields, `content_type` spelling (`image/jpg` follows the examples), the Get_Feature_Cost response types, and whether `fitzpatrick` accepts a single `src_file_id`.
 
-## Open (resolve in the spike, spec section 17)
-Costs for density, length, volume, hair transfer v2.1 and clothes v4; hair-too-short threshold; whether a clothes render can feed hair transfer; clothes framing; Camera Kit angle control. Record answers in the spec and update the cost table.
+## Safety rules for calls
+- Nothing is sent unless `LIVE_CALLS_ENABLED=true`. Replay never touches the network, and a missing fixture is an error.
+- Reserve units first, write the task row as `intent`, then send. Never re-send a create call; only a 429 is retried.
+- The rate limit bucket lives in Redis and is shared by all workers.
+
+## Open questions
+Owned by [product/spec.md](../product/spec.md) section 17. Record answers in the spec and update the cost table.

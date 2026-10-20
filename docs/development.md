@@ -23,4 +23,10 @@ Variables are listed in `.env.example`. The API validates them once at startup (
 ## Testing
 Vitest. Unit tests sit next to the code (`*.test.ts`). YouCam-facing tests run against recorded fixtures, never live. Required tests are listed in spec section 16 and architecture section 16.
 
+## CI
+`.github/workflows/ci.yml` runs `pnpm lint`, `pnpm typecheck` and `pnpm test` on every pull request. Branch protection on `master` requires it to pass and requires a pull request. Enable this in the repository settings; the workflow alone does not enforce it.
+
+## Fixtures and personal data
+Fixtures hold synthetic data or data from people who gave written consent for this use. Check before committing: no real photos, no names, no tokens.
+
 Git workflow: [git.md](git.md).

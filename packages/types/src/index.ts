@@ -55,15 +55,15 @@ export type YoucamErrorCode = z.infer<typeof youcamErrorCodeSchema>;
 export const youcamModeSchema = z.enum(['live', 'record', 'replay']);
 export type YoucamMode = z.infer<typeof youcamModeSchema>;
 
-export const photoKindSchema = z.enum(['front', 'left', 'right', 'top', 'full_length', 'body']);
+export const photoKindSchema = z.enum(['front', 'left', 'right', 'top', 'body']);
 export type PhotoKind = z.infer<typeof photoKindSchema>;
 
 export const ledgerEntrySchema = z.object({
   id: z.string().uuid(),
-  profileId: z.string().uuid(),
+  profileRef: z.string().uuid(),
   runId: z.string().uuid().nullable(),
   tool: z.string(),
-  kind: z.enum(['estimate', 'settle']),
+  kind: z.enum(['reserve', 'settle', 'release']),
   units: z.number().int().nonnegative(),
   taskId: z.string().nullable(),
 });

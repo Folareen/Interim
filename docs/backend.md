@@ -16,15 +16,18 @@ System design, module list, data model and HTTP routes are in [architecture.md](
 ## Database
 - Drizzle, schema in `packages/db/src/schema.ts`, mirroring architecture section 5.
 - Migrations: `pnpm --filter @interim/db db:generate` then `db:migrate`. Commit generated SQL.
-- Profile deletion is a hard delete that cascades through foreign keys; S3 objects are removed by the cleanup job.
-- The ledger is append only. Never update or delete ledger rows.
+- Profile deletion is a hard delete that cascades through foreign keys; S3 objects are removed by the cleanup job. The ledger, budget counters and deletion requests hold no personal data and are not part of the cascade (`ledger_entry.profile_ref` has no foreign key).
+- The ledger is append only: `reserve`, `settle` and `release` rows. Never update or delete them. Reserve units in one transaction that locks the `budget_counter` row for each scope.
 
 ## Queues
-BullMQ: `run`, `poll`, `cleanup`. Jobs must be idempotent: read the ledger and `call_cache` before acting. Never re-send a YouCam create call unless the earlier task is known to have failed.
+BullMQ: `run`, `poll`, `cleanup`. Jobs must be idempotent: read the ledger, the `youcam_task` row and `call_cache` before acting. Write the task row as `intent` before sending a create call. Never re-send a create call unless the earlier task is known to have failed; a task stuck in `intent` becomes `unknown` and is reconciled, not recreated. Only a 429 is retried on create.
 
 ## Storage
-Photos and renders go to S3-compatible object storage through `@aws-sdk/client-s3` with `S3_ENDPOINT` set: MinIO locally (console at http://localhost:9001), Cloudflare R2 in production (`S3_REGION=auto`). Store only the key in Postgres, never a URL. Serve files through short-lived presigned URLs. Photo expiry is a bucket lifecycle rule plus the cleanup queue; profile deletion removes the objects explicitly.
+Photos and renders go to S3-compatible object storage through `@aws-sdk/client-s3` with `S3_ENDPOINT` set: MinIO locally (console at http://localhost:9001), Cloudflare R2 in production (`S3_REGION=auto`). Store only the key in Postgres, never a URL. Serve files through short-lived presigned URLs, and upload through presigned URLs too. After upload the API normalises each photo (HEIC to JPEG, orientation applied, EXIF removed, size limited) and stores the normalised file. Photo expiry follows each row's `expires_at` and is enforced by the cleanup queue (retention can slide with new check ins, so there is no bucket lifecycle rule); profile deletion removes the objects explicitly.
 
 ## Errors and logging
 - Throw Nest `HttpException` subclasses for expected failures; let the global filter handle the rest.
 - Log at one boundary, structured, with run id and task id. Never log photo contents or personal text.
+
+## Identity
+A profile's owner is identified by a cookie token (hash stored in `profile.owner_ref`), or by a partner key. Check ownership in every controller that takes a profile, snapshot, run or card id. Public endpoints that can spend units sit behind the rate limits in architecture section 12.

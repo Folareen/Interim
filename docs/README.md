@@ -4,8 +4,8 @@ Each topic has one owner doc. Link to it instead of repeating it.
 
 | Doc | Owns |
 | --- | --- |
-| [product/overview.md](product/overview.md) | What Interim is, who it serves, language and safety rules |
-| [product/spec.md](product/spec.md) | Behaviour: templates, eligibility rules, agent loop, Stage Card, acceptance tests |
+| [product/overview.md](product/overview.md) | What Interim is, who it serves, the language and safety rules themselves |
+| [product/spec.md](product/spec.md) | Behaviour: templates, eligibility rules, agent loop, Stage Card, privacy, acceptance tests, and the open questions (section 17) |
 | [architecture.md](architecture.md) | System design: components, data model, queues, HTTP API, deployment |
 | [typescript.md](typescript.md) | TypeScript rules for all code in this repo |
 | [frontend/README.md](frontend/README.md) | Web app rules and conventions |
@@ -18,3 +18,10 @@ Each topic has one owner doc. Link to it instead of repeating it.
 | [git.md](git.md) | Branches, commits, pull requests |
 
 When a doc conflicts with code, fix whichever is wrong in the same change.
+
+## Keeping docs short
+- Say each thing once, in its owner doc, and link to it from everywhere else.
+- Do not describe what the code already shows. Docs hold decisions, rules, contracts and open questions.
+- Change an existing sentence before adding a new one. Delete text that is no longer true.
+- No status logs, change history or meeting notes. Git history and pull requests hold those.
+- Code comments and JSDoc follow [typescript.md](typescript.md#comments-and-jsdoc).

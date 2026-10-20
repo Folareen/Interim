@@ -15,12 +15,17 @@ const envSchema = z.object({
   YOUCAM_MODE: youcamModeSchema.default('replay'),
   YOUCAM_FIXTURES_DIR: z.string().default('../../packages/fixtures/youcam'), // relative to apps/api
   JUDGE_MODE_FORCE_REPLAY: z.enum(['true', 'false']).default('true'),
-  LIVE_CALLS_ENABLED: z.enum(['true', 'false']).default('false'), // no live YouCam call unless true
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().default(''),
   LLM_MODEL: z.string().default('gemini-2.5-flash'),
   UNIT_BUDGET_PER_RUN: z.coerce.number().default(50),
   UNIT_BUDGET_PER_PROFILE: z.coerce.number().default(500),
   UNIT_BUDGET_PER_DAY: z.coerce.number().default(2000),
+  UNIT_BUDGET_PER_SOURCE_PER_DAY: z.coerce.number().default(100),
+  LIVE_CALLS_ENABLED: z.enum(['true', 'false']).default('false'),
+  SESSION_SECRET: z.string().min(32),
+  MAX_UPLOAD_BYTES: z.coerce.number().default(12 * 1024 * 1024),
+  PARTNER_API_KEYS: z.string().default(''),
+  TURNSTILE_SECRET_KEY: z.string().default(''),
 });
 
 export type Env = z.infer<typeof envSchema>;
