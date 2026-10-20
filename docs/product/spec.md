@@ -1,6 +1,6 @@
 # Interim: Product Specification
 
-Version 1.1, October 20, 2026
+Version 1.2, October 20, 2026
 Companion documents: overview.md, ../architecture.md
 
 ## 1. Scope
@@ -9,7 +9,7 @@ This spec covers the hackathon build. It defines what the product does, what it 
 
 ## 2. Users
 
-* **Individual.** Picks a situation, captures a baseline, then adds check ins. Reads Stage Cards.
+* **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards.
 * **Partner agent.** Another agent calling Interim over MCP with a partner key. It never sees photos and cannot give consent for a person (section 15).
 
 There are no admin or care team roles in this build.
@@ -19,7 +19,11 @@ There are no admin or care team roles in this build.
 * **Profile.** One person's ledger, created from a situation template.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
-* **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot) and, for fit templates, their current size.
+* **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot), for fit templates their current size, and optionally the moment coming up.
+* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile.
+* **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday.
+* **Companion note.** The first block of a Stage Card. Rules in [overview.md](overview.md#the-companion).
+* **Words for today.** One passage a day from a fixed library, from the set the person chose (off by default).
 * **Stage.** A named point on the template path. Each template defines its own stages.
 * **Render.** One generated image from a YouCam try on tool, linked to its inputs.
 * **Stage Card.** The final output of a run.
@@ -36,17 +40,22 @@ A template is configuration, not code. Each template defines:
 * per stage list of allowed tools and the fallback order when one is not allowed
 * a hold or buy rule for garments, where the template uses fit
 * a unit budget per run
-* whether the situation is sensitive (drives the professional line on the card and the body image rules)
+* whether the situation is sensitive (drives the professional line, the link to someone to talk to and the body image rules)
+* whether body photos are on by default (off for after_surgery until the person turns them on)
 
-Template keys: weight_change, midlife_change, after_a_baby, going_grey, textured_growth, beard_growth, hair_loss_ahead.
+Template keys: hair_loss_ahead, hair_patches, face_fullness, after_surgery, skin_colour, weight_change, midlife_change, after_a_baby, going_grey, textured_growth, beard_growth.
 
-Sensitive templates: weight_change, midlife_change, after_a_baby, hair_loss_ahead.
+Sensitive templates: hair_loss_ahead, hair_patches, face_fullness, after_surgery, skin_colour, weight_change, midlife_change, after_a_baby.
 
 Every run stores the template key and version it used, so an old card can be explained after thresholds change.
 
 ### Stage examples
 
 * hair_loss_ahead: full, thinning, short, none, growing_in
+* hair_patches: full, patchy, widespread, growing_in
+* face_fullness: usual, fuller, settling
+* after_surgery: recovering, settling, settled
+* skin_colour: usual, changing, settled
 * after_a_baby: full, shedding, growing_in
 * weight_change: baseline size, size down one, size down two, stable
 * beard_growth: clean, stubble, short, full
@@ -54,7 +63,7 @@ Every run stores the template key and version it used, so an old card can be exp
 
 Stage keys are internal and never shown. Display labels are written separately in template config and pass the language scan. Exact stage thresholds are tuned during the spike. They live in template config and can change without code changes.
 
-For weight_change the stage is placed from the size the person reports, not from a measurement. The card says "reported".
+For weight_change, face_fullness and after_surgery the stage is placed from the self report, not from a measurement. The card says "reported".
 
 ## 5. Capture requirements
 
@@ -84,7 +93,7 @@ Device checks are advisory. The server runs them again before any YouCam call.
 
 ### Self report
 
-At each check in the person answers "Has anything changed since last time?" with none, some or a lot. Fit templates also ask for the current size, chosen from the size ladder in the sample catalog. These are not health fields.
+At each check in the person answers "Has anything changed since last time?" with none, some or a lot. Fit templates also ask for the current size, chosen from the size ladder in the sample catalog. An optional "Anything coming up?" picks one moment from the fixed list. These are not health fields, and none of them is free text.
 
 ## 6. Measurements taken
 
@@ -135,9 +144,9 @@ Each run follows this loop. The model chooses steps inside it. Code enforces the
 1. **Observe.** Load the profile, template, previous snapshot and the new snapshot. Run capture checks again on the server.
 2. **Measure.** Ask the planner which measurements are worth taking, filtered by eligibility. Take them. Add each to the ledger.
 3. **Place.** Compute the stage from measurements, self report and the template thresholds. If the stage changed since the last snapshot, record the change.
-4. **Decide.** The planner picks a strategy for this stage from the template's allowed list: cut, volume, colour, cover or hold. It must name the measurement that supports the choice.
+4. **Decide.** The planner picks a strategy for this stage and moment from the template's allowed list: cut, volume, colour, cover or hold. It must name the measurement or self report that supports the choice.
 5. **Act.** Render two to four options within budget. Render saved garments again on the new photo if the template uses fit.
-6. **Compose.** Build the Stage Card from tool outputs. The model writes the explanations with placeholders such as `{m:<measurement id>}`. Code fills in every number, date and size. Model text itself contains no digits and no number words.
+6. **Compose.** Build the Stage Card from tool outputs. The model writes the companion note in the profile's tone and the explanations, with placeholders such as `{m:<measurement id>}`. Code fills in every number, date and size. Model text itself contains no digits and no number words.
 7. **Stop.** Stop when the budget is spent, when two strategies in a row fail eligibility, or when the card is complete. Record why it stopped.
 
 Every step is stored as a trace entry with the tool, inputs, outputs, cost and a one line reason. The trace is shown on the card in short form.
@@ -148,21 +157,27 @@ Every step is stored as a trace entry with the tool, inputs, outputs, cost and a
 * The planner may not state a number. Numbers come only from measurement records through placeholders.
 * If the planner asks for something not possible (for example a render with no valid photo), the run records the refusal and tries the fallback.
 * The planner never mentions causes, medication or health findings.
-* If model text fails the language scan or the placeholder check, it is retried once. A second failure uses the fixed text for that stage from template config and the trace records it.
+* The planner receives the situation key, stage, measurements, self report, moment and tone. It never receives photos, reflection text or the words for today choice.
+* The companion note is at most three sentences, in the order notice, normalise, one thing for today. With the practical tone it skips feelings language and keeps the change and the step.
+* If model text fails the language scan, the companion phrase scan or the placeholder check, it is retried once. A second failure uses the fixed text for that stage and tone from template config, and the trace records it.
 
 ## 9. Stage Card
 
 Fields:
 
 * title and date
+* companion note, with the tone it was written in and the moment it plans for
 * situation label and current stage
 * what changed, each line with the measurement and tool that produced it, or the word "reported" for self reported size, and the date it was last measured
 * options, each with a render, a short reason and a label saying preview
 * what to hold off buying, with the reason
 * shopping list with sizes. The size comes from the reported size and the catalog size chart. A render is a preview and never a fit guarantee.
 * trace summary (what the agent decided and why)
-* one line suggesting a professional for health questions, shown only on sensitive situations
-* actions: approve list, share link, delete
+* what to say, two or three fixed lines, shown only for moments with other people
+* one line suggesting a professional for health questions and a link to someone to talk to, shown only on sensitive situations
+* actions: approve list, share link, change tone, delete
+
+Words for today is shown on the home screen, not on the card, so a shared card never reveals the person's faith.
 
 ## 10. Unit ledger and budgets
 
@@ -213,8 +228,10 @@ Each YouCam error maps to a plain sentence for the user and a next action for th
 Photos of a face and body are biometric data, and the situation a person picks can imply something about their health. Interim treats both as sensitive.
 
 * People must confirm they are 18 or older before the first upload.
-* Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements and the situation key, never photos. Each is a separate line the person accepts.
+* Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos. Each is a separate line the person accepts.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
+* The words for today choice can imply a person's religion. It is stored on the profile, never sent to the model or a partner, never shown on a share link, and deleted with the profile.
+* Reflection text stays on the device. It is never uploaded, logged or sent to the model.
 * Retention has two modes, and the person chooses on the consent screen with neither preselected. Standard: photos and renders are deleted 30 days after capture. Keep my history: photos and renders are kept until the person deletes them, or until 24 months after the last check in, whichever comes first. Every new check in restarts the 24 months. The setting can be switched off at any time, and then the 30 days count from each photo's capture date. For the templates that run over months (weight_change, hair_loss_ahead, textured_growth) the screen explains that keeping history is what makes comparisons and earlier looks possible. In both modes measurements, stage, self report and card text stay until the profile is deleted.
 * Photos are stored encrypted. A render that expires keeps its card text and trace but not its image.
 * YouCam deletes uploaded files after 24 hours, so Interim keeps its own copy and uploads again when needed.
@@ -232,8 +249,11 @@ The rules themselves (banned words, labels, previews, professional line, body im
 
 * **The scan.** The banned list lives in `packages/rules`. It matches whole words and their usual inflections, case insensitive, on user facing strings only: app copy, template display labels, fixed stage text, model output and the landing page. Internal keys such as stage names are not scanned. "Health" is allowed, "heal" and "healing" are not.
 * The planner prompt embeds the same list and a test checks outputs against it.
-* A test scans all user facing strings in the app and templates and fails the build on a banned word.
-* Which cards carry the professional line is decided by the template's sensitive flag (section 4).
+* **The companion phrase scan.** The forced-positivity phrases and battle words from overview.md also live in `packages/rules`, as a second whole-word scan. It runs on model output, fixed companion text, what to say lines and the words for today library.
+* A test scans all user facing strings in the app, templates and words for today library, and fails the build on a banned word or companion phrase.
+* Which cards carry the professional line and the someone to talk to link is decided by the template's sensitive flag (section 4).
+* **Distress handoff.** `packages/rules` holds a plain phrase check for crisis or self-harm language and a table of crisis contacts by region (US, Canada, UK, Ireland, Australia, with findahelpline.com for everywhere else). The device runs it on reflection text before anything else. A match replaces the screen with the contacts. The region comes from the browser locale and the person can change it.
+* Words for today passages are quoted exactly from public domain translations, with the source and reference stored beside each one. Trailing punctuation of an excerpt may become a full stop. Nothing else is edited.
 * Body Reshape is not called. Renders only use real photos from check ins.
 * Fit templates never show or ask for weight, BMI or a target. Cards show no goal, streak or progress score. A person can turn off body photos at any time and still use the hair features.
 
@@ -270,7 +290,10 @@ A partner agent cannot bypass eligibility, consent or budgets. Each partner has 
 7. Deleting a profile removes photos, measurements, renders and cards. Ledger rows remain with no personal data.
 8. A 429 response leads to a delayed retry, not a failure.
 9. A task that returns an error inside HTTP 200 is not charged.
-10. All seven templates load from config and run through the same code path.
+10. All eleven templates load from config and run through the same code path.
+10a. Every fixed companion text, what to say line and words for today passage passes both scans. A test string with "stay positive" or "battle" fails.
+10b. A reflection containing crisis language shows the crisis contacts for the region, and nothing from it reaches the server.
+10c. Words for today returns nothing when it is off, the same passage for everyone on the same day and set, and never appears on a share link.
 11. Standard retention: photos and renders are gone after 30 days, the card still shows its text, and it says an earlier look is unavailable.
 11a. Keep my history: photos remain past 30 days, a new check in restarts the 24 months, and 24 months after the last check in they are deleted. The consent screen cannot be passed without choosing a mode.
 12. Two concurrent runs cannot spend more than the remaining daily cap.
@@ -294,6 +317,7 @@ This section owns every open question. Answer these before building the rest.
 7. Check what is billed on failed, moderated and timed out tasks, and whether YouCam lists tasks for reconciliation.
 8. Confirm accepted formats, size limits, the framing for clothes (full body or chest up), which photo hair length needs, and whether Camera Kit gives enough angle control for the top photo.
 9. Run the capture checks and the tools on a panel of at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair. Record failure rates per group and tune the thresholds until they are close.
+10. For the illness-first templates: check whether hair density and length detection place patchy hair (hair_patches), whether face attributes notice fullness (face_fullness, else self report only), and whether skin tone analysis is stable enough over check ins to track a colour change (skin_colour). Drop a template from the demo if its tools cannot support it.
 
 Kill criterion: if density does not move and hair transfer rejects most thinning hair, switch to the runner up idea (a hair catalog agent for wig and extension sellers). It reuses the same YouCam client, ledger and hair transfer work.
 
@@ -313,8 +337,10 @@ Product measures, tracked in the build and reported in the readme:
 * share of cards approved
 * time from first photo to first card
 * cost per check in against the plan price
+* tone chosen at setup and how often it is changed
+* share of people who turn on words for today, by set
 
-Before submission, talk to at least five people in two of the situations about whether they would photograph themselves at this cadence, and record what they said.
+Before submission, talk to at least five people in two of the situations, at least three of them with lived experience of serious illness. Ask whether they would photograph themselves at this cadence, which tone they would pick, and show the card both ways (note first and note last). Record what they said.
 
 ## 19. Out of scope
 
