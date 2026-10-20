@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests"
   },
+  "dependencies": {
+    "@interim/types": "workspace:*"
+  },
   "devDependencies": {
     "@interim/eslint-config": "workspace:*",
     "@interim/tsconfig": "workspace:*",

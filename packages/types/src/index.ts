@@ -86,6 +86,24 @@ export type ConsentRequest = z.infer<typeof consentRequestSchema>;
 export const photoKindSchema = z.enum(['front', 'left', 'right', 'top', 'body']);
 export type PhotoKind = z.infer<typeof photoKindSchema>;
 
+/** Body of POST /profiles/:id/uploads: one presigned link per photo, sized up front so the link can pin it. */
+export const createUploadsSchema = z.object({
+  uploads: z.array(z.object({ kind: photoKindSchema, sizeBytes: z.number().int().positive() })).min(1).max(5),
+});
+export type CreateUploadsInput = z.infer<typeof createUploadsSchema>;
+
+export const changeReportSchema = z.enum(['none', 'some', 'lot']);
+export type ChangeReport = z.infer<typeof changeReportSchema>;
+
+/** Body of POST /profiles/:id/snapshots: the uploaded photos by id, plus the check in answers. */
+export const createSnapshotSchema = z.object({
+  uploads: z.array(z.object({ uploadId: z.string().uuid(), kind: photoKindSchema })).min(1).max(5),
+  selfReport: z
+    .object({ changed: changeReportSchema, reportedSize: z.string().min(1).max(20).optional() })
+    .optional(),
+});
+export type CreateSnapshotInput = z.infer<typeof createSnapshotSchema>;
+
 export const ledgerEntrySchema = z.object({
   id: z.string().uuid(),
   profileRef: z.string().uuid(),
