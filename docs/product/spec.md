@@ -202,9 +202,12 @@ Cost table, from the YouCam docs (read 2026-10-20). Still to verify in the spike
 * Hair transfer v2.1 (hairstyle): 2 units, preset or custom
 * Hair color: 1 unit
 * Beard style: 2 units
-* Skin tone (Fitzpatrick skin type): 10 units, charged only when the task succeeds. The earlier figure of about 20 units is not in the docs.
+* Fitzpatrick skin type: 10 units, charged only when the task succeeds.
+* Facial colour tones (skin_colour template): 20 units, charged only when the task succeeds.
+* Face shape (face_fullness template): 10 units for 1 to 5 features, charged only when the task succeeds. Interim asks for face shape only.
 * Skin analysis: 9 to 22 units. SD is 9, 12, 14, 16 and HD is 12, 16, 20, 22 for 1 to 4, 5 to 8, 9 to 12, 13 to 16 concerns.
-* Makeup try on: 1 unit, page not read
+* Makeup try on (brows): 1 unit, charged only when the task succeeds
+* Hat try on: 2 units
 * Clothes v4: not confirmed (the docs list clothes v2.0 and v3.0 at 2 units)
 
 ## 11. Error mapping
@@ -214,6 +217,8 @@ Each YouCam error maps to a plain sentence for the user and a next action for th
 * error_hair_too_short and error_bald_image: tell the user this tool cannot work on this photo, mark it blocked, use the fallback order.
 * error_face_angle_invalid and error_insufficient_lighting: ask for a new photo with a specific instruction. No retry.
 * error_no_face and error_large_face_angle: ask for a new photo. No retry.
+* The face tools' specific angle errors (face_not_forward_facing, angle_upward, angle_downward, angle_leftward, angle_rightward, angle_left_tilt, angle_right_tilt) and multi_person: ask for a new photo with the matching instruction (for example "tilt your head down a little"). No retry.
+* error_apply_region_mismatch and error_editing_failed (clothes): this garment cannot be shown on this photo. Mark the combination blocked and offer another garment. error_invalid_src (only the lower body or feet shown): ask for a new photo. error_invalid_ref: a catalog image is unusable, an Interim fault.
 * HTTP 429: wait with growing delay and random jitter, because there is no Retry After header. The limit is 250 requests per 300 seconds, shared by every caller of the key.
 * Any task with a status of error inside an HTTP 200: treat as failed, log, release the reservation unless a charge is observed.
 * Out of units or credits: stop the run, switch live calls off, raise an alert, tell the user to try later.
@@ -315,16 +320,19 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 
 This section owns every open question. Answer these before building the rest.
 
-1. Call Get_Feature_Cost for density, length, volume, hair transfer v2.1 and clothes v4. Fill the cost table with real numbers. Compute units and money per baseline and per check in.
+The live runs use the spike runner ([integrations/youcam.md](../integrations/youcam.md#spike-runner)). Formats, size limits and error codes are already in that doc, read from YouCam's docs.
+
+1. Call Get_Feature_Cost for density, length, volume, hair transfer v2.1, clothes v4, facial colour tones, face shape, hat and makeup. Fill the cost table with real numbers. Compute units and money per baseline and per check in.
 2. Run density detection on six top of head photos of different fullness at 45 degrees. If the grade never moves, stop using density as a trigger and use length plus self report.
 3. Run hair transfer v2.1 with hair_color set to src on photos with less and less hair. Record exactly where the two errors start. This becomes the eligibility table.
 4. Test chaining. Pass a clothes render into hair transfer, then into makeup. If face detection fails on generated images, render hair on the original photo and composite, or change the order.
 5. Render one saved garment on two different body photos to confirm the size bridge moment looks believable.
 6. Record every response into fixtures from the first call.
 7. Check what is billed on failed, moderated and timed out tasks, and whether YouCam lists tasks for reconciliation.
-8. Confirm accepted formats, size limits, the framing for clothes (full body or chest up), which photo hair length needs, and whether Camera Kit gives enough angle control for the top photo.
+8. Confirm the framing for clothes v4 (the docs say full body in one place and chest up in another), which photo hair length needs, whether Camera Kit gives enough angle control for the top photo, and whether the face tools' requirement of a face over 60 percent of the image width is workable in the capture wizard.
 9. Run the capture checks and the tools on a panel of at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair. Record failure rates per group and tune the thresholds until they are close.
 10. For the illness-first templates: check whether hair density and length detection place patchy hair (hair_patches), whether face attributes notice fullness (face_fullness, else self report only), and whether skin tone analysis is stable enough over check ins to track a colour change (skin_colour). Drop a template from the demo if its tools cannot support it.
+11. Hat and brow try on on bald, very short and covered hair: rule 6 of section 7 depends on them, and the docs do not say whether they work. Hat try on also requires a gender of female or male, which Interim does not ask for. Check whether the value changes the result, and decide what to send (for example the same hat rendered once for each, shown without naming either).
 
 Kill criterion: if density does not move and hair transfer rejects most thinning hair, switch to the runner up idea (a hair catalog agent for wig and extension sellers). It reuses the same YouCam client, ledger and hair transfer work.
 
