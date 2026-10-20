@@ -10,3 +10,5 @@ coverage
 .DS_Store
 packages/fixtures/youcam/*.json
 !packages/fixtures/youcam/.gitkeep
+# Spike runs write here. Promote a fixture to packages/fixtures only after checking consent.
+.spike/
