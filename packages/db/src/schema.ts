@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 // docs/architecture.md section 5. Hard delete cascades from profile, except the ledger,
 // budget counters and deletion requests, which hold no personal data.
@@ -131,20 +131,25 @@ export const youcamTask = pgTable('youcam_task', {
 });
 
 // No personal data and no foreign keys, so it survives profile deletion.
-export const ledgerEntry = pgTable('ledger_entry', {
-  id: id(),
-  profileRef: uuid('profile_ref').notNull(),
-  runId: uuid('run_id'),
-  tool: text('tool').notNull(),
-  kind: ledgerKind('kind').notNull(),
-  units: integer('units').notNull(),
-  taskId: text('task_id'),
-  createdAt: createdAt(),
-});
+export const ledgerEntry = pgTable(
+  'ledger_entry',
+  {
+    id: id(),
+    profileRef: uuid('profile_ref').notNull(),
+    runId: uuid('run_id'),
+    tool: text('tool').notNull(),
+    kind: ledgerKind('kind').notNull(),
+    units: integer('units').notNull(),
+    taskId: text('task_id'), // youcam_task.id, our request id. Null task ids never collide.
+    createdAt: createdAt(),
+  },
+  // One reserve, one settle and one release per task at most, so a retried job cannot double count.
+  (t) => [uniqueIndex('ledger_entry_task_kind').on(t.taskId, t.kind)],
+);
 
 // Reserved under a row lock so concurrent runs cannot overspend a cap.
 export const budgetCounter = pgTable('budget_counter', {
-  scope: text('scope').primaryKey(), // day:<date> | profile:<id> | source:<hash>:<date> | partner:<id>
+  scope: text('scope').primaryKey(), // run:<id> | profile:<id> | day:<date> | source:<hash>:<date> | partner:<id>
   reservedUnits: integer('reserved_units').notNull().default(0),
   settledUnits: integer('settled_units').notNull().default(0),
 });

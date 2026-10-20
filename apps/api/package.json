@@ -13,6 +13,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@interim/eslint-config": "workspace:*",
     "@interim/tsconfig": "workspace:*",
     "@nestjs/cli": "^12.0.8",
