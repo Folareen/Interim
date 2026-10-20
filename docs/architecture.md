@@ -134,7 +134,7 @@ BullMQ on Redis.
 
 * **run queue.** One job per run. Concurrency of one per profile.
 * **poll queue.** One job per open YouCam task, with growing delay.
-* **cleanup queue.** Photo and render expiry, deletion requests, storage reconcile, unknown task reconcile.
+* **cleanup queue.** Photo and render expiry, deletion requests, storage reconcile, unknown task reconcile. One repeating job, hourly. Expiry deletes the file, then the row (renders keep the row and lose `s3_key`). The reconcile walks `raw/` and `photos/` once: files of a profile that no longer exists go at once; unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`); photo rows older than the grace period whose file is missing are logged by id. A run then completes every deletion request made before it started. Unknown task reconcile arrives with the YouCam orchestration.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
 ## 9. HTTP API
