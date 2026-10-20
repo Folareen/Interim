@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AgentModule } from './agent/agent.module';
+import { CleanupModule } from './cleanup/cleanup.module';
 import { DbModule } from './db/db.module';
 import { GuardModule } from './guard/guard.module';
 import { HealthController } from './health/health.controller';
@@ -13,6 +14,7 @@ import { YoucamModule } from './youcam/youcam.module';
 @Module({
   imports: [
     DbModule,
+    CleanupModule,
     ProfilesModule,
     SnapshotsModule,
     RunsModule,

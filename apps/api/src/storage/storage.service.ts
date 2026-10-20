@@ -1,6 +1,8 @@
 import {
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
   NoSuchKey,
   PutObjectCommand,
   S3Client,
@@ -18,6 +20,11 @@ export interface StorageConfig {
 export const STORAGE_CONFIG = Symbol('STORAGE_CONFIG');
 
 const PRESIGN_TTL_SECONDS = 600;
+
+export interface StoredObject {
+  key: string;
+  lastModified: Date;
+}
 
 /** S3-compatible object storage: MinIO locally, R2 in production. Only keys are stored elsewhere. */
 @Injectable()
@@ -68,5 +75,36 @@ export class StorageService {
 
   async delete(key: string): Promise<void> {
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+  }
+
+  /** Lists every object under a prefix, one S3 page (up to 1000 keys) at a time. */
+  async *list(prefix: string): AsyncGenerator<StoredObject[]> {
+    let token: string | undefined;
+    do {
+      const page = await this.client.send(
+        new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix, ContinuationToken: token }),
+      );
+      const objects = (page.Contents ?? []).flatMap((o) =>
+        o.Key && o.LastModified ? [{ key: o.Key, lastModified: o.LastModified }] : [],
+      );
+      if (objects.length > 0) yield objects;
+      token = page.NextContinuationToken;
+    } while (token);
+  }
+
+  /** Deletes the keys in batches of 1000. Keys that do not exist are not an error. */
+  async deleteMany(keys: string[]): Promise<void> {
+    for (let i = 0; i < keys.length; i += 1000) {
+      const batch = keys.slice(i, i + 1000).map((Key) => ({ Key }));
+      const result = await this.client.send(
+        new DeleteObjectsCommand({ Bucket: this.bucket, Delete: { Objects: batch, Quiet: true } }),
+      );
+      if (result.Errors?.length) throw new Error(`Failed to delete ${result.Errors.length} objects`);
+    }
+  }
+
+  /** Deletes everything under a prefix. */
+  async deletePrefix(prefix: string): Promise<void> {
+    for await (const page of this.list(prefix)) await this.deleteMany(page.map((o) => o.key));
   }
 }
