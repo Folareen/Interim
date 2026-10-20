@@ -1,13 +1,18 @@
 import { z } from 'zod';
 
+// Illness-first templates lead, matching docs/product/overview.md.
 export const templateKeys = [
+  'hair_loss_ahead',
+  'hair_patches',
+  'face_fullness',
+  'after_surgery',
+  'skin_colour',
   'weight_change',
   'midlife_change',
   'after_a_baby',
   'going_grey',
   'textured_growth',
   'beard_growth',
-  'hair_loss_ahead',
 ] as const;
 export const templateKeySchema = z.enum(templateKeys);
 export type TemplateKey = z.infer<typeof templateKeySchema>;
@@ -92,12 +97,53 @@ export const createUploadsSchema = z.object({
 });
 export type CreateUploadsInput = z.infer<typeof createUploadsSchema>;
 
+/** How the companion talks to a profile (docs/product/overview.md, The companion). */
+export const toneSchema = z.enum(['practical', 'warm', 'light']);
+export type Tone = z.infer<typeof toneSchema>;
+
+/** What the person is getting ready for. A fixed list, never free text, because it reaches the model. */
+export const momentSchema = z.enum([
+  'back_to_work',
+  'family_event',
+  'date',
+  'photos',
+  'video_call',
+  'going_out',
+  'everyday',
+]);
+export type Moment = z.infer<typeof momentSchema>;
+
+/** The words for today sets. A profile with none chosen has words for today off. */
+export const wordsSetSchema = z.enum(['gentle', 'christian', 'muslim', 'jewish']);
+export type WordsSet = z.infer<typeof wordsSetSchema>;
+
+/**
+ * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off. The set can
+ * imply a religion, so only the person reads or sets it (docs/product/spec.md section 12).
+ */
+export const preferencesSchema = z.object({
+  tone: toneSchema,
+  wordsSet: wordsSetSchema.nullable(),
+  bodyPhotos: z.boolean(),
+});
+export type Preferences = z.infer<typeof preferencesSchema>;
+
+/** Query of GET /profiles/:id/words: the person's local date, so the passage turns over at their midnight. */
+export const wordsQuerySchema = z.object({
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((date) => !Number.isNaN(Date.parse(date)), 'Not a real date'),
+});
+export type WordsQuery = z.infer<typeof wordsQuerySchema>;
+
 export const changeReportSchema = z.enum(['none', 'some', 'lot']);
 export type ChangeReport = z.infer<typeof changeReportSchema>;
 
-/** Body of POST /profiles/:id/snapshots: the uploaded photos by id, plus the check in answers. */
+/** Body of POST /profiles/:id/snapshots: the uploaded photos by id, the check in answers and an optional moment. */
 export const createSnapshotSchema = z.object({
   uploads: z.array(z.object({ uploadId: z.string().uuid(), kind: photoKindSchema })).min(1).max(5),
+  moment: momentSchema.optional(),
   selfReport: z
     .object({ changed: changeReportSchema, reportedSize: z.string().min(1).max(20).optional() })
     .optional(),
@@ -121,6 +167,7 @@ export type Strategy = z.infer<typeof strategySchema>;
 export const stageCardSchema = z.object({
   title: z.string(),
   date: z.string(),
+  companionNote: z.object({ text: z.string(), tone: toneSchema, moment: momentSchema.nullable() }),
   situationLabel: z.string(),
   stage: z.string(),
   changes: z.array(z.object({ text: z.string(), measurementId: z.string(), tool: z.string() })),
@@ -129,6 +176,7 @@ export const stageCardSchema = z.object({
   ),
   holdOffBuying: z.array(z.object({ item: z.string(), reason: z.string() })),
   shoppingList: z.array(z.object({ sku: z.string(), size: z.string() })),
+  whatToSay: z.array(z.string()),
   traceSummary: z.array(z.string()),
   professionalNote: z.string().nullable(),
 });

@@ -296,6 +296,9 @@ importers:
       '@interim/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@interim/rules':
+        specifier: workspace:*
+        version: link:../rules
       '@interim/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig

@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@interim/eslint-config": "workspace:*",
+    "@interim/rules": "workspace:*",
     "@interim/tsconfig": "workspace:*",
     "eslint": "^10.13.0",
     "typescript": "^5.9.3",
