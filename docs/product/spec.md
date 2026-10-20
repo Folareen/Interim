@@ -139,16 +139,19 @@ Fields:
 * Budgets: a per run cap, a per profile cap and a global daily cap, all in config.
 * The unit ledger view shows each call, its cost and why it was made.
 
-Cost table, to verify in the spike:
+Cost table, from the YouCam docs (read 2026-10-20). Still to verify in the spike against Get_Feature_Cost:
 
 * Hair type detection: 2 units
-* Beard style: 2 units
+* Hair density detection: 1 unit
+* Hair length detection: 2 units
+* Hair volume: 2 units
+* Hair transfer v2.1 (hairstyle): 2 units, preset or custom
 * Hair color: 1 unit
-* Makeup try on: 1 unit
-* Skin analysis: 9 to 22 units depending on tier
-* Skin tone analysis: about 20 units, baseline only
-* Hairstyle render: about 2 units, from a public repo, unconfirmed
-* Hair density, hair length, hair volume, clothes v4: not confirmed
+* Beard style: 2 units
+* Skin tone (Fitzpatrick skin type): 10 units, charged only when the task succeeds. The earlier figure of about 20 units is not in the docs.
+* Skin analysis: 9 to 22 units. SD is 9, 12, 14, 16 and HD is 12, 16, 20, 22 for 1 to 4, 5 to 8, 9 to 12, 13 to 16 concerns.
+* Makeup try on: 1 unit, page not read
+* Clothes v4: not confirmed (the docs list clothes v2.0 and v3.0 at 2 units)
 
 ## 11. Error mapping
 

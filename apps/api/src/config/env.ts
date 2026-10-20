@@ -11,9 +11,11 @@ const envSchema = z.object({
   S3_ACCESS_KEY_ID: z.string().min(1),
   S3_SECRET_ACCESS_KEY: z.string().min(1),
   YOUCAM_API_KEY: z.string().default(''),
-  YOUCAM_BASE_URL: z.string().default(''),
+  YOUCAM_BASE_URL: z.string().url().default('https://yce-api-01.makeupar.com'),
   YOUCAM_MODE: youcamModeSchema.default('replay'),
+  YOUCAM_FIXTURES_DIR: z.string().default('../../packages/fixtures/youcam'), // relative to apps/api
   JUDGE_MODE_FORCE_REPLAY: z.enum(['true', 'false']).default('true'),
+  LIVE_CALLS_ENABLED: z.enum(['true', 'false']).default('false'), // no live YouCam call unless true
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().default(''),
   LLM_MODEL: z.string().default('gemini-2.5-flash'),
   UNIT_BUDGET_PER_RUN: z.coerce.number().default(50),
