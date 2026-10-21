@@ -234,7 +234,7 @@ Each YouCam error maps to a plain sentence for the user and a next action for th
 
 Photos of a face and body are biometric data, and the situation a person picks can imply something about their health. Interim treats both as sensitive.
 
-* People must confirm they are 18 or older before the first upload.
+* Interim is for adults only, as a deliberate choice. Photos of a face and body are biometric data, what a person picks can imply a health condition, and their photos go to two outside processors, so serving minors would need parental consent and legal review in each country. People confirm they are 18 or older before the first upload. This is a confirmation, not age verification.
 * Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos. Each is a separate line the person accepts.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
 * The words for today choice and the head covering setting can imply a person's religion or culture. Both are stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
@@ -355,4 +355,4 @@ Before submission, talk to at least five people in two of the situations, at lea
 
 ## 19. Out of scope
 
-Native apps, voice input, accounts for care teams, any health data, real checkout, insurance features and live catalog sync.
+Native apps, voice input, accounts for care teams, any health data, real checkout, insurance features, live catalog sync and anyone under 18 (section 12). A guardian led mode for teenagers is the likely way to add them later.
