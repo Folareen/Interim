@@ -8,12 +8,13 @@ This spec covers the hackathon build: what the product does, what it stores, how
 
 ## 2. Users
 
-* **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards.
+* **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards. Signs up or signs in first, so a profile survives cleared browser data and opens on any device (section 12b).
 
 There are no admin or care team roles in this build.
 
 ## 3. Core concepts
 
+* **Account.** A sign in: an email address plus a password, a link sent by email or Google. Every profile belongs to an account.
 * **Profile.** One person's ledger, created from a situation template.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
@@ -259,6 +260,22 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * A worker job runs every hour and sends to subscriptions whose local time matches. The passage comes from the same fixed library as the app.
 * Notification text passes both language scans in every language it is sent in.
 
+## 12b. Accounts and sign in
+
+* **Account first.** A person signs up or signs in before anything else, so a profile always belongs to a person, opens on any device and survives cleared browser data. There is no anonymous profile and no device cookie. Setup after that is situation, tone and hair, then consent. The language is chosen from the header, not as a step. Someone who signs in again lands where they left off, and can change tone and head covering from the ready screen.
+* **Three ways in, one session.** Email and password, a link sent by email, or Google. Any of them ends in the same kind of session.
+* **What an account holds.** An email address, a password hash (never the password) and, for Google, the account's subject id. Google is asked for the `openid` and `email` scopes only, so no name or photo arrives. All of it is deleted with the account.
+* **The email address is personal data** tied to profiles whose situation can imply health. It is kept in its own table, and is never sent to YouCam or Gemini, put in a log, shown on a share link or used for advertising. Two processors see it: Brevo, which sends the email, and Google, only for people who choose Google. Neither receives photos. The sign up and sign in screens say so.
+* **Passwords.** 10 to 128 characters with no composition rules, hashed with scrypt. There is no check against lists of leaked passwords yet (section 17).
+* **Confirmed email.** A password account cannot sign in until its email is confirmed by a link. A sign in link, a reset link or Google also proves the inbox, and when the address had an unconfirmed password account its password is thrown away, so someone who typed another person's address gains nothing.
+* **Emailed links.** One use, stored only as a hash, and valid for 24 hours (confirm), 15 minutes (sign in) or 30 minutes (reset). Asking for a new one cancels the older one. A link opens a page with a button, and is used only when the button is tapped, so mail scanners that open links cannot spend it.
+* **Sessions.** A random cookie token whose hash is stored. The cookie is httpOnly, Secure and SameSite=Lax, lasts 30 days and is extended while in use. A password reset signs out every browser. Sign out ends the one in use.
+* **No account guessing.** Sign up, asking for a link and asking for a reset answer the same whether or not the address has an account; a known address gets an email saying so. A wrong email and a wrong password are not told apart, and the work is the same.
+* **Limits.** Tries are counted per address and per email in the database, as hashes, and answer 429 past the limit: 8 sign in tries per email and 60 per address in 15 minutes; 5 sign ups or links per email and 10 or 20 per address in an hour.
+* **Delete account.** Deletes every profile with its photos, measurements and cards, then the account, sessions and links. It asks for the password when the account has one.
+* **Emails.** Fixed copy in the language on screen, scanned like every other string. They say nothing about the situation or what the app is for.
+* **Judge mode** needs no account and sample profiles are never owned by one.
+
 ## 13. Language and safety rules
 
 The rules themselves (banned words, labels, previews, professional line, body image rules) are owned by [overview.md](overview.md). This section is how they are enforced.
@@ -284,7 +301,7 @@ The rules themselves (banned words, labels, previews, professional line, body im
 
 ## 15. Other agents
 
-No MCP server and no partner keys. Every caller is the person, through the app, so no third party can create a profile, read a card or reach data that can imply someone's health.
+No MCP server and no partner keys. Every caller is the person, through the app, signed in or on their own browser, so no third party can create a profile, read a card or reach data that can imply someone's health.
 
 ## 16. Acceptance tests
 
@@ -310,6 +327,14 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 15. A HEIC photo is accepted, converted, and stored without EXIF data.
 16. Profile creation and uploads are rate limited per source address.
 17. The capture checks pass photos of the same quality across the skin tone and hair type panel at a similar rate.
+18. A profile in an account opens in a second browser after sign in, and never for anyone else.
+19. A password account cannot sign in until its email is confirmed.
+20. Signing up, asking for a link and asking for a reset answer the same for a known and an unknown address.
+21. An emailed link works once and not after it expires, and a link of one kind is refused for another.
+22. A sign in link or Google on an address with an unconfirmed password account discards that password.
+23. No profile can be created, read or changed without a signed in account, and one account never sees another's.
+24. Deleting an account removes its profiles, photos, sessions and links.
+25. Repeated wrong passwords for one email are answered 429.
 
 ## 17. Spike: what is still open
 
@@ -324,6 +349,7 @@ This section owns every open question. What the live runs settled is in [integra
 7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender, for example every style to everyone with the volume previews labelled by look.
 8. Whether Camera Kit gives enough angle control for the top photo.
 9. Native review of the nine draft languages: the screens and consent text (the consent wording also needs legal review per language), the banned word, companion phrase and crisis phrase lists, and the crisis contact wording. Review in this order of risk: consent text and crisis wording first, then the safety lists, then the rest. Reflection must not run in a language before its crisis list is reviewed. If a language cannot be reviewed, remove it from `liveLocales` rather than ship it unchecked; Igbo is the first to drop. The words for today sets have no public domain translation in these languages yet, so they fall back to English.
+10. Accounts (section 12b): checking new passwords against leaked ones, changing the email address, recovering an account when the inbox is lost, and legal review of the sign up wording where it names Brevo and Google. None is built.
 
 ## 18. Numbers and measures
 

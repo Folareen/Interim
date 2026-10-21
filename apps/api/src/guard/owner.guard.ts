@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   createParamDecorator,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { type OwnedRequest, type Owner, OwnerService } from './owner.service';
 
 /** Requires a caller identity and puts it on the request for `@CurrentOwner()`. */
@@ -13,9 +14,10 @@ import { type OwnedRequest, type Owner, OwnerService } from './owner.service';
 export class OwnerGuard implements CanActivate {
   constructor(@Inject(OwnerService) private readonly owners: OwnerService) {}
 
-  canActivate(context: ExecutionContext): boolean {
-    const req = context.switchToHttp().getRequest<OwnedRequest>();
-    const owner = this.owners.resolve(req);
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const http = context.switchToHttp();
+    const req = http.getRequest<OwnedRequest>();
+    const owner = await this.owners.resolve(req, http.getResponse<Response>());
     if (!owner) throw new UnauthorizedException();
     req.owner = owner;
     return true;

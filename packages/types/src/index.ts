@@ -148,6 +148,9 @@ export const profileSchema = z.object({
 });
 export type Profile = z.infer<typeof profileSchema>;
 
+/** `GET /profiles`: the caller's profiles, newest first. */
+export const profileListSchema = z.array(profileSchema);
+
 /** What the person is getting ready for. A fixed list, never free text, because it reaches the model. */
 export const momentSchema = z.enum([
   'back_to_work',
@@ -234,3 +237,51 @@ export const stageCardSchema = z.object({
   professionalNote: z.string().nullable(),
 });
 export type StageCard = z.infer<typeof stageCardSchema>;
+
+/** An email address as sign-in uses it: trimmed, lower case, and short enough for the database. */
+export const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email());
+
+/** Length only, no composition rules. The upper bound keeps hashing cheap to request (docs/product/spec.md section 12b). */
+export const passwordSchema = z.string().min(10).max(128);
+
+/** Body of POST /auth/register. `locale` is the language of the email that follows. */
+export const registerSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  locale: liveLocaleSchema,
+});
+export type RegisterInput = z.infer<typeof registerSchema>;
+
+/** Body of POST /auth/login. The password is not length checked here, so a wrong guess is a plain failure. */
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1).max(128),
+});
+export type LoginInput = z.infer<typeof loginSchema>;
+
+/** Body of POST /auth/magic and POST /auth/password/forgot: send a link to this address, in this language. */
+export const emailLinkRequestSchema = z.object({ email: emailSchema, locale: liveLocaleSchema });
+export type EmailLinkRequest = z.infer<typeof emailLinkRequestSchema>;
+
+/** The one use token carried by an emailed link. */
+export const linkTokenSchema = z.object({ token: z.string().min(20).max(200) });
+export type LinkToken = z.infer<typeof linkTokenSchema>;
+
+/** Body of POST /auth/password/reset. */
+export const resetPasswordSchema = linkTokenSchema.extend({ password: passwordSchema });
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+/** Body of DELETE /auth/account. The password is required when the account has one. */
+export const deleteAccountSchema = z.object({ password: z.string().max(128).optional() });
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
+
+/** The signed in account as `GET /auth/me` returns it. */
+export const meSchema = z.object({
+  email: z.string(),
+  hasPassword: z.boolean(),
+});
+export type Me = z.infer<typeof meSchema>;
+
+/** `GET /auth/config`: which sign-in methods this deployment offers. */
+export const authConfigSchema = z.object({ google: z.boolean() });
+export type AuthConfig = z.infer<typeof authConfigSchema>;

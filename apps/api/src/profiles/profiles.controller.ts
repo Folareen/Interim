@@ -11,14 +11,11 @@ import {
   Post,
   Put,
   Query,
-  Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { CurrentOwner, OwnerGuard } from '../guard/owner.guard';
-import { type Owner, OwnerService } from '../guard/owner.service';
+import type { Owner } from '../guard/owner.service';
 import { ZodPipe } from '../guard/zod.pipe';
 import { ProfilesService } from './profiles.service';
 
@@ -26,19 +23,11 @@ const idPipe = new ZodPipe(z.string().uuid());
 
 @Controller('profiles')
 export class ProfilesController {
-  constructor(
-    @Inject(ProfilesService) private readonly profiles: ProfilesService,
-    @Inject(OwnerService) private readonly owners: OwnerService,
-  ) {}
+  constructor(@Inject(ProfilesService) private readonly profiles: ProfilesService) {}
 
-  // Open to anyone: a new person has no identity yet, so the first profile mints their cookie.
+  @UseGuards(OwnerGuard)
   @Post()
-  create(
-    @Body(new ZodPipe(createProfileSchema)) body: CreateProfileInput,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const owner = this.owners.resolve(req) ?? this.owners.mint(res);
+  create(@Body(new ZodPipe(createProfileSchema)) body: CreateProfileInput, @CurrentOwner() owner: Owner) {
     return this.profiles.create(owner, body);
   }
 

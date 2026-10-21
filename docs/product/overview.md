@@ -109,6 +109,7 @@ The output of every check in. It opens with the companion note, then shows what 
 ## Where it lives
 
 * **The app.** A mobile first web app (PWA). The user picks a situation and a tone, takes photos at each check in and reads Stage Cards. This avoids an empty chat box for a first time user.
+* **Accounts.** Sign up or sign in comes first (email and password, a link by email, or Google), so profiles survive cleared browser data and open on any device. Rules are in spec section 12b.
 * **For programs and retailers.** A white label version of the app, not an agent interface. Interim keeps one way in, the person's own app, because what it holds can imply someone's health.
 
 ## Who pays

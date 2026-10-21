@@ -104,10 +104,7 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
           ))}
         </fieldset>
 
-        <div className="space-y-3 text-[0.95rem] text-muted">
-          <p>{t('noRecovery')}</p>
-          <p>{t('deleteAnytime')}</p>
-        </div>
+        <p className="text-[0.95rem] text-muted">{t('deleteAnytime')}</p>
 
         {error && <Notice>{error}</Notice>}
       </div>

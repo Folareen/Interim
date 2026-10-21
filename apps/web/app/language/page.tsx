@@ -16,10 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Language({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const [t, current, { next }] = await Promise.all([getTranslations('language'), getLocale(), searchParams]);
-  // Opened from inside the app, the person goes back where they were. Opened from the start, they carry on.
+  // The person goes back to where they were.
   const returnTo = next === undefined ? undefined : safeNext(next, '/');
   return (
-    <Shell step={returnTo ? undefined : 1} backHref={returnTo ?? '/'}>
+    <Shell backHref={returnTo ?? '/'}>
       <form action={chooseLanguage} className="flex flex-1 flex-col">
         {returnTo && <input type="hidden" name="next" value={returnTo} />}
         <PageHeading title={t('title')} intro={t('intro')} />

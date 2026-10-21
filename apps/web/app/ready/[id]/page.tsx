@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { secondaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getProfile } from '@/lib/server-api';
+import { getMe, getProfile } from '@/lib/server-api';
 import { DeleteProfile } from './delete-profile';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,6 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Ready({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!(await getMe())) redirect('/signin');
   const profile = await getProfile(id);
   if (!profile) notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
@@ -40,7 +43,12 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
           ))}
         </dl>
       </section>
-      <p className="mt-8 mb-12">{t('next')}</p>
+      <p className="mt-8">{t('next')}</p>
+      <div className="mt-6 mb-12">
+        <Link href={`/settings/${id}`} className={secondaryClass}>
+          {t('editAction')}
+        </Link>
+      </div>
       <DeleteProfile profileId={id} />
     </Shell>
   );

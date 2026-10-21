@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getProfile } from '@/lib/server-api';
+import { getMe, getProfile } from '@/lib/server-api';
 import { ConsentForm } from './consent-form';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,12 +13,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Consent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!(await getMe())) redirect('/signin');
   const profile = await getProfile(id);
   if (!profile) notFound();
   if (profile.consentCurrent) redirect(`/ready/${id}`);
   const t = await getTranslations('consent');
   return (
-    <Shell step={4}>
+    <Shell step={3}>
       <PageHeading title={t('title')} intro={t('intro')} />
       <ConsentForm profileId={id} version={CONSENT_VERSION} />
     </Shell>

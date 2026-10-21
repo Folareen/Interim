@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { env } from '../config/env';
-import { OWNER_CONFIG, OwnerService } from './owner.service';
+import { AccountGuard } from './account.guard';
+import { OWNER_CONFIG } from './config';
+import { OwnerService } from './owner.service';
 import { OwnerGuard } from './owner.guard';
+import { SessionService } from './session.service';
 
 @Module({
   providers: [
@@ -12,9 +15,11 @@ import { OwnerGuard } from './owner.guard';
         secureCookie: env.NODE_ENV === 'production',
       },
     },
+    SessionService,
     OwnerService,
     OwnerGuard,
+    AccountGuard,
   ],
-  exports: [OwnerService, OwnerGuard],
+  exports: [OwnerService, OwnerGuard, SessionService, AccountGuard, OWNER_CONFIG],
 })
 export class GuardModule {}
