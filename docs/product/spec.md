@@ -259,14 +259,6 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * A worker job runs every hour and sends to subscriptions whose local time matches. The passage comes from the same fixed library as the app.
 * Notification text passes both language scans in every language it is sent in.
 
-## 12b. Read aloud
-
-* Every card, the words for today screen and each capture step has a read aloud control. The capture wizard can speak its instructions as the person takes each photo.
-* The browser's own voice (speechSynthesis) is used when the device has one for the profile's language. Otherwise the API returns audio.
-* Fixed copy (capture steps, what to say lines, fallback notes, words for today) is turned into audio once per language and voice, stored, and served from storage. Only the companion note and card explanations are made on request, then cached with the card and deleted with it.
-* Only text Interim already shows is sent to the voice service, never photos or reflection text. Vendors per language are chosen by native speaker listening tests: Gemini TTS for the languages it supports, Spitch for Yoruba, and a Nigerian English voice tested for Pidgin. A vendor that is not already a processor gets its own consent line, asked the first time read aloud is used.
-* There is no voice input.
-
 ## 13. Language and safety rules
 
 The rules themselves (banned words, labels, previews, professional line, body image rules) are owned by [overview.md](overview.md). This section is how they are enforced.
@@ -356,4 +348,4 @@ Before submission, talk to at least five people in two of the situations, at lea
 
 ## 19. Out of scope
 
-Native apps, voice input, accounts for care teams, any health data, real checkout, insurance features, live catalog sync and anyone under 18 (section 12). A guardian led mode for teenagers is the likely way to add them later.
+Native apps, accounts for care teams, any health data, real checkout, insurance features, live catalog sync and anyone under 18 (section 12). A guardian led mode for teenagers is the likely way to add them later.
