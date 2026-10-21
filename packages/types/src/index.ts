@@ -116,12 +116,23 @@ export const localeSchema = z.enum(locales);
 export type Locale = z.infer<typeof localeSchema>;
 
 /**
- * The languages offered today. A language joins only with its reviewed word lists and all its copy.
- * Catalogs are typed by this list, so adding one fails the build until every catalog has it.
+ * The languages offered today. A language joins only with its word lists and all its copy. Catalogs
+ * are typed by this list, so adding one fails the build until every catalog has it.
  */
-export const liveLocales = ['en'] as const satisfies readonly Locale[];
+export const liveLocales = ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig', 'pcm'] as const satisfies readonly Locale[];
 export const liveLocaleSchema = z.enum(liveLocales);
 export type LiveLocale = z.infer<typeof liveLocaleSchema>;
+
+/**
+ * The languages a native speaker has checked. The others are live but drafted, and the app says so
+ * on screen until they are checked (docs/product/spec.md section 17).
+ */
+export const reviewedLocales = ['en'] as const satisfies readonly LiveLocale[];
+
+/** Whether a language still ships as a draft. */
+export function isDraftLocale(locale: LiveLocale): boolean {
+  return !(reviewedLocales as readonly string[]).includes(locale);
+}
 
 /** How the companion talks to a profile (docs/product/overview.md, The companion). */
 export const toneSchema = z.enum(['practical', 'warm', 'light']);

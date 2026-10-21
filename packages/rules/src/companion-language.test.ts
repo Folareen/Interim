@@ -29,3 +29,30 @@ describe('findCompanionPhrase', () => {
     expect(findCompanionPhrase('An upbeat colour for the heartbeat of the party', 'en')).toBeUndefined();
   });
 });
+
+describe('findCompanionPhrase in other languages', () => {
+  it.each([
+    ['fr', 'Reste positive', 'Reste positive'],
+    ['es', 'Mantente positiva', 'Mantente positiva'],
+    ['it', 'Resta positivo', 'Resta positivo'],
+    ['pt', 'Fique positiva', 'Fique positiva'],
+    ['sw', 'Kaa chanya sasa', 'Kaa chanya'],
+    ['yo', 'Jẹ́ alágbára', 'Je alagbara'],
+    ['pcm', 'Make you strong', 'Make you strong'],
+  ] as const)('%s flags "%s"', (locale, text, found) => {
+    expect(findCompanionPhrase(text, locale)).toBe(found);
+  });
+
+  it('flags battle words and body goals in French and Spanish', () => {
+    expect(findCompanionPhrase('Tu es une guerrière', 'fr')).toBe('guerriere');
+    expect(findCompanionPhrase('Un vêtement amincissant', 'fr')).toBe('amincissant');
+    expect(findCompanionPhrase('Una prenda que adelgaza', 'es')).toBe('adelgaza');
+    expect(findCompanionPhrase('Una prenda adelgazante', 'es')).toBe('adelgazante');
+  });
+
+  it('passes gentle text', () => {
+    expect(findCompanionPhrase('Voici ce qui a changé depuis la dernière fois.', 'fr')).toBeUndefined();
+    expect(findCompanionPhrase('Esto es lo que cambió desde la última vez.', 'es')).toBeUndefined();
+  });
+});
+

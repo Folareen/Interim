@@ -21,6 +21,15 @@ export interface WordsSetConfig {
  */
 export const wordsLibrary: { en: Record<WordsSet, WordsSetConfig> } & Record<LiveLocale, Partial<Record<WordsSet, WordsSetConfig>>> = {
   en,
+  fr: {},
+  es: {},
+  it: {},
+  pt: {},
+  sw: {},
+  ha: {},
+  yo: {},
+  ig: {},
+  pcm: {},
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;

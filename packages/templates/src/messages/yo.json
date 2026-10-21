@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "Ó ń ràn ọ́ lọ́wọ́ láti ní ìmọ̀lára bí ara rẹ nígbà tí ara rẹ ń yípadà.",
+    "back": "Padà",
+    "continue": "Tẹ̀síwájú",
+    "tryAgain": "Gbìyànjú lẹ́ẹ̀kan sí i",
+    "stepOf": "Ìgbésẹ̀ {current} nínú {total}",
+    "themeToLight": "Yípadà sí àwòrán ìmọ́lẹ̀",
+    "themeToDark": "Yípadà sí àwòrán òkùnkùn",
+    "language": "Èdè",
+    "draftNote": "Ìtumọ̀ yìí jẹ́ èyí àkọ́kọ́ tí a kọ. Olùsọ èdè náà kò tíì yẹ̀ ẹ́ wò, nítorí náà àwọn ọ̀rọ̀ kan lè má tọ̀nà.",
+    "skipToContent": "Fò lọ sí àkóónú",
+    "genericError": "Nǹkan kan ṣẹlẹ̀. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
+    "networkError": "A kò lè dé Interim. Ṣàyẹ̀wò ìsopọ̀ rẹ kí o sì gbìyànjú lẹ́ẹ̀kan sí i.",
+    "notFoundTitle": "A kò rí ojú-ìwé yẹn",
+    "notFoundBody": "Ìsopọ̀ náà lè ti gbó, tàbí kí wọ́n ti pa àkọsílẹ̀ náà rẹ́.",
+    "startAgain": "Bẹ̀rẹ̀ lẹ́ẹ̀kan sí i"
+  },
+  "welcome": {
+    "title": "Máa ní ìmọ̀lára bí ara rẹ nígbà tí ara rẹ ń yípadà.",
+    "intro": "Interim fi bí o ṣe rí lónìí hàn ọ́, àti ohun tí o lè wọ̀ àti bí o ṣe lè ṣe irun orí rẹ fún àwọn ọjọ́ tó ń bọ̀. A ṣe é fún ẹnikẹ́ni tó ń kojú ìyípadà, pẹ̀lú àwọn ìyípadà tí àìsàn ń mú wá.",
+    "reassurance": "Ìwọ ni o yan ohun tí o fẹ́ pín, o sì lè pa gbogbo rẹ̀ rẹ́ nígbàkúgbà.",
+    "start": "Bẹ̀rẹ̀",
+    "footnote": "Interim jẹ́ nípa bí o ṣe rí àti ohun tí o lè wọ̀. Kì í fúnni ní ìmọ̀ràn dókítà."
+  },
+  "language": {
+    "title": "Yan èdè rẹ",
+    "intro": "Interim yóò lò ó fún gbogbo ohun tí o bá kà.",
+    "draftTag": "Kò tíì yẹ̀ wò",
+    "draftsNote": "Èdè tí a fi “Kò tíì yẹ̀ wò” sàmì sí kò tíì ní olùsọ èdè náà tó yẹ̀ ẹ́ wò.",
+    "submit": "Tẹ̀síwájú"
+  },
+  "situation": {
+    "title": "Kí ló ń yípadà fún ọ?",
+    "intro": "Yan èyí tó bá ọ mu jù. O kò nílò láti dárúkọ àìsàn tàbí oògùn kankan.",
+    "groupIllness": "Ó máa ń jẹ mọ́ àìsàn tàbí ohun tí wọ́n ń ṣe fún un",
+    "groupOther": "Àwọn ìyípadà mìíràn",
+    "blurbs": {
+      "hair_loss_ahead": "Irun orí rẹ ń tín, tàbí o retí pé yóò tín. Múra sílẹ̀ fún ìpele kọ̀ọ̀kan, láti ìgbà tó ń tín títí tó fi tún dàgbà.",
+      "hair_patches": "Irun ń wálẹ̀ ní ibi kan kan, ó sì lè wá kó sì lọ.",
+      "face_fullness": "Ojú rẹ dà bí èyí tó kún jù tàbí tó yàtọ̀, ó sì lè tún padà bọ̀ sípò.",
+      "after_surgery": "Ara rẹ ní ìrísí tuntun. Bí aṣọ ṣe bá ọ mu àti ìtura ni àkọ́kọ́, àwọn fọ́tò ara sì wà ní títì títí o fi máa ṣí wọn.",
+      "skin_colour": "Àwọ̀ ara rẹ ń yípadà, àwọn àwọ̀ tó ti bá ọ mu télẹ̀ lè má bá ọ mu mọ́ báyìí.",
+      "weight_change": "Ìwọ̀n ara rẹ ń pọ̀ sí i tàbí ń dínkù, láti ara ìfẹ́ rẹ tàbí rárá, ìwọ̀n aṣọ rẹ sì ń yípadà.",
+      "midlife_change": "Àwọn ìyípadà nínú irun àti ara ní àárín ayé. Bí irun ṣe pọ̀ àti bí a ṣe gé e ló ṣe pàtàkì jù.",
+      "after_a_baby": "Irun wíwálẹ̀ lẹ́yìn tí a bímọ. Fún ìsinsìnyí, Interim yóò yẹra fún gígé ńlá fún ọ.",
+      "going_grey": "Jẹ́ kí irun funfun dàgbà ní ìpele ìpele, dípò kí a pa á láró.",
+      "textured_growth": "Jẹ́ kí irun tó le dàgbà, láti èyí tó kúrú gan-an dé èjìká.",
+      "beard_growth": "Jẹ́ kí irùngbọ̀n dàgbà, láti èyí tó kéré dé èyí tó kún."
+    },
+    "submit": "Tẹ̀síwájú"
+  },
+  "setup": {
+    "title": "Àwọn nǹkan díẹ̀ nípa rẹ",
+    "intro": "Wọ́n ń pinnu bí Interim ṣe ń bá ọ sọ̀rọ̀ àti ohun tó ń fi hàn ọ́.",
+    "toneTitle": "Báwo ni Interim ṣe yẹ kó máa bá ọ sọ̀rọ̀?",
+    "tones": {
+      "practical": { "label": "Ohun tó wúlò nìkan", "description": "Ohun tó yípadà àti nǹkan kan láti ṣe. Kò sí ọ̀rọ̀ nípa ìmọ̀lára." },
+      "warm": { "label": "Onínúure", "description": "Onínúure àti ìbàlẹ̀, pẹ̀lú ọ̀rọ̀ kúkúrú ní ìbẹ̀rẹ̀ àyẹ̀wò kọ̀ọ̀kan." },
+      "light": { "label": "Fúyẹ́", "description": "Láìṣòro, pẹ̀lú àwàdà díẹ̀." }
+    },
+    "hairTitle": "Irun orí rẹ",
+    "headCoveringLabel": "Mo máa ń bo irun orí mi",
+    "headCoveringHelp": "Tí o bá ń bò ó, Interim kò ní fi ìrísí irun tàbí irun àtọwọ́dá hàn lórí fọ́tò rẹ.",
+    "ageTitle": "Ọjọ́ orí rẹ",
+    "ageLabel": "Mo ti pé ọdún 18 tàbí jù bẹ́ẹ̀ lọ",
+    "ageHelp": "Interim wà fún àgbàlagbà.",
+    "submit": "Tẹ̀síwájú",
+    "submitting": "Ń múra sílẹ̀…"
+  },
+  "consent": {
+    "title": "Kí o tó fi fọ́tò kún un",
+    "intro": "Àwọn fọ́tò rẹ, àti ohun tí Interim kọ́ láti inú wọn, jẹ́ ti ara ẹni. Èyí ni gangan ohun tó ń ṣẹlẹ̀ sí wọn.",
+    "keepTitle": "Ohun tí Interim ń pamọ́",
+    "keepBody": "Àwọn fọ́tò rẹ, ìwọ̀n tí a mú láti inú wọn, àwọn èsì rẹ àti àwọn káàdì rẹ. A kì í tà ohunkóhun tàbí lò ó fún ìpolówó.",
+    "helpersTitle": "Àwọn tó ń ṣèrànwọ́",
+    "helperYoucam": "YouCam, láti ọwọ́ Perfect Corp, ń gba àwọn fọ́tò rẹ kí ó lè wọ̀n wọ́n kí ó sì fi ìrísí hàn ọ́ ṣáájú.",
+    "helperGoogle": "Google ń gba ìwọ̀n, ipò rẹ, ohun tí o ń múra sílẹ̀ fún àti ìró ọ̀rọ̀ tí o yàn, kí ó lè kọ àwọn àkọsílẹ̀ rẹ. Kì í gba fọ́tò rárá.",
+    "retentionTitle": "Ìgbà wo ni a ó fi pa àwọn fọ́tò rẹ mọ́",
+    "retention": {
+      "standard": {
+        "label": "Pa rẹ́ lẹ́yìn ọjọ́ 30",
+        "description": "A ó pa àwọn fọ́tò àti ìrísí ṣáájú rẹ́ ní ọjọ́ 30 lẹ́yìn tí a yà wọ́n. Ìwọ̀n àti káàdì yóò wà títí o fi pa àkọsílẹ̀ rẹ rẹ́."
+      },
+      "extended": {
+        "label": "Pa ìtàn mi mọ́",
+        "description": "Pa wọ́n mọ́ títí o fi pa wọ́n rẹ́, tàbí títí oṣù 24 lẹ́yìn àyẹ̀wò rẹ tó kẹ́yìn. Èyí jẹ́ kí Interim lè fi wéra lórí àkókò kí ó sì fi ìrísí àtijọ́ hàn."
+      }
+    },
+    "confirmTitle": "Jọ̀wọ́ jẹ́rìí",
+    "confirmStore": "Interim lè pa àwọn fọ́tò àti ìwọ̀n mi mọ́.",
+    "confirmYoucam": "YouCam (Perfect Corp) lè ṣiṣẹ́ lórí àwọn fọ́tò mi.",
+    "confirmGoogle": "Google lè ṣiṣẹ́ lórí ìwọ̀n àti ètò mi, ṣùgbọ́n kì í ṣe lórí fọ́tò mi.",
+    "confirmOwn": "Àwọn fọ́tò náà yóò jẹ́ ti èmi nìkan.",
+    "noRecovery": "Kò sí ọ̀rọ̀ aṣínà. Interim mọ̀ ọ́ lórí ẹ̀rọ yìí, nítorí náà tí o bá pa dátà ẹ̀rọ aṣàwákiri rẹ rẹ́, a kò lè gba àkọsílẹ̀ yìí padà.",
+    "deleteAnytime": "O lè pa àkọsílẹ̀ rẹ àti gbogbo ohun tó wà nínú rẹ̀ rẹ́ nígbàkúgbà.",
+    "incomplete": "Yan ìgbà tí a ó fi pa àwọn fọ́tò mọ́ kí o sì samisi àpótí kọ̀ọ̀kan láti tẹ̀síwájú.",
+    "submit": "Mo gbà, mo sì tẹ̀síwájú",
+    "submitting": "Ń kọ ọ́ sílẹ̀…",
+    "outdated": "Ọ̀rọ̀ ìfọwọ́sí ti yípadà. Tún ojú-ìwé yìí gbé wá kí o sì tún kà á."
+  },
+  "ready": {
+    "title": "A ti ṣètò rẹ",
+    "intro": "Interim ní ohun tó nílò láti bẹ̀rẹ̀.",
+    "summaryTitle": "Àwọn yíyàn rẹ",
+    "situationLabel": "Ipò",
+    "toneLabel": "Ìró ọ̀rọ̀",
+    "photosLabel": "Fọ́tò",
+    "next": "Àyẹ̀wò àkọ́kọ́ rẹ jẹ́ fọ́tò díẹ̀ àti ìbéèrè kíákíá méjì. Kò tíì sí nínú ẹ̀yà yìí.",
+    "deleteTitle": "Pa àkọsílẹ̀ mi rẹ́",
+    "deleteBody": "Èyí yóò yọ àkọsílẹ̀ rẹ, àwọn fọ́tò, ìwọ̀n àti káàdì kúrò. A kò lè dá a padà.",
+    "deleteAction": "Pa àkọsílẹ̀ mi rẹ́",
+    "deleteConfirm": "Bẹ́ẹ̀ ni, pa gbogbo rẹ̀ rẹ́",
+    "deleteCancel": "Pa àkọsílẹ̀ mi mọ́",
+    "deleting": "Ń pa á rẹ́…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Irun fẹ́rẹ̀ẹ́ máa wálẹ̀",
+    "hair_patches": "Irun ń wálẹ̀ ní ibi kan kan",
+    "face_fullness": "Ìrísí ojú ń yípadà",
+    "after_surgery": "Ara yípadà lẹ́yìn iṣẹ́ abẹ",
+    "skin_colour": "Àwọ̀ ara ń yípadà",
+    "weight_change": "Ìyípadà ìwọ̀n ara",
+    "midlife_change": "Ìyípadà àárín ayé",
+    "after_a_baby": "Lẹ́yìn ìbímọ",
+    "going_grey": "Irun ń di funfun",
+    "textured_growth": "Jẹ́ kí irun tó le dàgbà",
+    "beard_growth": "Jẹ́ kí irùngbọ̀n dàgbà"
+  },
+  "companionFallback": {
+    "practical": "Èyí ni ohun tó yípadà láti ìgbà tó kọjá, àti àwọn àṣàyàn díẹ̀ fún ohun tó ń bọ̀.",
+    "warm": "Àwọn nǹkan dà bí èyí tó yàtọ̀ díẹ̀ lọ́tẹ̀ yìí, èyí sì jẹ́ ohun tó wọ́pọ̀ ní ìpele yìí. Èyí ni àwọn ìrísí díẹ̀ tó ṣì dà bí ìwọ, fún ohunkóhun tó ń bọ̀.",
+    "light": "Àyẹ̀wò tuntun, àwọn àṣàyàn tuntun. Èyí ni àwọn ìrísí díẹ̀ láti gbìyànjú fún ohun tó ń bọ̀."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "Mo ti ní àwọn ìyípadà kan ní ọdún yìí. Inú mi dùn pé mo ti padà.",
+      "Ẹ ṣé tí ẹ bi mí. Mo fẹ́ kí a sọ̀rọ̀ nípa iṣẹ́ lónìí.",
+      "Ìtàn gígùn ni. Kí ni mo ti pàdánù?"
+    ],
+    "family_event": [
+      "Bẹ́ẹ̀ ni, irun mi yàtọ̀. Inú mi dùn gan-an láti rí yín.",
+      "N óo sọ fún yín nígbà míì. Báwo ni ẹ ṣe wà?"
+    ],
+    "date": [
+      "Àwọn nǹkan ti yípadà fún mi láìpẹ́ yìí. Inú mi yóò dùn láti sọ̀rọ̀ nípa rẹ̀ nígbà míì.",
+      "Mo fẹ́ gbọ́ nípa rẹ ná."
+    ],
+    "photos": ["Ṣé a lè yà òmíràn? Mo fẹ́ yan èyí tí mo fẹ́ jù.", "Ṣé mo lè rí i kí wọ́n tó gbé e sórí ayélujára?"],
+    "video_call": ["Ìrísí tuntun ní oṣù yìí. Ṣé a lè bẹ̀rẹ̀?"],
+    "going_out": [
+      "Ìyípadà ni tí mo ṣì ń mọ́ra. Ṣé a ó jẹ kí ni?",
+      "Mo fẹ́ kí a má ṣe sọ̀rọ̀ nípa rẹ̀ lónìí."
+    ],
+    "everyday": []
+  }
+}

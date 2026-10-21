@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "E dey help you feel like yourself as your body dey change.",
+    "back": "Go back",
+    "continue": "Continue",
+    "tryAgain": "Try again",
+    "stepOf": "Step {current} of {total}",
+    "themeToLight": "Change to light theme",
+    "themeToDark": "Change to dark theme",
+    "language": "Language",
+    "draftNote": "Dis translation na draft. Person wey sabi di language never check am, so some words fit no correct.",
+    "skipToContent": "Skip go di main content",
+    "genericError": "Something don happen. Abeg try again.",
+    "networkError": "We no fit reach Interim. Check your network and try again.",
+    "notFoundTitle": "We no see dat page",
+    "notFoundBody": "Di link fit don old, or dem fit don delete di profile.",
+    "startAgain": "Start again"
+  },
+  "welcome": {
+    "title": "Feel like yourself as your body dey change.",
+    "intro": "Interim go show you how you dey look today, wetin to wear and how to fix your hair for di days wey dey come. Dem make am for anybody wey dey pass through change, including di changes wey sickness dey bring.",
+    "reassurance": "Na you dey choose wetin to share, and you fit delete everything anytime.",
+    "start": "Start",
+    "footnote": "Interim na about how you dey look and wetin to wear. E no dey give medical advice."
+  },
+  "language": {
+    "title": "Choose your language",
+    "intro": "Interim go use am for everything wey you go read.",
+    "draftTag": "Draft",
+    "draftsNote": "Language wey get Draft mark, person wey sabi di language never check am yet.",
+    "submit": "Continue"
+  },
+  "situation": {
+    "title": "Wetin dey change for you?",
+    "intro": "Choose di one wey fit pass. You no need to talk di name of any sickness or medicine.",
+    "groupIllness": "Plenty times e dey come with sickness or di care for am",
+    "groupOther": "Oda changes",
+    "blurbs": {
+      "hair_loss_ahead": "Your hair dey thin, or you dey expect am. Prepare for each stage, from when e dey thin till e grow back.",
+      "hair_patches": "Hair dey comot for some places, and e fit come and go.",
+      "face_fullness": "Your face dey look fuller or different, and e fit settle again.",
+      "after_surgery": "Your body get new shape. How cloth fit and comfort come first, and body photos go stay off until you turn dem on.",
+      "skin_colour": "Your skin colour dey change, and colours wey dey suit you before fit no suit you now.",
+      "weight_change": "Your weight dey go up or down, whether you want am or not, and your cloth size dey change.",
+      "midlife_change": "Changes for your hair and body for middle age. Volume and cut matter pass.",
+      "after_a_baby": "Hair dey fall after you born pikin. For now, Interim go keep you away from big cut.",
+      "going_grey": "Make your grey hair grow small small, instead of to dye am.",
+      "textured_growth": "Make your textured hair grow, from very short reach shoulder.",
+      "beard_growth": "Make your beard grow, from small stubble reach full beard."
+    },
+    "submit": "Continue"
+  },
+  "setup": {
+    "title": "Small things about you",
+    "intro": "Dem dey decide how Interim go talk to you and wetin e go show you.",
+    "toneTitle": "How you want make Interim talk to you?",
+    "tones": {
+      "practical": { "label": "Just practical", "description": "Wetin change and one thing to do. No talk about feelings." },
+      "warm": { "label": "Warm", "description": "Kind and calm, with short note for di start of each check in." },
+      "light": { "label": "Light", "description": "Relax style, with small jokes." }
+    },
+    "hairTitle": "Your hair",
+    "headCoveringLabel": "I dey cover my hair",
+    "headCoveringHelp": "If na so, Interim no go show hairstyle or wig for your photos.",
+    "ageTitle": "Your age",
+    "ageLabel": "I don reach 18 or pass",
+    "ageHelp": "Interim na for adults.",
+    "submit": "Continue",
+    "submitting": "Dey set up…"
+  },
+  "consent": {
+    "title": "Before you add photos",
+    "intro": "Your photos, and wetin Interim learn from dem, na your private matter. Na exactly wetin go happen to dem be dis.",
+    "keepTitle": "Wetin Interim dey keep",
+    "keepBody": "Your photos, di measurements wey dem take from dem, your answers and your cards. Dem no dey sell anything or use am for advert.",
+    "helpersTitle": "Who dey help",
+    "helperYoucam": "YouCam, by Perfect Corp, dey receive your photos so e fit measure dem and show preview of looks.",
+    "helperGoogle": "Google dey receive measurements, your situation, wetin you dey get ready for and di tone wey you choose, so e fit write your notes. E no dey ever receive photos.",
+    "retentionTitle": "How long to keep your photos",
+    "retention": {
+      "standard": {
+        "label": "Delete after 30 days",
+        "description": "Dem go delete photos and previews 30 days after dem take dem. Measurements and cards go stay until you delete your profile."
+      },
+      "extended": {
+        "label": "Keep my history",
+        "description": "Keep dem until you delete dem, or until 24 months after your last check in. Dis one go let Interim compare over time and show earlier looks."
+      }
+    },
+    "confirmTitle": "Abeg confirm",
+    "confirmStore": "Interim fit store my photos and measurements.",
+    "confirmYoucam": "YouCam (Perfect Corp) fit process my photos.",
+    "confirmGoogle": "Google fit process my measurements and settings, but no be my photos.",
+    "confirmOwn": "Di photos go be only me.",
+    "noRecovery": "No password dey. Interim dey recognise you for dis device, so if you clear your browser data, we no go fit recover dis profile.",
+    "deleteAnytime": "You fit delete your profile and everything inside am anytime.",
+    "incomplete": "Choose how long to keep photos and tick each box to continue.",
+    "submit": "I agree, make we continue",
+    "submitting": "Dey save…",
+    "outdated": "Di consent text don change. Reload dis page and read am again."
+  },
+  "ready": {
+    "title": "Everything don set",
+    "intro": "Interim don get wetin e need to start.",
+    "summaryTitle": "Your choices",
+    "situationLabel": "Situation",
+    "toneLabel": "Tone",
+    "photosLabel": "Photos",
+    "next": "Your first check in na few photos and two quick questions. E never dey inside dis version yet.",
+    "deleteTitle": "Delete my profile",
+    "deleteBody": "Dis one go remove your profile, photos, measurements and cards. You no fit undo am.",
+    "deleteAction": "Delete my profile",
+    "deleteConfirm": "Yes, delete everything",
+    "deleteCancel": "Keep my profile",
+    "deleting": "Dey delete…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Hair loss dey come",
+    "hair_patches": "Hair dey comot for some places",
+    "face_fullness": "Face shape dey change",
+    "after_surgery": "Body change after surgery",
+    "skin_colour": "Skin colour dey change",
+    "weight_change": "Weight change",
+    "midlife_change": "Middle age change",
+    "after_a_baby": "After you born pikin",
+    "going_grey": "Hair dey turn grey",
+    "textured_growth": "Make textured hair grow",
+    "beard_growth": "Make beard grow"
+  },
+  "companionFallback": {
+    "practical": "Dis na wetin change since last time, and some options for wetin dey come.",
+    "warm": "Things dey look small different dis time, and dat one normal for dis stage. Na some looks wey still dey look like you, for wetin dey come.",
+    "light": "New check in, new options. Dis na some looks to try for wetin dey come."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "Some changes don happen to me dis year. I happy say I don come back.",
+      "Thank you for asking. I go prefer make we talk about work today.",
+      "E be long story. Wetin I miss?"
+    ],
+    "family_event": [
+      "Yes, my hair don change. E sweet me well to see you.",
+      "I go tell you another time. How you dey?"
+    ],
+    "date": [
+      "Things don change for me recently. I go happy to talk about am another time.",
+      "I go prefer to hear about you first."
+    ],
+    "photos": ["We fit take one more? I wan pick di one wey I like pass.", "I fit see am before dem post am?"],
+    "video_call": ["New look dis month. Make we start?"],
+    "going_out": [
+      "Na change wey I still dey get used to. Anyway, wetin we go chop?",
+      "I no wan talk about am today."
+    ],
+    "everyday": []
+  }
+}

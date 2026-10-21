@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "Inakusaidia kujisikia kama wewe mwili wako unapobadilika.",
+    "back": "Rudi",
+    "continue": "Endelea",
+    "tryAgain": "Jaribu tena",
+    "stepOf": "Hatua {current} kati ya {total}",
+    "themeToLight": "Badilisha kwenda mandhari ya mwanga",
+    "themeToDark": "Badilisha kwenda mandhari ya giza",
+    "language": "Lugha",
+    "draftNote": "Tafsiri hii ni rasimu. Mzungumzaji wa asili hajaikagua bado, kwa hivyo baadhi ya maneno yanaweza kuwa si sahihi.",
+    "skipToContent": "Ruka hadi maudhui",
+    "genericError": "Kuna tatizo lililotokea. Tafadhali jaribu tena.",
+    "networkError": "Hatukuweza kufikia Interim. Angalia mtandao wako kisha jaribu tena.",
+    "notFoundTitle": "Hatukuipata ukurasa huo",
+    "notFoundBody": "Kiungo kinaweza kuwa cha zamani, au wasifu unaweza kuwa umefutwa.",
+    "startAgain": "Anza upya"
+  },
+  "welcome": {
+    "title": "Jisikie kama wewe mwili wako unapobadilika.",
+    "intro": "Interim inakuonyesha unavyoonekana leo, cha kuvaa na jinsi ya kutengeneza nywele zako kwa siku zijazo. Imetengenezwa kwa yeyote anayepitia mabadiliko, ikiwemo yale yanayokuja na ugonjwa.",
+    "reassurance": "Wewe unachagua cha kushiriki, na unaweza kufuta kila kitu wakati wowote.",
+    "start": "Anza",
+    "footnote": "Interim inahusu unavyoonekana na cha kuvaa. Haitoi ushauri wa kimatibabu."
+  },
+  "language": {
+    "title": "Chagua lugha yako",
+    "intro": "Interim itaitumia kwa kila kitu unachosoma.",
+    "draftTag": "Rasimu",
+    "draftsNote": "Lugha iliyowekewa alama ya Rasimu bado haijakaguliwa na mzungumzaji wa asili.",
+    "submit": "Endelea"
+  },
+  "situation": {
+    "title": "Nini kinabadilika kwako?",
+    "intro": "Chagua kinachofaa zaidi. Huhitaji kamwe kutaja ugonjwa wala dawa.",
+    "groupIllness": "Mara nyingi hutokana na ugonjwa au huduma yake",
+    "groupOther": "Mabadiliko mengine",
+    "blurbs": {
+      "hair_loss_ahead": "Nywele zako zinapungua, au unatarajia kupungua. Jipange kwa kila hatua, kuanzia kupungua hadi kuota tena.",
+      "hair_patches": "Nywele zinakatika kwa vipande vipande, na zinaweza kuja na kuondoka.",
+      "face_fullness": "Uso wako unaonekana kuwa mpana zaidi au tofauti, na unaweza kutulia tena.",
+      "after_surgery": "Mwili wako una umbo jipya. Kutoshea na faraja vinakuja kwanza, na picha za mwili hubaki zimezimwa hadi uziwashe.",
+      "skin_colour": "Rangi ya ngozi yako inabadilika, na rangi zilizokufaa hapo awali huenda zisikufae sasa.",
+      "weight_change": "Uzito wako unaongezeka au kupungua, kwa makusudi au la, na ukubwa wa nguo zako unabadilika.",
+      "midlife_change": "Mabadiliko ya nywele na mwili katikati ya maisha. Wingi wa nywele na mkato ndivyo muhimu zaidi.",
+      "after_a_baby": "Nywele kuanguka baada ya kujifungua. Kwa sasa Interim inakuepusha na mikato mikubwa.",
+      "going_grey": "Kuacha mvi zikue kwa hatua, badala ya kuzipaka rangi.",
+      "textured_growth": "Kuacha nywele za kipekee zikue, kuanzia fupi sana hadi urefu wa mabega.",
+      "beard_growth": "Kufuga ndevu, kuanzia ndevu fupi hadi kamili."
+    },
+    "submit": "Endelea"
+  },
+  "setup": {
+    "title": "Mambo machache kukuhusu",
+    "intro": "Yanaamua jinsi Interim inavyoongea nawe na inachokuonyesha.",
+    "toneTitle": "Interim izungumze nawe vipi?",
+    "tones": {
+      "practical": { "label": "Mambo ya vitendo tu", "description": "Kilichobadilika na jambo moja la kufanya. Bila maongezi kuhusu hisia." },
+      "warm": { "label": "Ya upole", "description": "Ya fadhili na utulivu, yenye ujumbe mfupi mwanzoni mwa kila ukaguzi." },
+      "light": { "label": "Nyepesi", "description": "Ya kawaida na tulivu, yenye ucheshi kidogo." }
+    },
+    "hairTitle": "Nywele zako",
+    "headCoveringLabel": "Ninafunika nywele zangu",
+    "headCoveringHelp": "Ikiwa ndivyo, Interim haitaonyesha mitindo ya nywele wala wigi kwenye picha zako.",
+    "ageTitle": "Umri wako",
+    "ageLabel": "Nina miaka 18 au zaidi",
+    "ageHelp": "Interim ni kwa watu wazima.",
+    "submit": "Endelea",
+    "submitting": "Inaandaa…"
+  },
+  "consent": {
+    "title": "Kabla ya kuongeza picha",
+    "intro": "Picha zako, na kile ambacho Interim inajifunza kutoka kwazo, ni za kibinafsi. Hiki ndicho hasa kinachotokea kwazo.",
+    "keepTitle": "Interim inachohifadhi",
+    "keepBody": "Picha zako, vipimo vilivyochukuliwa kutoka kwazo, majibu yako na kadi zako. Hakuna kinachouzwa wala kutumika kwa matangazo.",
+    "helpersTitle": "Nani anasaidia",
+    "helperYoucam": "YouCam, ya Perfect Corp, inapokea picha zako ili iweze kuzipima na kuonyesha mwonekano wa awali.",
+    "helperGoogle": "Google inapokea vipimo, hali yako, unachojiandaa nacho na sauti uliyochagua, ili iweze kuandika maelezo yako. Haipokei picha kamwe.",
+    "retentionTitle": "Picha zako zihifadhiwe kwa muda gani",
+    "retention": {
+      "standard": {
+        "label": "Futa baada ya siku 30",
+        "description": "Picha na mwonekano wa awali hufutwa siku 30 baada ya kupigwa. Vipimo na kadi hubaki hadi ufute wasifu wako."
+      },
+      "extended": {
+        "label": "Hifadhi historia yangu",
+        "description": "Zihifadhiwe hadi uzifute, au hadi miezi 24 baada ya ukaguzi wako wa mwisho. Hii inaruhusu Interim kulinganisha kwa muda na kuonyesha mwonekano wa awali."
+      }
+    },
+    "confirmTitle": "Tafadhali thibitisha",
+    "confirmStore": "Interim inaweza kuhifadhi picha na vipimo vyangu.",
+    "confirmYoucam": "YouCam (Perfect Corp) inaweza kuchakata picha zangu.",
+    "confirmGoogle": "Google inaweza kuchakata vipimo na mipangilio yangu, lakini si picha zangu.",
+    "confirmOwn": "Picha zitakuwa zangu pekee.",
+    "noRecovery": "Hakuna nenosiri. Interim inakutambua kwenye kifaa hiki, kwa hivyo ukifuta data ya kivinjari chako, wasifu huu hauwezi kurejeshwa.",
+    "deleteAnytime": "Unaweza kufuta wasifu wako na kila kitu ndani yake wakati wowote.",
+    "incomplete": "Chagua muda wa kuhifadhi picha na weka alama kwenye kila kisanduku ili kuendelea.",
+    "submit": "Nakubali na ninaendelea",
+    "submitting": "Inahifadhi…",
+    "outdated": "Maandishi ya idhini yamebadilika. Pakia upya ukurasa huu na uyasome tena."
+  },
+  "ready": {
+    "title": "Umeandaliwa",
+    "intro": "Interim ina inachohitaji kuanza.",
+    "summaryTitle": "Chaguo zako",
+    "situationLabel": "Hali",
+    "toneLabel": "Sauti",
+    "photosLabel": "Picha",
+    "next": "Ukaguzi wako wa kwanza ni picha chache na maswali mawili mafupi. Bado haujawa kwenye toleo hili.",
+    "deleteTitle": "Futa wasifu wangu",
+    "deleteBody": "Hii inaondoa wasifu wako, picha, vipimo na kadi. Haiwezi kutenduliwa.",
+    "deleteAction": "Futa wasifu wangu",
+    "deleteConfirm": "Ndiyo, futa kila kitu",
+    "deleteCancel": "Weka wasifu wangu",
+    "deleting": "Inafuta…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Kupotea kwa nywele kunakuja",
+    "hair_patches": "Nywele zinakatika kwa vipande",
+    "face_fullness": "Umbo la uso linabadilika",
+    "after_surgery": "Mwili umebadilika baada ya upasuaji",
+    "skin_colour": "Rangi ya ngozi inabadilika",
+    "weight_change": "Mabadiliko ya uzito",
+    "midlife_change": "Mabadiliko ya katikati ya maisha",
+    "after_a_baby": "Baada ya kujifungua",
+    "going_grey": "Nywele kuwa mvi",
+    "textured_growth": "Kuacha nywele za kipekee zikue",
+    "beard_growth": "Kufuga ndevu"
+  },
+  "companionFallback": {
+    "practical": "Hiki ndicho kilichobadilika tangu mara ya mwisho, na machaguo machache kwa kinachokuja.",
+    "warm": "Mambo yanaonekana tofauti kidogo mara hii, na hilo ni la kawaida katika hatua hii. Hapa kuna mionekano michache ambayo bado inakufaa, kwa kinachokuja.",
+    "light": "Ukaguzi mpya, machaguo mapya. Hapa kuna mionekano michache ya kujaribu kwa kinachokuja."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "Nimepitia mabadiliko fulani mwaka huu. Nafurahi kurudi.",
+      "Asante kwa kuuliza. Leo ningependa kuzungumzia kazi.",
+      "Ni hadithi ndefu. Nimekosa nini?"
+    ],
+    "family_event": [
+      "Ndiyo, nywele zangu ni tofauti. Ni vizuri sana kukuona.",
+      "Nitakueleza siku nyingine. Hujambo?"
+    ],
+    "date": [
+      "Mambo yamebadilika kwangu hivi karibuni. Nitafurahi kuyazungumzia siku nyingine.",
+      "Ningependa kukusikia wewe kwanza."
+    ],
+    "photos": ["Tupige nyingine moja? Nataka kuchagua ninayoipenda.", "Naweza kuiona kabla haijapakiwa?"],
+    "video_call": ["Mwonekano mpya mwezi huu. Tuanze?"],
+    "going_out": [
+      "Ni mabadiliko ambayo bado ninazoea. Hata hivyo, tunakula nini?",
+      "Ningependa tusiyazungumzie leo."
+    ],
+    "everyday": []
+  }
+}
