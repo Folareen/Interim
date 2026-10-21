@@ -175,12 +175,18 @@ export class RunsService {
   }
 
   private async view(runId: string): Promise<RunView> {
-    const [row] = await this.db.select().from(run).where(eq(run.id, runId));
-    if (!row) throw new NotFoundException();
+    const [found] = await this.db
+      .select({ run, profileId: snapshot.profileId })
+      .from(run)
+      .innerJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .where(eq(run.id, runId));
+    if (!found) throw new NotFoundException();
+    const { run: row, profileId } = found;
     const trace = await this.db.select().from(traceEntry).where(eq(traceEntry.runId, runId)).orderBy(asc(traceEntry.seq));
     const [card] = await this.db.select({ id: stageCard.id }).from(stageCard).where(eq(stageCard.runId, runId));
     return {
       id: row.id,
+      profileId,
       status: row.status,
       stopReason: traceReasonSchema.nullable().parse(row.stopReason),
       retake: captureProblemSchema.nullable().parse(row.retake),

@@ -4,7 +4,7 @@ import { looksByStrategy, looksById, templates } from './index';
 
 describe('template config', () => {
   it.each(templateKeys)('%s names only stages it has', (key) => {
-    const { placement, stages, strategies } = templates[key];
+    const { placement, stages } = templates[key];
     const named: string[] = [];
     if (placement.by === 'density') named.push(...placement.bands.map((b) => b.stage), placement.recovery.stage);
     if (placement.by === 'length') named.push(...Object.values(placement.stages));

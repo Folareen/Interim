@@ -1,6 +1,9 @@
 import {
+  type CaptureProblemBody,
   type ConsentRequest,
   type CreateProfileInput,
+  type CreateSnapshotInput,
+  type CreateUploadsInput,
   type LinkToken,
   type LoginInput,
   type Me,
@@ -9,16 +12,27 @@ import {
   type RegisterInput,
   type ResetPasswordInput,
   type EmailLinkRequest,
+  type RunView,
+  type UploadsResponse,
+  captureProblemBodySchema,
   meSchema,
   preferencesSchema,
   profileSchema,
+  runViewSchema,
+  snapshotCreatedSchema,
+  uploadsResponseSchema,
 } from '@interim/types';
 
-/** A failed call to the API. `status` is `'network'` when no response arrived at all. */
+/**
+ * A failed call to the API. `status` is `'network'` when no response arrived at all. `problem` is
+ * set when the API refused a photo or an answer and said which, so the screen can say it in the
+ * person's language.
+ */
 export class ApiError extends Error {
   constructor(
     readonly status: number | 'network',
     message: string,
+    readonly problem?: CaptureProblemBody,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -38,7 +52,10 @@ async function send(path: string, method: string, body?: unknown): Promise<Respo
   } catch {
     throw new ApiError('network', 'Could not reach the API');
   }
-  if (!response.ok) throw new ApiError(response.status, `The API answered ${response.status}`);
+  if (!response.ok) {
+    const problem = captureProblemBodySchema.safeParse(await response.json().catch(() => undefined));
+    throw new ApiError(response.status, `The API answered ${response.status}`, problem.success ? problem.data : undefined);
+  }
   return response;
 }
 
@@ -110,4 +127,40 @@ export async function logout(): Promise<void> {
 /** Deletes the account and everything in it. The password is needed when the account has one. */
 export async function deleteAccount(password?: string): Promise<void> {
   await send('/auth/account', 'DELETE', { password });
+}
+
+/** Asks for one upload link per photo. */
+export async function createUploads(profileId: string, input: CreateUploadsInput): Promise<UploadsResponse> {
+  return uploadsResponseSchema.parse(await (await send(`/profiles/${profileId}/uploads`, 'POST', input)).json());
+}
+
+/** Sends a photo straight to storage on a link from `createUploads`. The bytes never pass through the API. */
+export async function putPhoto(url: string, photo: Blob): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetch(url, { method: 'PUT', body: photo });
+  } catch {
+    throw new ApiError('network', 'Could not reach storage');
+  }
+  if (!response.ok) throw new ApiError(response.status, `Storage answered ${response.status}`);
+}
+
+/** Stores a snapshot from uploaded photos and the check in answers. Returns its id. */
+export async function createSnapshot(profileId: string, input: CreateSnapshotInput): Promise<string> {
+  return snapshotCreatedSchema.parse(await (await send(`/profiles/${profileId}/snapshots`, 'POST', input)).json()).id;
+}
+
+/** Starts the agent for a snapshot. Starting it again returns the same run. */
+export async function startRun(snapshotId: string): Promise<RunView> {
+  return runViewSchema.parse(await (await send(`/snapshots/${snapshotId}/runs`, 'POST')).json());
+}
+
+/** Approves a card. */
+export async function approveCard(cardId: string): Promise<void> {
+  await send(`/cards/${cardId}/approve`, 'POST');
+}
+
+/** A run's progress, for when the live stream is not available. */
+export async function fetchRun(runId: string): Promise<RunView> {
+  return runViewSchema.parse(await (await send(`/runs/${runId}`, 'GET')).json());
 }

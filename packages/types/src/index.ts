@@ -378,6 +378,7 @@ export type RunStatus = z.infer<typeof runStatusSchema>;
 /** `GET /runs/:id`, and what the progress stream sends each second. */
 export const runViewSchema = z.object({
   id: z.string().uuid(),
+  profileId: z.string().uuid(),
   status: runStatusSchema,
   stopReason: traceReasonSchema.nullable(),
   retake: captureProblemSchema.nullable(),
