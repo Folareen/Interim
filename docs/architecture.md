@@ -1,6 +1,5 @@
 # Interim: Architecture
 
-Version 1.1, October 20, 2026
 Companion documents: product/overview.md, product/spec.md
 
 ## 1. Principles
@@ -8,7 +7,7 @@ Companion documents: product/overview.md, product/spec.md
 * Eligibility, budgets and consent are plain code. The language model plans and explains.
 * Every YouCam call goes through one client, one ledger and one dedupe layer.
 * Everything a judge sees can run from recorded fixtures at zero cost.
-* One engine and one code path for all seven templates. Templates are configuration.
+* One engine and one code path for every template. Templates are configuration.
 * API keys never reach the browser.
 * Anyone can reach the public endpoints, so every endpoint that can spend units is limited and capped.
 
@@ -44,15 +43,12 @@ interim/
     api/            NestJS API and worker entry points
   packages/
     types/          Shared types and zod schemas
-    templates/      Template configuration files and stage definitions
-    rules/          Eligibility rules and the banned word list
+    templates/      Situations and stages, fixed copy per language, words for today
+    rules/          Eligibility, budget, retention and language rules, crisis contacts
     db/             Drizzle schema and migrations
-    fixtures/       Recorded YouCam and planner responses and sample profiles
+    fixtures/       Sample personas and recorded YouCam and planner responses
     tsconfig/       Shared TypeScript configs
     eslint-config/  Shared ESLint config
-  scripts/
-    spike/          48 hour spike scripts
-    record/         Fixture recording helper
   docs/
 ```
 
@@ -65,13 +61,15 @@ interim/
 * **ledger.** Append only unit ledger, reservations and budget counters.
 * **youcam.** The only module allowed to talk to YouCam. See section 6.
 * **agent.** Planner, rules, composer, trace. See section 7.
-* **guard.** Consent checks, request limits, banned word scan, privacy deletion jobs.
+* **guard.** Owner identity, consent checks and request limits.
+* **cleanup.** Retention, deletion and bucket reconcile. See section 8.
+* **storage.** The S3 client: presigned uploads, reads, listing and deletes.
 
 ## 5. Data model (PostgreSQL)
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (hash of the owner token, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (planned languages; only live ones are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template); words_set and head_covering are read only through the preferences paths, judge_sample flag.
+* **profile.** id, template_key, owner_ref (hash of the owner token, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
 * **consent_event.** id, profile_id, version, action (grant or withdraw), created.
 * **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
@@ -100,14 +98,12 @@ Single module, single entry point. Nothing else imports an HTTP client for YouCa
 * **Auth.** Bearer token from server side environment. Never sent to the browser.
 * **Upload.** The documented V2 flow: register the file, upload to the returned location, then create the task with the file id.
 * **Polling.** BullMQ job with growing delay. Stop on success, error or timeout.
-* **Errors.** HTTP errors and task level errors are both parsed. A task status of error inside an HTTP 200 is a failure. Mapped error codes follow the spec.
-* **Unknown tasks.** A task left in `intent` after a crash, timeout or 5xx becomes `unknown`. A reconcile job resolves it (to verify whether YouCam lists tasks) and the reservation stays held until then. It is never created again automatically. A 429 is the only create failure that is retried.
+* **Failures.** HTTP errors and task level errors are both parsed. Error mapping, unknown tasks, 429 handling and duplicate calls follow spec sections 10 and 11.
 * **Rate limit.** A token bucket in Redis, sized to the documented limit of 250 requests per 300 seconds, shared by every worker. No profile may take more than its configured share. Random jitter on a 429 because there is no Retry After header.
-* **Duplicates.** There is no idempotency key. The cache key is the normalised photo hash, tool, API version and parameter hash.
+* **Cache key.** The normalised photo hash, tool, API version and parameter hash.
 * **Cost.** A cost function calls Get_Feature_Cost where available and falls back to the config table in the spec.
 * **Live switch.** `LIVE_CALLS_ENABLED` must be true for any live call. It is turned off automatically when YouCam reports no units or rejects the key.
-* **Recording.** A flag records every YouCam request and response, and every planner input and output, into the fixtures package, with secrets removed.
-* **Replay.** A flag replays recorded YouCam responses and recorded planner output with no network call. A missing fixture is an error, never a live call. Judge mode forces this flag. `JUDGE_MODE_FORCE_REPLAY=true` wins over `YOUCAM_MODE`, and the server refuses to start if live mode and the force flag disagree on a public deployment.
+* **Record and replay.** Recording saves YouCam responses and planner output as fixtures with secrets removed. Replay serves them with no network call, and a missing fixture is an error, never a live call. Judge mode forces replay. Modes are in [integrations/youcam.md](integrations/youcam.md#modes-youcam_mode).
 
 ## 7. Agent module
 
@@ -118,12 +114,7 @@ Four parts.
 * **Composer (model plus code).** Builds the Stage Card from tool outputs. The model writes explanation text with placeholders such as `{m:<id>}`. Code inserts all numbers, dates, sizes and image references.
 * **Trace writer (code).** Stores a trace entry for each step with a one line reason.
 
-Guard rails in the loop:
-
-* The model cannot see raw photos. It sees measurement records and render references. The paid Gemini tier is used so inputs are not used for training.
-* A validator rejects model text that contains any digit, any number word, or a placeholder that does not exist. On rejection the text is retried once, then replaced by the fixed text for that stage.
-* A banned word scan runs on every model output before it is saved.
-* The loop has a hard step limit and a hard budget limit.
+The model never sees raw photos, only measurement records and render references. Its text is validated and scanned before it is saved (spec sections 8 and 13, [llm.md](llm.md)). The loop has a hard step limit and a hard budget limit.
 
 ## 8. Job queue
 
@@ -131,7 +122,7 @@ BullMQ on Redis.
 
 * **run queue.** One job per run. Concurrency of one per profile.
 * **poll queue.** One job per open YouCam task, with growing delay.
-* **cleanup queue.** Photo and render expiry, deletion requests, storage reconcile, unknown task reconcile. One repeating job, hourly. Expiry deletes the file, then the row (renders keep the row and lose `s3_key`). The reconcile walks `raw/` and `photos/` once: files of a profile that no longer exists go at once; unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`); photo rows older than the grace period whose file is missing are logged by id. A run then completes every deletion request made before it started. Unknown task reconcile arrives with the YouCam orchestration.
+* **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `s3_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
 ## 9. HTTP API
@@ -166,11 +157,9 @@ All routes check consent version and ownership. Share links expire, can be revok
 * **Ledger view.** Every call, its cost and the reason it was made.
 * **Mobile first.** Designed and filmed on a phone. Installable as a PWA.
 
-## 11. YouCam access
+## 11. Access
 
-Interim exposes no MCP server or partner API: every caller is the person, through the app.
-
-Interim also needs to call YouCam's own hosted MCP servers or REST. The beauty server holds the hair and beard tools. The fashion server holds clothes, hats and scarves. A head to toe flow needs both, or direct REST calls. The simplest plan is direct REST for everything the worker calls, and the hosted MCP servers only as a documented option.
+Interim exposes no MCP server or partner API: every caller is the person, through the app. The worker calls YouCam's REST API directly and does not use YouCam's hosted MCP servers.
 
 ## 12. Security and privacy
 
@@ -180,8 +169,7 @@ Interim also needs to call YouCam's own hosted MCP servers or REST. The beauty s
 * Photos encrypted at rest with a key managed outside the code.
 * Signed, short lived URLs for photo and render access.
 * Consent version stored with every profile, plus a consent event history.
-* Retention follows the spec: 30 days in standard mode, or until deleted or 24 months after the last check in in keep history mode. In keep history mode each new check in pushes `expires_at` forward on the profile's photos and renders. Deletion on request, and export.
-* Logs hold ids only, never photo contents or personal text, and are kept 14 days.
+* Retention, deletion, export and logging follow spec section 12. In keep history mode each new check in pushes `expires_at` forward on the profile's photos and renders.
 * Judge mode has no write access to real accounts.
 
 ## 13. Configuration
@@ -222,23 +210,8 @@ Server environment variables, by name:
 * **Unit tests.** Eligibility rules, stage placement, cost and budget logic, banned word scan, card validator.
 * **Contract tests.** The YouCam client against recorded fixtures, including errors inside HTTP 200 and 429 with no Retry After.
 * **Concurrency tests.** Two runs reserving the last units. A crash between send and store of a create call.
-* **Template tests.** All seven templates run through the same code path.
+* **Template tests.** Every template runs through the same code path.
 * **End to end.** The capture to Stage Card flow in replay mode, using a browser test.
 * **Guard tests.** A card with an invented number or a digit fails validation. A banned word fails the build.
 * **Upload tests.** HEIC, wrong file type, oversized file, EXIF removal.
 * **Live smoke test.** A small live run before submission to confirm the recorded fixtures still match the API.
-
-## 17. Build order
-
-1. YouCam client with record and replay, and the ledger. Run the spike.
-2. Templates and rules packages, with tests.
-3. Snapshot upload and capture checks.
-4. Agent loop with the planner, composer and trace.
-5. Stage Card and the web app flow.
-6. Judge mode and sample profiles.
-7. Banned word scan, deletion jobs, and polish.
-8. Measurements for the readme and the video.
-
-## 18. Open technical questions
-
-Owned by [product/spec.md](product/spec.md) section 17. The results go into the spec and the eligibility table.

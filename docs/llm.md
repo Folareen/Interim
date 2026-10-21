@@ -7,7 +7,7 @@ Guardrails (no raw photos, restricted tools, banned-word scan, placeholder valid
 ## Prompts
 Keep prompts in `apps/api/src/agent/prompts/` as versioned files. The planner prompt embeds the banned word list from `packages/rules` rather than a copy.
 
-Planner input and output are recorded and replayed with the YouCam fixtures, keyed by prompt version and input hash, so replay mode never calls the model. Use the paid Gemini tier so inputs are not used for training. The model receives measurement records and the situation key, never photos.
+Planner input and output are recorded and replayed with the YouCam fixtures, keyed by prompt version and input hash, so replay mode never calls the model. Use the paid Gemini tier so inputs are not used for training. What the model receives is listed in [product/spec.md](product/spec.md) section 8.
 
 ## Open
 - Confirm the model and its tool-calling reliability.

@@ -1,5 +1,6 @@
 import type { PhotoKind } from '@interim/types';
 
+/** What the photo and self report checks need to know about a snapshot. */
 export interface SnapshotContext {
   isBaseline: boolean;
   /** Fit templates need a reported size, and a body photo while body photos are on (docs/product/spec.md section 5). */

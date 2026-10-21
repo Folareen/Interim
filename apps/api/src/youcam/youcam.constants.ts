@@ -1,4 +1,4 @@
-// docs/product/spec.md section 10. Confirmed against Get_Feature_Cost on 2026-10-21. Keys are tool names in youcam.tools.ts.
+/** Units per call, as Get_Feature_Cost lists them (docs/product/spec.md section 10). Keys are tool names in `youcam.tools.ts`. */
 export const unitCosts: Record<string, number | null> = {
   hair_type: 2,
   hair_density: 1,
@@ -16,10 +16,10 @@ export const unitCosts: Record<string, number | null> = {
   image_to_image: 1, // spike only
 };
 
-// What a unit costs, from the account owner: 500 units cost 27.50 dollars (2026-10-21).
+/** Dollars per unit: 500 units cost 27.50 dollars. */
 export const usdPerUnit = 0.055;
 
-// Skin analysis is priced by the number of concerns and the tier: [max concerns, SD, HD].
+/** Skin analysis price by number of concerns and tier: [max concerns, SD, HD]. */
 export const skinAnalysisUnits = [
   [4, 9, 12],
   [8, 12, 16],
@@ -27,11 +27,11 @@ export const skinAnalysisUnits = [
   [16, 16, 22],
 ] as const;
 
-// Documented limit: 250 requests per 300 seconds, per IP address and per access token (both
-// must hold), and the docs advise about 5 requests per second.
+/** YouCam's limit: 250 requests per 300 seconds per IP address and per access token, about 5 a second advised. */
 export const rateLimit = { requests: 250, windowSeconds: 300, perSecond: 5 } as const;
 
+/** YouCam's API host. */
 export const defaultBaseUrl = 'https://yce-api-01.makeupar.com';
 
-// Uploaded files and task results live 24 hours on the YouCam side.
+/** Uploaded files and task results live 24 hours on YouCam's side. */
 export const youcamRetentionSeconds = 24 * 60 * 60;

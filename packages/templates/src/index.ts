@@ -1,5 +1,6 @@
 import type { TemplateKey } from '@interim/types';
 
+/** One situation: its stages, cadence and flags (docs/product/spec.md section 4). */
 export interface Template {
   key: TemplateKey;
   stages: readonly string[];
@@ -13,7 +14,7 @@ export interface Template {
   remeasureEvery: number;
 }
 
-// Labels live in ./copy. Stage keys are internal and never shown. Stage thresholds are tuned in the spike.
+/** Every situation by key. Labels live in `copy`. Stage keys are internal and never shown, and stage thresholds are tuned in the spike. */
 export const templates: Record<TemplateKey, Template> = {
   hair_loss_ahead: {
     key: 'hair_loss_ahead',

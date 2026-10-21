@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Illness-first templates lead, matching docs/product/overview.md.
+/** The situations, in display order: the illness-first ones come first (docs/product/overview.md, Templates). */
 export const templateKeys = [
   'hair_loss_ahead',
   'hair_patches',
@@ -14,11 +14,12 @@ export const templateKeys = [
   'textured_growth',
   'beard_growth',
 ] as const;
+
+/** A situation key. */
 export const templateKeySchema = z.enum(templateKeys);
 export type TemplateKey = z.infer<typeof templateKeySchema>;
 
-// docs/product/spec.md section 11. Codes published in the YouCam docs and agent skills; how each is handled
-// lives in apps/api/src/youcam/youcam.errors.ts.
+/** Error codes YouCam documents for failed tasks. How each is handled is in `youcam.errors.ts` (docs/product/spec.md section 11). */
 export const youcamErrorCodes = [
   'error_hair_too_short',
   'error_bald_image',
@@ -69,9 +70,11 @@ export const youcamErrorCodes = [
 export const youcamErrorCodeSchema = z.enum(youcamErrorCodes);
 export type YoucamErrorCode = z.infer<typeof youcamErrorCodeSchema>;
 
+/** How the YouCam client runs: `live`, `record` (live, and save fixtures) or `replay` (fixtures only). */
 export const youcamModeSchema = z.enum(['live', 'record', 'replay']);
 export type YoucamMode = z.infer<typeof youcamModeSchema>;
 
+/** `standard` deletes photos after 30 days; `extended` keeps them up to 24 months (docs/product/spec.md section 12). */
 export const retentionSchema = z.enum(['standard', 'extended']);
 export type Retention = z.infer<typeof retentionSchema>;
 
@@ -82,10 +85,7 @@ export const createProfileSchema = z.object({
 });
 export type CreateProfileInput = z.infer<typeof createProfileSchema>;
 
-/**
- * Body of POST /profiles/:id/consent. Each processor line is accepted separately and
- * retention has no default: the person must choose (docs/product/spec.md section 12).
- */
+/** Body of POST /profiles/:id/consent. Each processor line is accepted separately, and retention has no default (spec section 12). */
 export const consentRequestSchema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('grant'),
@@ -100,6 +100,7 @@ export const consentRequestSchema = z.discriminatedUnion('action', [
 ]);
 export type ConsentRequest = z.infer<typeof consentRequestSchema>;
 
+/** The photos a check in can include (docs/product/spec.md section 5). */
 export const photoKindSchema = z.enum(['front', 'left', 'right', 'top', 'body']);
 export type PhotoKind = z.infer<typeof photoKindSchema>;
 
@@ -115,9 +116,8 @@ export const localeSchema = z.enum(locales);
 export type Locale = z.infer<typeof localeSchema>;
 
 /**
- * The languages offered today. A language joins only when its reviewed banned word and companion
- * phrase lists and all its copy exist. Catalogs are typed `Record<LiveLocale, …>`, so adding a
- * language here fails the build until every catalog has it.
+ * The languages offered today. A language joins only with its reviewed word lists and all its copy.
+ * Catalogs are typed by this list, so adding one fails the build until every catalog has it.
  */
 export const liveLocales = ['en'] as const satisfies readonly Locale[];
 export const liveLocaleSchema = z.enum(liveLocales);
@@ -144,10 +144,8 @@ export const wordsSetSchema = z.enum(['gentle', 'christian', 'muslim', 'jewish']
 export type WordsSet = z.infer<typeof wordsSetSchema>;
 
 /**
- * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off. `headCovering`
- * means the person covers their hair, which turns hair try on off. The set and the covering can
- * imply a religion or culture, so only the person reads or sets them (docs/product/spec.md
- * section 12).
+ * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off; `headCovering`
+ * turns hair try on off. Both can imply a religion or culture, so only the person reads or sets them (spec section 12).
  */
 export const preferencesSchema = z.object({
   locale: liveLocaleSchema,
@@ -167,6 +165,7 @@ export const wordsQuerySchema = z.object({
 });
 export type WordsQuery = z.infer<typeof wordsQuerySchema>;
 
+/** How much has changed since last time, as the person reports it. */
 export const changeReportSchema = z.enum(['none', 'some', 'lot']);
 export type ChangeReport = z.infer<typeof changeReportSchema>;
 
@@ -180,6 +179,7 @@ export const createSnapshotSchema = z.object({
 });
 export type CreateSnapshotInput = z.infer<typeof createSnapshotSchema>;
 
+/** One ledger row as the API returns it. */
 export const ledgerEntrySchema = z.object({
   id: z.string().uuid(),
   profileRef: z.string().uuid(),
@@ -191,9 +191,11 @@ export const ledgerEntrySchema = z.object({
 });
 export type LedgerEntry = z.infer<typeof ledgerEntrySchema>;
 
+/** What the agent advises for a stage. */
 export const strategySchema = z.enum(['cut', 'volume', 'colour', 'cover', 'hold']);
 export type Strategy = z.infer<typeof strategySchema>;
 
+/** The output of a check in (docs/product/spec.md section 9). */
 export const stageCardSchema = z.object({
   title: z.string(),
   date: z.string(),

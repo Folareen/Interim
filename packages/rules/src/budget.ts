@@ -8,12 +8,14 @@ export interface BudgetContext {
   sourceHash?: string;
 }
 
+/** The fixed caps from config. */
 export interface BudgetCaps {
   perProfile: number;
   perDay: number;
   perSourcePerDay: number;
 }
 
+/** One counter a call must fit under, with its cap. */
 export interface BudgetScope {
   /** Key of the `budget_counter` row: `run:<id>`, `profile:<id>`, `day:<date>`, `source:<hash>:<date>`. */
   key: string;

@@ -22,6 +22,7 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { StorageService } from '../storage/storage.service';
 import { normalisePhoto } from './photo';
 
+/** Upload limits, provided by the module from the environment. */
 export interface UploadConfig {
   maxUploadBytes: number;
 }

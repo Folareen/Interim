@@ -3,13 +3,15 @@ import { UnprocessableEntityException } from '@nestjs/common';
 import convertHeic from 'heic-convert';
 import sharp from 'sharp';
 
-// The strictest YouCam limit a photo is sent to (beard style: long side under 1024 px) and the
-// smallest short side any tool accepts (skin analysis SD). See docs/integrations/youcam.md.
+/** The long side photos are capped to: the strictest limit any YouCam tool sends (beard style, under 1024 px). */
 export const MAX_LONG_SIDE = 1000;
+
+/** The smallest short side any YouCam tool accepts (skin analysis SD). */
 export const MIN_SHORT_SIDE = 480;
 // Guards against decompression bombs; a 12 MB file can still decode to a huge bitmap.
 const MAX_INPUT_PIXELS = 50_000_000;
 
+/** The formats the app accepts. HEIC is converted to JPEG. */
 export type PhotoFormat = 'jpeg' | 'png' | 'heic';
 
 /** Identifies the format from the file's first bytes. The file name and declared type are never trusted. */
@@ -25,6 +27,7 @@ export function detectFormat(bytes: Buffer): PhotoFormat | undefined {
   return undefined;
 }
 
+/** A photo after normalisation, ready to store and send to YouCam. */
 export interface NormalisedPhoto {
   jpeg: Buffer;
   /** Of the normalised file, so the same picture uploaded twice matches (spec section 5). */

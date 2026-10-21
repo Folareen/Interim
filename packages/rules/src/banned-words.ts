@@ -1,9 +1,8 @@
 import type { LiveLocale } from '@interim/types';
 import { wholeWords } from './whole-words';
 
-// docs/product/overview.md owns the rules; docs/product/spec.md section 13 describes the scan.
-// User facing text must never contain these. Whole words only, so "health" is fine. Each
-// language's list is written and reviewed by a native speaker before the language goes live.
+// Whole words only, so "health" is fine. Each language's list is native-reviewed before the language
+// goes live. docs/product/overview.md owns the rules.
 
 /** The banned words per language, as the planner prompt lists them. */
 export const bannedWords: Record<LiveLocale, readonly string[]> = {

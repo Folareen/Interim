@@ -1,7 +1,6 @@
 import { youcamErrorCodeSchema, type YoucamErrorCode } from '@interim/types';
 
-// Transport and policy failures. Task failures reported inside an HTTP 200 are not thrown;
-// getTask returns them as `state: 'error'` with an action.
+/** Transport and policy failures. A task that failed inside an HTTP 200 is not thrown: `getTask` returns it with an action. */
 export type YoucamErrorKind =
   | 'live_disabled' // mode or LIVE_CALLS_ENABLED forbids the call
   | 'replay_missing' // no recorded fixture; never falls through to the network
@@ -12,6 +11,7 @@ export type YoucamErrorKind =
   | 'unknown_outcome' // timeout or 5xx on create: the task may exist, never re-send
   | 'transient'; // timeout or 5xx on poll or upload: retry with growing delay
 
+/** A transport or policy failure. `kind` says what to do about it. */
 export class YoucamError extends Error {
   constructor(
     readonly kind: YoucamErrorKind,
@@ -23,7 +23,7 @@ export class YoucamError extends Error {
   }
 }
 
-// docs/product/spec.md section 11, for a task that ended in `error`.
+/** What to do about a task that ended in `error` (docs/product/spec.md section 11). */
 export type TaskErrorAction =
   | 'block_tool' // this tool cannot work on this photo; cache as blocked and use the fallback order
   | 'new_photo' // ask for a new photo with a specific instruction; no retry
@@ -57,8 +57,7 @@ const actions: Record<YoucamErrorCode, TaskErrorAction> = {
   error_face_position_out_of_boundary: 'new_photo',
   error_src_face_too_small: 'new_photo',
   error_src_face_out_of_bound: 'new_photo',
-  // This garment cannot be shown on this photo (it covers a region the photo does not show, or
-  // the result would match what the person already wears). Another garment may still work.
+  // This garment cannot be shown on this photo, or would look like what the person already wears. Another may work.
   error_apply_region_mismatch: 'block_tool',
   error_editing_failed: 'block_tool',
   error_nsfw_content_detected: 'new_photo', // moderation rejection
@@ -80,7 +79,7 @@ const actions: Record<YoucamErrorCode, TaskErrorAction> = {
   unknown_internal_error: 'fault',
 };
 
-// A code YouCam adds later is not in the table; treat it as a fault rather than guess.
+/** Maps a task error code to an action. A code YouCam adds later is treated as a fault rather than guessed. */
 export function taskErrorAction(code: string): TaskErrorAction {
   const known = youcamErrorCodeSchema.safeParse(code);
   return known.success ? actions[known.data] : 'fault';

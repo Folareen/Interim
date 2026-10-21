@@ -1,10 +1,8 @@
 import type { LiveLocale } from '@interim/types';
 import { wholeWords } from './whole-words';
 
-// docs/product/overview.md (Language and safety rules) owns these; spec section 13 describes the scan.
-// Forced positivity, battle and journey framing, an earlier look as better, and a smaller or larger
-// body as the goal. Runs beside findBannedWord on companion text, what to say lines and the words
-// for today library. Each language's list is written and reviewed by a native speaker.
+// Forced positivity, battle and journey framing, an earlier look as better, and a body size as the
+// goal (docs/product/overview.md, Language and safety rules). Each language's list is native-reviewed.
 const apostrophe = "['’]?";
 const patterns: Record<LiveLocale, RegExp> = {
   en: wholeWords([

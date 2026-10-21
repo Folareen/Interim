@@ -11,6 +11,7 @@ const RAW_GRACE_MS = 24 * HOUR_MS;
 const PHOTO_GRACE_MS = HOUR_MS;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
+/** What one cleanup sweep did. */
 export interface CleanupReport {
   expiredPhotos: number;
   expiredRenders: number;

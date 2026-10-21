@@ -10,6 +10,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Inject, Injectable } from '@nestjs/common';
 
+/** Connection settings for the S3-compatible bucket. */
 export interface StorageConfig {
   endpoint: string;
   bucket: string;
@@ -21,6 +22,7 @@ export const STORAGE_CONFIG = Symbol('STORAGE_CONFIG');
 
 const PRESIGN_TTL_SECONDS = 600;
 
+/** An object in the bucket, as the cleanup sweep sees it. */
 export interface StoredObject {
   key: string;
   lastModified: Date;

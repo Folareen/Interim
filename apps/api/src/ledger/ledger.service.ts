@@ -17,6 +17,8 @@ export class BudgetExceededError extends Error {
 
 /** The call a reservation is for. `taskId` is the `youcam_task.id` the caller generated, which makes every step idempotent. */
 export type LedgerCall = BudgetContext & { taskId: string };
+
+/** A call plus what to hold for it: the tool, the units and, in tests, the time. */
 export type ReserveInput = LedgerCall & { tool: string; units: number; now?: Date };
 
 type Tx = Parameters<Parameters<Db['transaction']>[0]>[0];

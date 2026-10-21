@@ -1,12 +1,12 @@
 import type { WordsSet } from '@interim/types';
 import type { WordsSetConfig } from '../words';
 
-// docs/product/overview.md (The companion) and spec section 13. Quoted exactly from public domain
-// translations, checked against the online texts on 2026-10-20 (KJV via bible-api.com, Pickthall
-// via alquran.cloud, JPS 1917 via Sefaria, quotes via Wikisource and Project Gutenberg). An excerpt
-// may start with a capital and end with a full stop; nothing else is edited. Passages that promise a
-// physical outcome, or fail either language scan, are left out. Never written, paraphrased or chosen
-// by the model.
+/**
+ * Quoted exactly from public domain translations, checked against the online texts on 2026-10-20 (King James
+ * via bible-api.com, Pickthall via alquran.cloud, JPS 1917 via Sefaria, quotes via Wikisource and Gutenberg).
+ * An excerpt may start with a capital and end with a full stop; nothing else is edited. Passages that
+ * promise a physical outcome or fail the language scans are left out, and the model never writes or chooses them.
+ */
 export const en: Record<WordsSet, WordsSetConfig> = {
   gentle: {
     label: 'Gentle words',

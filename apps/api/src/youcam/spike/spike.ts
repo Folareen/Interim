@@ -8,15 +8,8 @@ import { unitCosts, usdPerUnit } from '../youcam.constants';
 import type { ToolName, ToolRequest, ToolResult } from '../youcam.tools';
 import { bodyFor, estimateUnits, manifestSchema, maxUnitsFrom, resultRowSchema, spendProblem, type Run } from './plan';
 
-// The first-48-hours spike (docs/product/spec.md section 17), run by hand against the live API.
-//   pnpm --filter @interim/api spike credit
-//   pnpm --filter @interim/api spike costs [filter]
-//   pnpm --filter @interim/api spike templates <feature> <version> [starting_token]
-//   pnpm --filter @interim/api spike renders [label-filter]
-//   pnpm --filter @interim/api spike batch <manifest.json> [--yes --max-units <n>]
-// Output goes to apps/api/.spike (ignored by git): fixtures/ and results.jsonl.
-// `batch` is a dry run unless --yes is given. Spending needs all three switches and --max-units, a
-// cap on the whole batch that it checks before it starts and while it runs.
+// The live spike (docs/product/spec.md section 17). Usage is in docs/integrations/youcam.md. Output
+// goes to apps/api/.spike, which git ignores, so real photos and responses cannot be committed.
 
 const pollEveryMs = 5_000;
 const maxPolls = 24;
@@ -43,13 +36,13 @@ function liveClient(): YoucamClient {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Reads a photo as the app would store it: orientation applied, EXIF removed, long side capped. */
+// Processes a photo the way the app stores it, so the spike sends what production would.
 async function loadPhoto(file: string, base: string) {
   const photo = await normalisePhoto(await readFile(path.resolve(base, file)));
   return { bytes: photo.jpeg, hash: photo.sha256, contentType: 'image/jpg' as const, fileName: `${photo.sha256.slice(0, 12)}.jpg` };
 }
 
-/** A fixture is named by what was sent, so the same call in a later run overwrites the same file. */
+// Named by what was sent, so the same call in a later run overwrites the same fixture.
 function fixtureKey(run: Run, hashes: readonly string[]): string {
   const digest = createHash('sha256')
     .update(JSON.stringify([run.tool, hashes, run.params]))
@@ -67,7 +60,7 @@ async function finish(client: YoucamClient, ref: TaskRef): Promise<TaskStatus<To
   return { state: 'running' };
 }
 
-/** The result image link, for the tools that return one. Links are signed and expire in about two hours. */
+// Result links are signed and expire in about two hours.
 function imageUrl(result: ToolResult<ToolName>): string | undefined {
   return 'url' in result ? result.url : undefined;
 }
@@ -81,7 +74,7 @@ async function saveRender(label: string, result: ToolResult<ToolName>) {
   await writeFile(path.join(spikeDir, 'renders', `${label}.jpg`), Buffer.from(await response.arrayBuffer()));
 }
 
-/** Saves the image of every finished run whose task is still within its 24 hours. Polling is free. */
+// Polling is free, and a task stays readable for 24 hours.
 async function renders(filter: string | undefined) {
   const client = liveClient();
   const lines = (await readFile(path.join(spikeDir, 'results.jsonl'), 'utf8')).split('\n').filter(Boolean);

@@ -1,11 +1,10 @@
 # Interim: Product Specification
 
-Version 1.3, October 20, 2026
 Companion documents: overview.md, ../architecture.md
 
 ## 1. Scope
 
-This spec covers the hackathon build. It defines what the product does, what it stores, how the agent decides, and how the work is judged done. Items marked "to verify" depend on facts about the YouCam API that are not confirmed yet and are settled in the first 48 hours (section 17). Section 17 is the single owner of open questions; other docs link to it.
+This spec covers the hackathon build: what the product does, what it stores, how the agent decides, and how the work is judged done. Section 17 owns the open questions, and other docs link to it.
 
 ## 2. Users
 
@@ -75,21 +74,21 @@ Photo kinds: front, left, right, top, body.
 * **front.** Face visible, yaw within 10 degrees, even light, resolution above the YouCam minimum.
 * **left and right.** For hair type, baseline only. Yaw above 15 degrees, same size as the front photo.
 * **top.** Top of head at a 45 degree downward angle, for density. A person cannot hold this alone, so the wizard offers a five second timer with an on screen guide, or asks someone to take it. Skipping it is allowed and means density is not measured.
-* **body.** Full body or chest up, as the clothes tool requires. One photo serves fit renders and, if the spike confirms, hair length. Required only for templates that use fit.
+* **body.** Full body or chest up, as the clothes tool requires. One photo serves fit renders. Required only for templates that use fit, and only while body photos are on.
 
 What each snapshot needs:
 
 * Baseline: front, left, right, top where possible, and body for fit templates.
 * Check in: front, plus top when density is tracked and body when the template uses fit.
 
-Each check is run on the device. A photo that fails a check is rejected with a plain instruction and nothing is uploaded or charged. The light and angle checks are calibrated on a panel that spans skin tones and hair types (section 17). Exact framing requirements come from the YouCam docs and are confirmed in the spike.
+Each check is run on the device. A photo that fails a check is rejected with a plain instruction and nothing is uploaded or charged. The light and angle checks are calibrated on a panel that spans skin tones and hair types (section 17). Framing limits per tool are in [integrations/youcam.md](../integrations/youcam.md).
 
 Device checks are advisory. The server runs them again before any YouCam call.
 
 ### Upload handling
 
 * Accepted: JPEG, PNG and HEIC, up to 12 MB, verified by file signature and not by file name.
-* The server converts HEIC to JPEG, applies the orientation, strips all EXIF and location data, and resizes to the YouCam limits (to verify).
+* The server converts HEIC to JPEG, applies the orientation, strips all EXIF and location data, caps the long side at 1000 px and rejects a short side under 480 px (the strictest YouCam limits).
 * The photo hash used for dedupe is taken after this normalisation, so the same picture uploaded twice matches.
 
 ### Self report
@@ -190,15 +189,14 @@ Words for today is shown on the home screen, not on the card, so a shared card n
 * The reserve step runs in one database transaction against a budget counter row per scope, so two runs cannot both spend the last units.
 * Caps, all in config: per run, per profile, per day (global) and per source address per day. Caps are checked at reserve time.
 * A global switch (`LIVE_CALLS_ENABLED`) turns off all live calls at once. It is off unless set. When the YouCam account reports that it is out of units, the switch is turned off automatically and an alert is raised.
-* Units are expected to be charged only on success and a failed task to settle at zero. This is to verify in the spike, including moderation and error cases. Until verified, settlement uses the actual charge observed.
-* Errors can arrive as HTTP 200 with a task status of error. The client must treat those as failures.
+* A failed task settles at zero: the errors seen so far (face angle, face too small) cost nothing. Moderation rejections and timeouts are unverified, so settlement uses the actual charge observed.
 * There is no idempotency key. Every call writes a task row in the state `intent` before it is sent and moves it to `created` with the YouCam task id once the response arrives.
 * A create call is never repeated unless the earlier task is known to have failed. A task left in `intent` after a crash, a timeout or a 5xx is `unknown`. It is reconciled (to verify whether YouCam lists tasks) and its reservation is held until it is resolved. It is never created again automatically.
 * A 429 means the task was not created, so it is the one create failure that is safe to retry.
 * The unit ledger view shows each call, its cost and why it was made.
-* Unit cost in money is tracked in config. The spike computes units and money per baseline and per check in, and the plan must keep cost per active member inside the price (section 18).
+* Unit cost in money is tracked in config, and the plan must keep cost per active member inside the price (section 18).
 
-Cost table, confirmed against Get_Feature_Cost on 2026-10-21 (every price in the docs matched):
+Prices, as Get_Feature_Cost lists them:
 
 * Hair type detection: 2 units
 * Hair density detection: 1 unit
@@ -311,6 +309,7 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 10a. Every fixed companion text, what to say line and words for today passage passes both scans. A test string with "stay positive" or "battle" fails.
 10b. A reflection containing crisis language shows the crisis contacts for the region, and nothing from it reaches the server.
 10c. Words for today returns nothing when it is off, the same passage for everyone on the same day and set, and never appears on a share link.
+10d. A profile with head covering on is never offered hair try on.
 11. Standard retention: photos and renders are gone after 30 days, the card still shows its text, and it says an earlier look is unavailable.
 11a. Keep my history: photos remain past 30 days, a new check in restarts the 24 months, and 24 months after the last check in they are deleted. The consent screen cannot be passed without choosing a mode.
 12. Two concurrent runs cannot spend more than the remaining daily cap.
@@ -322,18 +321,16 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 
 ## 17. Spike: what is still open
 
-This section owns every open question. The facts the first live runs settled (costs, tool behaviour, timings, errors) are in [integrations/youcam.md](../integrations/youcam.md#observed-live). The runs use the spike runner described there, on freely licensed portraits. They were professional photos, not selfies, so they say what the tools can do and nothing about how people will photograph themselves.
+This section owns every open question. What the live runs settled is in [integrations/youcam.md](../integrations/youcam.md#observed-live). Those runs used professional portraits and synthetic images, so they show what the tools can do, not how people will photograph themselves.
 
 1. Compute units and money per baseline and per check in from the cost table, using the price per unit of the real plan.
-2. Hair density on real top of head photos. On synthetic heads it follows fullness within one person (-0.06 to 1.91 when the same man went from thinning to thick) and is not comparable across people, so stage placement compares a person with their own baseline using `mapping`, not the grade label. It fell about 0.6 in dim light, so a change under about 0.7 needs the light checked. Confirm on at least six real photos. Hair length is coarse (growing back read the same as full hair on one persona), so it supports but does not place a stage.
-3. What is billed on moderation rejections and on timed out tasks. Every error seen so far (face angle, face too small) cost nothing.
-4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Skin colour and Fitzpatrick ordered six synthetic people correctly from very fair to very dark; confirm on real selfies.
-5. For the illness-first templates: face aspect ratio moved about 1 percent when only the light changed, and skin colour about 2 hex units, so both are steady enough to track. Whether they follow a real change (fullness from medicine, a colour change) is untested. hair_patches depends on density (item 2). Drop a template from the demo if its tools cannot support it.
-6. Head covering: only a hijab and a head wrap were tried. Check other coverings and wigs, and decide the exact wording of the setting with people who cover their hair.
-7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender (for example every style to everyone, with the volume previews labelled by look rather than by gender).
+2. Hair density on at least six real top of head photos. On synthetic heads it follows fullness within one person but not across people, and drops in dim light, so stage placement compares `mapping` with the person's own baseline (section 6). Hair length is coarse and supports a stage but does not place one.
+3. What is billed on moderation rejections and on timed out tasks.
+4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Skin colour and Fitzpatrick ordered six synthetic people correctly and need the same check on real selfies.
+5. Whether face aspect ratio and skin colour follow a real change (fullness from medicine, a colour change). Both were steady under changes of light. hair_patches depends on density (item 2). Drop a template from the demo if its tools cannot support it.
+6. Head covering: only a hijab and a head wrap were tried. Check other coverings and wigs, and settle the wording of the setting with people who cover their hair.
+7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender, for example every style to everyone with the volume previews labelled by look.
 8. Whether Camera Kit gives enough angle control for the top photo.
-
-Hair transfer accepts every hair state and density moves with fullness, so the earlier kill criterion no longer applies.
 
 ## 18. Numbers and measures
 

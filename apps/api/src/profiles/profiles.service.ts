@@ -14,8 +14,8 @@ import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { StorageService } from '../storage/storage.service';
 
-// owner_ref is a credential hash and never leaves the API. words_set and head_covering can imply a
-// religion or culture, so they are only read through the preferences, words and export paths.
+// Leaves out owner_ref (a credential hash) and the columns that can imply a religion or culture
+// (words_set, head_covering). Those are only read through the preferences, words and export paths.
 const visible = {
   id: profile.id,
   templateKey: profile.templateKey,
@@ -71,9 +71,8 @@ export class ProfilesService {
   }
 
   /**
-   * Records a consent grant or withdrawal. A grant for an outdated text is refused so the person
-   * always sees the current one.
-   * @throws ConflictException when a grant names a version other than the current one.
+   * Records a consent grant or withdrawal.
+   * @throws ConflictException when a grant names an outdated consent version, so the person always sees the current text.
    */
   async consent(id: string, owner: Owner, input: ConsentRequest) {
     if (input.action === 'grant' && input.version !== CONSENT_VERSION) {
@@ -133,10 +132,7 @@ export class ProfilesService {
     return { words: wordsForDay(wordsSet, date, locale) };
   }
 
-  /**
-   * Hard deletes the profile; foreign keys cascade. Its files go straight away, and the cleanup
-   * sweep removes anything this misses and then completes the deletion request.
-   */
+  /** Hard deletes the profile and its files. The cleanup sweep removes anything left behind. */
   async remove(id: string, owner: Owner): Promise<void> {
     await this.db.transaction(async (tx) => {
       const deleted = await tx
@@ -154,10 +150,7 @@ export class ProfilesService {
     ]);
   }
 
-  /**
-   * Switching retention changes when existing files expire (spec section 12). Standard counts 30
-   * days from each capture date; keep history counts 24 months from the last check in.
-   */
+  // Standard counts 30 days from each capture; keep history counts 24 months from the last check in (spec section 12).
   private async reapplyRetention(tx: Parameters<Parameters<Db['transaction']>[0]>[0], id: string, to: Retention) {
     const snapshotIds = tx.select({ id: snapshot.id }).from(snapshot).where(eq(snapshot.profileId, id));
     if (to === 'extended') {
@@ -171,7 +164,6 @@ export class ProfilesService {
       await tx.update(render).set({ expiresAt: until }).where(inArray(render.snapshotId, snapshotIds));
       return;
     }
-    // Per row, from its own snapshot's capture date.
     await tx.execute(sql`
       update ${photo} set expires_at = s.taken_at + interval '30 days'
       from ${snapshot} s where ${photo.snapshotId} = s.id and s.profile_id = ${id}`);
@@ -180,7 +172,7 @@ export class ProfilesService {
       from ${snapshot} s where ${render.snapshotId} = s.id and s.profile_id = ${id}`);
   }
 
-  /** Everything stored about the profile. Grows as snapshots, measurements and cards land. */
+  /** Everything stored about the profile, for the person's export. */
   async export(id: string, owner: Owner) {
     const current = await this.get(id, owner);
     const consentEvents = await this.db

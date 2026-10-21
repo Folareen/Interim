@@ -39,8 +39,9 @@ Adapted from [this gist](https://gist.github.com/pipethedev/ff13d98a5b626f985708
 
 ## Comments and JSDoc
 - A `//` comment says why: a business rule, an external quirk, an invariant, a trade-off. Never what the next line does. If a comment restates the code, delete it or rename the code.
-- No commented-out code, no TODOs without an owner or issue, no change history (git has it).
+- Delete a comment that restates the code, repeats a doc instead of linking to it, or records a date, a status or a change (git has those). No commented-out code, and no TODOs without an owner or issue.
 - JSDoc is required on every exported function, class, schema and type that other modules use, and on public methods. It is how the next reader learns the contract without opening the body.
+- JSDoc is not needed on: Nest module classes (they only wire), Drizzle tables ([architecture.md](architecture.md) section 5 documents them), a `type X = z.infer<typeof xSchema>` placed under its documented schema, dependency injection tokens (the providing module says what they carry), controller methods (document the controller; routes are in [architecture.md](architecture.md) section 9), and framework entry exports such as Next.js pages.
 - A JSDoc block starts with one sentence on what the thing is for. Add only what the signature cannot say: `@param` for units, ranges or meaning that the name does not carry, `@returns` when the result is not obvious, `@throws` for errors callers must handle, `@example` for a non-obvious call. Do not repeat types, they are in the signature.
 - Keep it short. A block longer than the code it describes is a sign to simplify the code. Do not add JSDoc to private helpers whose name and types already say it all.
 - When behaviour changes, update the JSDoc in the same change. A wrong doc is worse than none.

@@ -9,11 +9,10 @@ const runSchema = z
     /** Names the run in the results and in its fixture file. */
     label: z.string().regex(/^[A-Za-z0-9_-]{1,40}$/),
     tool: toolSchema,
-    /** One photo, for most tools. */
     photo: z.string().min(1).optional(),
     /** One to three photos, as `src_file_ids`: front, right and left for hair type, or the sources of an image edit. */
     photos: z.array(z.string().min(1)).min(1).max(3).optional(),
-    /** A garment or hat image. */
+    /** A garment image. */
     ref: z.string().min(1).optional(),
     /** Extra request fields, such as `template_id`. YouCam's request schema checks them. */
     params: z.record(z.string(), z.unknown()).default({}),
@@ -31,6 +30,8 @@ export const resultRowSchema = z.object({
 
 /** A list of YouCam calls to run in order, read from a JSON file (docs/integrations/youcam.md, Spike runner). */
 export const manifestSchema = z.object({ runs: z.array(runSchema).min(1) });
+
+/** One YouCam call in a manifest. */
 export type Run = z.infer<typeof runSchema>;
 
 /**
