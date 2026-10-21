@@ -50,6 +50,13 @@
       "when": 1792598852852,
       "tag": "0006_pink_rafael_vega",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792609980980,
+      "tag": "0007_steady_slipstream",
+      "breakpoints": true
     }
   ]
 }
