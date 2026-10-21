@@ -1,6 +1,7 @@
 'use client';
 
-import type { LiveLocale, TemplateKey, Tone } from '@interim/types';
+import type { TemplateKey, Tone } from '@interim/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useRef, useState } from 'react';
 import { Actions } from '@/components/actions';
@@ -9,33 +10,13 @@ import { ChoiceRow } from '@/components/choice-row';
 import { Notice } from '@/components/notice';
 import { ApiError, createProfile, getPreferences, savePreferences } from '@/lib/api';
 
-type Text = {
-  toneTitle: string;
-  tones: Record<Tone, { label: string; description: string }>;
-  hairTitle: string;
-  headCoveringLabel: string;
-  headCoveringHelp: string;
-  ageTitle: string;
-  ageLabel: string;
-  ageHelp: string;
-  submit: string;
-  submitting: string;
-};
-
 const toneOrder: Tone[] = ['practical', 'warm', 'light'];
 
 /** Asks how Interim should talk and whether to show hair, then starts the profile. */
-export function SetupForm({
-  situation,
-  locale,
-  text,
-  errors,
-}: {
-  situation: TemplateKey;
-  locale: LiveLocale;
-  text: Text;
-  errors: { network: string; generic: string };
-}) {
+export function SetupForm({ situation }: { situation: TemplateKey }) {
+  const t = useTranslations('setup');
+  const common = useTranslations('common');
+  const locale = useLocale();
   const router = useRouter();
   const [tone, setTone] = useState<Tone>('warm');
   const [headCovering, setHeadCovering] = useState(false);
@@ -55,7 +36,7 @@ export function SetupForm({
       await savePreferences(created.current, { ...current, locale, tone, headCovering });
       router.push(`/consent/${created.current}`);
     } catch (cause) {
-      setError(cause instanceof ApiError && cause.status === 'network' ? errors.network : errors.generic);
+      setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
       setWorking(false);
     }
   }
@@ -64,15 +45,15 @@ export function SetupForm({
     <form onSubmit={submit} className="flex flex-1 flex-col">
       <div className="mt-8 space-y-9 pb-8">
         <fieldset className="space-y-3">
-          <legend className="mb-3 text-[1.15rem] font-semibold">{text.toneTitle}</legend>
+          <legend className="mb-3 text-[1.15rem] font-semibold">{t('toneTitle')}</legend>
           {toneOrder.map((key) => (
             <ChoiceRow
               key={key}
               kind="radio"
               name="tone"
               value={key}
-              label={text.tones[key].label}
-              description={text.tones[key].description}
+              label={t(`tones.${key}.label`)}
+              description={t(`tones.${key}.description`)}
               checked={tone === key}
               onChange={() => setTone(key)}
             />
@@ -80,24 +61,25 @@ export function SetupForm({
         </fieldset>
 
         <fieldset className="space-y-3">
-          <legend className="mb-3 text-[1.15rem] font-semibold">{text.hairTitle}</legend>
+          <legend className="mb-3 text-[1.15rem] font-semibold">{t('hairTitle')}</legend>
           <ChoiceRow
             kind="checkbox"
             name="headCovering"
-            label={text.headCoveringLabel}
-            description={text.headCoveringHelp}
+            label={t('headCoveringLabel')}
+            description={t('headCoveringHelp')}
             checked={headCovering}
             onChange={(event) => setHeadCovering(event.target.checked)}
           />
         </fieldset>
 
         <fieldset className="space-y-3">
-          <legend className="mb-3 text-[1.15rem] font-semibold">{text.ageTitle}</legend>
+          <legend className="mb-3 text-[1.15rem] font-semibold">{t('ageTitle')}</legend>
           <ChoiceRow
             kind="checkbox"
             name="adult"
-            label={text.ageLabel}
-            description={text.ageHelp}
+            required
+            label={t('ageLabel')}
+            description={t('ageHelp')}
             checked={adult}
             onChange={(event) => setAdult(event.target.checked)}
           />
@@ -106,8 +88,12 @@ export function SetupForm({
         {error && <Notice>{error}</Notice>}
       </div>
       <Actions>
+        {/* Read out when the button turns to "working", since nothing else on the screen changes. */}
+        <p role="status" className="sr-only">
+          {working ? t('submitting') : ''}
+        </p>
         <Button type="submit" disabled={!adult || working}>
-          {working ? text.submitting : text.submit}
+          {working ? t('submitting') : t('submit')}
         </Button>
       </Actions>
     </form>

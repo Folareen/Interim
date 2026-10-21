@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
 
 // The browser only talks to `/api/*`, which is forwarded to the API, so the owner cookie stays first
 // party. The origin is server-side configuration and is never sent to the browser.
@@ -12,4 +13,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
+export default withNextIntl(nextConfig);

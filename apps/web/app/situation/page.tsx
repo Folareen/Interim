@@ -1,27 +1,27 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { Actions } from '@/components/actions';
 import { Button } from '@/components/button';
 import { ChoiceRow } from '@/components/choice-row';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getCopy } from '@/lib/prefs';
 import { situationGroups } from '@/lib/situations';
 
 export async function generateMetadata(): Promise<Metadata> {
-  return { title: (await getCopy()).ui.situation.title };
+  return { title: (await getTranslations('situation'))('title') };
 }
 
 export default async function Situation() {
-  const { ui, templateLabels } = await getCopy();
+  const [t, labels] = await Promise.all([getTranslations('situation'), getTranslations('templateLabels')]);
   const groups = [
-    { title: ui.situation.groupIllness, keys: situationGroups.illness },
-    { title: ui.situation.groupOther, keys: situationGroups.other },
+    { title: t('groupIllness'), keys: situationGroups.illness },
+    { title: t('groupOther'), keys: situationGroups.other },
   ];
   return (
     <Shell step={2} backHref="/language">
       {/* A plain GET form: the choice travels in the address, so no state is kept between screens. */}
       <form action="/setup" method="get" className="flex flex-1 flex-col">
-        <PageHeading title={ui.situation.title} intro={ui.situation.intro} />
+        <PageHeading title={t('title')} intro={t('intro')} />
         <div className="mt-8 space-y-8 pb-8">
           {groups.map((group) => (
             <fieldset key={group.title} className="space-y-3">
@@ -33,15 +33,15 @@ export default async function Situation() {
                   name="situation"
                   value={key}
                   required
-                  label={templateLabels[key]}
-                  description={ui.situation.blurbs[key]}
+                  label={labels(key)}
+                  description={t(`blurbs.${key}`)}
                 />
               ))}
             </fieldset>
           ))}
         </div>
         <Actions>
-          <Button type="submit">{ui.situation.submit}</Button>
+          <Button type="submit">{t('submit')}</Button>
         </Actions>
       </form>
     </Shell>

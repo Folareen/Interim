@@ -3,6 +3,8 @@ import type { InputHTMLAttributes } from 'react';
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> & {
   kind: 'radio' | 'checkbox';
   label: string;
+  /** The label's language when it differs from the page, as with a language's own name. */
+  labelLang?: string;
   description?: string;
 };
 
@@ -10,7 +12,7 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'children'> & 
  * A large, tappable radio or checkbox row. The real input is hidden but stays focusable, so it
  * works with a keyboard and a screen reader, and the form works without JavaScript.
  */
-export function ChoiceRow({ kind, label, description, lang, ...input }: Props) {
+export function ChoiceRow({ kind, label, labelLang, description, ...input }: Props) {
   return (
     <label className="group flex cursor-pointer items-start gap-4 rounded-card border border-border bg-surface p-4 transition-colors hover:border-outline has-[:checked]:border-accent has-[:checked]:bg-tint has-[:checked]:ring-1 has-[:checked]:ring-accent has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
       <input type={kind} className="peer sr-only" {...input} />
@@ -26,8 +28,10 @@ export function ChoiceRow({ kind, label, description, lang, ...input }: Props) {
           </svg>
         )}
       </span>
-      <span className="min-w-0" lang={lang}>
-        <span className="block font-semibold leading-snug">{label}</span>
+      <span className="min-w-0">
+        <span className="block font-semibold leading-snug" lang={labelLang}>
+          {label}
+        </span>
         {description && <span className="mt-1 block text-[0.9rem] leading-snug text-muted">{description}</span>}
       </span>
     </label>
