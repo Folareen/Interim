@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { secondaryClass } from '@/components/button';
+import { primaryClass, secondaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getMe, getProfile } from '@/lib/server-api';
+import { getCards, getMe, getProfile } from '@/lib/server-api';
 import { DeleteProfile } from './delete-profile';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,7 +18,8 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
   const profile = await getProfile(id);
   if (!profile) notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
-  const [t, labels, setup, consent] = await Promise.all([
+  const [cards, t, labels, setup, consent] = await Promise.all([
+    getCards(id),
     getTranslations('ready'),
     getTranslations('templateLabels'),
     getTranslations('setup'),
@@ -44,7 +45,15 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
         </dl>
       </section>
       <p className="mt-8">{t('next')}</p>
-      <div className="mt-6 mb-12">
+      <div className="mt-6 mb-12 space-y-3">
+        <Link href={`/capture/${id}`} className={primaryClass}>
+          {t('startAction')}
+        </Link>
+        {cards[0] && (
+          <Link href={`/cards/${cards[0].id}`} className={secondaryClass}>
+            {t('cardAction')}
+          </Link>
+        )}
         <Link href={`/settings/${id}`} className={secondaryClass}>
           {t('editAction')}
         </Link>

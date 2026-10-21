@@ -1,4 +1,23 @@
 import { Module } from '@nestjs/common';
+import { AgentModule } from '../agent/agent.module';
+import { env } from '../config/env';
+import { GuardModule } from '../guard/guard.module';
+import { StorageModule } from '../storage/storage.module';
+import { BullRunQueue, RUNS_REDIS_URL, RUN_QUEUE } from './run.queue';
+import { RunWorker } from './run.worker';
+import { RUNS_CONFIG, RunsService } from './runs.service';
+import { RunsController } from './runs.controller';
 
-@Module({})
+@Module({
+  imports: [GuardModule, StorageModule, AgentModule],
+  controllers: [RunsController],
+  providers: [
+    { provide: RUNS_REDIS_URL, useValue: env.REDIS_URL },
+    { provide: RUNS_CONFIG, useValue: { runBudgetCap: env.UNIT_BUDGET_PER_RUN } },
+    { provide: RUN_QUEUE, useClass: BullRunQueue },
+    RunsService,
+    RunWorker,
+  ],
+  exports: [RunWorker],
+})
 export class RunsModule {}

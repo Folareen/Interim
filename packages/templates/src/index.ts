@@ -1,4 +1,4 @@
-import type { TemplateKey } from '@interim/types';
+import type { MeasureTool, Placement, Strategy, TemplateKey } from '@interim/types';
 
 /** One situation: its stages, cadence and flags (docs/product/spec.md section 4). */
 export interface Template {
@@ -12,6 +12,12 @@ export interface Template {
   unitBudgetPerRun: number;
   version: number;
   remeasureEvery: number;
+  /** The measurements followed over time, once the baseline has taken them all. */
+  tracks: readonly MeasureTool[];
+  /** How a stage is placed (docs/product/spec.md section 6). Thresholds are tuned in the spike. */
+  placement: Placement;
+  /** The strategies the agent may choose in each stage. */
+  strategies: Readonly<Record<string, readonly Strategy[]>>;
 }
 
 /** Every situation by key. Labels live in `copy`. Stage keys are internal and never shown, and stage thresholds are tuned in the spike. */
@@ -26,6 +32,22 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['hair_density', 'hair_length'],
+    placement: {
+      by: 'density',
+      bands: [
+        { minDrop: 1.8, stage: 'none' },
+        { minDrop: 0.7, stage: 'thinning' },
+      ],
+      recovery: { minRise: 0.7, stage: 'growing_in' },
+    },
+    strategies: {
+      full: ['cut', 'colour', 'hold'],
+      thinning: ['volume', 'cut', 'colour'],
+      short: ['cut', 'colour', 'hold'],
+      none: ['cut', 'colour', 'hold'],
+      growing_in: ['cut', 'colour', 'hold'],
+    },
   },
   hair_patches: {
     key: 'hair_patches',
@@ -37,6 +59,21 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['hair_density'],
+    placement: {
+      by: 'density',
+      bands: [
+        { minDrop: 1.5, stage: 'widespread' },
+        { minDrop: 0.7, stage: 'patchy' },
+      ],
+      recovery: { minRise: 0.7, stage: 'growing_in' },
+    },
+    strategies: {
+      full: ['cut', 'colour', 'hold'],
+      patchy: ['volume', 'cut', 'colour'],
+      widespread: ['cut', 'colour', 'hold'],
+      growing_in: ['cut', 'colour', 'hold'],
+    },
   },
   face_fullness: {
     key: 'face_fullness',
@@ -48,6 +85,13 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['face_shape'],
+    placement: { by: 'reported_change' },
+    strategies: {
+      usual: ['cut', 'colour', 'hold'],
+      fuller: ['cut', 'colour', 'hold'],
+      settling: ['cut', 'colour', 'hold'],
+    },
   },
   // Body photos start off: scars, drains and a changed shape are the most private change Interim sees.
   after_surgery: {
@@ -60,6 +104,13 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: [],
+    placement: { by: 'reported_change' },
+    strategies: {
+      recovering: ['colour', 'hold'],
+      settling: ['cut', 'colour', 'hold'],
+      settled: ['cut', 'colour', 'hold'],
+    },
   },
   skin_colour: {
     key: 'skin_colour',
@@ -71,6 +122,17 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['skin_tone'],
+    placement: {
+      by: 'skin_colour',
+      bands: [{ minChange: 8, stage: 'changing' }],
+      settled: 'settled',
+    },
+    strategies: {
+      usual: ['cut', 'colour', 'hold'],
+      changing: ['cut', 'colour', 'hold'],
+      settled: ['cut', 'colour', 'hold'],
+    },
   },
   weight_change: {
     key: 'weight_change',
@@ -83,6 +145,18 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 2,
     remeasureEvery: 3,
+    tracks: [],
+    placement: {
+      by: 'reported_size',
+      steps: ['usual_size', 'one_size_away', 'two_sizes_away'],
+      settled: 'settled',
+    },
+    strategies: {
+      usual_size: ['cut', 'colour', 'hold'],
+      one_size_away: ['cut', 'colour', 'hold'],
+      two_sizes_away: ['cut', 'colour', 'hold'],
+      settled: ['cut', 'colour', 'hold'],
+    },
   },
   midlife_change: {
     key: 'midlife_change',
@@ -94,6 +168,20 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['hair_density'],
+    placement: {
+      by: 'density',
+      bands: [
+        { minDrop: 1.5, stage: 'sparse' },
+        { minDrop: 0.7, stage: 'thinning' },
+      ],
+      recovery: { minRise: 0.7, stage: 'full' },
+    },
+    strategies: {
+      full: ['cut', 'colour', 'hold'],
+      thinning: ['volume', 'cut', 'colour'],
+      sparse: ['volume', 'cut', 'colour'],
+    },
   },
   after_a_baby: {
     key: 'after_a_baby',
@@ -105,6 +193,17 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['hair_density'],
+    placement: {
+      by: 'density',
+      bands: [{ minDrop: 0.7, stage: 'shedding' }],
+      recovery: { minRise: 0.7, stage: 'growing_in' },
+    },
+    strategies: {
+      full: ['cut', 'colour', 'hold'],
+      shedding: ['volume', 'cut', 'colour'],
+      growing_in: ['cut', 'colour', 'hold'],
+    },
   },
   going_grey: {
     key: 'going_grey',
@@ -116,6 +215,13 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: [],
+    placement: { by: 'reported_change' },
+    strategies: {
+      mostly_coloured: ['cut', 'colour', 'hold'],
+      mixed: ['cut', 'colour', 'hold'],
+      mostly_grey: ['cut', 'colour', 'hold'],
+    },
   },
   textured_growth: {
     key: 'textured_growth',
@@ -127,6 +233,26 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: ['hair_length'],
+    placement: {
+      by: 'length',
+      stages: {
+        'above the ears': 'very_short',
+        'ear length': 'short',
+        'ear length or longer': 'short',
+        'short hair': 'chin_length',
+        'short hair or longer': 'chin_length',
+        'above chest': 'shoulder_length',
+        'above chest or longer': 'shoulder_length',
+        'long hair': 'shoulder_length',
+      },
+    },
+    strategies: {
+      very_short: ['cut', 'colour', 'hold'],
+      short: ['cut', 'colour', 'hold'],
+      chin_length: ['cut', 'colour', 'hold'],
+      shoulder_length: ['cut', 'colour', 'hold'],
+    },
   },
   beard_growth: {
     key: 'beard_growth',
@@ -138,8 +264,18 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    tracks: [],
+    placement: { by: 'reported_change' },
+    strategies: {
+      clean: ['cut', 'colour', 'hold'],
+      stubble: ['cut', 'colour', 'hold'],
+      short: ['cut', 'colour', 'hold'],
+      full: ['cut', 'colour', 'hold'],
+    },
   },
 };
 
 export * from './copy';
+export * from './looks';
 export * from './words';
+export * from './display';

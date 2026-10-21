@@ -192,6 +192,22 @@ export class YoucamClient {
     return { state: 'success', result: definition.result.parse(data.results) as ToolResult<T> };
   }
 
+  /**
+   * Downloads a finished render. Replay reads the image saved beside the fixture and fails closed
+   * when there is none; record saves the image there, because the signed link expires in hours.
+   * @throws YoucamError of kind `transient` when the download fails, so the caller can poll again.
+   */
+  async getResultImage(ref: TaskRef, url: string): Promise<Buffer> {
+    if (this.mode === 'replay') return this.readImageFixture(ref);
+    this.assertLive();
+    if (new URL(url).protocol !== 'https:') throw new YoucamError('invalid_request', 'Result link is not https');
+    const response = await this.send('GET', url, {}, undefined, 'read');
+    if (!response.ok) throw new YoucamError('transient', `Result download failed with ${response.status}`);
+    const image = Buffer.from(await response.arrayBuffer());
+    if (this.mode === 'record') await this.writeImageFixture(ref, image);
+    return image;
+  }
+
   /** Units the API key can still spend. Free, live only. */
   async getSpendableUnits(): Promise<number> {
     this.assertLive();
@@ -312,12 +328,27 @@ export class YoucamClient {
     return new YoucamError('invalid_request', `YouCam returned ${status}: ${text.slice(0, 300)}`);
   }
 
-  private fixturePath(tool: ToolName, fixtureKey: string): string {
+  private fixturePath(tool: ToolName, fixtureKey: string, extension: 'json' | 'jpg' = 'json'): string {
     // The key becomes a file name.
     if (!/^[A-Za-z0-9_-]+$/.test(fixtureKey)) {
       throw new YoucamError('invalid_request', 'Fixture key has unsupported characters');
     }
-    return path.join(this.config.fixturesDir, tool, `${fixtureKey}.json`);
+    return path.join(this.config.fixturesDir, tool, `${fixtureKey}.${extension}`);
+  }
+
+  private async readImageFixture(ref: TaskRef): Promise<Buffer> {
+    const file = this.fixturePath(ref.tool, ref.fixtureKey, 'jpg');
+    try {
+      return await readFile(file);
+    } catch (cause) {
+      throw new YoucamError('replay_missing', `No recorded image at ${file}`, { cause });
+    }
+  }
+
+  private async writeImageFixture(ref: TaskRef, image: Buffer): Promise<void> {
+    const file = this.fixturePath(ref.tool, ref.fixtureKey, 'jpg');
+    await mkdir(path.dirname(file), { recursive: true });
+    await writeFile(file, image);
   }
 
   private async readFixture(tool: ToolName, fixtureKey: string): Promise<string> {

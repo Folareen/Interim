@@ -1,10 +1,10 @@
 import { type Db, photo, selfReport, snapshot } from '@interim/db';
-import { ConflictException, ForbiddenException, UnprocessableEntityException } from '@nestjs/common';
+import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
-import sharp from 'sharp';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { ProfilesService } from '../profiles/profiles.service';
 import { MemoryStorage } from '../test/memory-storage';
+import { blurredJpeg, darkJpeg, texturedJpeg } from '../test/photos';
 import { createTestDb } from '../test/test-db';
 import { SnapshotsService } from './snapshots.service';
 
@@ -28,7 +28,7 @@ let jpeg: Buffer;
 
 beforeAll(async () => {
   db = await createTestDb();
-  jpeg = await sharp({ create: { width: 800, height: 600, channels: 3, background: '#a87850' } }).jpeg().toBuffer();
+  jpeg = await texturedJpeg();
 });
 
 beforeEach(async () => {
@@ -79,22 +79,46 @@ describe('baseline', () => {
   it('asks for the missing photos and stores nothing', async () => {
     const id = await newProfile();
     const uploads = await upload(id, ['front']);
-    await expect(snapshots.create(id, owner, { uploads })).rejects.toThrow(/left, right/);
+    await expect(snapshots.create(id, owner, { uploads })).rejects.toMatchObject({ code: 'missing_left' });
     expect(await db.select().from(snapshot)).toEqual([]);
   });
 
   it('rejects a file that is not an image, whatever the upload says', async () => {
     const id = await newProfile();
     const uploads = await upload(id, ['front', 'left', 'right'], Buffer.from('not a photo'));
-    await expect(snapshots.create(id, owner, { uploads })).rejects.toThrow(UnprocessableEntityException);
+    await expect(snapshots.create(id, owner, { uploads })).rejects.toMatchObject({ code: 'wrong_format', kind: 'front' });
     expect(await db.select().from(snapshot)).toEqual([]);
+  });
+
+  it('refuses a dark or blurred photo before storing anything, and names which one', async () => {
+    const id = await newProfile();
+    for (const [body, code] of [
+      [await darkJpeg(), 'too_dark'],
+      [await blurredJpeg(), 'blurry'],
+    ] as const) {
+      const uploads = await upload(id, ['front', 'left', 'right'], body);
+      await expect(snapshots.create(id, owner, { uploads })).rejects.toMatchObject({ code, kind: expect.any(String) });
+    }
+    expect(await db.select().from(snapshot)).toEqual([]);
+    expect(await db.select().from(photo)).toEqual([]);
+    expect([...storage.objects.keys()].filter((k) => k.startsWith('photos/'))).toEqual([]);
+  });
+
+  it('records how bright and sharp each stored photo was', async () => {
+    const id = await newProfile();
+    const saved = await snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right']) });
+    const [row] = await db.select({ check: snapshot.captureCheck }).from(snapshot).where(eq(snapshot.id, saved.id));
+    expect(row?.check).toMatchObject({
+      source: 'server',
+      photos: expect.arrayContaining([expect.objectContaining({ kind: 'front', meanLuma: expect.any(Number), sharpness: expect.any(Number) })]),
+    });
   });
 
   it('rejects an upload id that never arrived', async () => {
     const id = await newProfile();
     const uploads = await upload(id, ['front', 'left', 'right']);
     storage.objects.delete(`raw/${id}/${uploads[0]?.uploadId}`);
-    await expect(snapshots.create(id, owner, { uploads })).rejects.toThrow(/did not upload/);
+    await expect(snapshots.create(id, owner, { uploads })).rejects.toMatchObject({ code: 'not_uploaded', kind: 'front' });
   });
 
   it('lets only one of two simultaneous requests be the baseline', async () => {
@@ -119,7 +143,7 @@ describe('check in', () => {
     await snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right']) });
 
     const noReport = await upload(id, ['front']);
-    await expect(snapshots.create(id, owner, { uploads: noReport })).rejects.toThrow(/anything has changed/);
+    await expect(snapshots.create(id, owner, { uploads: noReport })).rejects.toMatchObject({ code: 'needs_change_answer' });
 
     const saved = await snapshots.create(id, owner, {
       uploads: await upload(id, ['front']),
@@ -144,14 +168,14 @@ describe('check in', () => {
     const id = await newProfile('standard', 'after_surgery');
     await expect(
       snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right', 'body']) }),
-    ).rejects.toThrow(/Body photos are off/);
+    ).rejects.toMatchObject({ code: 'body_photos_off' });
 
     await snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right']) });
 
     await profiles.setPreferences(id, owner, { locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true, headCovering: false });
     await expect(
       snapshots.create(id, owner, { uploads: await upload(id, ['front']), selfReport: { changed: 'some', reportedSize: 'M' } }),
-    ).rejects.toThrow(/body photo/);
+    ).rejects.toMatchObject({ code: 'missing_body' });
   });
 
   it('refuses side photos after the first set', async () => {
@@ -159,7 +183,7 @@ describe('check in', () => {
     await snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right']) });
     await expect(
       snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left']), selfReport: { changed: 'none' } }),
-    ).rejects.toThrow(/first set/);
+    ).rejects.toMatchObject({ code: 'sides_baseline_only' });
   });
 
   it('keep history restarts the clock on earlier photos; standard does not', async () => {

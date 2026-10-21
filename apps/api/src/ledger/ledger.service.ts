@@ -87,6 +87,22 @@ export class LedgerService {
     return this.close('release', call, 0);
   }
 
+  /**
+   * Units left under the tightest cap that applies to a call, so the agent can plan within it. An
+   * estimate for planning: `reserve` is what enforces the caps, under a lock.
+   */
+  async remaining(context: BudgetContext, now = new Date()): Promise<number> {
+    const scopes = budgetScopes(context, this.caps, dayOf(now));
+    const rows = await this.db
+      .select()
+      .from(budgetCounter)
+      .where(inArray(budgetCounter.scope, scopes.map((s) => s.key)));
+    const byScope = new Map(rows.map((row) => [row.scope, row]));
+    return Math.min(
+      ...scopes.map(({ key, cap }) => cap - (byScope.get(key)?.reservedUnits ?? 0) - (byScope.get(key)?.settledUnits ?? 0)),
+    );
+  }
+
   /** The caller's own ledger rows and the profile's held and spent totals. */
   async list(profileId: string, owner: Owner) {
     await this.profiles.get(profileId, owner);

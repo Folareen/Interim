@@ -25,6 +25,9 @@ export const moment = pgEnum('moment', [
   'going_out',
   'everyday',
 ]);
+export const runStatus = pgEnum('run_status', ['queued', 'running', 'done', 'failed']);
+export const agentStep = pgEnum('agent_step', ['observe', 'measure', 'place', 'decide', 'act', 'compose', 'stop']);
+export const strategy = pgEnum('strategy', ['cut', 'volume', 'colour', 'cover', 'hold']);
 export const taskState = pgEnum('task_state', [
   'intent',
   'created',
@@ -92,67 +95,104 @@ export const photo = pgTable('photo', {
   createdAt: createdAt(),
 });
 
-export const measurement = pgTable('measurement', {
-  id: id(),
-  snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
-  tool: text('tool').notNull(),
-  value: jsonb('value_json').notNull(),
-  youcamTaskId: text('youcam_task_id'), // cost is read from the ledger through this id
-  createdAt: createdAt(),
-});
+export const measurement = pgTable(
+  'measurement',
+  {
+    id: id(),
+    snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
+    tool: text('tool').notNull(),
+    value: jsonb('value_json').notNull(),
+    // False when YouCam's own read of the photo was not all good: kept, but never used to place a stage.
+    reliable: boolean('reliable').notNull().default(true),
+    youcamTaskId: text('youcam_task_id'), // cost is read from the ledger through this id
+    createdAt: createdAt(),
+  },
+  // A retried job finds its measurement instead of adding a second one.
+  (t) => [uniqueIndex('measurement_snapshot_tool').on(t.snapshotId, t.tool)],
+);
 
-export const render = pgTable('render', {
-  id: id(),
-  snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
-  tool: text('tool').notNull(),
-  inputHash: text('input_hash').notNull(),
-  objectKey: text('object_key'), // null once the image has expired
-  label: text('label').notNull(), // preview | earlier look
-  expiresAt: timestamp('expires_at').notNull(),
-  createdAt: createdAt(),
-});
+export const render = pgTable(
+  'render',
+  {
+    id: id(),
+    snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
+    tool: text('tool').notNull(),
+    strategy: strategy('strategy').notNull(),
+    inputHash: text('input_hash').notNull(),
+    objectKey: text('object_key'), // null once the image has expired
+    label: text('label').notNull(), // preview | earlier_look
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('render_snapshot_input').on(t.snapshotId, t.inputHash)],
+);
 
-export const run = pgTable('run', {
-  id: id(),
-  snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
-  templateKey: text('template_key').notNull(),
-  templateVersion: integer('template_version').notNull(),
-  status: text('status').notNull(),
-  stopReason: text('stop_reason'),
-  budgetUnits: integer('budget_units').notNull(), // spent units are summed from the ledger
-  createdAt: createdAt(),
-});
+export const run = pgTable(
+  'run',
+  {
+    id: id(),
+    snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
+    templateKey: text('template_key').notNull(),
+    templateVersion: integer('template_version').notNull(),
+    status: runStatus('status').notNull().default('queued'),
+    stopReason: text('stop_reason'), // a trace reason code
+    retake: text('retake'), // a capture problem code, when YouCam asked for a new photo
+    budgetUnits: integer('budget_units').notNull(), // spent units are summed from the ledger
+    sourceHash: text('source_hash'), // keyed hash of the caller's address, for the per source daily cap
+    createdAt: createdAt(),
+  },
+  // One run per snapshot, so starting it twice returns the same one.
+  (t) => [uniqueIndex('run_snapshot').on(t.snapshotId)],
+);
 
-export const traceEntry = pgTable('trace_entry', {
-  id: id(),
-  runId: uuid('run_id').notNull().references(() => run.id, { onDelete: 'cascade' }),
-  seq: integer('seq').notNull(),
-  tool: text('tool').notNull(),
-  inputs: jsonb('inputs_json').notNull(),
-  outputsRef: text('outputs_ref'),
-  costUnits: integer('cost_units').notNull().default(0),
-  reason: text('reason').notNull(),
-  createdAt: createdAt(),
-});
+export const traceEntry = pgTable(
+  'trace_entry',
+  {
+    id: id(),
+    runId: uuid('run_id').notNull().references(() => run.id, { onDelete: 'cascade' }),
+    seq: integer('seq').notNull(),
+    step: agentStep('step').notNull(),
+    tool: text('tool'), // null for a step that used none
+    inputs: jsonb('inputs_json').notNull(),
+    outputsRef: text('outputs_ref'),
+    costUnits: integer('cost_units').notNull().default(0),
+    reason: text('reason').notNull(), // a trace reason code
+    createdAt: createdAt(),
+  },
+  // A retried job rewrites the same line instead of adding another.
+  (t) => [uniqueIndex('trace_entry_run_seq').on(t.runId, t.seq)],
+);
 
-export const stageCard = pgTable('stage_card', {
-  id: id(),
-  runId: uuid('run_id').notNull().references(() => run.id, { onDelete: 'cascade' }),
-  card: jsonb('card_json').notNull(),
-  approvedAt: timestamp('approved_at'),
-  createdAt: createdAt(),
-});
+export const stageCard = pgTable(
+  'stage_card',
+  {
+    id: id(),
+    runId: uuid('run_id').notNull().references(() => run.id, { onDelete: 'cascade' }),
+    // Kept beside the run so listing a profile's cards and checking who owns one is a single lookup.
+    profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+    card: jsonb('card_json').notNull(),
+    approvedAt: timestamp('approved_at'),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('stage_card_run').on(t.runId)],
+);
 
-export const youcamTask = pgTable('youcam_task', {
-  id: id(), // our request id, written before the create call is sent
-  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
-  runId: uuid('run_id').references(() => run.id, { onDelete: 'set null' }),
-  tool: text('tool').notNull(),
-  state: taskState('state').notNull().default('intent'),
-  youcamTaskId: text('youcam_task_id'),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  createdAt: createdAt(),
-});
+export const youcamTask = pgTable(
+  'youcam_task',
+  {
+    id: id(), // our request id, written before the create call is sent
+    profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+    runId: uuid('run_id').references(() => run.id, { onDelete: 'set null' }),
+    tool: text('tool').notNull(),
+    // The call's fixture key (photo hash, tool, version, parameters). A redelivered job finds its task by it.
+    cacheKey: text('cache_key').notNull(),
+    state: taskState('state').notNull().default('intent'),
+    youcamTaskId: text('youcam_task_id'),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex('youcam_task_run_key').on(t.runId, t.cacheKey)],
+);
 
 // No personal data and no foreign keys, so it survives profile deletion.
 export const ledgerEntry = pgTable(
@@ -179,8 +219,13 @@ export const budgetCounter = pgTable('budget_counter', {
 });
 
 export const callCache = pgTable('call_cache', {
-  key: text('key').primaryKey(), // normalised photo hash + tool + API version + parameters hash
+  // `<profile id>:<normalised photo hash, tool, API version and parameters hash>`. The profile is part
+  // of the key, so one person's result is never served to another and a deleted profile takes its rows.
+  key: text('key').primaryKey(),
+  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+  tool: text('tool').notNull(),
   outcome: cacheOutcome('outcome').notNull(),
+  // A success holds the tool's result as JSON for a measurement, or the stored image's object key for a render.
   resultRef: text('result_ref'),
   createdAt: createdAt(),
 });

@@ -179,6 +179,8 @@ export const tools = {
       faceshape: z
         .enum(['Triangle', 'Diamond', 'Heart', 'InvTriangle', 'Oblong', 'Oval', 'Round', 'Square', 'Unknown'])
         .optional(),
+      // `[1, ratio]`: the second number is the face's height for a width of one. The one tracked for fullness.
+      facialratio: z.object({ face_aspect_ratio: z.tuple([z.number(), z.number()]) }).optional(),
     }),
   },
   // Keeps the person's face, pose and background and changes only the garment.

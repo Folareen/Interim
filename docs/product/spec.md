@@ -147,7 +147,7 @@ The eligibility table is published in the project readme, built from the spike r
 Each run follows this loop. The model chooses steps inside it. Code enforces the rules.
 
 1. **Observe.** Load the profile, template, previous snapshot and the new snapshot. Run capture checks again on the server.
-2. **Measure.** Ask the planner which measurements are worth taking, filtered by eligibility. Take them. Add each to the ledger.
+2. **Measure.** Code decides which measurements are worth taking, from section 6 and the template, and filters them by eligibility. Take them. Add each to the ledger. The planner is not asked, because this decision spends units.
 3. **Place.** Compute the stage from measurements, self report and the template thresholds. If the stage changed since the last snapshot, record the change.
 4. **Decide.** The planner picks a strategy for this stage and moment from the template's allowed list: cut, volume, colour, cover or hold. It must name the measurement or self report that supports the choice.
 5. **Act.** Render two to four options within budget. Render saved garments again on the new photo if the template uses fit.
@@ -349,7 +349,8 @@ This section owns every open question. What the live runs settled is in [integra
 7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender, for example every style to everyone with the volume previews labelled by look.
 8. Whether Camera Kit gives enough angle control for the top photo.
 9. Native review of the nine draft languages: the screens and consent text (the consent wording also needs legal review per language), the banned word, companion phrase and crisis phrase lists, and the crisis contact wording. Review in this order of risk: consent text and crisis wording first, then the safety lists, then the rest. Reflection must not run in a language before its crisis list is reviewed. If a language cannot be reviewed, remove it from `liveLocales` rather than ship it unchecked; Igbo is the first to drop. The words for today sets have no public domain translation in these languages yet, so they fall back to English.
-10. Accounts (section 12b): checking new passwords against leaked ones, changing the email address, recovering an account when the inbox is lost, and legal review of the sign up wording where it names Brevo and Google. None is built.
+10. YouCam's Camera Kit (`plugins-media.makeupar.com`) runs on the capture screen with camera access. Its documentation does not say what it sends to Perfect Corp's servers, whether frames leave the device, or how it behaves on iOS Safari, and the consent text names Perfect Corp only as the processor of uploaded photos. Settle this and the wording before launch. The file input stays as the way to avoid the kit.
+11. Accounts (section 12b): checking new passwords against leaked ones, changing the email address, recovering an account when the inbox is lost, and legal review of the sign up wording where it names Brevo and Google. None is built.
 
 ## 18. Numbers and measures
 

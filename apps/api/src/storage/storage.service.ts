@@ -54,6 +54,13 @@ export class StorageService {
     return { url, expiresInSeconds: PRESIGN_TTL_SECONDS };
   }
 
+  /** A short-lived link the browser can show an image from. Photos and renders are never public. */
+  async presignGet(key: string) {
+    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
+      expiresIn: PRESIGN_TTL_SECONDS,
+    });
+  }
+
   /**
    * Reads an object, refusing anything larger than `maxBytes` before downloading it.
    * @returns undefined when the key does not exist, or `'too_large'`.

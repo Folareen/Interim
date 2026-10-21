@@ -1,25 +1,20 @@
 import { randomUUID } from 'node:crypto';
 import { type Db, photo, profile, render, selfReport, snapshot } from '@interim/db';
-import { photoSetProblem, selfReportProblem, expiresAt } from '@interim/rules';
+import { expiresAt, photoQualityProblem, photoSetProblem, selfReportProblem } from '@interim/rules';
 import { templates } from '@interim/templates';
 import {
   type CreateSnapshotInput,
   type CreateUploadsInput,
+  type PhotoKind,
   templateKeySchema,
 } from '@interim/types';
-import {
-  ConflictException,
-  ForbiddenException,
-  Inject,
-  Injectable,
-  PayloadTooLargeException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { count, eq, inArray } from 'drizzle-orm';
 import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { StorageService } from '../storage/storage.service';
+import { CaptureError, captureError } from './capture-error';
 import { normalisePhoto } from './photo';
 
 /** Upload limits, provided by the module from the environment. */
@@ -46,13 +41,12 @@ export class SnapshotsService {
    * Hands out one short-lived upload link per photo. Nothing is stored yet: the raw file lands
    * under `raw/` and becomes a photo only when a snapshot names its upload id.
    * @throws ForbiddenException before the person has consented to the current text.
-   * @throws PayloadTooLargeException when a photo is over `MAX_UPLOAD_BYTES`.
+   * @throws UnprocessableEntityException with code `too_large` when a photo is over `MAX_UPLOAD_BYTES`.
    */
   async createUploads(profileId: string, owner: Owner, input: CreateUploadsInput) {
     await this.requireConsent(profileId, owner);
-    if (input.uploads.some((u) => u.sizeBytes > this.config.maxUploadBytes)) {
-      throw new PayloadTooLargeException('Photos can be up to 12 MB.');
-    }
+    const tooLarge = input.uploads.find((u) => u.sizeBytes > this.config.maxUploadBytes);
+    if (tooLarge) throw captureError('too_large', tooLarge.kind);
     const uploads = await Promise.all(
       input.uploads.map(async ({ kind, sizeBytes }) => {
         const uploadId = randomUUID();
@@ -65,8 +59,10 @@ export class SnapshotsService {
 
   /**
    * Turns uploaded files into a stored snapshot: checks the photo set and self report, normalises
-   * every photo, stores the JPEGs and rows together, then deletes the raw uploads.
-   * @throws UnprocessableEntityException with a plain sentence when anything is missing or unusable.
+   * every photo and checks its light and sharpness, stores the JPEGs and rows together, then
+   * deletes the raw uploads. A photo that fails a check is refused before anything is stored, so
+   * no YouCam call can follow it (docs/product/spec.md section 16, test 1).
+   * @throws UnprocessableEntityException with a `CaptureProblemBody` when anything is missing or unusable.
    */
   async create(profileId: string, owner: Owner, input: CreateSnapshotInput) {
     const current = await this.requireConsent(profileId, owner);
@@ -81,14 +77,14 @@ export class SnapshotsService {
     const problem =
       photoSetProblem(input.uploads.map((u) => u.kind), context) ??
       selfReportProblem(input.selfReport, context);
-    if (problem) throw new UnprocessableEntityException(problem);
+    if (problem) throw captureError(problem);
 
     const normalised = await Promise.all(
       input.uploads.map(async ({ uploadId, kind }) => {
         const raw = await this.storage.readCapped(rawKey(profileId, uploadId), this.config.maxUploadBytes);
-        if (raw === undefined) throw new UnprocessableEntityException(`The ${kind} photo did not upload. Try again.`);
-        if (raw === 'too_large') throw new UnprocessableEntityException('Photos can be up to 12 MB.');
-        return { uploadId, kind, photo: await normalisePhoto(raw) };
+        if (raw === undefined) throw captureError('not_uploaded', kind);
+        if (raw === 'too_large') throw captureError('too_large', kind);
+        return { uploadId, kind, photo: await normaliseFor(kind, raw) };
       }),
     );
 
@@ -125,7 +121,14 @@ export class SnapshotsService {
         moment: input.moment ?? null,
         captureCheck: {
           source: 'server',
-          photos: normalised.map(({ kind, photo: p }) => ({ kind, format: p.format, width: p.width, height: p.height })),
+          photos: normalised.map(({ kind, photo: p }) => ({
+            kind,
+            format: p.format,
+            width: p.width,
+            height: p.height,
+            meanLuma: Math.round(p.meanLuma),
+            sharpness: Math.round(p.sharpness),
+          })),
         },
       });
       await tx.insert(photo).values(
@@ -164,5 +167,19 @@ export class SnapshotsService {
     const current = await this.profiles.get(profileId, owner);
     if (!current.consentCurrent) throw new ForbiddenException('Please accept the current consent text first.');
     return current;
+  }
+}
+
+/** Normalises one photo and applies the quality rule, tagging any refusal with the kind of photo. */
+async function normaliseFor(kind: PhotoKind, raw: Buffer) {
+  try {
+    const normalised = await normalisePhoto(raw);
+    const problem = photoQualityProblem(normalised);
+    if (problem) throw captureError(problem, kind);
+    return normalised;
+  } catch (error) {
+    // Adds which photo failed, so the wizard can send the person back to it.
+    if (error instanceof CaptureError && !error.kind) throw captureError(error.code, kind);
+    throw error;
   }
 }

@@ -11,6 +11,8 @@ const profile = {
   consentCurrent: false,
   retention: 'standard',
   tone: 'warm',
+  bodyPhotos: true,
+  hasBaseline: false,
   extra: 'ignored',
 };
 

@@ -8,7 +8,8 @@ Design: [architecture.md](../architecture.md) section 6. Eligibility rules, erro
 | `youcam.tools.ts` | One entry per tool: version, path, request schema, result schema |
 | `youcam.errors.ts` | `YoucamError` kinds and the task error to action table |
 | `youcam.constants.ts` | Cost table, rate limit, base URL |
-| `youcam.module.ts` | Builds the client from env |
+| `youcam.gateway.ts` | `YoucamGateway`: the one path every call takes (recorded result, reserve, task row, upload, create, poll, settle, cache), and `youcamFixtureKey` |
+| `youcam.module.ts` | Builds the client and the gateway from env |
 | `spike/` | The spike runner and its manifest schema. Not part of the build |
 
 ## Modes (`YOUCAM_MODE`)
@@ -19,12 +20,13 @@ Design: [architecture.md](../architecture.md) section 6. Eligibility rules, erro
 The default is `replay`, so a fresh checkout never spends units. `live` and `record` also need `LIVE_CALLS_ENABLED=true` and a key; otherwise the client throws before any request.
 
 ## Using the client
-The caller owns the ledger, task rows, call_cache and the poll queue. The client does only the YouCam steps:
+The client does only the YouCam steps; the gateway owns the ledger, task rows and call_cache around it, and the agent calls the gateway, never the client:
 
 1. `uploadPhoto(photo)` returns a file id, valid 24 hours.
 2. `createTask(tool, body, fixtureKey)` returns a `TaskRef`. `fixtureKey` is the call_cache key and names the fixture. Never call it twice for one logical task.
 3. `getTask(ref)` returns `running`, `success` with a typed result, or `error` with the code and an action (`block_tool`, `new_photo`, `fault`). A task error inside HTTP 200 is returned, not thrown.
-4. `getFeatureCosts()` and `getSpendableUnits()` read prices and the balance. Both are free and live only. Spendable units are the credit batches whose type starts with `Api`.
+4. `getResultImage(ref, url)` downloads a finished render. In `record` it also saves `<fixtureKey>.jpg` beside the fixture, because the signed link expires in hours; in `replay` it reads that file and fails closed when it is missing.
+5. `getFeatureCosts()` and `getSpendableUnits()` read prices and the balance. Both are free and live only. Spendable units are the credit batches whose type starts with `Api`.
 
 Thrown `YoucamError` kinds: `live_disabled`, `replay_missing`, `auth`, `out_of_units`, `rate_limited`, `invalid_request`, `unknown_outcome` (create timed out or got a 5xx: mark the task `unknown`, do not re-send) and `transient` (poll or upload: retry later). Only a 429 is retried inside the client, up to 5 times with a doubling wait and jitter.
 
@@ -96,10 +98,11 @@ Found by running the tools against the live API, on professional portraits and o
 
 ## Not built yet
 - The Redis token bucket shared by all workers (architecture.md section 6). The client only backs off on a 429.
-- The reserve, task row, call_cache and poll queue steps that wrap the client.
+- A separate poll queue. The gateway polls inside the run job (5 to 20 seconds apart, up to 5 minutes), and a task row left in `created` is polled again on redelivery.
+- Reconciling `unknown` tasks, and switching live calls off by itself on `auth` or `out_of_units`.
 - A tool entry for skin analysis (`skin-analysis`). Its prices are in `youcam.constants.ts`.
 - Wrappers for bg-replace, image-to-video, look-vto and the template lists, which only the spike runner reads.
-- Not yet seen succeed live: hair type (needs three angle photos), hair color and beard style.
+- Not yet seen succeed live: hair type (needs three angle photos), hair color and beard style. The template lists were read once (116 hair transfer templates, 15 beard style ones, all unisex `all_` ids for beards) and the looks in `packages/templates/src/looks.ts` come from them.
 
 ## Spike runner
 Runs the live part of the spike ([product/spec.md](../product/spec.md) section 17) from a JSON manifest of calls. It is a dry run unless `--yes` is given. Live calls cost real money (500 units cost 27.50 dollars), so spending also needs `--max-units <n>`, a cap on the whole batch. The runner refuses if the estimate is over the cap or any run has no confirmed price, and stops before a run that would pass it. It needs `YOUCAM_MODE=record`, `JUDGE_MODE_FORCE_REPLAY=false`, `LIVE_CALLS_ENABLED=true` and `YOUCAM_API_KEY` (copy `.env.example` to `.env` first).

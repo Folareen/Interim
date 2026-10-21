@@ -1,13 +1,19 @@
 import {
   type AuthConfig,
+  type CardSummary,
+  type CardView,
   type Me,
   type Preferences,
   type Profile,
+  type RunView,
   authConfigSchema,
+  cardSummaryListSchema,
+  cardViewSchema,
   meSchema,
   preferencesSchema,
   profileListSchema,
   profileSchema,
+  runViewSchema,
 } from '@interim/types';
 import { cookies } from 'next/headers';
 
@@ -63,4 +69,36 @@ export async function getPreferences(id: string): Promise<Preferences | undefine
   if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return preferencesSchema.parse(await response.json());
+}
+
+/** A run, or undefined when it does not exist or is not the person's. */
+export async function getRun(id: string): Promise<RunView | undefined> {
+  const response = await fetch(`${apiOrigin}/runs/${encodeURIComponent(id)}`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return runViewSchema.parse(await response.json());
+}
+
+/** A Stage Card with links to its images, or undefined when it is not the person's. */
+export async function getCard(id: string): Promise<CardView | undefined> {
+  const response = await fetch(`${apiOrigin}/cards/${encodeURIComponent(id)}`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return cardViewSchema.parse(await response.json());
+}
+
+/** The profile's cards, newest first. */
+export async function getCards(profileId: string): Promise<CardSummary[]> {
+  const response = await fetch(`${apiOrigin}/profiles/${encodeURIComponent(profileId)}/cards`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return cardSummaryListSchema.parse(await response.json());
 }

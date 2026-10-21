@@ -42,6 +42,10 @@ export class MemoryStorage {
     return Promise.resolve({ url: `https://r2.test/${key}?size=${sizeBytes}`, expiresInSeconds: 600 });
   }
 
+  presignGet(key: string) {
+    return Promise.resolve(`https://r2.test/${key}?signed=1`);
+  }
+
   asService(): StorageService {
     return this as unknown as StorageService;
   }
