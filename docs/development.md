@@ -1,7 +1,7 @@
 # Development
 
 ## Requirements
-Node 22, pnpm 10, Docker (Postgres, Redis, and MinIO as a local stand-in for Cloudflare R2).
+Node 22, pnpm 10, Docker (Postgres and Redis), and a Cloudflare R2 bucket with an API token.
 
 ## First run
 ```bash
