@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { boolean, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 // docs/architecture.md section 5. Hard delete cascades from profile, except the ledger,
 // budget counters and deletion requests, which hold no personal data.
@@ -13,6 +13,7 @@ export const consentAction = pgEnum('consent_action', ['grant', 'withdraw']);
 export const changeReport = pgEnum('change_report', ['none', 'some', 'lot']);
 // Every planned language, so turning one on needs no migration; the API accepts only live ones.
 export const locale = pgEnum('locale', ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig', 'pcm']);
+export const authTokenPurpose = pgEnum('auth_token_purpose', ['verify_email', 'magic_link', 'reset_password']);
 export const tone = pgEnum('tone', ['practical', 'warm', 'light']);
 export const wordsSet = pgEnum('words_set', ['gentle', 'christian', 'muslim', 'jewish']);
 export const moment = pgEnum('moment', [
@@ -212,3 +213,46 @@ export const deletionRequest = pgTable('deletion_request', {
   requestedAt: timestamp('requested_at').notNull().defaultNow(),
   completedAt: timestamp('completed_at'),
 });
+
+// Sign-in (docs/architecture.md section 12). A profile belongs to an account through
+// `profile.owner_ref = 'account:<id>'`, so deleting an account deletes its profiles through
+// `ProfilesService.remove`, which also removes their files.
+export const account = pgTable('account', {
+  id: id(),
+  email: text('email').notNull().unique(), // stored lower case
+  emailVerifiedAt: timestamp('email_verified_at'), // null until the person proves the inbox is theirs
+  passwordHash: text('password_hash'), // null for accounts that only use a link or Google
+  googleSub: text('google_sub').unique(),
+  createdAt: createdAt(),
+});
+
+// Only the hash of the cookie token is stored, so a database leak cannot be replayed.
+export const session = pgTable('session', {
+  id: id(),
+  accountId: uuid('account_id').notNull().references(() => account.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: createdAt(),
+});
+
+// One use links sent by email. Keyed by email, not account, because a sign-in link can create the account.
+export const authToken = pgTable('auth_token', {
+  id: id(),
+  email: text('email').notNull(),
+  purpose: authTokenPurpose('purpose').notNull(),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  usedAt: timestamp('used_at'),
+  createdAt: createdAt(),
+});
+
+// Fixed window counters for sign-in endpoints. Keys are HMACs, so no email or address is stored.
+export const rateLimit = pgTable(
+  'rate_limit',
+  {
+    key: text('key').notNull(),
+    windowStart: timestamp('window_start').notNull(),
+    hits: integer('hits').notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.key, t.windowStart] })],
+);
