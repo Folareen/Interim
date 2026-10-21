@@ -21,7 +21,7 @@ Components, from the user inward:
 * **Agent module.** Planner, eligibility rules, composer, trace writer.
 * **PostgreSQL.** All records.
 * **Redis.** Queues, the shared rate limit bucket and short lived locks.
-* **Object storage.** Encrypted photos and renders in Cloudflare R2, reached through its S3 compatible API (no AWS account is involved). MinIO stands in for it locally.
+* **Object storage.** Encrypted photos and renders in Cloudflare R2, reached through its S3 compatible API (no AWS account is involved).
 * **YouCam API.** External. Called only from the worker.
 
 Request flow for one check in:
