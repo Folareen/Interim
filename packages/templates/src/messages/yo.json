@@ -17,7 +17,9 @@
     "notFoundBody": "Ìsopọ̀ náà lè ti gbó, tàbí kí wọ́n ti pa àkọsílẹ̀ náà rẹ́.",
     "startAgain": "Bẹ̀rẹ̀ lẹ́ẹ̀kan sí i",
     "signIn": "Wọlé",
-    "account": "Àkáǹtì"
+    "account": "Àkáǹtì",
+    "showPassword": "Fi ọ̀rọ̀ aṣínà hàn",
+    "hidePassword": "Má ṣe fi ọ̀rọ̀ aṣínà hàn"
   },
   "welcome": {
     "title": "Máa ní ìmọ̀lára bí ara rẹ nígbà tí ara rẹ ń yípadà.",

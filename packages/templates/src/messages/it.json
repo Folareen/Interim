@@ -17,7 +17,9 @@
     "notFoundBody": "Il link potrebbe essere vecchio, oppure il profilo potrebbe essere stato eliminato.",
     "startAgain": "Ricomincia",
     "signIn": "Accedi",
-    "account": "Account"
+    "account": "Account",
+    "showPassword": "Mostra la password",
+    "hidePassword": "Nascondi la password"
   },
   "welcome": {
     "title": "Sentiti ancora tu mentre il tuo corpo cambia.",

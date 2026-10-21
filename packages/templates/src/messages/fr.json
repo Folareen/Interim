@@ -17,7 +17,9 @@
     "notFoundBody": "Le lien est peut-être ancien, ou le profil a peut-être été supprimé.",
     "startAgain": "Recommencer",
     "signIn": "Se connecter",
-    "account": "Compte"
+    "account": "Compte",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe"
   },
   "welcome": {
     "title": "Sentez-vous vous-même pendant que votre corps change.",

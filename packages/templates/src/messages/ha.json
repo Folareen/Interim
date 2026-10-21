@@ -17,7 +17,9 @@
     "notFoundBody": "Hanyar na iya zama tsohuwa, ko kuma an share bayanan mutumin.",
     "startAgain": "Fara daga farko",
     "signIn": "Shiga",
-    "account": "Asusu"
+    "account": "Asusu",
+    "showPassword": "Nuna kalmar sirri",
+    "hidePassword": "Daina nuna kalmar sirri"
   },
   "welcome": {
     "title": "Ku ji kamar kanku yayin da jikinku ke canzawa.",

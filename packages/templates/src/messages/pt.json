@@ -17,7 +17,9 @@
     "notFoundBody": "O link pode ser antigo, ou o perfil pode ter sido excluído.",
     "startAgain": "Começar de novo",
     "signIn": "Entrar",
-    "account": "Conta"
+    "account": "Conta",
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Ocultar senha"
   },
   "welcome": {
     "title": "Continue se sentindo como você enquanto seu corpo muda.",

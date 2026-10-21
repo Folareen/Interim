@@ -17,7 +17,9 @@
     "notFoundBody": "Di link fit don old, or dem fit don delete di profile.",
     "startAgain": "Start again",
     "signIn": "Sign in",
-    "account": "Account"
+    "account": "Account",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "welcome": {
     "title": "Feel like yourself as your body dey change.",

@@ -17,7 +17,9 @@
     "notFoundBody": "Kiungo kinaweza kuwa cha zamani, au wasifu unaweza kuwa umefutwa.",
     "startAgain": "Anza upya",
     "signIn": "Ingia",
-    "account": "Akaunti"
+    "account": "Akaunti",
+    "showPassword": "Onyesha nenosiri",
+    "hidePassword": "Ficha nenosiri"
   },
   "welcome": {
     "title": "Jisikie kama wewe mwili wako unapobadilika.",

@@ -17,7 +17,9 @@
     "notFoundBody": "The link may be old, or the profile may have been deleted.",
     "startAgain": "Start again",
     "signIn": "Sign in",
-    "account": "Account"
+    "account": "Account",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "welcome": {
     "title": "Feel like yourself while your body changes.",

@@ -17,7 +17,9 @@
     "notFoundBody": "Njikọ ahụ nwere ike ịbụ nke ochie, ma ọ bụ ka e hichapụla profaịlụ ahụ.",
     "startAgain": "Malite ọzọ",
     "signIn": "Banye",
-    "account": "Akaụntụ"
+    "account": "Akaụntụ",
+    "showPassword": "Gosi paswọọdụ",
+    "hidePassword": "Kwụsị igosi paswọọdụ"
   },
   "welcome": {
     "title": "Nwee mmetụta dị ka onwe gị ka ahụ gị na-agbanwe.",
