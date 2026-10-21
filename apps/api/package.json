@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nest start --watch",
-    "dev:worker": "nest start --watch --entryFile worker",
+    "dev": "nest start --watch --env-file ../../.env",
+    "dev:worker": "nest start --watch --entryFile worker --env-file ../../.env",
     "build": "nest build",
     "start": "node dist/main",
     "start:worker": "node dist/worker",
