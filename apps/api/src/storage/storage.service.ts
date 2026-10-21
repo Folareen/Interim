@@ -10,7 +10,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Inject, Injectable } from '@nestjs/common';
 
-/** Connection settings for the S3-compatible bucket. */
+/** Connection settings for the R2 bucket. */
 export interface StorageConfig {
   endpoint: string;
   bucket: string;
@@ -28,7 +28,7 @@ export interface StoredObject {
   lastModified: Date;
 }
 
-/** S3-compatible object storage: MinIO locally, R2 in production. Only keys are stored elsewhere. */
+/** Cloudflare R2 object storage, reached through its S3-compatible API. MinIO stands in for it locally. Only keys are stored elsewhere. */
 @Injectable()
 export class StorageService {
   private readonly client: S3Client;
@@ -79,7 +79,7 @@ export class StorageService {
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
   }
 
-  /** Lists every object under a prefix, one S3 page (up to 1000 keys) at a time. */
+  /** Lists every object under a prefix, one page (up to 1000 keys) at a time. */
   async *list(prefix: string): AsyncGenerator<StoredObject[]> {
     let token: string | undefined;
     do {

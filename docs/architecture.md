@@ -21,7 +21,7 @@ Components, from the user inward:
 * **Agent module.** Planner, eligibility rules, composer, trace writer.
 * **PostgreSQL.** All records.
 * **Redis.** Queues, the shared rate limit bucket and short lived locks.
-* **Object storage (S3 compatible).** Encrypted photos and renders. Cloudflare R2 in production, MinIO locally.
+* **Object storage.** Encrypted photos and renders in Cloudflare R2, reached through its S3 compatible API (no AWS account is involved). MinIO stands in for it locally.
 * **YouCam API.** External. Called only from the worker.
 
 Request flow for one check in:
@@ -63,7 +63,7 @@ interim/
 * **agent.** Planner, rules, composer, trace. See section 7.
 * **guard.** Owner identity, consent checks and request limits.
 * **cleanup.** Retention, deletion and bucket reconcile. See section 8.
-* **storage.** The S3 client: presigned uploads, reads, listing and deletes.
+* **storage.** The R2 client: presigned uploads, reads, listing and deletes.
 
 ## 5. Data model (PostgreSQL)
 
@@ -73,9 +73,9 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **consent_event.** id, profile_id, version, action (grant or withdraw), created.
 * **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
-* **photo.** id, snapshot_id, kind (front, left, right, top, body), s3_key, sha256 of the normalised file, expires_at.
+* **photo.** id, snapshot_id, kind (front, left, right, top, body), object_key, sha256 of the normalised file, expires_at.
 * **measurement.** id, snapshot_id, tool, value_json, youcam_task_id. Cost is read from the ledger through the task id.
-* **render.** id, snapshot_id, tool, input_hash, s3_key (null once expired), label (preview or earlier look), expires_at.
+* **render.** id, snapshot_id, tool, input_hash, object_key (null once expired), label (preview or earlier look), expires_at.
 * **run.** id, snapshot_id, template_key, template_version, status, stop_reason, budget_units. Spent units are summed from the ledger.
 * **trace_entry.** id, run_id, seq, tool, inputs_json, outputs_ref, cost_units, reason.
 * **stage_card.** id, run_id, card_json, approved_at.
@@ -88,7 +88,7 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **share_link.** id, card_id, token_hash, expires_at, revoked_at.
 * **deletion_request.** id, requested_at, completed_at. Holds no profile reference.
 
-Hard delete cascades from profile to everything above except the ledger, budget counters and deletion requests, and removes the S3 objects. A cleanup job also compares stored keys against the bucket to find objects that are missing or that were left behind. Redis jobs carry ids only. Backups age out within 7 days.
+Hard delete cascades from profile to everything above except the ledger, budget counters and deletion requests, and removes the stored files. A cleanup job also compares stored keys against the bucket to find objects that are missing or that were left behind. Redis jobs carry ids only. Backups age out within 7 days.
 
 ## 6. YouCam client design
 
@@ -122,7 +122,7 @@ BullMQ on Redis.
 
 * **run queue.** One job per run. Concurrency of one per profile.
 * **poll queue.** One job per open YouCam task, with growing delay.
-* **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `s3_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
+* **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `object_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
 ## 9. HTTP API
@@ -180,7 +180,7 @@ Server environment variables, by name:
 * YOUCAM_BASE_URL
 * DATABASE_URL
 * REDIS_URL
-* S3_ENDPOINT, S3_BUCKET, S3_REGION, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY
+* R2_ENDPOINT, R2_BUCKET, R2_REGION, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
 * GOOGLE_GENERATIVE_AI_API_KEY and LLM_MODEL (Gemini through the Vercel AI SDK)
 * UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY
 * YOUCAM_MODE with values live, record or replay

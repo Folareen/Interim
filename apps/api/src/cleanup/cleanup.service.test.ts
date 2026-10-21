@@ -33,7 +33,7 @@ const put = (key: string, age = 0) => storage.put(key, Buffer.from('x'), 'image/
 const keys = () => [...storage.objects.keys()].sort();
 
 async function addPhoto(key: string, expiresAt: Date, withObject = true) {
-  await db.insert(photo).values({ snapshotId, kind: 'front', s3Key: key, sha256: 'h', expiresAt });
+  await db.insert(photo).values({ snapshotId, kind: 'front', objectKey: key, sha256: 'h', expiresAt });
   if (withObject) await put(key, 10 * 60 * 1000);
 }
 
@@ -52,13 +52,13 @@ describe('expiry', () => {
   it('removes the image of an expired render but keeps the row', async () => {
     const key = `renders/${alive}/r.jpg`;
     await put(key);
-    await db.insert(render).values({ snapshotId, tool: 'hairstyle', inputHash: 'h', s3Key: key, label: 'preview', expiresAt: ago(HOUR) });
+    await db.insert(render).values({ snapshotId, tool: 'hairstyle', inputHash: 'h', objectKey: key, label: 'preview', expiresAt: ago(HOUR) });
 
     const report = await cleanup.run(now);
 
     expect(report.expiredRenders).toBe(1);
     expect(storage.objects.has(key)).toBe(false);
-    expect((await db.select().from(render))[0]?.s3Key).toBeNull();
+    expect((await db.select().from(render))[0]?.objectKey).toBeNull();
   });
 });
 

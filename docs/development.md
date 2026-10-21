@@ -1,7 +1,7 @@
 # Development
 
 ## Requirements
-Node 22, pnpm 10, Docker (Postgres, Redis and MinIO for S3-compatible storage).
+Node 22, pnpm 10, Docker (Postgres, Redis, and MinIO as a local stand-in for Cloudflare R2).
 
 ## First run
 ```bash

@@ -66,7 +66,7 @@ describe('baseline', () => {
     expect(saved.isBaseline).toBe(true);
     const photos = await db.select().from(photo).where(eq(photo.snapshotId, saved.id));
     expect(photos.map((p) => p.kind).sort()).toEqual(['front', 'left', 'right']);
-    expect(photos.every((p) => storage.objects.has(p.s3Key))).toBe(true);
+    expect(photos.every((p) => storage.objects.has(p.objectKey))).toBe(true);
     expect([...storage.objects.keys()].filter((k) => k.startsWith('raw/'))).toEqual([]);
     expect(photos[0]?.expiresAt.getTime()).toBeGreaterThan(Date.now());
   });

@@ -10,7 +10,7 @@ const profileId = '3f2b8a0e-7c2d-4a39-9d57-0d7a6a1f2b11';
 
 function build(consentCurrent: boolean) {
   const presignPut = vi.fn((key: string, sizeBytes: number) =>
-    Promise.resolve({ url: `https://s3.test/${key}?size=${sizeBytes}`, expiresInSeconds: 600 }),
+    Promise.resolve({ url: `https://r2.test/${key}?size=${sizeBytes}`, expiresInSeconds: 600 }),
   );
   const profiles = { get: vi.fn(() => Promise.resolve({ consentCurrent })) } as unknown as ProfilesService;
   const storage = { presignPut } as unknown as StorageService;
