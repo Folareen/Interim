@@ -102,7 +102,7 @@ Found by running the tools against the live API, on professional portraits and o
 - Reconciling `unknown` tasks, and switching live calls off by itself on `auth` or `out_of_units`.
 - A tool entry for skin analysis (`skin-analysis`). Its prices are in `youcam.constants.ts`.
 - Wrappers for bg-replace, image-to-video, look-vto and the template lists, which only the spike runner reads.
-- Not yet seen succeed live: hair type (needs three angle photos), hair color and beard style.
+- Not yet seen succeed live: hair type (needs three angle photos), hair color and beard style. The template lists were read once (116 hair transfer templates, 15 beard style ones, all unisex `all_` ids for beards) and the looks in `packages/templates/src/looks.ts` come from them.
 
 ## Spike runner
 Runs the live part of the spike ([product/spec.md](../product/spec.md) section 17) from a JSON manifest of calls. It is a dry run unless `--yes` is given. Live calls cost real money (500 units cost 27.50 dollars), so spending also needs `--max-units <n>`, a cap on the whole batch. The runner refuses if the estimate is over the cap or any run has no confirmed price, and stops before a run that would pass it. It needs `YOUCAM_MODE=record`, `JUDGE_MODE_FORCE_REPLAY=false`, `LIVE_CALLS_ENABLED=true` and `YOUCAM_API_KEY` (copy `.env.example` to `.env` first).
