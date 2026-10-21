@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Newsreader, Source_Sans_3 } from 'next/font/google';
 import type { ReactNode } from 'react';
-import { getCopy, getLocale, getTheme } from '@/lib/prefs';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages, getTranslations } from 'next-intl/server';
+import { getTheme } from '@/lib/prefs';
 import './globals.css';
 
 // Both families cover the extended Latin and Vietnamese letters that Yoruba, Igbo and Hausa need.
@@ -14,10 +16,10 @@ const serif = Newsreader({
   axes: ['opsz'],
 });
 
-export const metadata: Metadata = {
-  title: { default: 'Interim', template: '%s · Interim' },
-  description: 'Helps you feel like yourself while your body changes.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('common');
+  return { title: { default: t('appName'), template: `%s · ${t('appName')}` }, description: t('tagline') };
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -30,7 +32,12 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const [locale, theme, { ui }] = await Promise.all([getLocale(), getTheme(), getCopy()]);
+  const [locale, theme, t, { common, setup, consent, ready }] = await Promise.all([
+    getLocale(),
+    getTheme(),
+    getTranslations('common'),
+    getMessages(),
+  ]);
   return (
     <html lang={locale} data-theme={theme} className={`${sans.variable} ${serif.variable}`}>
       <body>
@@ -38,9 +45,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           href="#main"
           className="sr-only rounded-lg bg-accent px-4 py-3 font-semibold text-on-accent focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-10"
         >
-          {ui.common.skipToContent}
+          {t('skipToContent')}
         </a>
-        {children}
+        {/* Only the screens with client islands get their text sent to the browser. */}
+        <NextIntlClientProvider locale={locale} messages={{ common, setup, consent, ready }}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

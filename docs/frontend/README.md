@@ -11,23 +11,26 @@ Next.js App Router PWA in `apps/web`, mobile first. Pages and flows: [architectu
 - Test the camera and install flow on iOS Safari and Android Chrome.
 
 ## Screens and state
-Setup runs welcome, language, situation, setup, consent, then ready. The language and theme live in cookies (`interim_locale`, `interim_theme`) that the server reads, so pages render in the right language and theme from the first paint. The situation travels in the address of the setup step. The profile is created when setup is submitted, and later screens read it by id on the server with the person's cookie. The language and situation screens are plain forms and work without JavaScript.
+Setup runs welcome, language, situation, setup, consent, then ready. The language and theme live in cookies (`interim_locale`, `interim_theme`) that the server reads, so pages render in the right language and theme from the first paint. Before a language is chosen, the browser's `Accept-Language` picks one the app offers, else English, and nothing is stored until the person chooses. A globe button in the header opens the language screen from any page and brings the person back to where they were. The situation travels in the address of the setup step. The profile is created when setup is submitted, and later screens read it by id on the server with the person's cookie. The language and situation screens are plain forms and work without JavaScript.
 
 Before a screen is done, check it in both themes at 320px and 390px wide, with the keyboard only, and with an axe audit that reports no violations.
 
 ## Copy
 User facing strings follow the language rules in [../product/overview.md](../product/overview.md) and are scanned with `@interim/rules`.
 
-**Translations move with the frontend.** No text is written inline in a component. Every string lives in a language catalog (`packages/templates/src/copy/<locale>.ts`, extending the `Copy` type; words for today in `words/<locale>.ts`). Any frontend change that adds, edits or removes text updates the catalog of every language in the same pull request, not only English:
-- Add the key to `Copy` first. The catalogs are typed `Record<LiveLocale, Copy>`, so the build fails until each live language has it.
-- Add the new strings to the list in `copy.test.ts`, so both language scans run on them in every language.
-- A language that is not live yet has no file. Draft its text when the language is added, and turn it on only after a native speaker has reviewed the copy and its word lists ([../product/spec.md](../product/spec.md) section 13).
-- Do not build text by joining fragments, and keep numbers, dates and sizes out of the sentence (pass them in) so word order can differ between languages.
+The app uses [next-intl](https://next-intl.dev). The server reads the person's language in `i18n/request.ts` and every page gets that language's messages. Server components call `getTranslations('namespace')` and client components `useTranslations('namespace')`. Keys are typed from the English file (`global.d.ts`), so a key that does not exist fails the typecheck.
+
+**Translations move with the frontend.** No text is written inline in a component. Every string lives in `packages/templates/src/messages/<locale>.json`, one file per language, with the same keys in every file. Any frontend change that adds, edits or removes text updates all ten files in the same pull request, not only English:
+- Add the key to `en.json` first, then to the other nine. `copy.test.ts` fails if a language has a missing or extra key, an empty string, or different `{marks}` from English.
+- The same test runs the banned word and companion phrase scans on every string in every language, so a new string is covered with no list to update.
+- Put a value into a sentence with a mark such as `{current}`, never by joining fragments, so word order can differ between languages. Keep numbers, dates and sizes out of the text and pass them in. Write a curly apostrophe (’) rather than `'`, because next-intl treats a straight one before `{` as an escape.
+- A language marked draft (`reviewedLocales` in `@interim/types`) shows a note on every screen and a tag on the language screen. A language leaves draft only after a native speaker has reviewed its messages and word lists ([../product/spec.md](../product/spec.md) section 17). Words for today live in `words/<locale>.ts`, and a set with no public domain translation falls back to English.
+- The `Messages` type in `packages/templates` is what the API reads for fixed notes, situation names and the lines for what to say, so the API and the web app never keep separate copies.
 
 ## Accessibility
-Every control is keyboard reachable and labelled; contrast meets WCAG AA; do not rely on color alone; respect reduced motion.
+Every control is keyboard reachable and labelled; contrast meets WCAG AA; do not rely on color alone; respect reduced motion. The page's `lang` is the person's language, a language's own name carries its own `lang` on the language screen, a button that is off says why through `aria-describedby`, and a status line announces when a form is working. The theme and language buttons are labelled by what they do.
 
-The screen reader pass (VoiceOver and TalkBack testing, the page language set to the person's language) and read aloud ([../product/spec.md](../product/spec.md) section 12b) come after the core flow works end to end. Until then the basics above still apply to every component.
+The screen reader pass (VoiceOver and TalkBack testing) and read aloud ([../product/spec.md](../product/spec.md) section 12b) come after the core flow works end to end. Until then the basics above still apply to every component.
 
 ## PWA
 `app/manifest.ts` defines the manifest. Icons and service worker are still to add.

@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "Yana taimaka muku ku ji kamar kanku yayin da jikinku ke canzawa.",
+    "back": "Koma baya",
+    "continue": "Ci gaba",
+    "tryAgain": "Sake gwadawa",
+    "stepOf": "Mataki na {current} cikin {total}",
+    "themeToLight": "Koma jigon haske",
+    "themeToDark": "Koma jigon duhu",
+    "language": "Harshe",
+    "draftNote": "Wannan fassara ce ta farko. Mai jin harshen bai duba ta ba tukuna, don haka wasu kalmomi na iya zama ba daidai ba.",
+    "skipToContent": "Tsallaka zuwa abin da ke ciki",
+    "genericError": "Wani abu ya faru. Da fatan za ku sake gwadawa.",
+    "networkError": "Ba mu iya haɗawa da Interim ba. Ku duba haɗin intanet ɗinku, sannan ku sake gwadawa.",
+    "notFoundTitle": "Ba mu sami wannan shafin ba",
+    "notFoundBody": "Hanyar na iya zama tsohuwa, ko kuma an share bayanan mutumin.",
+    "startAgain": "Fara daga farko"
+  },
+  "welcome": {
+    "title": "Ku ji kamar kanku yayin da jikinku ke canzawa.",
+    "intro": "Interim yana nuna muku yadda kuke a yau, da abin da za ku sa da yadda za ku gyara gashinku a kwanaki masu zuwa. An yi shi ne ga duk wanda ke cikin sauyi, har da sauye-sauyen da rashin lafiya ke kawowa.",
+    "reassurance": "Ku ne ke zaɓar abin da za ku bayar, kuma kuna iya share komai a kowane lokaci.",
+    "start": "Fara",
+    "footnote": "Interim yana magana ne kan yadda kuke da abin da za ku sa. Ba ya ba da shawarar likita."
+  },
+  "language": {
+    "title": "Ku zaɓi harshenku",
+    "intro": "Interim zai yi amfani da shi a duk abin da za ku karanta.",
+    "draftTag": "Ba a duba ba",
+    "draftsNote": "Harshen da aka yi wa alama da “Ba a duba ba”, mai jin harshen bai duba shi ba tukuna.",
+    "submit": "Ci gaba"
+  },
+  "situation": {
+    "title": "Me ke canzawa a gare ku?",
+    "intro": "Ku zaɓi wanda ya fi dacewa. Ba sai kun faɗi sunan cuta ko magani ba.",
+    "groupIllness": "Sau da yawa na da alaƙa da rashin lafiya ko kulawa da ita",
+    "groupOther": "Sauran sauye-sauye",
+    "blurbs": {
+      "hair_loss_ahead": "Gashinku yana raguwa, ko kuna tsammanin zai ragu. Ku shirya wa kowane mataki, daga raguwa har zuwa girma.",
+      "hair_patches": "Gashi yana zubewa a wurare, kuma yana iya zuwa ya tafi.",
+      "face_fullness": "Fuskarku tana kama da ta cika ko ta bambanta, kuma tana iya komawa yadda take.",
+      "after_surgery": "Jikinku yana da sabon siffa. Dacewar kaya da jin daɗi su ne farko, kuma hotunan jiki suna kashe har sai kun kunna su.",
+      "skin_colour": "Launin fatarku yana canzawa, kuma launukan da suka dace da ku a da ƙila ba su dace yanzu ba.",
+      "weight_change": "Nauyinku yana ƙaruwa ko raguwa, da gangan ko ba da gangan ba, kuma girman tufafinku yana canzawa.",
+      "midlife_change": "Sauyin gashi da jiki a tsakiyar rayuwa. Yawan gashi da yanka su ne suka fi muhimmanci.",
+      "after_a_baby": "Zubewar gashi bayan haihuwa. A yanzu Interim yana nisantar da ku daga manyan yanka.",
+      "going_grey": "Barin furfura ta girma a hankali, maimakon yin mata rini.",
+      "textured_growth": "Barin gashi mai cukurkuɗe ya girma, daga gajere sosai zuwa kan kafaɗa.",
+      "beard_growth": "Barin gemu ya girma, daga ɗan gemu zuwa cikakke."
+    },
+    "submit": "Ci gaba"
+  },
+  "setup": {
+    "title": "Wasu abubuwa game da ku",
+    "intro": "Suna tantance yadda Interim zai yi magana da ku da abin da zai nuna muku.",
+    "toneTitle": "Ta yaya Interim zai yi magana da ku?",
+    "tones": {
+      "practical": { "label": "Abin da ya dace kawai", "description": "Abin da ya canza da abu ɗaya da za a yi. Ba magana kan ji a zuciya ba." },
+      "warm": { "label": "Mai ɗumi", "description": "Mai kirki da natsuwa, da gajeren saƙo a farkon kowane dubawa." },
+      "light": { "label": "Mai sauƙi", "description": "Mai walwala, da ɗan ban dariya." }
+    },
+    "hairTitle": "Gashinku",
+    "headCoveringLabel": "Ina rufe gashina",
+    "headCoveringHelp": "Idan haka ne, Interim ba zai nuna salon gashi ko wig a hotunanku ba.",
+    "ageTitle": "Shekarunku",
+    "ageLabel": "Shekaruna 18 ko fiye",
+    "ageHelp": "Interim na manya ne.",
+    "submit": "Ci gaba",
+    "submitting": "Ana shiryawa…"
+  },
+  "consent": {
+    "title": "Kafin ku ƙara hotuna",
+    "intro": "Hotunanku, da abin da Interim ke koya daga cikinsu, na sirri ne. Ga ainihin abin da ke faruwa da su.",
+    "keepTitle": "Abin da Interim ke adanawa",
+    "keepBody": "Hotunanku, ma’aunin da aka ɗauka daga cikinsu, amsoshinku da katunanku. Ba a sayar da komai ko amfani da shi don talla.",
+    "helpersTitle": "Waɗanda ke taimakawa",
+    "helperYoucam": "YouCam, na Perfect Corp, yana karɓar hotunanku don ya auna su kuma ya nuna samfurin kamannin.",
+    "helperGoogle": "Google yana karɓar ma’auni, yanayinku, abin da kuke shiryawa da salon magana da kuka zaɓa, don ya rubuta saƙonninku. Ba ya karɓar hotuna ko kaɗan.",
+    "retentionTitle": "Har yaushe za a adana hotunanku",
+    "retention": {
+      "standard": {
+        "label": "Share bayan kwana 30",
+        "description": "Ana share hotuna da samfuran kamannin kwana 30 bayan an ɗauke su. Ma’auni da katuna suna nan har sai kun share bayananku."
+      },
+      "extended": {
+        "label": "Adana tarihina",
+        "description": "A adana su har sai kun share su, ko kuma har watanni 24 bayan dubawarku ta ƙarshe. Wannan yana ba Interim damar kwatanta a kan lokaci da nuna kamannin da suka gabata."
+      }
+    },
+    "confirmTitle": "Da fatan za ku tabbatar",
+    "confirmStore": "Interim na iya adana hotuna da ma’aunina.",
+    "confirmYoucam": "YouCam (Perfect Corp) na iya sarrafa hotunana.",
+    "confirmGoogle": "Google na iya sarrafa ma’aunina da saitunana, amma ba hotunana ba.",
+    "confirmOwn": "Hotunan za su zama nawa ne kaɗai.",
+    "noRecovery": "Babu kalmar sirri. Interim yana gane ku a wannan na’urar, don haka idan kuka share bayanan browser ɗinku, ba za a iya dawo da wannan bayanan ba.",
+    "deleteAnytime": "Kuna iya share bayananku da duk abin da ke cikinsu a kowane lokaci.",
+    "incomplete": "Ku zaɓi tsawon lokacin adana hotuna, sannan ku yi alama a kowane akwati don ci gaba.",
+    "submit": "Na yarda, ina ci gaba",
+    "submitting": "Ana adanawa…",
+    "outdated": "Rubutun yarda ya canza. Ku sake buɗe wannan shafin ku karanta shi."
+  },
+  "ready": {
+    "title": "An shirya",
+    "intro": "Interim yana da abin da yake buƙata don farawa.",
+    "summaryTitle": "Zaɓinku",
+    "situationLabel": "Yanayi",
+    "toneLabel": "Salon magana",
+    "photosLabel": "Hotuna",
+    "next": "Dubawarku ta farko hotuna ne kaɗan da tambayoyi biyu masu sauri. Ba ta cikin wannan sigar tukuna.",
+    "deleteTitle": "Share bayanana",
+    "deleteBody": "Wannan yana cire bayananku, hotuna, ma’auni da katuna. Ba za a iya mayar da shi ba.",
+    "deleteAction": "Share bayanana",
+    "deleteConfirm": "Eh, share komai",
+    "deleteCancel": "Ajiye bayanana",
+    "deleting": "Ana sharewa…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Zubewar gashi na tafe",
+    "hair_patches": "Gashi na zubewa a wurare",
+    "face_fullness": "Siffar fuska na canzawa",
+    "after_surgery": "Jiki ya canza bayan tiyata",
+    "skin_colour": "Launin fata na canzawa",
+    "weight_change": "Sauyin nauyi",
+    "midlife_change": "Sauyin tsakiyar rayuwa",
+    "after_a_baby": "Bayan haihuwa",
+    "going_grey": "Gashi na yin furfura",
+    "textured_growth": "Girman gashi mai cukurkuɗe",
+    "beard_growth": "Barin gemu ya girma"
+  },
+  "companionFallback": {
+    "practical": "Ga abin da ya canza tun lokacin ƙarshe, da wasu zaɓuɓɓuka don abin da ke tafe.",
+    "warm": "Abubuwa suna kama da ɗan bambanta a wannan karon, kuma hakan ya zama ruwan dare a wannan mataki. Ga wasu kamanni da har yanzu suna kama da ku, don duk abin da ke tafe.",
+    "light": "Sabon dubawa, sabbin zaɓuɓɓuka. Ga wasu kamanni da za ku gwada don abin da ke tafe."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "Na samu wasu sauye-sauye a bana. Ina farin cikin dawowa.",
+      "Na gode da tambaya. Na gwammace mu yi magana kan aiki a yau.",
+      "Labari ne mai tsawo. Me na rasa?"
+    ],
+    "family_event": [
+      "Eh, gashina ya bambanta. Na ji daɗin ganinku sosai.",
+      "Zan gaya muku wani lokaci. Yaya kuke?"
+    ],
+    "date": [
+      "Abubuwa sun canza a gare ni kwanan nan. Zan yi farin ciki in yi magana a kai wani lokaci.",
+      "Na gwammace in ji daga gare ku da farko."
+    ],
+    "photos": ["Za mu ɗauki ɗaya kuma? Ina so in zaɓi wanda na fi so.", "Zan iya ganinsa kafin a saka shi?"],
+    "video_call": ["Sabon kamanni a wannan watan. Mu fara?"],
+    "going_out": [
+      "Sauyi ne da har yanzu ina saba da shi. Ko ma dai menene, me za mu ci?",
+      "Na gwammace kada mu shiga cikinsa a yau."
+    ],
+    "everyday": []
+  }
+}

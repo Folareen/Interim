@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "Helps you feel like yourself while your body changes.",
+    "back": "Back",
+    "continue": "Continue",
+    "tryAgain": "Try again",
+    "stepOf": "Step {current} of {total}",
+    "themeToLight": "Switch to the light theme",
+    "themeToDark": "Switch to the dark theme",
+    "language": "Language",
+    "draftNote": "This translation is a draft. A native speaker has not checked it yet, so some wording may be off.",
+    "skipToContent": "Skip to content",
+    "genericError": "Something went wrong. Please try again.",
+    "networkError": "We could not reach Interim. Check your connection and try again.",
+    "notFoundTitle": "We could not find that page",
+    "notFoundBody": "The link may be old, or the profile may have been deleted.",
+    "startAgain": "Start again"
+  },
+  "welcome": {
+    "title": "Feel like yourself while your body changes.",
+    "intro": "Interim shows you how you look today, and what to wear and how to style your hair for the days ahead. It is made for anyone going through a change, including the changes that come with illness.",
+    "reassurance": "You choose what to share, and you can delete everything at any time.",
+    "start": "Get started",
+    "footnote": "Interim is about how you look and what to wear. It does not give medical advice."
+  },
+  "language": {
+    "title": "Choose your language",
+    "intro": "Interim will use it for everything you read.",
+    "draftTag": "Draft",
+    "draftsNote": "A language marked Draft has not been checked by a native speaker yet.",
+    "submit": "Continue"
+  },
+  "situation": {
+    "title": "What is changing for you?",
+    "intro": "Choose the one that fits best. You never need to name a condition or a medicine.",
+    "groupIllness": "Often part of illness or its care",
+    "groupOther": "Other changes",
+    "blurbs": {
+      "hair_loss_ahead": "Your hair is thinning, or you expect it to. Plan for each stage, from thinning to growing back.",
+      "hair_patches": "Hair is coming out in patches, and it may come and go.",
+      "face_fullness": "Your face looks fuller or different, and it may settle again.",
+      "after_surgery": "Your body has a new shape. Fit and comfort come first, and body photos stay off until you turn them on.",
+      "skin_colour": "Your skin tone is shifting, and colours that used to suit you may not now.",
+      "weight_change": "Your weight is going up or down, on purpose or not, and your clothes sizes are changing.",
+      "midlife_change": "Changes in your hair and body through midlife. Volume and cut matter most.",
+      "after_a_baby": "Hair shedding after having a baby. Interim steers you away from big cuts for now.",
+      "going_grey": "Growing out your grey in stages, instead of dyeing it.",
+      "textured_growth": "Growing out textured hair, from very short to shoulder length.",
+      "beard_growth": "Growing a beard, from stubble to full."
+    },
+    "submit": "Continue"
+  },
+  "setup": {
+    "title": "A few things about you",
+    "intro": "These shape how Interim talks to you and what it shows.",
+    "toneTitle": "How should Interim talk to you?",
+    "tones": {
+      "practical": { "label": "Just practical", "description": "What changed and one thing to do. No talk about feelings." },
+      "warm": { "label": "Warm", "description": "Kind and steady, with a short note at the start of each check in." },
+      "light": { "label": "Light", "description": "Easygoing, with a little humour." }
+    },
+    "hairTitle": "Your hair",
+    "headCoveringLabel": "I cover my hair",
+    "headCoveringHelp": "If you do, Interim will not show hairstyles or wigs on your photos.",
+    "ageTitle": "Your age",
+    "ageLabel": "I am 18 or older",
+    "ageHelp": "Interim is for adults.",
+    "submit": "Continue",
+    "submitting": "Setting up…"
+  },
+  "consent": {
+    "title": "Before you add photos",
+    "intro": "Your photos, and what Interim learns from them, are personal. Here is exactly what happens to them.",
+    "keepTitle": "What Interim keeps",
+    "keepBody": "Your photos, the measurements taken from them, your answers and your cards. Nothing is sold or used for advertising.",
+    "helpersTitle": "Who helps",
+    "helperYoucam": "YouCam, by Perfect Corp, receives your photos so it can measure them and preview looks.",
+    "helperGoogle": "Google receives measurements, your situation, what you are getting ready for and the tone you chose, so it can write your notes. It never receives photos.",
+    "retentionTitle": "How long to keep your photos",
+    "retention": {
+      "standard": {
+        "label": "Delete after 30 days",
+        "description": "Photos and previews are deleted 30 days after they are taken. Measurements and cards stay until you delete your profile."
+      },
+      "extended": {
+        "label": "Keep my history",
+        "description": "Keep them until you delete them, or until 24 months after your last check in. This lets Interim compare over time and show earlier looks."
+      }
+    },
+    "confirmTitle": "Please confirm",
+    "confirmStore": "Interim may store my photos and measurements.",
+    "confirmYoucam": "YouCam (Perfect Corp) may process my photos.",
+    "confirmGoogle": "Google may process my measurements and settings, but not my photos.",
+    "confirmOwn": "The photos will only be of me.",
+    "noRecovery": "There are no passwords. Interim remembers you on this device, so if you clear your browser data, this profile cannot be recovered.",
+    "deleteAnytime": "You can delete your profile and everything in it at any time.",
+    "incomplete": "Choose how long to keep photos and tick each box to continue.",
+    "submit": "I agree and continue",
+    "submitting": "Saving…",
+    "outdated": "The consent text has changed. Reload this page and read it again."
+  },
+  "ready": {
+    "title": "You are set up",
+    "intro": "Interim has what it needs to start.",
+    "summaryTitle": "Your choices",
+    "situationLabel": "Situation",
+    "toneLabel": "Tone",
+    "photosLabel": "Photos",
+    "next": "Your first check in is a few photos and two quick questions. It is not in this version yet.",
+    "deleteTitle": "Delete my profile",
+    "deleteBody": "This removes your profile, photos, measurements and cards. It cannot be undone.",
+    "deleteAction": "Delete my profile",
+    "deleteConfirm": "Yes, delete everything",
+    "deleteCancel": "Keep my profile",
+    "deleting": "Deleting…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Hair loss ahead",
+    "hair_patches": "Hair coming out in patches",
+    "face_fullness": "Face shape changing",
+    "after_surgery": "Body changed after surgery",
+    "skin_colour": "Skin colour changing",
+    "weight_change": "Weight change",
+    "midlife_change": "Midlife change",
+    "after_a_baby": "After a baby",
+    "going_grey": "Going grey",
+    "textured_growth": "Growing out textured hair",
+    "beard_growth": "Growing a beard"
+  },
+  "companionFallback": {
+    "practical": "Here’s what changed since last time, and a few options for what’s coming up.",
+    "warm": "Things look a little different this time, and that’s a normal part of this stage. Here are a few looks that still feel like you, for whatever is coming up.",
+    "light": "New check in, new options. Here are a few looks to try for what’s coming up."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "I’ve had some changes this year. I’m glad to be back.",
+      "Thanks for asking. I’d rather talk about work today.",
+      "It’s a long story. What did I miss?"
+    ],
+    "family_event": [
+      "Yes, my hair’s different. It’s so good to see you.",
+      "I’ll tell you about it another time. How have you been?"
+    ],
+    "date": [
+      "Things have changed for me lately. I’m happy to talk about it another time.",
+      "I’d rather hear about you first."
+    ],
+    "photos": ["Can we take one more? I want to pick my favourite.", "Can I see it before it goes up?"],
+    "video_call": ["New look this month. Shall we get started?"],
+    "going_out": [
+      "It’s a change I’m still getting used to. Anyway, what are we having?",
+      "I’d rather not get into it today."
+    ],
+    "everyday": []
+  }
+}

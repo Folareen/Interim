@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "Le ayuda a seguir sintiéndose como usted mientras su cuerpo cambia.",
+    "back": "Atrás",
+    "continue": "Continuar",
+    "tryAgain": "Intentar de nuevo",
+    "stepOf": "Paso {current} de {total}",
+    "themeToLight": "Cambiar al tema claro",
+    "themeToDark": "Cambiar al tema oscuro",
+    "language": "Idioma",
+    "draftNote": "Esta traducción es un borrador. Todavía no la ha revisado un hablante nativo, así que algunas frases pueden sonar raras.",
+    "skipToContent": "Ir al contenido",
+    "genericError": "Algo salió mal. Inténtelo de nuevo.",
+    "networkError": "No pudimos conectar con Interim. Revise su conexión e inténtelo de nuevo.",
+    "notFoundTitle": "No encontramos esa página",
+    "notFoundBody": "Puede que el enlace sea antiguo o que el perfil se haya eliminado.",
+    "startAgain": "Empezar de nuevo"
+  },
+  "welcome": {
+    "title": "Siga sintiéndose como usted mientras su cuerpo cambia.",
+    "intro": "Interim le muestra cómo se ve hoy, qué ponerse y cómo peinarse en los días que vienen. Está hecho para cualquier persona que pase por un cambio, incluidos los que trae una enfermedad.",
+    "reassurance": "Usted decide qué compartir y puede borrarlo todo en cualquier momento.",
+    "start": "Empezar",
+    "footnote": "Interim trata de su aspecto y de qué ponerse. No da consejos médicos."
+  },
+  "language": {
+    "title": "Elija su idioma",
+    "intro": "Interim lo usará para todo lo que lea.",
+    "draftTag": "Borrador",
+    "draftsNote": "Un idioma marcado como Borrador todavía no lo ha revisado un hablante nativo.",
+    "submit": "Continuar"
+  },
+  "situation": {
+    "title": "¿Qué está cambiando para usted?",
+    "intro": "Elija lo que mejor encaje. Nunca necesita nombrar una enfermedad ni un medicamento.",
+    "groupIllness": "A menudo parte de una enfermedad o de sus cuidados",
+    "groupOther": "Otros cambios",
+    "blurbs": {
+      "hair_loss_ahead": "Su cabello se está aclarando, o espera que ocurra. Prepárese para cada etapa, desde que se aclara hasta que vuelve a crecer.",
+      "hair_patches": "El cabello se cae por zonas y puede ir y venir.",
+      "face_fullness": "Su rostro se ve más lleno o distinto, y puede volver a asentarse.",
+      "after_surgery": "Su cuerpo tiene una forma nueva. Primero van el ajuste y la comodidad, y las fotos del cuerpo quedan desactivadas hasta que usted las active.",
+      "skin_colour": "El tono de su piel está cambiando, y los colores que antes le favorecían quizá ya no.",
+      "weight_change": "Su peso sube o baja, a propósito o no, y las tallas de su ropa están cambiando.",
+      "midlife_change": "Cambios en el cabello y el cuerpo a mitad de la vida. El volumen y el corte importan más.",
+      "after_a_baby": "Caída del cabello después de tener un bebé. Interim le aleja de los cortes grandes por ahora.",
+      "going_grey": "Dejar crecer las canas por etapas, en lugar de teñirlas.",
+      "textured_growth": "Dejar crecer el cabello con textura, desde muy corto hasta los hombros.",
+      "beard_growth": "Dejar crecer la barba, desde la barba incipiente hasta la barba completa."
+    },
+    "submit": "Continuar"
+  },
+  "setup": {
+    "title": "Algunas cosas sobre usted",
+    "intro": "Determinan cómo le habla Interim y qué le muestra.",
+    "toneTitle": "¿Cómo debe hablarle Interim?",
+    "tones": {
+      "practical": { "label": "Solo lo práctico", "description": "Qué cambió y una cosa que hacer. Sin hablar de emociones." },
+      "warm": { "label": "Cercano", "description": "Amable y tranquilo, con una nota breve al comienzo de cada revisión." },
+      "light": { "label": "Ligero", "description": "Relajado, con un poco de humor." }
+    },
+    "hairTitle": "Su cabello",
+    "headCoveringLabel": "Me cubro el cabello",
+    "headCoveringHelp": "Si es así, Interim no mostrará peinados ni pelucas en sus fotos.",
+    "ageTitle": "Su edad",
+    "ageLabel": "Tengo 18 años o más",
+    "ageHelp": "Interim es para personas adultas.",
+    "submit": "Continuar",
+    "submitting": "Preparando…"
+  },
+  "consent": {
+    "title": "Antes de añadir fotos",
+    "intro": "Sus fotos, y lo que Interim aprende de ellas, son personales. Esto es exactamente lo que ocurre con ellas.",
+    "keepTitle": "Qué conserva Interim",
+    "keepBody": "Sus fotos, las medidas tomadas de ellas, sus respuestas y sus fichas. Nada se vende ni se usa para publicidad.",
+    "helpersTitle": "Quién ayuda",
+    "helperYoucam": "YouCam, de Perfect Corp, recibe sus fotos para medirlas y mostrar vistas previas de looks.",
+    "helperGoogle": "Google recibe las medidas, su situación, para qué se está preparando y el tono que eligió, para poder redactar sus notas. Nunca recibe fotos.",
+    "retentionTitle": "Cuánto tiempo conservar sus fotos",
+    "retention": {
+      "standard": {
+        "label": "Borrar a los 30 días",
+        "description": "Las fotos y las vistas previas se borran 30 días después de tomarse. Las medidas y las fichas se quedan hasta que usted elimine su perfil."
+      },
+      "extended": {
+        "label": "Conservar mi historial",
+        "description": "Se conservan hasta que usted las borre, o hasta 24 meses después de su última revisión. Así Interim puede comparar con el tiempo y mostrar looks anteriores."
+      }
+    },
+    "confirmTitle": "Por favor, confirme",
+    "confirmStore": "Interim puede guardar mis fotos y medidas.",
+    "confirmYoucam": "YouCam (Perfect Corp) puede procesar mis fotos.",
+    "confirmGoogle": "Google puede procesar mis medidas y ajustes, pero no mis fotos.",
+    "confirmOwn": "Las fotos serán solo mías.",
+    "noRecovery": "No hay contraseñas. Interim le reconoce en este dispositivo, así que si borra los datos del navegador, este perfil no se podrá recuperar.",
+    "deleteAnytime": "Puede eliminar su perfil y todo lo que contiene en cualquier momento.",
+    "incomplete": "Elija cuánto tiempo conservar las fotos y marque cada casilla para continuar.",
+    "submit": "Acepto y continúo",
+    "submitting": "Guardando…",
+    "outdated": "El texto del consentimiento ha cambiado. Recargue esta página y léalo de nuevo."
+  },
+  "ready": {
+    "title": "Todo está listo",
+    "intro": "Interim tiene lo que necesita para empezar.",
+    "summaryTitle": "Sus elecciones",
+    "situationLabel": "Situación",
+    "toneLabel": "Tono",
+    "photosLabel": "Fotos",
+    "next": "Su primera revisión son unas pocas fotos y dos preguntas rápidas. Todavía no está en esta versión.",
+    "deleteTitle": "Eliminar mi perfil",
+    "deleteBody": "Esto elimina su perfil, fotos, medidas y fichas. No se puede deshacer.",
+    "deleteAction": "Eliminar mi perfil",
+    "deleteConfirm": "Sí, borrar todo",
+    "deleteCancel": "Conservar mi perfil",
+    "deleting": "Eliminando…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Caída del cabello por venir",
+    "hair_patches": "Cabello que se cae por zonas",
+    "face_fullness": "La forma del rostro está cambiando",
+    "after_surgery": "Cuerpo cambiado tras una operación",
+    "skin_colour": "El color de la piel está cambiando",
+    "weight_change": "Cambio de peso",
+    "midlife_change": "Cambios de la mitad de la vida",
+    "after_a_baby": "Después de un bebé",
+    "going_grey": "Cabello que se llena de canas",
+    "textured_growth": "Dejar crecer el cabello con textura",
+    "beard_growth": "Dejar crecer la barba"
+  },
+  "companionFallback": {
+    "practical": "Esto es lo que cambió desde la última vez, y algunas opciones para lo que viene.",
+    "warm": "Las cosas se ven un poco distintas esta vez, y es normal en esta etapa. Aquí tiene algunos looks que siguen siendo usted, para lo que viene.",
+    "light": "Nueva revisión, nuevas opciones. Aquí tiene algunos looks para probar en lo que viene."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "He tenido algunos cambios este año. Me alegra volver.",
+      "Gracias por preguntar. Hoy prefiero hablar del trabajo.",
+      "Es una larga historia. ¿Qué me he perdido?"
+    ],
+    "family_event": [
+      "Sí, mi cabello es distinto. Qué alegría verte.",
+      "Ya te lo contaré en otro momento. ¿Cómo has estado?"
+    ],
+    "date": [
+      "Las cosas han cambiado para mí últimamente. Con gusto hablo de ello en otro momento.",
+      "Prefiero escucharte a ti primero."
+    ],
+    "photos": ["¿Podemos hacer una más? Quiero elegir mi favorita.", "¿Puedo verla antes de que se publique?"],
+    "video_call": ["Look nuevo este mes. ¿Empezamos?"],
+    "going_out": [
+      "Es un cambio al que todavía me estoy acostumbrando. En fin, ¿qué vamos a pedir?",
+      "Prefiero no hablar de eso hoy."
+    ],
+    "everyday": []
+  }
+}

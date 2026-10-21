@@ -1,7 +1,7 @@
-import { crisisContacts, findBannedWord, findCompanionPhrase } from '@interim/rules';
+import { crisisWording, findBannedWord, findCompanionPhrase } from '@interim/rules';
 import { liveLocales, templateKeys, wordsSetSchema } from '@interim/types';
 import { describe, expect, it } from 'vitest';
-import { copy, fillCopy, localeNames, templates, wordsForDay, wordsLibrary } from './index';
+import { localeNames, messages, templates, wordsForDay, wordsLibrary } from './index';
 
 const leaves = (value: unknown): string[] => {
   if (typeof value === 'string') return [value];
@@ -10,21 +10,29 @@ const leaves = (value: unknown): string[] => {
   return [];
 };
 
+/** Every string with the path to it, so a missing or extra key shows where. */
+const entries = (value: unknown, path = ''): [string, string][] => {
+  if (typeof value === 'string') return [[path, value]];
+  if (Array.isArray(value)) return value.flatMap((item, i) => entries(item, `${path}[${i}]`));
+  if (value && typeof value === 'object') {
+    return Object.entries(value).flatMap(([key, item]) => entries(item, path ? `${path}.${key}` : key));
+  }
+  return [];
+};
+
+const marks = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+
 // Spec section 16, tests 5, 10 and 10a: every fixed user facing string passes both scans in its
 // own language.
 const userFacing = liveLocales.flatMap((locale) => {
-  const c = copy[locale];
   const texts = [
-    ...leaves(c.ui),
-    ...Object.values(c.templateLabels),
-    ...Object.values(c.companionFallback),
-    ...Object.values(c.whatToSay).flat(),
+    ...leaves(messages[locale]),
     ...Object.values(wordsLibrary[locale]).flatMap((set) => [
       set.label,
       ...(set.translation ? [set.translation] : []),
       ...set.passages.flatMap((p) => [p.text, p.source]),
     ]),
-    ...Object.values(crisisContacts).flatMap((contacts) => contacts.map((contact) => contact.how[locale])),
+    ...Object.values(crisisWording[locale]),
   ];
   return texts.map((text) => [locale, text] as const);
 });
@@ -33,6 +41,32 @@ describe('fixed copy', () => {
   it.each(userFacing)('passes the language scans (%s): %s', (locale, text) => {
     expect(findBannedWord(text, locale)).toBeUndefined();
     expect(findCompanionPhrase(text, locale)).toBeUndefined();
+  });
+});
+
+describe('translations', () => {
+  const reference = new Map(entries(messages.en));
+
+  it.each(liveLocales)('%s has exactly the keys English has, each with text', (locale) => {
+    const own = entries(messages[locale]);
+    expect(own.map(([path]) => path)).toEqual([...reference.keys()]);
+    for (const [path, text] of own) expect(text.trim(), `${locale} ${path}`).not.toBe('');
+  });
+
+  it.each(liveLocales)('%s keeps the same {marks} as English in every string', (locale) => {
+    for (const [path, text] of entries(messages[locale])) {
+      expect(marks(text), `${locale} ${path}`).toEqual(marks(reference.get(path) ?? ''));
+    }
+  });
+
+  it('leaves no translation identical to English except names and shared words', () => {
+    const allowed = new Set(['common.appName', 'ready.situationLabel']);
+    for (const locale of liveLocales.filter((l) => l !== 'en' && l !== 'pcm')) {
+      for (const [path, text] of entries(messages[locale])) {
+        if (allowed.has(path) || path.startsWith('common.appName')) continue;
+        if (text === reference.get(path) && text.length > 12) throw new Error(`${locale} ${path} is still English`);
+      }
+    }
   });
 });
 
@@ -75,27 +109,11 @@ describe('wordsForDay', () => {
   });
 });
 
-describe('fillCopy', () => {
-  it('puts values at their marks, wherever the language needs them', () => {
-    expect(fillCopy('Step {current} of {total}', { current: 2, total: 5 })).toBe('Step 2 of 5');
-    expect(fillCopy('{total} steps, now on {current}', { current: 2, total: 5 })).toBe('5 steps, now on 2');
-  });
-
-  it('fails loudly when a value is missing rather than printing a mark', () => {
-    expect(() => fillCopy('Step {current} of {total}', { current: 2 })).toThrow(/total/);
-  });
-
-  it('is used by every English string with a mark, and only with marks it can fill', () => {
-    const marked = leaves(copy.en.ui).filter((text) => text.includes('{'));
-    expect(marked).toEqual(['Step {current} of {total}']);
-  });
-});
-
 describe('language names', () => {
   it('has a name for every planned language, in that language', () => {
     expect(localeNames.en).toBe('English');
     expect(localeNames.yo).toBe('Yorùbá');
-    expect(Object.keys(localeNames)).toHaveLength(10);
+    expect(Object.keys(localeNames)).toEqual([...liveLocales]);
   });
 });
 

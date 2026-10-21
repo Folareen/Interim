@@ -1,0 +1,158 @@
+{
+  "common": {
+    "appName": "Interim",
+    "tagline": "Ọ na-enyere gị aka inwe mmetụta dị ka onwe gị ka ahụ gị na-agbanwe.",
+    "back": "Laghachi",
+    "continue": "Gaa n’ihu",
+    "tryAgain": "Nwaa ọzọ",
+    "stepOf": "Nzọụkwụ {current} n’ime {total}",
+    "themeToLight": "Gbanwee gaa n’ọkwa ìhè",
+    "themeToDark": "Gbanwee gaa n’ọkwa ọchịchịrị",
+    "language": "Asụsụ",
+    "draftNote": "A tụgharịrị ihe a mana onye na-asụ asụsụ a anwụbeghị ya nlele, ya mere ụfọdụ okwu nwere ike ọ dị ka ọ na-ezighị ezi.",
+    "skipToContent": "Gafee gaa n’ọdịnaya",
+    "genericError": "Ihe mebiri. Biko nwaa ọzọ.",
+    "networkError": "Anyị enweghị ike iru Interim. Lelee njikọ gị ma nwaa ọzọ.",
+    "notFoundTitle": "Anyị ahụghị ibe ahụ",
+    "notFoundBody": "Njikọ ahụ nwere ike ịbụ nke ochie, ma ọ bụ ka e hichapụla profaịlụ ahụ.",
+    "startAgain": "Malite ọzọ"
+  },
+  "welcome": {
+    "title": "Nwee mmetụta dị ka onwe gị ka ahụ gị na-agbanwe.",
+    "intro": "Interim na-egosi gị ka i si adị taa, na ihe ị ga-eyi na otu esi arụ ntutu gị n’ụbọchị ndị na-abịa. E mere ya maka onye ọ bụla na-agafe mgbanwe, gụnyere mgbanwe ndị ọrịa na-ewetara.",
+    "reassurance": "Ị na-ahọrọ ihe ị ga-ekekọrịta, ị nwekwara ike ihichapụ ihe niile n’oge ọ bụla.",
+    "start": "Malite",
+    "footnote": "Interim bụ maka ka i si adị na ihe ị ga-eyi. Ọ naghị enye ndụmọdụ dọkịta."
+  },
+  "language": {
+    "title": "Họrọ asụsụ gị",
+    "intro": "Interim ga-eji ya maka ihe niile ị na-agụ.",
+    "draftTag": "Anwụbeghị nlele",
+    "draftsNote": "Asụsụ e dere “Anwụbeghị nlele” n’akụkụ ya, onye na-asụ ya anwụbeghị ya nlele.",
+    "submit": "Gaa n’ihu"
+  },
+  "situation": {
+    "title": "Gịnị na-agbanwe maka gị?",
+    "intro": "Họrọ nke kachasị kwekọọ. Ị naghị achọ ịkpọ aha ọrịa ma ọ bụ ọgwụ ọ bụla.",
+    "groupIllness": "Ọtụtụ mgbe ọ na-adị n’ọrịa ma ọ bụ n’nlekọta ya",
+    "groupOther": "Mgbanwe ndị ọzọ",
+    "blurbs": {
+      "hair_loss_ahead": "Ntutu gị na-adị gịrịgịrị, ma ọ bụ ị na-atụ anya na ọ ga-adị. Kwado maka ogo ọ bụla, site n’ịdị gịrịgịrị ruo n’itolite ọzọ.",
+      "hair_patches": "Ntutu na-ada n’ebe ụfọdụ, ọ nwekwara ike ịbịa laa.",
+      "face_fullness": "Ihu gị na-adị ka o juru ma ọ bụ dị iche, ọ nwekwara ike ịlaghachi n’ọnọdụ ya.",
+      "after_surgery": "Ahụ gị nwere ọdịdị ọhụrụ. Ka uwe si kwekọọ na nkasi obi bụ nke mbụ, foto ahụ na-adịkwa na-agbanyụ ruo mgbe ị gbanyere ya.",
+      "skin_colour": "Agba akpụkpọ ahụ gị na-agbanwe, agba ndị kwesịrị gị na mbụ nwere ike ghara ịkwesị ugbu a.",
+      "weight_change": "Ibu gị na-abawanye ma ọ bụ na-ebelata, n’ihu ma ọ bụ n’ekwughị, nha uwe gị na-agbanwekwa.",
+      "midlife_change": "Mgbanwe n’ntutu na ahụ n’etiti ndụ. Ọtụtụ ntutu na otu e si bipụ ya bụ ihe kachasị mkpa.",
+      "after_a_baby": "Ntutu na-ada mgbe a mụsịrị nwa. Ugbu a Interim na-eme ka ị zere nnukwu ịbipụ.",
+      "going_grey": "Ikwe ka ntutu ọcha toluo n’ogo, kama ịsa ya agba.",
+      "textured_growth": "Ikwe ka ntutu na-agbagọ toluo, site na nke dị mkpụmkpụ nke ukwuu ruo na ubu.",
+      "beard_growth": "Itolite afụ ọnụ, site na nke dị obere ruo nke juru ebe niile."
+    },
+    "submit": "Gaa n’ihu"
+  },
+  "setup": {
+    "title": "Ihe ole na ole banyere gị",
+    "intro": "Ha na-ekpebi otu Interim si agwa gị okwu na ihe ọ na-egosi gị.",
+    "toneTitle": "Kedu ka Interim kwesịrị isi gwa gị okwu?",
+    "tones": {
+      "practical": { "label": "Naanị ihe bara uru", "description": "Ihe gbanwere na otu ihe a ga-eme. Enweghị okwu gbasara mmetụta." },
+      "warm": { "label": "Nke obi ụtọ", "description": "Nke obiọma na nke dị jụụ, nwere obere ozi na mmalite nlele ọ bụla." },
+      "light": { "label": "Nke dị mfe", "description": "Nke na-enweghị ọgbaghara, nwere obere ọchị." }
+    },
+    "hairTitle": "Ntutu gị",
+    "headCoveringLabel": "Ana m ekpuchi ntutu m",
+    "headCoveringHelp": "Ọ bụrụ otú ahụ, Interim agaghị egosi ụdị ntutu ma ọ bụ wig n’elu foto gị.",
+    "ageTitle": "Afọ gị",
+    "ageLabel": "Adị m afọ 18 ma ọ bụ karịa",
+    "ageHelp": "Interim bụ maka ndị okenye.",
+    "submit": "Gaa n’ihu",
+    "submitting": "Na-ahazi…"
+  },
+  "consent": {
+    "title": "Tupu ịgbakwunye foto",
+    "intro": "Foto gị, na ihe Interim na-amụta site na ha, bụ nke onwe gị. Nke a bụ ihe na-eme ha n’ezie.",
+    "keepTitle": "Ihe Interim na-edebe",
+    "keepBody": "Foto gị, ihe e tụrụ site na ha, azịza gị na kaadị gị. Ọ nweghị ihe a na-ere ma ọ bụ jiri ya mee mgbasa ozi.",
+    "helpersTitle": "Ndị na-enyere aka",
+    "helperYoucam": "YouCam, nke Perfect Corp, na-anata foto gị ka ọ tụọ ha ma gosi ọdịdị tupu oge.",
+    "helperGoogle": "Google na-anata ihe e tụrụ, ọnọdụ gị, ihe ị na-akwado maka ya na ụdị okwu ị họọrọ, ka ọ nwee ike dee ndetu gị. Ọ naghị anata foto ọ bụla.",
+    "retentionTitle": "Ogologo oge a ga-ebu debe foto gị",
+    "retention": {
+      "standard": {
+        "label": "Hichapụ mgbe ụbọchị 30 gachara",
+        "description": "A na-ehichapụ foto na ọdịdị tupu oge ụbọchị 30 mgbe e sere ha. Ihe e tụrụ na kaadị na-anọ ruo mgbe ị hichapụrụ profaịlụ gị."
+      },
+      "extended": {
+        "label": "Debe akụkọ m",
+        "description": "Debe ha ruo mgbe ị hichapụrụ ha, ma ọ bụ ruo ọnwa 24 mgbe nlele gị ikpeazụ gasịrị. Nke a na-enye Interim ohere iji tụnyere n’oge ma gosi ọdịdị gara aga."
+      }
+    },
+    "confirmTitle": "Biko kwenye",
+    "confirmStore": "Interim nwere ike idebe foto m na ihe e tụrụ m.",
+    "confirmYoucam": "YouCam (Perfect Corp) nwere ike ịrụ ọrụ na foto m.",
+    "confirmGoogle": "Google nwere ike ịrụ ọrụ na ihe e tụrụ m na ntọala m, ma ọ bụghị foto m.",
+    "confirmOwn": "Foto ndị ahụ ga-abụ nke m naanị.",
+    "noRecovery": "Enweghị paswọọdụ. Interim maara gị n’ngwaọrụ a, ya mere ọ bụrụ na ị hichapụ data nchọgharị gị, enweghị ike ịnweta profaịlụ a ọzọ.",
+    "deleteAnytime": "Ị nwere ike ihichapụ profaịlụ gị na ihe niile dị na ya n’oge ọ bụla.",
+    "incomplete": "Họrọ ogologo oge a ga-edebe foto ma maakị igbe ọ bụla ka ị gaa n’ihu.",
+    "submit": "Ekwenyere m, ana m aga n’ihu",
+    "submitting": "Na-edebe…",
+    "outdated": "Ederede nkwenye agbanweela. Bugharịa ibe a ma gụọ ya ọzọ."
+  },
+  "ready": {
+    "title": "Ahaziri gị",
+    "intro": "Interim nwere ihe ọ chọrọ ịmalite.",
+    "summaryTitle": "Nhọrọ gị",
+    "situationLabel": "Ọnọdụ",
+    "toneLabel": "Ụdị okwu",
+    "photosLabel": "Foto",
+    "next": "Nlele mbụ gị bụ foto ole na ole na ajụjụ abụọ ngwa ngwa. Ọ nọghị na ụdị a ugbu a.",
+    "deleteTitle": "Hichapụ profaịlụ m",
+    "deleteBody": "Nke a ga-ewepụ profaịlụ gị, foto, ihe e tụrụ na kaadị. Enweghị ike ịgbanwe ya.",
+    "deleteAction": "Hichapụ profaịlụ m",
+    "deleteConfirm": "Ee, hichapụ ihe niile",
+    "deleteCancel": "Debe profaịlụ m",
+    "deleting": "Na-ehichapụ…"
+  },
+  "templateLabels": {
+    "hair_loss_ahead": "Ntutu na-ada na-abịa",
+    "hair_patches": "Ntutu na-ada n’ebe ụfọdụ",
+    "face_fullness": "Ọdịdị ihu na-agbanwe",
+    "after_surgery": "Ahụ gbanwere mgbe ịwa ahụ gasịrị",
+    "skin_colour": "Agba akpụkpọ ahụ na-agbanwe",
+    "weight_change": "Mgbanwe ibu",
+    "midlife_change": "Mgbanwe etiti ndụ",
+    "after_a_baby": "Mgbe a mụsịrị nwa",
+    "going_grey": "Ntutu na-acha ọcha",
+    "textured_growth": "Itolite ntutu na-agbagọ",
+    "beard_growth": "Itolite afụ ọnụ"
+  },
+  "companionFallback": {
+    "practical": "Nke a bụ ihe gbanwere kemgbe oge ikpeazụ, na nhọrọ ole na ole maka ihe na-abịa.",
+    "warm": "Ihe na-adị ntakịrị iche n’oge a, nke a bụkwa ihe a na-ahụkarị n’ogo a. Nke a bụ ụfọdụ ọdịdị ka dị ka gị, maka ihe ọ bụla na-abịa.",
+    "light": "Nlele ọhụrụ, nhọrọ ọhụrụ. Nke a bụ ụfọdụ ọdịdị ị ga-anwale maka ihe na-abịa."
+  },
+  "whatToSay": {
+    "back_to_work": [
+      "Enwere m mgbanwe ụfọdụ n’afọ a. Obi dị m ụtọ na alọtara m.",
+      "Daalụ maka ajụjụ gị. Taa, a chọrọ m ịkọ banyere ọrụ.",
+      "Ọ bụ ogologo akụkọ. Gịnị ka m efunahụrụ?"
+    ],
+    "family_event": [
+      "Ee, ntutu m dị iche. Obi dị m ụtọ ịhụ unu.",
+      "Aga m agwa unu mgbe ọzọ. Kedu ka unu mere?"
+    ],
+    "date": [
+      "Ihe agbanweela maka m n’oge na-adịbeghị anya. Aga m anọ n’obi ụtọ ikwu maka ya mgbe ọzọ.",
+      "Achọrọ m ịnụ maka gị ka ọ bụrụ nke mbụ."
+    ],
+    "photos": ["Anyị ga-esekwa otu ọzọ? Achọrọ m ịhọrọ nke m kacha amasị.", "Enwere m ike ịhụ ya tupu e bufee ya?"],
+    "video_call": ["Ọdịdị ọhụrụ n’ọnwa a. Anyị ga-amalite?"],
+    "going_out": [
+      "Ọ bụ mgbanwe m ka na-eji nwayọ na-amata. Ọ bụ ya mere, gịnị ka anyị ga-eri?",
+      "Achọghị m ịkọ banyere ya taa."
+    ],
+    "everyday": []
+  }
+}
