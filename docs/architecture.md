@@ -80,15 +80,15 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
 * **photo.** id, snapshot_id, kind (front, left, right, top, body), object_key, sha256 of the normalised file, expires_at.
-* **measurement.** id, snapshot_id, tool, value_json, youcam_task_id. Cost is read from the ledger through the task id.
-* **render.** id, snapshot_id, tool, input_hash, object_key (null once expired), label (preview or earlier look), expires_at.
-* **run.** id, snapshot_id, template_key, template_version, status, stop_reason, budget_units. Spent units are summed from the ledger.
-* **trace_entry.** id, run_id, seq, tool, inputs_json, outputs_ref, cost_units, reason.
-* **stage_card.** id, run_id, card_json, approved_at.
-* **youcam_task.** id (our request id), profile_id, run_id, tool, state (intent, created, polling, done, failed, unknown), youcam_task_id, updated.
+* **measurement.** id, snapshot_id, tool, value_json (a `MeasuredValue`, not YouCam's raw result), reliable, youcam_task_id. One per tool per snapshot. `reliable` is false when YouCam's own read of the photo was not all good, and such a reading never places a stage. Cost is read from the ledger through the task id.
+* **render.** id, snapshot_id, tool, strategy, input_hash, object_key (null once expired), label (preview or earlier_look), expires_at. One per snapshot and input hash.
+* **run.** id, snapshot_id (unique: one run per snapshot), template_key, template_version, status (queued, running, done or failed), stop_reason (a trace reason code), retake (a capture problem code, when YouCam asked for a new photo), budget_units, source_hash. Spent units are summed from the ledger.
+* **trace_entry.** id, run_id, seq, step (observe, measure, place, decide, act, compose or stop), tool (null when none), inputs_json (no personal data; the decide step keeps the strategy and the fact it cites), outputs_ref, cost_units, reason (a code the web app translates, never text).
+* **stage_card.** id, run_id (unique), profile_id, card_json, approved_at. The card stores keys and values, never display text for stages, tools or numbers; the web app writes those in the person's language.
+* **youcam_task.** id (our request id), profile_id, run_id, tool, cache_key, state (intent, created, polling, done, failed, unknown), youcam_task_id, updated. Unique on run and cache key, so a redelivered job finds its task.
 * **ledger_entry.** id, profile_ref, run_id, tool, kind (reserve, settle or release), units, task_id. `profile_ref` is a random id with no foreign key. Ledger rows hold no personal data and are not deleted with the profile.
 * **budget_counter.** scope (run, profile, day, source), reserved_units, settled_units. Locked in a transaction while reserving.
-* **call_cache.** key (normalised photo hash, tool, API version, parameters hash), outcome (success or blocked), result_ref. Transient failures are never cached.
+* **call_cache.** key (`<profile id>:<tool>:` plus the fixture key from the normalised photo hash, API version and parameters hash), profile_id (cascade), tool, outcome (success or blocked), result_ref (a measurement's result as JSON, or a render's object key). Transient failures are never cached. The profile is part of the key, so one person's result is never served to another.
 * **catalog_item.** sku, name, size chart (sample catalog).
 * **garment.** id, profile_id, catalog_sku, saved_at.
 * **share_link.** id, card_id, token_hash, expires_at, revoked_at.
@@ -100,7 +100,7 @@ Hard delete cascades from profile to everything above except the ledger, budget 
 
 Single module, single entry point. Nothing else imports an HTTP client for YouCam.
 
-* **Flow per call.** Check consent, live switch and caps, check eligibility, check call_cache, reserve units in the ledger, write the task row as `intent`, upload the file if needed, create the task, store the task id, poll to completion, parse the result, settle or release the ledger, write the cache.
+* **Flow per call.** Check consent, live switch and caps, check eligibility, check call_cache, reserve units in the ledger, write the task row as `intent`, upload the file if needed, create the task, store the task id, poll to completion, parse the result, settle or release the ledger, write the cache. `YoucamGateway` runs this flow around `YoucamClient`, and eligibility is decided before it by the agent. A task row found in `intent` or `unknown` is never sent again, and one found in `created` is polled instead of created.
 * **Auth.** Bearer token from server side environment. Never sent to the browser.
 * **Upload.** The documented V2 flow: register the file, upload to the returned location, then create the task with the file id.
 * **Polling.** BullMQ job with growing delay. Stop on success, error or timeout.
@@ -127,7 +127,7 @@ The model never sees raw photos, only measurement records and render references.
 BullMQ on Redis.
 
 * **run queue.** One job per run. Concurrency of one per profile.
-* **poll queue.** One job per open YouCam task, with growing delay.
+* **poll queue.** Not a separate queue yet: the gateway polls inside the run job with a growing delay, and a task row left in `created` is polled again if the job is delivered twice.
 * **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `object_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
@@ -142,9 +142,11 @@ BullMQ on Redis.
 * GET /profiles/:id/export
 * POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
 * POST /profiles/:id/snapshots (upload ids with kinds, self report and an optional moment; normalises, stores, then deletes the raw uploads)
-* POST /snapshots/:id/runs (starts the agent)
-* GET /runs/:id/events (server sent events)
-* GET /runs/:id/card
+* POST /snapshots/:id/runs (starts the agent; starting twice returns the same run)
+* GET /runs/:id (status, stop reason, trace)
+* GET /runs/:id/events (server sent events: the same view once a second until the run finishes)
+* GET /cards/:id (the card with short lived links to its renders and the front photo)
+* GET /profiles/:id/cards (newest first)
 * POST /cards/:id/approve
 * POST /cards/:id/share (creates an expiring link)
 * DELETE /shares/:id (revokes a link)
@@ -161,8 +163,8 @@ All routes check consent version and ownership. Share links expire, can be revok
 ## 10. Web app
 
 * **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
-* **Capture wizard.** Uses the YouCam JS Camera Kit where possible for angle and lighting guidance. Runs checks on the device and blocks upload on failure. Offers a timer for the top photo. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
-* **Run progress.** Shows the live trace in short lines, so the agent is visible.
+* **Capture wizard.** Asks for what `capturePlan` in `packages/rules` says, the same rule the server applies. Uses the YouCam JS Camera Kit for the front, both sides (one hair type capture) and the top photo (its five second countdown is the timer), and a plain file input for the body photo and whenever the kit does not load or the camera is refused. Runs `photoQualityProblem` on each photo on the device and blocks upload on failure. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
+* **Run progress.** Shows the live trace in short lines, so the agent is visible. It listens to the event stream and asks every two seconds if the stream is not available.
 * **Stage Card.** Before and after slider for renders, a clear preview label, shopping list, share, export and delete actions.
 * **Ledger view.** Every call, its cost and the reason it was made.
 * **Mobile first.** Designed and filmed on a phone. Installable as a PWA.
@@ -194,7 +196,7 @@ Server environment variables, by name:
 * R2_ENDPOINT, R2_BUCKET, R2_REGION, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
 * GOOGLE_GENERATIVE_AI_API_KEY and LLM_MODEL (Gemini through the Vercel AI SDK)
 * UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY
-* YOUCAM_MODE with values live, record or replay
+* YOUCAM_MODE with values live, record or replay, and YOUCAM_FIXTURES_DIR and PLANNER_FIXTURES_DIR for what record writes and replay serves
 * LIVE_CALLS_ENABLED, false unless set
 * JUDGE_MODE_FORCE_REPLAY
 * SESSION_SECRET, MAX_UPLOAD_BYTES, TURNSTILE_SECRET_KEY
