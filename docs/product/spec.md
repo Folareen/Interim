@@ -263,7 +263,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 ## 12b. Accounts and sign in
 
 * **Account first.** A person signs up or signs in before anything else, so a profile always belongs to a person, opens on any device and survives cleared browser data. There is no anonymous profile and no device cookie. Setup after that is situation, tone and hair, then consent. The language is chosen from the header, not as a step. Someone who signs in again lands where they left off, and can change tone and head covering from the ready screen.
-* **Three ways in, one session.** Email and password, a link sent by email, or Google. Any of them ends in the same kind of session. Passkeys are not offered.
+* **Three ways in, one session.** Email and password, a link sent by email, or Google. Any of them ends in the same kind of session.
 * **What an account holds.** An email address, a password hash (never the password) and, for Google, the account's subject id. Google is asked for the `openid` and `email` scopes only, so no name or photo arrives. All of it is deleted with the account.
 * **The email address is personal data** tied to profiles whose situation can imply health. It is kept in its own table, and is never sent to YouCam or Gemini, put in a log, shown on a share link or used for advertising. Two processors see it: Brevo, which sends the email, and Google, only for people who choose Google. Neither receives photos. The sign up and sign in screens say so.
 * **Passwords.** 10 to 128 characters with no composition rules, hashed with scrypt. There is no check against lists of leaked passwords yet (section 17).
