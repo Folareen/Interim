@@ -7,6 +7,39 @@ import { z } from 'zod';
 
 const srcFile = z.object({ src_file_id: z.string().min(1) });
 const singleUrl = z.object({ url: z.string().url() });
+const hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/);
+
+// How strict the face angle check is, from `strict` (4 to 6 degrees) to `flexible` (30 degrees).
+const faceAngleStrictness = z.enum(['strict', 'high', 'medium', 'low', 'flexible']);
+
+// Returned with the face analysers. YouCam's own read of the photo, such as "good".
+const faceQuality = z.object({
+  has_face: z.boolean().optional(),
+  area: z.string().optional(),
+  frontal: z.string().optional(),
+  lighting: z.string().optional(),
+  faceangle: z.string().optional(),
+});
+
+const garmentCategory = z.enum(['full_body', 'lower_body', 'upper_body', 'shoes', 'auto', 'outer']);
+
+// Brow effect of Makeup VTO. `name` must match a label in YouCam's eyebrows.json.
+const browEffect = z.object({
+  category: z.literal('eyebrows'),
+  pattern: z.union([
+    z.object({ type: z.literal('color') }),
+    z.object({
+      type: z.literal('shape'),
+      name: z.string().min(1),
+      curvature: z.number().int().min(-100).max(100).optional(),
+      thickness: z.number().int().min(-100).max(100).optional(),
+      definition: z.number().int().min(0).max(100).optional(),
+    }),
+  ]),
+  palettes: z
+    .array(z.object({ color: hex, colorIntensity: z.number().int().min(0).max(100), texture: z.literal('matte') }))
+    .min(1),
+});
 
 const hairColorPresets = [
   'Jet Black',
@@ -56,8 +89,9 @@ export const tools = {
     request: srcFile,
     result: z.object({
       hair_density: z.object({
-        mapping: z.string(), // a float as a string, 0 to 3
-        term: z.enum(['Extremely Low Density', 'Low Density', 'Medium Density', 'High Density']),
+        mapping: z.string(), // a float as a string; the docs say 0 to 3, the live API returned -0.06 too
+        // The docs spell the first grade "Extremely"; the live API returned "Extreme". Both are accepted.
+        term: z.enum(['Extreme Low Density', 'Extremely Low Density', 'Low Density', 'Medium Density', 'High Density']),
       }),
     }),
   },
@@ -112,8 +146,95 @@ export const tools = {
   fitzpatrick: {
     version: 'v2.0',
     path: 'fitzpatrick-scale-analyzer',
-    request: srcFile,
+    request: srcFile.extend({ version: z.literal('1.0') }), // required, though the docs page omits it
     result: z.object({ fitzpatrick_scale: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']) }),
+  },
+  // Facial colour tones, 20 units, charged only on success. Only `skin_color` is reliable: in the
+  // spike it moved about 2 hex units when a photo was dimmed, brightened or warmed, while the eye
+  // and hair colour names changed with the light and a bald man read as "Blonde".
+  skin_tone: {
+    version: 'v2.0',
+    path: 'skin-tone-analysis',
+    request: srcFile.extend({ face_angle_strictness_level: faceAngleStrictness.optional() }),
+    result: z.object({
+      face_quality: faceQuality.optional(),
+      color: z.object({
+        skin_color: hex,
+        eye_color: z.string().optional(),
+        eye_color_name: z.string().optional(),
+        eyebrow_color: z.string().optional(),
+        lip_color: z.string().optional(),
+        hair_color: z.string().optional(),
+        hair_color_name: z.string().optional(),
+      }),
+    }),
+  },
+  // Only face shape and its aspect ratio are allowed. The analyser can also return age and gender,
+  // which Interim never asks for (docs/product/overview.md, Language and safety rules). 10 units
+  // for 1 to 5 features.
+  face_shape: {
+    version: 'v2.0',
+    path: 'face-attr-analysis',
+    request: srcFile.extend({
+      features: z.array(z.enum(['faceShape', 'faceAspectRatio'])).min(1).max(2),
+      face_angle_strictness_level: faceAngleStrictness.optional(),
+    }),
+    result: z.object({
+      face_quality: faceQuality.optional(),
+      faceshape: z
+        .enum(['Triangle', 'Diamond', 'Heart', 'InvTriangle', 'Oblong', 'Oval', 'Round', 'Square', 'Unknown'])
+        .optional(),
+    }),
+  },
+  // Clothes try on v4. The cost is not in the docs table; read it with Get_Feature_Cost. The docs
+  // disagree on whether the person photo is full body or chest up (docs/product/spec.md section 17).
+  cloth_v4: {
+    version: 'v2.0',
+    path: 'cloth-v4',
+    request: srcFile.extend({
+      ref_file_id: z.string().min(1),
+      garment_category: garmentCategory,
+      change_shoes: z.boolean().optional(),
+      filter_multi_person: z.enum(['off', 'normal', 'strict']).optional(),
+    }),
+    result: singleUrl,
+  },
+  // Brow makeup, the fallback when hair tools are blocked. 1 unit. The docs show the result both
+  // as `{ url }` and as a list of `{ download_url }`; the live API returned `{ url }` every time.
+  makeup_brows: {
+    version: 'v2.0',
+    path: 'makeup-vto',
+    request: srcFile.extend({ effects: z.tuple([browEffect]) }),
+    result: singleUrl,
+  },
+  // The next two make synthetic test photos for the spike runner (docs/integrations/youcam.md,
+  // Spike runner). The product never calls them. 1 unit each. `size` is width*height, and the
+  // text to image sizes are limited to five values.
+  text_to_image: {
+    version: 'v2.0',
+    path: 'text-to-image/youcam',
+    request: z.object({
+      model: z.literal('youcam-image-v2'),
+      prompt: z.string().min(1).max(800),
+      negative_prompt: z.string().min(1).max(500).optional(),
+      size: z.enum(['1664*928', '1472*1104', '1328*1328', '1104*1472', '928*1664']).optional(),
+      prompt_extend: z.boolean().optional(),
+    }),
+    result: singleUrl,
+  },
+  // Edits one to three photos from a prompt, such as "the same person with a shaved head".
+  image_to_image: {
+    version: 'v2.0',
+    path: 'image-to-image/youcam',
+    request: z.object({
+      src_file_ids: z.array(z.string().min(1)).min(1).max(3),
+      model: z.literal('youcam-image-v2'),
+      prompt: z.string().min(1).max(800),
+      negative_prompt: z.string().min(1).max(500).optional(),
+      size: z.string().regex(/^\d{3,4}\*\d{3,4}$/).optional(),
+      prompt_extend: z.boolean().optional(),
+    }),
+    result: singleUrl,
   },
 } as const;
 

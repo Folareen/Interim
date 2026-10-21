@@ -38,6 +38,15 @@ const actions: Record<YoucamErrorCode, TaskErrorAction> = {
   error_no_face: 'new_photo',
   error_large_face_angle: 'new_photo',
   error_multiple_people: 'new_photo',
+  error_multi_person: 'new_photo',
+  error_face_not_forward_facing: 'new_photo',
+  error_face_angle_upward: 'new_photo',
+  error_face_angle_downward: 'new_photo',
+  error_face_angle_leftward: 'new_photo',
+  error_face_angle_rightward: 'new_photo',
+  error_face_angle_left_tilt: 'new_photo',
+  error_face_angle_right_tilt: 'new_photo',
+  error_invalid_src: 'new_photo', // the photo shows only the lower body or feet
   error_no_shoulder: 'new_photo',
   error_pose: 'new_photo',
   error_face_pose: 'new_photo',
@@ -48,9 +57,14 @@ const actions: Record<YoucamErrorCode, TaskErrorAction> = {
   error_face_position_out_of_boundary: 'new_photo',
   error_src_face_too_small: 'new_photo',
   error_src_face_out_of_bound: 'new_photo',
+  // This garment cannot be shown on this photo (it covers a region the photo does not show, or
+  // the result would match what the person already wears). Another garment may still work.
+  error_apply_region_mismatch: 'block_tool',
+  error_editing_failed: 'block_tool',
   error_nsfw_content_detected: 'new_photo', // moderation rejection
   exceed_nsfw_retry_limits: 'new_photo',
   // Normalisation should make these impossible, so they point at a bug on our side.
+  error_invalid_ref: 'fault', // a catalog image is unusable
   error_below_min_image_size: 'fault',
   error_exceed_max_image_size: 'fault',
   error_mismatch_image_size: 'fault',

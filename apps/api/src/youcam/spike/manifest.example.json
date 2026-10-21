@@ -1,0 +1,20 @@
+{
+  "note": "Copy to apps/api/.spike/manifest.json and put photos in .spike/photos. Paths are relative to this file. Replace the FILL_IN template ids with ids from the template list endpoints. Only photos of people who gave written consent.",
+  "runs": [
+    { "label": "density-full", "tool": "hair_density", "photo": "photos/full-top.jpg" },
+    { "label": "density-thin", "tool": "hair_density", "photo": "photos/thin-top.jpg" },
+    { "label": "density-sparse", "tool": "hair_density", "photo": "photos/sparse-top.jpg" },
+    { "label": "length-short", "tool": "hair_length", "photo": "photos/short-front.jpg" },
+    { "label": "type-baseline", "tool": "hair_type", "photos": ["photos/full-front.jpg", "photos/full-right.jpg", "photos/full-left.jpg"] },
+    { "label": "style-full", "tool": "hairstyle", "photo": "photos/full-front.jpg", "params": { "template_id": "FILL_IN", "hair_color": "src" } },
+    { "label": "style-thin", "tool": "hairstyle", "photo": "photos/thin-front.jpg", "params": { "template_id": "FILL_IN", "hair_color": "src" } },
+    { "label": "style-short", "tool": "hairstyle", "photo": "photos/short-front.jpg", "params": { "template_id": "FILL_IN", "hair_color": "src" } },
+    { "label": "style-bald", "tool": "hairstyle", "photo": "photos/bald-front.jpg", "params": { "template_id": "FILL_IN", "hair_color": "src" } },
+    { "label": "tone-day1", "tool": "skin_tone", "photo": "photos/full-front.jpg" },
+    { "label": "tone-day2", "tool": "skin_tone", "photo": "photos/full-front-b.jpg" },
+    { "label": "shape-front", "tool": "face_shape", "photo": "photos/full-front.jpg", "params": { "features": ["faceShape"] } },
+    { "label": "cloth-body-a", "tool": "cloth_v4", "photo": "photos/body-a.jpg", "ref": "photos/jacket.jpg", "params": { "garment_category": "upper_body" } },
+    { "label": "cloth-body-b", "tool": "cloth_v4", "photo": "photos/body-b.jpg", "ref": "photos/jacket.jpg", "params": { "garment_category": "upper_body" } },
+    { "label": "brows-bald", "tool": "makeup_brows", "photo": "photos/bald-front.jpg", "params": { "effects": [{ "category": "eyebrows", "pattern": { "type": "color" }, "palettes": [{ "color": "#3b2f2f", "colorIntensity": 60, "texture": "matte" }] }] } }
+  ]
+}

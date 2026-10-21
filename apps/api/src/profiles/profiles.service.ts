@@ -14,8 +14,8 @@ import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { StorageService } from '../storage/storage.service';
 
-// owner_ref is a credential hash and never leaves the API. words_set can imply a religion, so it
-// is only read through the preferences, words and export paths.
+// owner_ref is a credential hash and never leaves the API. words_set and head_covering can imply a
+// religion or culture, so they are only read through the preferences, words and export paths.
 const visible = {
   id: profile.id,
   templateKey: profile.templateKey,
@@ -98,7 +98,13 @@ export class ProfilesService {
   /** The person's companion settings, including the words for today set. */
   async preferences(id: string, owner: Owner): Promise<Preferences> {
     const [row] = await this.db
-      .select({ locale: profile.locale, tone: profile.tone, wordsSet: profile.wordsSet, bodyPhotos: profile.bodyPhotos })
+      .select({
+        locale: profile.locale,
+        tone: profile.tone,
+        wordsSet: profile.wordsSet,
+        bodyPhotos: profile.bodyPhotos,
+        headCovering: profile.headCovering,
+      })
       .from(profile)
       .where(and(eq(profile.id, id), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();

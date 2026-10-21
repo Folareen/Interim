@@ -17,7 +17,7 @@ export const templateKeys = [
 export const templateKeySchema = z.enum(templateKeys);
 export type TemplateKey = z.infer<typeof templateKeySchema>;
 
-// docs/product/spec.md section 11. Codes published in the YouCam docs; how each is handled
+// docs/product/spec.md section 11. Codes published in the YouCam docs and agent skills; how each is handled
 // lives in apps/api/src/youcam/youcam.errors.ts.
 export const youcamErrorCodes = [
   'error_hair_too_short',
@@ -42,6 +42,18 @@ export const youcamErrorCodes = [
   'error_exceed_max_image_size',
   'error_mismatch_image_size',
   'error_unsupport_ratio',
+  'error_face_not_forward_facing',
+  'error_face_angle_upward',
+  'error_face_angle_downward',
+  'error_face_angle_leftward',
+  'error_face_angle_rightward',
+  'error_face_angle_left_tilt',
+  'error_face_angle_right_tilt',
+  'error_invalid_ref',
+  'error_apply_region_mismatch',
+  'error_invalid_src',
+  'error_editing_failed',
+  'error_multi_person',
   'error_nsfw_content_detected',
   'exceed_nsfw_retry_limits',
   'exceed_max_filesize',
@@ -132,14 +144,17 @@ export const wordsSetSchema = z.enum(['gentle', 'christian', 'muslim', 'jewish']
 export type WordsSet = z.infer<typeof wordsSetSchema>;
 
 /**
- * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off. The set can
- * imply a religion, so only the person reads or sets it (docs/product/spec.md section 12).
+ * Body of PUT /profiles/:id/preferences. `wordsSet` null turns words for today off. `headCovering`
+ * means the person covers their hair, which turns hair try on off. The set and the covering can
+ * imply a religion or culture, so only the person reads or sets them (docs/product/spec.md
+ * section 12).
  */
 export const preferencesSchema = z.object({
   locale: liveLocaleSchema,
   tone: toneSchema,
   wordsSet: wordsSetSchema.nullable(),
   bodyPhotos: z.boolean(),
+  headCovering: z.boolean(),
 });
 export type Preferences = z.infer<typeof preferencesSchema>;
 

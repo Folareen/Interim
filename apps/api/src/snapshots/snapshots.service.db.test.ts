@@ -148,7 +148,7 @@ describe('check in', () => {
 
     await snapshots.create(id, owner, { uploads: await upload(id, ['front', 'left', 'right']) });
 
-    await profiles.setPreferences(id, owner, { locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true });
+    await profiles.setPreferences(id, owner, { locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true, headCovering: false });
     await expect(
       snapshots.create(id, owner, { uploads: await upload(id, ['front']), selfReport: { changed: 'some', reportedSize: 'M' } }),
     ).rejects.toThrow(/body photo/);

@@ -40,9 +40,9 @@ One engine, one steady voice.
 
 **The Change Ledger.** A dated, measured record of how someone looks: hair density grade, hair length stage, hair type, skin tone, face shape, a full body photo, and the garments they saved. Each check in adds a snapshot.
 
-**The stage model.** For each situation, a template defines the expected path (for example full hair, thinning, short, none, growing in), how often to check in, which YouCam tools are valid at each stage, and what to do when a tool stops working. The stage decides the tools, not the situation.
+**The stage model.** For each situation, a template defines the expected path (for example full hair, thinning, short, none, growing in), how often to check in, which YouCam tools are valid at each stage, and what to do when a tool does not apply. The stage decides the tools, not the situation.
 
-This is how the YouCam hair APIs, which reject bald and very short hair, become part of the product logic instead of a limit. When hair transfer stops being valid, the agent switches to hat, brow or colour matching, and uses the baseline renders from earlier, fuller photos for as long as those photos are kept (30 days in standard mode, or until the person deletes them or 24 months after the last check in if they choose to keep their history).
+The YouCam hair try on works on bald, shaved and very short hair as well as full hair, so a person with no hair can preview a hairstyle or a wig on their own photo. It also replaces whatever is on the head, including a hijab or head wrap, so a person who covers their hair says so once and hair try on is never shown to them. For them, and whenever a hair tool does not apply, the agent switches to clothes, brow and colour options, and uses the baseline renders from earlier photos for as long as those photos are kept (30 days in standard mode, or until the person deletes them or 24 months after the last check in if they choose to keep their history).
 
 ## Templates
 
@@ -65,7 +65,7 @@ Also for:
 10. Growing out textured hair. Length stages from very short to shoulder length, with protective style windows.
 11. Growing a beard. Stubble to full beard, with a beard style render for each stage.
 
-Templates 2 to 5 depend on YouCam behaviour that is not yet confirmed (spec section 17).
+Templates 2 to 5 depend on YouCam behaviour that is still being confirmed with real photos (spec section 17).
 
 Another Round 2 entry (Bloom) is built around a chemo wig try on. Interim is not a try on. It follows the whole timeline (before, during, growing back in, fit change), covers several situations, plans for everyday moments, and speaks in a voice the person chooses.
 
@@ -147,6 +147,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * Users choose a situation from a fixed list. There are no condition fields and no medication fields.
 * Density grades are described as visual categories, not health findings.
 * Every card for a sensitive situation (templates 1 to 8) carries one short line suggesting a professional for health questions, and a link to someone to talk to.
+* Head coverings are respected. A person who covers their hair is never shown a render without it, and the card never suggests removing a covering.
 * Body image: Interim never shows or asks for weight, BMI or a target, and never shows a goal, streak or progress score. Fit templates show saved clothes on the person as they are today. A person can turn off body photos at any time.
 * The Body Reshape API is not used to show a future thinner person. Renders are only made on real check in photos.
 * Previews are labelled as previews. They do not promise a result.
@@ -154,19 +155,19 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 ## Demo plan
 
-* Lead with Hair loss ahead across its whole timeline: hair thinning, the switch to cover and brow options when hair tools stop working, growing back in, and a fit change at the end. Show the companion note changing with each stage and a moment such as a first day back at work.
+* Lead with Hair loss ahead across its whole timeline: hair thinning, a bald stage where the person previews hairstyles or a wig on their own photo, growing back in, and a fit change at the end. Show the companion note changing with each stage and a moment such as a first day back at work.
 * Then weight change, to show the same engine working for a different situation, with its hard numbers.
-* Real people only with clear consent. Stages that are simulated are labelled on screen as sample profiles.
+* Real people only with clear consent. The sample profiles are two synthetic people in five hair stages (`packages/fixtures/sample`), labelled on screen as simulated.
 * A recorded fixture replay so the video and the judges cost no units.
 * Show the agent trace and the unit ledger on screen so the technical depth is visible.
 
 ## Risks and open questions
 
-* Technical unknowns (density grades, hair transfer limits, chaining, unit costs, billing on failure, fairness across skin tones and hair types, and support for templates 2 to 5) are tracked in spec section 17, which owns them.
+* Technical unknowns still open (hair density with the real pose, fairness across skin tones and hair types, whether skin colour and face fullness follow real change, and support for templates 2 to 5) are tracked in spec section 17, which owns them. Hair try on, clothes try on and chaining them were confirmed on 2026-10-21.
 * No user research yet. The plan is in spec section 18.
 * Some US states (Illinois and Nevada from 2025) ban AI mental health care. Interim stays a cosmetic tool with a kind voice. The language rules and the on-device reflection keep it there.
 * Photographing yourself six ways at every check in may be too much, especially when unwell. The check in set is kept small for that reason.
-* A believable demo needs dated photos of one consenting person, which is harder for illness than for weight change.
+* A demo with a real person needs dated photos of one consenting person, which is harder for illness than for weight change, so the demo uses the synthetic sample profiles and shows real photos only with consent.
 * Medical and body image sensitivity needs careful wording on every screen.
 
 The first 48 hours of the build exist to answer the technical unknowns.

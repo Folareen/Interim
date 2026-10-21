@@ -10,7 +10,8 @@
     "start:worker": "node dist/worker",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "spike": "tsx --env-file=../../.env src/youcam/spike/spike.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",
@@ -24,6 +25,7 @@
     "@types/node": "^26.6.5",
     "@types/pg": "^8.23.1",
     "eslint": "^10.13.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^5.0.5"
   },

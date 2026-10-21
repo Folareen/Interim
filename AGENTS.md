@@ -8,5 +8,6 @@ Read [docs/README.md](docs/README.md) to find the owning doc before changing any
 - User facing copy must pass the banned-word scan (see docs/product/overview.md).
 - Frontend work updates the translation catalogs for every language in the same change (docs/frontend/README.md, Copy).
 - Default `YOUCAM_MODE` is `replay`. Never run live calls without being asked.
+- Live calls cost real money (500 units cost 27.50 dollars). Before any live batch, state its cost in units and dollars, agree a cap with the user, and run it with `--max-units`. Never go past the cap, or start another batch, without asking again.
 - Follow [docs/git.md](docs/git.md) for branches, commits and PRs.
 - Run `pnpm lint && pnpm typecheck && pnpm test` before finishing.

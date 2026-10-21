@@ -1,0 +1,1 @@
+ALTER TABLE "profile" ADD COLUMN "head_covering" boolean DEFAULT false NOT NULL;

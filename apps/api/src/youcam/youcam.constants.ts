@@ -1,5 +1,4 @@
-// docs/product/spec.md section 10. Costs marked null are unconfirmed (verify in the spike).
-// Confirmed against docs.perfectcorp.com on 2026-10-20 unless noted.
+// docs/product/spec.md section 10. Confirmed against Get_Feature_Cost on 2026-10-21. Keys are tool names in youcam.tools.ts.
 export const unitCosts: Record<string, number | null> = {
   hair_type: 2,
   hair_density: 1,
@@ -9,9 +8,16 @@ export const unitCosts: Record<string, number | null> = {
   hairstyle: 2, // v2.1, preset and custom mode
   beard_style: 2,
   fitzpatrick: 10, // charged only when the task succeeds
-  makeup_tryon: 1, // from the spec, page not read
-  clothes_v4: null,
+  skin_tone: 20, // facial colour tones, charged only when the task succeeds
+  face_shape: 10, // one feature; 6 to 14 features cost 20, 15 to 28 cost 30
+  makeup_brows: 1, // charged only when the task succeeds
+  cloth_v4: 2,
+  text_to_image: 1, // spike only
+  image_to_image: 1, // spike only
 };
+
+// What a unit costs, from the account owner: 500 units cost 27.50 dollars (2026-10-21).
+export const usdPerUnit = 0.055;
 
 // Skin analysis is priced by the number of concerns and the tier: [max concerns, SD, HD].
 export const skinAnalysisUnits = [

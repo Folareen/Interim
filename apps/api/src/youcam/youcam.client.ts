@@ -54,7 +54,8 @@ const createSchema = z.object({ data: z.object({ task_id: z.string().min(1) }) }
 
 const statusSchema = z.object({
   data: z.object({
-    task_status: z.enum(['running', 'success', 'error']),
+    // Makeup VTO's docs also list `queued` and `processing`; all three mean not finished yet.
+    task_status: z.enum(['running', 'queued', 'processing', 'success', 'error']),
     error: z.string().nullish(),
     error_message: z.string().nullish(),
     results: z.unknown().optional(),
@@ -64,7 +65,12 @@ const statusSchema = z.object({
 // HTTP errors look like { status, error, error_code }. CreditInsufficiency means out of units.
 const httpErrorSchema = z.object({ error_code: z.string().optional() });
 
-// Not documented as stable; verify in the spike (docs/product/spec.md section 17).
+// Credit batches by type. Units a call can spend are the batches whose type starts with `Api`.
+const creditSchema = z.object({
+  results: z.array(z.object({ type: z.string(), amount: z.number() })),
+});
+
+// Checked against the live API on 2026-10-21; the docs do not describe this response.
 const featureCostSchema = z.object({
   result: z.object({
     next_token: z.string().nullish(),
@@ -73,7 +79,7 @@ const featureCostSchema = z.object({
         description: z.string(),
         amount: z.number(),
         unit: z.string(),
-        proc_unit: z.string().nullish(),
+        proc_unit: z.number().nullish(), // units of measure per charge, such as images; seen as a number in the live API
         run_task_url: z.string().nullish(),
       }),
     ),
@@ -166,10 +172,8 @@ export class YoucamClient {
     }
 
     const { data } = statusSchema.parse(JSON.parse(raw));
-    if (this.mode === 'record' && data.task_status !== 'running') {
-      await this.writeFixture(ref.tool, ref.fixtureKey, raw);
-    }
-    if (data.task_status === 'running') return { state: 'running' };
+    if (data.task_status !== 'success' && data.task_status !== 'error') return { state: 'running' };
+    if (this.mode === 'record') await this.writeFixture(ref.tool, ref.fixtureKey, raw);
     if (data.task_status === 'error') {
       const code = data.error ?? 'unknown_internal_error';
       return {
@@ -180,6 +184,21 @@ export class YoucamClient {
       };
     }
     return { state: 'success', result: definition.result.parse(data.results) as ToolResult<T> };
+  }
+
+  // Units the API key can still spend. Free to call, live only.
+  async getSpendableUnits(): Promise<number> {
+    this.assertLive();
+    const credit = creditSchema.parse(await this.request('GET', '/s2s/v1.0/client/credit', 'read'));
+    return credit.results.filter((batch) => batch.type.startsWith('Api')).reduce((sum, batch) => sum + batch.amount, 0);
+  }
+
+  // One page of a template list, such as `hair-transfer`. Free, live only. The response shape is
+  // not yet confirmed, so the spike prints it raw and the schema is written from what it shows.
+  async getTemplatePage(feature: string, version: string, startingToken?: string): Promise<unknown> {
+    this.assertLive();
+    const query = startingToken ? `&starting_token=${encodeURIComponent(startingToken)}` : '';
+    return this.request('GET', `/s2s/${version}/task/template/${encodeURIComponent(feature)}?page_size=20${query}`, 'read');
   }
 
   // Live only. Replay has no cost fixture; use the table in youcam.constants.ts.

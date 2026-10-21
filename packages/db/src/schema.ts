@@ -45,6 +45,9 @@ export const profile = pgTable('profile', {
   tone: tone('tone').notNull().default('warm'),
   // Can imply a religion: never sent to the model (docs/product/spec.md section 12).
   wordsSet: wordsSet('words_set'), // null while words for today is off
+  // The person covers their hair, so hair try on never runs. Can imply a religion or culture: never
+  // sent to the model (docs/product/spec.md sections 7 and 12).
+  headCovering: boolean('head_covering').notNull().default(false),
   // New profiles copy the template's default; rows from before the setting existed keep body photos on.
   bodyPhotos: boolean('body_photos').notNull().default(true),
   judgeSample: boolean('judge_sample').notNull().default(false),

@@ -71,7 +71,7 @@ interim/
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (hash of the owner token, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (planned languages; only live ones are accepted), tone (practical, warm or light), words_set (null while off; read only on person-only routes), body_photos (starts from the template), judge_sample flag.
+* **profile.** id, template_key, owner_ref (hash of the owner token, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (planned languages; only live ones are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template); words_set and head_covering are read only through the preferences paths, judge_sample flag.
 * **consent_event.** id, profile_id, version, action (grant or withdraw), created.
 * **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
@@ -139,7 +139,7 @@ BullMQ on Redis.
 * POST /profiles with a template key and an age confirmation (open; mints the owner cookie for a new person)
 * GET /profiles (the caller's own) and GET /profiles/:id
 * POST /profiles/:id/consent (grant or withdraw)
-* GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos; the person only)
+* GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos, head covering)
 * GET /profiles/:id/words?date=YYYY-MM-DD (today's passage in the profile's language or English, or null while off; the person only)
 * DELETE /profiles/:id
 * GET /profiles/:id/export

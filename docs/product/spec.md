@@ -19,7 +19,8 @@ There are no admin or care team roles in this build.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
 * **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot) and, for fit templates, their current size.
-* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile with the language, the body photo setting and the words for today choice.
+* **Tone.** How the companion talks to this profile: practical, warm (the default) or light. Stored on the profile with the language, the body photo setting, the head covering setting and the words for today choice.
+* **Head covering.** A profile setting: the person covers their hair. It turns off every tool that changes or removes what is on the head (rule 4 of section 7). Asked once at setup in neutral words, off by default, changeable at any time.
 * **Language.** The profile's language, from the live languages (section 13). English by default.
 * **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday. Optional on any snapshot, the baseline included.
 * **Companion note.** The first block of a Stage Card. Rules in [overview.md](overview.md#the-companion).
@@ -102,8 +103,8 @@ At baseline, once per profile:
 * Hair type detection
 * Hair density detection
 * Hair length detection
-* Face attributes (face shape)
-* Skin tone analysis, once only because of its cost
+* Face attributes: face aspect ratio and face shape (one call, 10 units). The ratio is the number tracked for fullness.
+* Skin colour (facial colour tones, 20 units), once only because of its cost. Only the skin colour is used.
 * Body photo stored for fit renders
 
 At each check in, measurements are taken when any of these is true:
@@ -112,7 +113,11 @@ At each check in, measurements are taken when any of these is true:
 * the stage model expects a change
 * `remeasure_every` check ins have passed without a measurement
 
-What is measured then: density when the stage model expects change, length when the template tracks length.
+What is measured then: density when the stage model expects change, length when the template tracks length, face aspect ratio for face_fullness, skin colour for skin_colour.
+
+Density is placed by comparing `mapping` with the same person's baseline, never by the grade label, which is not comparable across people. A change smaller than about 0.7 is treated as noise unless the capture check passed the light.
+
+The face tools run at the loosest angle setting (`flexible`, within 30 degrees) because the on device capture check is the gate. YouCam returns its own read of the photo (`face_quality`: area, frontal, lighting, face angle). A result whose quality is not all "good" is stored as unreliable and is not used to place a stage.
 
 When nothing is measured, stage placement uses the last measurements and the card shows the date they were taken ("last measured on"). A card never presents an old value as new.
 
@@ -125,15 +130,15 @@ Rules, in order of evaluation:
 1. No live call is made when live calls are off (section 10) or the mode is replay. In replay a missing fixture fails closed with an error. It never falls through to the network.
 2. A tool is blocked if the snapshot failed its capture check for that tool, on the device or on the server.
 3. When a recorded success exists for the same normalised photo hash, tool, API version and parameters, the recorded result is returned and no new call is made. This is a reuse, not a block.
-4. Hair transfer (hairstyle v2.1) is allowed only when the snapshot shows hair present. Preflight uses the density grade and length stage measured for this snapshot, against thresholds in template config (to verify).
-5. Hair transfer is marked blocked for the snapshot, and cached as blocked, when the API returns error_hair_too_short or error_bald_image. The agent then moves to the fallback order.
-6. Fallback order when hair transfer is blocked: hat try on, brow makeup try on, then renders from the baseline hair photos labelled as earlier looks. The last step works only while those photos are still retained (section 12). If they have expired, the card says so and offers to keep history for future check ins.
+4. Hair transfer (hairstyle v2.1) is allowed whatever hair is present. It worked on bald, shaved, very short and covered heads in the spike, so a person with no hair can preview a hairstyle or wig, labelled as a preview. It replaces whatever is on the head, including a hijab or head wrap, so it is never run for a profile with head covering on. Hair length cannot tell a covered head from a bald one (both read "above the ears"), so the setting, not a measurement, decides.
+5. Hair transfer is marked blocked for the snapshot, and cached as blocked, when the API returns error_hair_too_short or error_bald_image. The spike never produced either, but the handling stays.
+6. Fallback order when hair transfer is blocked or off: brow makeup try on, then renders from the baseline photos labelled as earlier looks. The last step works only while those photos are still retained (section 12). If they have expired, the card says so and offers to keep history for future check ins. Hat and scarf try on are not used: the hat tool makes a new picture of a styled person in another scene, so the result is not recognisably the person.
 7. Beard style is allowed only in the beard template, or when the user marks beard as a goal.
 8. Hair volume previews are allowed only when density is present and are always labelled as visual previews.
 9. Clothes try on is allowed only when the body photo passes capture checks.
 10. A tool is blocked when its estimated cost would exceed any remaining cap (run, profile, day, source).
 
-Short or shaved hair, head coverings and no hair are normal inputs. They block hair tools with neutral wording and never an error tone, and the face based flows still run.
+Short or shaved hair and no hair are normal inputs. A head covering turns hair try on off with neutral wording and never an error tone, and the face and clothes flows still run.
 
 The eligibility table is published in the project readme, built from the spike results.
 
@@ -193,7 +198,7 @@ Words for today is shown on the home screen, not on the card, so a shared card n
 * The unit ledger view shows each call, its cost and why it was made.
 * Unit cost in money is tracked in config. The spike computes units and money per baseline and per check in, and the plan must keep cost per active member inside the price (section 18).
 
-Cost table, from the YouCam docs (read 2026-10-20). Still to verify in the spike against Get_Feature_Cost:
+Cost table, confirmed against Get_Feature_Cost on 2026-10-21 (every price in the docs matched):
 
 * Hair type detection: 2 units
 * Hair density detection: 1 unit
@@ -202,10 +207,12 @@ Cost table, from the YouCam docs (read 2026-10-20). Still to verify in the spike
 * Hair transfer v2.1 (hairstyle): 2 units, preset or custom
 * Hair color: 1 unit
 * Beard style: 2 units
-* Skin tone (Fitzpatrick skin type): 10 units, charged only when the task succeeds. The earlier figure of about 20 units is not in the docs.
+* Fitzpatrick skin type: 10 units, charged only when the task succeeds.
+* Facial colour tones (skin_colour template): 20 units, charged only when the task succeeds.
+* Face shape (face_fullness template): 10 units for 1 to 5 features, charged only when the task succeeds. Interim asks for face shape only.
 * Skin analysis: 9 to 22 units. SD is 9, 12, 14, 16 and HD is 12, 16, 20, 22 for 1 to 4, 5 to 8, 9 to 12, 13 to 16 concerns.
-* Makeup try on: 1 unit, page not read
-* Clothes v4: not confirmed (the docs list clothes v2.0 and v3.0 at 2 units)
+* Makeup try on (brows): 1 unit, charged only when the task succeeds
+* Clothes v4: 2 units
 
 ## 11. Error mapping
 
@@ -214,6 +221,8 @@ Each YouCam error maps to a plain sentence for the user and a next action for th
 * error_hair_too_short and error_bald_image: tell the user this tool cannot work on this photo, mark it blocked, use the fallback order.
 * error_face_angle_invalid and error_insufficient_lighting: ask for a new photo with a specific instruction. No retry.
 * error_no_face and error_large_face_angle: ask for a new photo. No retry.
+* The face tools' specific angle errors (face_not_forward_facing, angle_upward, angle_downward, angle_leftward, angle_rightward, angle_left_tilt, angle_right_tilt) and multi_person: ask for a new photo with the matching instruction (for example "tilt your head down a little"). No retry.
+* error_apply_region_mismatch and error_editing_failed (clothes): this garment cannot be shown on this photo. Mark the combination blocked and offer another garment. error_invalid_src (only the lower body or feet shown): ask for a new photo. error_invalid_ref: a catalog image is unusable, an Interim fault.
 * HTTP 429: wait with growing delay and random jitter, because there is no Retry After header. The limit is 250 requests per 300 seconds, shared by every caller of the key.
 * Any task with a status of error inside an HTTP 200: treat as failed, log, release the reservation unless a charge is observed.
 * Out of units or credits: stop the run, switch live calls off, raise an alert, tell the user to try later.
@@ -230,7 +239,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * People must confirm they are 18 or older before the first upload.
 * Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos. Each is a separate line the person accepts.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
-* The words for today choice can imply a person's religion. It is stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
+* The words for today choice and the head covering setting can imply a person's religion or culture. Both are stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
 * Reflection text stays on the device. It is never uploaded, logged or sent to the model.
 * Retention has two modes, and the person chooses on the consent screen with neither preselected. Standard: photos and renders are deleted 30 days after capture. Keep my history: photos and renders are kept until the person deletes them, or until 24 months after the last check in, whichever comes first. Every new check in restarts the 24 months. The setting can be switched off at any time, and then the 30 days count from each photo's capture date. For the templates that run over months (weight_change, hair_loss_ahead, textured_growth) the screen explains that keeping history is what makes comparisons and earlier looks possible. In both modes measurements, stage, self report and card text stay until the profile is deleted.
 * Photos are stored encrypted. A render that expires keeps its card text and trace but not its image.
@@ -311,22 +320,20 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 16. Profile creation and uploads are rate limited per source address.
 17. The capture checks pass photos of the same quality across the skin tone and hair type panel at a similar rate.
 
-## 17. First 48 hours: spike plan
+## 17. Spike: what is still open
 
-This section owns every open question. Answer these before building the rest.
+This section owns every open question. The facts the first live runs settled (costs, tool behaviour, timings, errors) are in [integrations/youcam.md](../integrations/youcam.md#observed-live). The runs use the spike runner described there, on freely licensed portraits. They were professional photos, not selfies, so they say what the tools can do and nothing about how people will photograph themselves.
 
-1. Call Get_Feature_Cost for density, length, volume, hair transfer v2.1 and clothes v4. Fill the cost table with real numbers. Compute units and money per baseline and per check in.
-2. Run density detection on six top of head photos of different fullness at 45 degrees. If the grade never moves, stop using density as a trigger and use length plus self report.
-3. Run hair transfer v2.1 with hair_color set to src on photos with less and less hair. Record exactly where the two errors start. This becomes the eligibility table.
-4. Test chaining. Pass a clothes render into hair transfer, then into makeup. If face detection fails on generated images, render hair on the original photo and composite, or change the order.
-5. Render one saved garment on two different body photos to confirm the size bridge moment looks believable.
-6. Record every response into fixtures from the first call.
-7. Check what is billed on failed, moderated and timed out tasks, and whether YouCam lists tasks for reconciliation.
-8. Confirm accepted formats, size limits, the framing for clothes (full body or chest up), which photo hair length needs, and whether Camera Kit gives enough angle control for the top photo.
-9. Run the capture checks and the tools on a panel of at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair. Record failure rates per group and tune the thresholds until they are close.
-10. For the illness-first templates: check whether hair density and length detection place patchy hair (hair_patches), whether face attributes notice fullness (face_fullness, else self report only), and whether skin tone analysis is stable enough over check ins to track a colour change (skin_colour). Drop a template from the demo if its tools cannot support it.
+1. Compute units and money per baseline and per check in from the cost table, using the price per unit of the real plan.
+2. Hair density on real top of head photos. On synthetic heads it follows fullness within one person (-0.06 to 1.91 when the same man went from thinning to thick) and is not comparable across people, so stage placement compares a person with their own baseline using `mapping`, not the grade label. It fell about 0.6 in dim light, so a change under about 0.7 needs the light checked. Confirm on at least six real photos. Hair length is coarse (growing back read the same as full hair on one persona), so it supports but does not place a stage.
+3. What is billed on moderation rejections and on timed out tasks. Every error seen so far (face angle, face too small) cost nothing.
+4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Skin colour and Fitzpatrick ordered six synthetic people correctly from very fair to very dark; confirm on real selfies.
+5. For the illness-first templates: face aspect ratio moved about 1 percent when only the light changed, and skin colour about 2 hex units, so both are steady enough to track. Whether they follow a real change (fullness from medicine, a colour change) is untested. hair_patches depends on density (item 2). Drop a template from the demo if its tools cannot support it.
+6. Head covering: only a hijab and a head wrap were tried. Check other coverings and wigs, and decide the exact wording of the setting with people who cover their hair.
+7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender (for example every style to everyone, with the volume previews labelled by look rather than by gender).
+8. Whether Camera Kit gives enough angle control for the top photo.
 
-Kill criterion: if density does not move and hair transfer rejects most thinning hair, switch to the runner up idea (a hair catalog agent for wig and extension sellers). It reuses the same YouCam client, ledger and hair transfer work.
+Hair transfer accepts every hair state and density moves with fullness, so the earlier kill criterion no longer applies.
 
 ## 18. Numbers and measures
 
