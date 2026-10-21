@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { Actions } from '@/components/actions';
 import { primaryClass, secondaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
@@ -47,6 +46,9 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
       </section>
       <p className="mt-8">{t('next')}</p>
       <div className="mt-6 mb-12 space-y-3">
+        <Link href={`/capture/${id}`} className={primaryClass}>
+          {t('startAction')}
+        </Link>
         {cards[0] && (
           <Link href={`/cards/${cards[0].id}`} className={secondaryClass}>
             {t('cardAction')}
@@ -57,11 +59,6 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
         </Link>
       </div>
       <DeleteProfile profileId={id} />
-      <Actions>
-        <Link href={`/capture/${id}`} className={primaryClass}>
-          {t('startAction')}
-        </Link>
-      </Actions>
     </Shell>
   );
 }
