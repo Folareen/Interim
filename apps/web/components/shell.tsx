@@ -2,6 +2,7 @@ import { isDraftLocale } from '@interim/types';
 import { getLocale, getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { getMe } from '@/lib/server-api';
 import { LanguageLink } from './language-link';
 import { ThemeToggle } from './theme-toggle';
 
@@ -13,7 +14,7 @@ export const TOTAL_STEPS = 4;
  * way back and the theme switch, and an optional progress line for the setup steps.
  */
 export async function Shell({ step, backHref, children }: { step?: number; backHref?: string; children: ReactNode }) {
-  const [t, locale] = await Promise.all([getTranslations('common'), getLocale()]);
+  const [t, locale, me] = await Promise.all([getTranslations('common'), getLocale(), getMe()]);
   const stepText = step === undefined ? '' : t('stepOf', { current: step, total: TOTAL_STEPS });
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pt-[env(safe-area-inset-top)] md:py-8">
@@ -31,6 +32,16 @@ export async function Shell({ step, backHref, children }: { step?: number; backH
           </Link>
         )}
         <div className="flex items-center">
+          <Link
+            href={me ? '/account' : '/signin'}
+            aria-label={me ? t('account') : t('signIn')}
+            className="grid size-11 place-items-center rounded-lg text-muted transition-colors hover:text-text"
+          >
+            <svg aria-hidden viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4.5 20c.9-3.6 3.8-5.5 7.5-5.5s6.6 1.9 7.5 5.5" />
+            </svg>
+          </Link>
           <LanguageLink />
           <ThemeToggle />
         </div>

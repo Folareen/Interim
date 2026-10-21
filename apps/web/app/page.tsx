@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Actions } from '@/components/actions';
-import { primaryClass } from '@/components/button';
+import { primaryClass, secondaryClass } from '@/components/button';
 import { Shell } from '@/components/shell';
 import { StageDots } from '@/components/stage-dots';
 
@@ -19,6 +19,9 @@ export default async function Welcome() {
       <Actions>
         <Link href="/language" className={primaryClass}>
           {t('start')}
+        </Link>
+        <Link href="/signin" className={secondaryClass}>
+          {t('haveAccount')}
         </Link>
       </Actions>
     </Shell>

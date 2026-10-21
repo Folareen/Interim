@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const [locale, theme, t, { common, setup, consent, ready }] = await Promise.all([
+  const [locale, theme, t, { common, setup, consent, ready, auth, account }] = await Promise.all([
     getLocale(),
     getTheme(),
     getTranslations('common'),
@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           {t('skipToContent')}
         </a>
         {/* Only the screens with client islands get their text sent to the browser. */}
-        <NextIntlClientProvider locale={locale} messages={{ common, setup, consent, ready }}>
+        <NextIntlClientProvider locale={locale} messages={{ common, setup, consent, ready, auth, account }}>
           {children}
         </NextIntlClientProvider>
       </body>

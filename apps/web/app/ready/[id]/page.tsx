@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { primaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getProfile } from '@/lib/server-api';
+import { getMe, getProfile } from '@/lib/server-api';
 import { DeleteProfile } from './delete-profile';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Ready({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const profile = await getProfile(id);
+  const [profile, me] = await Promise.all([getProfile(id), getMe()]);
   if (!profile) notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
   const [t, labels, setup, consent] = await Promise.all([
@@ -40,7 +42,19 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
           ))}
         </dl>
       </section>
-      <p className="mt-8 mb-12">{t('next')}</p>
+      <p className="mt-8">{t('next')}</p>
+      {!me && (
+        <section className="mt-8 mb-12 rounded-card border border-accent bg-tint p-4">
+          <h2 className="text-[1.25rem]">{t('saveTitle')}</h2>
+          <p className="mt-2">{t('saveBody')}</p>
+          <div className="mt-4">
+            <Link href="/signup" className={primaryClass}>
+              {t('saveAction')}
+            </Link>
+          </div>
+        </section>
+      )}
+      {me && <div className="mb-12" />}
       <DeleteProfile profileId={id} />
     </Shell>
   );
