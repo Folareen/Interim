@@ -115,6 +115,8 @@ At each check in, measurements are taken when any of these is true:
 
 What is measured then: density when the stage model expects change, length when the template tracks length, face aspect ratio for face_fullness, skin colour for skin_colour.
 
+Density is placed by comparing `mapping` with the same person's baseline, never by the grade label, which is not comparable across people. A change smaller than about 0.7 is treated as noise unless the capture check passed the light.
+
 The face tools run at the loosest angle setting (`flexible`, within 30 degrees) because the on device capture check is the gate. YouCam returns its own read of the photo (`face_quality`: area, frontal, lighting, face angle). A result whose quality is not all "good" is stored as unreliable and is not used to place a stage.
 
 When nothing is measured, stage placement uses the last measurements and the card shows the date they were taken ("last measured on"). A card never presents an old value as new.
@@ -323,15 +325,15 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 This section owns every open question. The facts the first live runs settled (costs, tool behaviour, timings, errors) are in [integrations/youcam.md](../integrations/youcam.md#observed-live). The runs use the spike runner described there, on freely licensed portraits. They were professional photos, not selfies, so they say what the tools can do and nothing about how people will photograph themselves.
 
 1. Compute units and money per baseline and per check in from the cost table, using the price per unit of the real plan.
-2. Hair density with the real pose (front, head lowered about 45 degrees). All ten frontal photos failed the angle check. Check that the grade moves with fullness on at least six real top of head photos. If it never moves, stop using density as a trigger and use length plus self report. Hair length separates short from long, not covered from bald.
+2. Hair density on real top of head photos. On synthetic heads it follows fullness within one person (-0.06 to 1.91 when the same man went from thinning to thick) and is not comparable across people, so stage placement compares a person with their own baseline using `mapping`, not the grade label. It fell about 0.6 in dim light, so a change under about 0.7 needs the light checked. Confirm on at least six real photos. Hair length is coarse (growing back read the same as full hair on one persona), so it supports but does not place a stage.
 3. What is billed on moderation rejections and on timed out tasks. Every error seen so far (face angle, face too small) cost nothing.
-4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Also check whether the skin colour estimate is fair across skin tones: the one darker skinned portrait read as a mid brown.
+4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Skin colour and Fitzpatrick ordered six synthetic people correctly from very fair to very dark; confirm on real selfies.
 5. For the illness-first templates: face aspect ratio moved about 1 percent when only the light changed, and skin colour about 2 hex units, so both are steady enough to track. Whether they follow a real change (fullness from medicine, a colour change) is untested. hair_patches depends on density (item 2). Drop a template from the demo if its tools cannot support it.
 6. Head covering: only a hijab and a head wrap were tried. Check other coverings and wigs, and decide the exact wording of the setting with people who cover their hair.
 7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender (for example every style to everyone, with the volume previews labelled by look rather than by gender).
 8. Whether Camera Kit gives enough angle control for the top photo.
 
-Hair transfer accepts every hair state, so the earlier kill criterion (density does not move and hair transfer rejects most thinning hair) no longer applies. If density does not move, use length plus self report.
+Hair transfer accepts every hair state and density moves with fullness, so the earlier kill criterion no longer applies.
 
 ## 18. Numbers and measures
 

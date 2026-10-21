@@ -157,7 +157,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 * Lead with Hair loss ahead across its whole timeline: hair thinning, a bald stage where the person previews hairstyles or a wig on their own photo, growing back in, and a fit change at the end. Show the companion note changing with each stage and a moment such as a first day back at work.
 * Then weight change, to show the same engine working for a different situation, with its hard numbers.
-* Real people only with clear consent. Stages that are simulated are labelled on screen as sample profiles.
+* Real people only with clear consent. The sample profiles are two synthetic people in five hair stages (`packages/fixtures/sample`), labelled on screen as simulated.
 * A recorded fixture replay so the video and the judges cost no units.
 * Show the agent trace and the unit ledger on screen so the technical depth is visible.
 
@@ -167,7 +167,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * No user research yet. The plan is in spec section 18.
 * Some US states (Illinois and Nevada from 2025) ban AI mental health care. Interim stays a cosmetic tool with a kind voice. The language rules and the on-device reflection keep it there.
 * Photographing yourself six ways at every check in may be too much, especially when unwell. The check in set is kept small for that reason.
-* A believable demo needs dated photos of one consenting person, which is harder for illness than for weight change.
+* A demo with a real person needs dated photos of one consenting person, which is harder for illness than for weight change, so the demo uses the synthetic sample profiles and shows real photos only with consent.
 * Medical and body image sensitivity needs careful wording on every screen.
 
 The first 48 hours of the build exist to answer the technical unknowns.

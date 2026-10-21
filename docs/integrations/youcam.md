@@ -87,7 +87,7 @@ Not done:
 - Not yet seen succeed live: hair density (needs the head lowered pose), hair type (needs three angle photos), hair color, beard style and Fitzpatrick.
 
 ## Observed live
-From 83 runs on 18 freely licensed portraits and 2 product photos on 2026-10-21 (352 units). The portraits are professional photos, not selfies.
+From about 160 runs on 2026-10-21 (about 600 units): 18 freely licensed portraits and 2 product photos, then 31 synthetic images made with the YouCam image generator. The portraits are professional photos, not selfies.
 
 - **Errors cost nothing.** Face angle (`error_face_angle_invalid`, `_downward`, `_leftward`, `_rightward`) and `error_face_position_too_small` changed the balance by 0. Moderation and timeouts are untested.
 - **Timing.** Detections, hair transfer and brows took about 10 to 20 seconds, clothes 25 to 40 seconds. Poll about every 5 seconds.
@@ -95,9 +95,12 @@ From 83 runs on 18 freely licensed portraits and 2 product photos on 2026-10-21 
 - **Get_Feature_Cost** returns `proc_unit` as a number. Every price in the docs matched.
 - **Hair transfer works on any hair.** 11 of 11 succeeded with `hair_color: src`: two bald men, two shaved women, a very short grey haired woman, short, long and afro hair, and a hijab and a head wrap. On a bald head it adds the template hair. On a covered head it **replaces the covering** with hair. The result keeps the person's face, pose, clothes and background. It matched grey hair colour. Templates have ids like `male_short_curly` and `female_blunt_bob`, a title, `category_name` (Male or Female) and `keep_users_color`.
 - **Hair volume works** with `template_id` on short, long and afro hair, and shows a visibly fuller look. Its five templates are all Female (`female_subtle`, `_natural`, `_medium`, `_high`, `_maximized`).
-- **Hair length** reads a covered head, a bald head and a shaved head all as "above the ears". It cannot tell them apart.
-- **Hair density** returned `error_face_angle_invalid` on all ten frontal photos. It needs the head lowered about 45 degrees.
+- **Hair length is coarse.** It reads a covered head, a bald head and a shaved head all as "above the ears". On a generated man, full hair and growing back both read "ear length"; on a generated woman it separated long, ear length and above the ears. It cannot place a stage on its own.
+- **Hair density needs the head lowered about 45 degrees.** It returned `error_face_angle_invalid` on all ten frontal photos, and on three generated photos where the tilt was too slight. The grade is spelled "Extreme Low Density" (the docs say "Extremely"), and `mapping` can be negative.
+- **Hair density follows fullness within one person.** One generated man, edited from thinning to thick at the same pose, went from -0.06 to 1.91 (Extreme Low to Medium). A thick haired woman read 2.50 (High). Sparse heads read -0.06 to 0.21. It is not comparable across people: a thick curly haired man read 0.92 (Low). So compare a person with their own baseline, not the label.
+- **Density depends on light.** The same photos gave -0.06, -0.04 and 0.01 for a sparse head (dim, original, bright), but 1.28, 1.91 and 1.92 for a thick one. Dim light cost 0.6, so a change smaller than about 0.7 is not trustworthy unless the light is checked.
 - **Face tools reject at the default angle.** At the default strictness (`high`, about 10 degrees) all six portraits tried, and three lighting copies of one, failed with an angle or size error. At `flexible` every one succeeded. `face_quality` still flags a poor photo (`area: toosmall`, `frontal: notgood`) on a result that succeeded.
+- **Skin colour follows skin tone.** Six generated women, from very fair to very dark, read brightness 155, 151, 146, 113, 76 and 78 and Fitzpatrick II, II, III, V, VI, VI, in the right order. Fitzpatrick needs `version: '1.0'` in the body, which its docs page leaves out.
 - **Skin colour is steady, other colours are not.** `skin_color` moved about 2 hex units when a photo was dimmed, brightened or warmed. Eye colour names changed with the light, and hair colour was wrong for bald heads ("Blonde"). Use only `skin_color`.
 - **Face aspect ratio is a usable number.** The same face gave 1.346 to 1.361 across four lighting versions, about 1 percent. The face shape label is coarser.
 - **Clothes v4 is faithful.** It keeps the face, pose and background and changes the garment, with `garment_category` `outer` and `upper_body`. It works on chest up and waist up photos, and costs 2 units.
@@ -112,6 +115,9 @@ From 83 runs on 18 freely licensed portraits and 2 product photos on 2026-10-21 
 
 ## Open questions
 Owned by [product/spec.md](../product/spec.md) section 17. Record answers in the spec and update the cost table.
+
+## Image generator
+`text_to_image` and `image_to_image` (`youcam-image-v2`, 1 unit each) make synthetic test photos for the spike. The product never calls them. Text to image takes five sizes (for example `1104*1472`). Image to image edits one to three photos from a prompt, and kept the same face, clothes and background across five hair stages (`packages/fixtures/sample`). Results come back in about 8 to 15 seconds. Set `prompt_extend: false` for tight control. Without a clothing instruction a person can come out bare shouldered, so say "wearing a plain t-shirt".
 
 ## Spike runner
 Runs the live part of the spike plan ([product/spec.md](../product/spec.md) section 17) from a JSON manifest of calls. It is a dry run unless `--yes` is given, and it needs all three switches: `YOUCAM_MODE=record`, `JUDGE_MODE_FORCE_REPLAY=false`, `LIVE_CALLS_ENABLED=true`, plus `YOUCAM_API_KEY`. Copy `.env.example` to `.env` first.
