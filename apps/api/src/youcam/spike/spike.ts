@@ -4,18 +4,19 @@ import path from 'node:path';
 import { normalisePhoto } from '../../snapshots/photo';
 import { YoucamClient, type TaskRef, type TaskStatus } from '../youcam.client';
 import { YoucamError } from '../youcam.errors';
-import { unitCosts } from '../youcam.constants';
+import { unitCosts, usdPerUnit } from '../youcam.constants';
 import type { ToolName, ToolRequest, ToolResult } from '../youcam.tools';
-import { bodyFor, estimateUnits, manifestSchema, resultRowSchema, type Run } from './plan';
+import { bodyFor, estimateUnits, manifestSchema, maxUnitsFrom, resultRowSchema, spendProblem, type Run } from './plan';
 
 // The first-48-hours spike (docs/product/spec.md section 17), run by hand against the live API.
 //   pnpm --filter @interim/api spike credit
 //   pnpm --filter @interim/api spike costs [filter]
 //   pnpm --filter @interim/api spike templates <feature> <version> [starting_token]
 //   pnpm --filter @interim/api spike renders [label-filter]
-//   pnpm --filter @interim/api spike batch <manifest.json> [--yes]
+//   pnpm --filter @interim/api spike batch <manifest.json> [--yes --max-units <n>]
 // Output goes to apps/api/.spike (ignored by git): fixtures/ and results.jsonl.
-// `batch` is a dry run unless --yes is given, and spends units only with all three switches set.
+// `batch` is a dry run unless --yes is given. Spending needs all three switches and --max-units, a
+// cap on the whole batch that it checks before it starts and while it runs.
 
 const pollEveryMs = 5_000;
 const maxPolls = 24;
@@ -108,12 +109,15 @@ async function runOne(client: YoucamClient, run: Run, base: string) {
   return { key, taskId: ref.taskId, status, seconds: Math.round((Date.now() - started) / 1000) };
 }
 
-async function batch(manifestPath: string, confirmed: boolean) {
+async function batch(manifestPath: string, flags: readonly string[]) {
+  const confirmed = flags.includes('--yes');
+  const maxUnits = maxUnitsFrom(flags);
   const manifest = manifestSchema.parse(JSON.parse(await readFile(manifestPath, 'utf8')));
   const base = path.dirname(path.resolve(manifestPath));
   const estimate = estimateUnits(manifest.runs);
   for (const run of manifest.runs) console.log(`${run.label.padEnd(24)} ${run.tool.padEnd(14)} ~${unitCosts[run.tool] ?? '?'} units`);
-  console.log(`\n${manifest.runs.length} runs, about ${estimate.units} units, ${estimate.unpriced} with no confirmed cost.`);
+  const dollars = (estimate.units * usdPerUnit).toFixed(2);
+  console.log(`\n${manifest.runs.length} runs, about ${estimate.units} units (about $${dollars}), ${estimate.unpriced} with no confirmed cost.`);
 
   // Free: catches a missing or unreadable photo before any unit is spent.
   const files = new Set(manifest.runs.flatMap((run) => [...(run.photos ?? []), ...(run.photo ? [run.photo] : []), ...(run.ref ? [run.ref] : [])]));
@@ -124,11 +128,21 @@ async function batch(manifestPath: string, confirmed: boolean) {
     return;
   }
 
+  const problem = spendProblem(estimate, maxUnits);
+  // maxUnits is only undefined when spendProblem has already said so.
+  if (problem !== undefined || maxUnits === undefined) return stop(problem ?? 'Add --max-units <n>.');
+
   const client = liveClient();
   await mkdir(spikeDir, { recursive: true });
   const rows: string[] = [];
+  const startUnits = await client.getSpendableUnits();
   for (const run of manifest.runs) {
     const before = await client.getSpendableUnits();
+    // Counts every unit the balance has lost since the start, including a run that crashed after YouCam charged it.
+    if (startUnits - before + (unitCosts[run.tool] ?? 0) > maxUnits) {
+      console.log(`Stopped before ${run.label}: ${startUnits - before} units spent, and the next run would pass the cap of ${maxUnits}.`);
+      break;
+    }
     let row: Record<string, unknown>;
     try {
       const done = await runOne(client, run, base);
@@ -166,7 +180,7 @@ async function main() {
   } else if (command === 'renders') {
     await renders(argument);
   } else if (command === 'batch' && argument) {
-    await batch(argument, flags.includes('--yes'));
+    await batch(argument, flags);
   } else {
     stop('Usage: spike credit | spike costs [filter] | spike templates <feature> <version> [token] | spike renders [filter] | spike batch <manifest.json> [--yes]');
   }

@@ -45,6 +45,24 @@ export function bodyFor(run: Run, photoIds: readonly string[], refId: string | u
   return { ...source, ...(refId ? { ref_file_id: refId } : {}), ...run.params };
 }
 
+/** Reads `--max-units <n>` from the command line flags. */
+export function maxUnitsFrom(flags: readonly string[]): number | undefined {
+  const at = flags.indexOf('--max-units');
+  const value = at === -1 ? undefined : Number(flags[at + 1]);
+  return value !== undefined && Number.isInteger(value) && value > 0 ? value : undefined;
+}
+
+/**
+ * Why a batch may not spend units, or undefined when it may. Spending needs a cap the person set,
+ * a known price for every run, and an estimate that fits under the cap.
+ */
+export function spendProblem(estimate: { units: number; unpriced: number }, maxUnits: number | undefined): string | undefined {
+  if (maxUnits === undefined) return 'Add --max-units <n>, the most this batch may spend. Nothing was sent.';
+  if (estimate.unpriced > 0) return 'A run has no confirmed price, so its cost cannot be capped. Nothing was sent.';
+  if (estimate.units > maxUnits) return `The estimate (${estimate.units} units) is over the cap (${maxUnits}). Nothing was sent.`;
+  return undefined;
+}
+
 /** Units the runs are expected to spend. Tools with no confirmed cost are counted apart. */
 export function estimateUnits(runs: readonly Run[]): { units: number; unpriced: number } {
   let units = 0;

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { bodyFor, estimateUnits, manifestSchema } from './plan';
+import { bodyFor, estimateUnits, manifestSchema, maxUnitsFrom, spendProblem } from './plan';
 
 const run = { label: 'density-1', tool: 'hair_density', photo: 'a.jpg' };
 
@@ -51,5 +51,21 @@ describe('estimateUnits', () => {
       runs: [run, { ...run, label: 'd2' }, { label: 'c', tool: 'cloth_v4', photo: 'a.jpg' }],
     });
     expect(estimateUnits(runs)).toEqual({ units: 4, unpriced: 0 });
+  });
+});
+
+describe('spending cap', () => {
+  it('reads --max-units and ignores anything that is not a positive whole number', () => {
+    expect(maxUnitsFrom(['--yes', '--max-units', '40'])).toBe(40);
+    expect(maxUnitsFrom(['--yes'])).toBeUndefined();
+    for (const bad of ['0', '-5', 'ten', '2.5', '']) expect(maxUnitsFrom(['--max-units', bad])).toBeUndefined();
+    expect(maxUnitsFrom(['--max-units'])).toBeUndefined();
+  });
+
+  it('refuses to spend without a cap, with an unpriced run, or over the cap', () => {
+    expect(spendProblem({ units: 10, unpriced: 0 }, undefined)).toMatch(/--max-units/);
+    expect(spendProblem({ units: 10, unpriced: 1 }, 100)).toMatch(/no confirmed price/);
+    expect(spendProblem({ units: 101, unpriced: 0 }, 100)).toMatch(/over the cap/);
+    expect(spendProblem({ units: 100, unpriced: 0 }, 100)).toBeUndefined();
   });
 });

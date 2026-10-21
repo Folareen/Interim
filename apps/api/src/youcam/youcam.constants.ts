@@ -16,6 +16,9 @@ export const unitCosts: Record<string, number | null> = {
   image_to_image: 1, // spike only
 };
 
+// What a unit costs, from the account owner: 500 units cost 27.50 dollars (2026-10-21).
+export const usdPerUnit = 0.055;
+
 // Skin analysis is priced by the number of concerns and the tier: [max concerns, SD, HD].
 export const skinAnalysisUnits = [
   [4, 9, 12],

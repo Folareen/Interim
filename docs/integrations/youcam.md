@@ -120,7 +120,7 @@ Owned by [product/spec.md](../product/spec.md) section 17. Record answers in the
 `text_to_image` and `image_to_image` (`youcam-image-v2`, 1 unit each) make synthetic test photos for the spike. The product never calls them. Text to image takes five sizes (for example `1104*1472`). Image to image edits one to three photos from a prompt, and kept the same face, clothes and background across five hair stages (`packages/fixtures/sample`). Results come back in about 8 to 15 seconds. Set `prompt_extend: false` for tight control. Without a clothing instruction a person can come out bare shouldered, so say "wearing a plain t-shirt".
 
 ## Spike runner
-Runs the live part of the spike plan ([product/spec.md](../product/spec.md) section 17) from a JSON manifest of calls. It is a dry run unless `--yes` is given, and it needs all three switches: `YOUCAM_MODE=record`, `JUDGE_MODE_FORCE_REPLAY=false`, `LIVE_CALLS_ENABLED=true`, plus `YOUCAM_API_KEY`. Copy `.env.example` to `.env` first.
+Runs the live part of the spike plan ([product/spec.md](../product/spec.md) section 17) from a JSON manifest of calls. It is a dry run unless `--yes` is given. Live calls cost real money (500 units cost 27.50 dollars), so spending also needs `--max-units <n>`, a cap on the whole batch: the runner refuses if the estimate is over the cap or any run has no confirmed price, and stops mid batch before a run that would pass it. It needs all three switches: `YOUCAM_MODE=record`, `JUDGE_MODE_FORCE_REPLAY=false`, `LIVE_CALLS_ENABLED=true`, plus `YOUCAM_API_KEY`. Copy `.env.example` to `.env` first.
 
 ```bash
 pnpm --filter @interim/api spike credit                      # units left, free
@@ -128,7 +128,7 @@ pnpm --filter @interim/api spike costs [filter]              # Get_Feature_Cost,
 pnpm --filter @interim/api spike templates hair-transfer v2.1  # template list, free
 pnpm --filter @interim/api spike renders [filter]             # save the image of finished runs, free (tasks last 24 hours)
 pnpm --filter @interim/api spike batch .spike/manifest.json  # dry run: estimate, checks photos, sends nothing
-pnpm --filter @interim/api spike batch .spike/manifest.json --yes
+pnpm --filter @interim/api spike batch .spike/manifest.json --yes --max-units 40
 ```
 
 Photos are processed the way the app stores them (orientation applied, EXIF removed, long side capped). Each run records the task state, error code, units spent (balance before and after) and seconds to `apps/api/.spike/results.jsonl`, and the final response to `.spike/fixtures/<tool>/<label>-<hash>.json`. Each success also saves its render to `.spike/renders/<label>.jpg`, so a run can be fed another run's output. A create that times out is never repeated. `.spike/` is ignored by git. Copy a fixture to `packages/fixtures/youcam` only after checking it is synthetic or from someone who gave written consent. `spike/manifest.example.json` covers the plan's experiments.
