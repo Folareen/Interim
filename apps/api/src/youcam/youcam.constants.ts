@@ -12,6 +12,8 @@ export const unitCosts: Record<string, number | null> = {
   face_shape: 10, // one feature; 6 to 14 features cost 20, 15 to 28 cost 30
   makeup_brows: 1, // charged only when the task succeeds
   cloth_v4: 2,
+  text_to_image: 1, // spike only
+  image_to_image: 1, // spike only
 };
 
 // Skin analysis is priced by the number of concerns and the tier: [max concerns, SD, HD].

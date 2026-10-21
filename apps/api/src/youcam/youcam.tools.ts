@@ -89,8 +89,9 @@ export const tools = {
     request: srcFile,
     result: z.object({
       hair_density: z.object({
-        mapping: z.string(), // a float as a string, 0 to 3
-        term: z.enum(['Extremely Low Density', 'Low Density', 'Medium Density', 'High Density']),
+        mapping: z.string(), // a float as a string; the docs say 0 to 3, the live API returned -0.06 too
+        // The docs spell the first grade "Extremely"; the live API returned "Extreme". Both are accepted.
+        term: z.enum(['Extreme Low Density', 'Extremely Low Density', 'Low Density', 'Medium Density', 'High Density']),
       }),
     }),
   },
@@ -145,7 +146,7 @@ export const tools = {
   fitzpatrick: {
     version: 'v2.0',
     path: 'fitzpatrick-scale-analyzer',
-    request: srcFile,
+    request: srcFile.extend({ version: z.literal('1.0') }), // required, though the docs page omits it
     result: z.object({ fitzpatrick_scale: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']) }),
   },
   // Facial colour tones, 20 units, charged only on success. Only `skin_color` is reliable: in the
@@ -204,6 +205,35 @@ export const tools = {
     version: 'v2.0',
     path: 'makeup-vto',
     request: srcFile.extend({ effects: z.tuple([browEffect]) }),
+    result: singleUrl,
+  },
+  // The next two make synthetic test photos for the spike runner (docs/integrations/youcam.md,
+  // Spike runner). The product never calls them. 1 unit each. `size` is width*height, and the
+  // text to image sizes are limited to five values.
+  text_to_image: {
+    version: 'v2.0',
+    path: 'text-to-image/youcam',
+    request: z.object({
+      model: z.literal('youcam-image-v2'),
+      prompt: z.string().min(1).max(800),
+      negative_prompt: z.string().min(1).max(500).optional(),
+      size: z.enum(['1664*928', '1472*1104', '1328*1328', '1104*1472', '928*1664']).optional(),
+      prompt_extend: z.boolean().optional(),
+    }),
+    result: singleUrl,
+  },
+  // Edits one to three photos from a prompt, such as "the same person with a shaved head".
+  image_to_image: {
+    version: 'v2.0',
+    path: 'image-to-image/youcam',
+    request: z.object({
+      src_file_ids: z.array(z.string().min(1)).min(1).max(3),
+      model: z.literal('youcam-image-v2'),
+      prompt: z.string().min(1).max(800),
+      negative_prompt: z.string().min(1).max(500).optional(),
+      size: z.string().regex(/^\d{3,4}\*\d{3,4}$/).optional(),
+      prompt_extend: z.boolean().optional(),
+    }),
     result: singleUrl,
   },
 } as const;

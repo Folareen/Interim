@@ -6,11 +6,12 @@ import { bodyFor, estimateUnits, manifestSchema } from './plan';
 const run = { label: 'density-1', tool: 'hair_density', photo: 'a.jpg' };
 
 describe('manifest', () => {
-  it('needs a photo or three photos, not both and not neither', () => {
+  it('takes a photo, up to three photos, or none, but never a photo and photos together', () => {
     expect(manifestSchema.safeParse({ runs: [run] }).success).toBe(true);
-    expect(manifestSchema.safeParse({ runs: [{ ...run, photo: undefined }] }).success).toBe(false);
+    expect(manifestSchema.safeParse({ runs: [{ ...run, photo: undefined }] }).success).toBe(true);
+    expect(manifestSchema.safeParse({ runs: [{ ...run, photo: undefined, photos: ['a', 'b'] }] }).success).toBe(true);
     expect(manifestSchema.safeParse({ runs: [{ ...run, photos: ['a', 'b', 'c'] }] }).success).toBe(false);
-    expect(manifestSchema.safeParse({ runs: [{ ...run, photo: undefined, photos: ['a', 'b'] }] }).success).toBe(false);
+    expect(manifestSchema.safeParse({ runs: [{ ...run, photo: undefined, photos: ['a', 'b', 'c', 'd'] }] }).success).toBe(false);
   });
 
   it('rejects an unknown tool and a label that could name a path', () => {
@@ -30,6 +31,9 @@ describe('bodyFor', () => {
   it('builds a single photo, a three photo and a garment body', () => {
     const single = manifestSchema.parse({ runs: [run] }).runs[0];
     expect(single && bodyFor(single, ['f1'], undefined)).toEqual({ src_file_id: 'f1' });
+
+    const text = manifestSchema.parse({ runs: [{ label: 't', tool: 'text_to_image', params: { prompt: 'x' } }] }).runs[0];
+    expect(text && bodyFor(text, [], undefined)).toEqual({ prompt: 'x' });
 
     const three = manifestSchema.parse({ runs: [{ label: 't', tool: 'hair_type', photos: ['a', 'b', 'c'] }] }).runs[0];
     expect(three && bodyFor(three, ['1', '2', '3'], undefined)).toEqual({ src_file_ids: ['1', '2', '3'] });

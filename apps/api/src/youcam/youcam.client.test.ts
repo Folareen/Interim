@@ -229,6 +229,22 @@ describe('more tools', () => {
     expect(await client().getTask(ref('makeup_brows'))).toMatchObject({ state: 'success' });
   });
 
+  it('reads the density grade as the live API spells it, with a negative mapping', async () => {
+    fetchMock.mockResolvedValueOnce(
+      task({ hair_density: { mapping: '-0.06', term: 'Extreme Low Density' }, timed: 3418 }),
+    );
+    const status = await client().getTask({ tool: 'hair_density', fixtureKey: 'k', taskId: 't' });
+    expect(status).toEqual({ state: 'success', result: { hair_density: { mapping: '-0.06', term: 'Extreme Low Density' } } });
+  });
+
+  it('needs the version field for Fitzpatrick, which the docs page leaves out', async () => {
+    const body = { src_file_id: 'f1' } as never;
+    await expect(client().createTask('fitzpatrick', body, 'k1')).rejects.toThrow();
+    fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_id: 't1' } }));
+    await client().createTask('fitzpatrick', { src_file_id: 'f1', version: '1.0' }, 'k1');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('treats the queued and processing states as still running', async () => {
     for (const task_status of ['queued', 'processing']) {
       fetchMock.mockResolvedValueOnce(json({ status: 200, data: { task_status } }));

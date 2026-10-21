@@ -11,14 +11,14 @@ const runSchema = z
     tool: toolSchema,
     /** One photo, for most tools. */
     photo: z.string().min(1).optional(),
-    /** Front, right and left photos, for hair type. */
-    photos: z.array(z.string().min(1)).length(3).optional(),
+    /** One to three photos, as `src_file_ids`: front, right and left for hair type, or the sources of an image edit. */
+    photos: z.array(z.string().min(1)).min(1).max(3).optional(),
     /** A garment or hat image. */
     ref: z.string().min(1).optional(),
     /** Extra request fields, such as `template_id`. YouCam's request schema checks them. */
     params: z.record(z.string(), z.unknown()).default({}),
   })
-  .refine((run) => (run.photo === undefined) !== (run.photos === undefined), 'Give photo or photos, not both');
+  .refine((run) => run.photo === undefined || run.photos === undefined, 'Give photo or photos, not both');
 
 /** One line of `results.jsonl`, as the runner wrote it. */
 export const resultRowSchema = z.object({
@@ -38,7 +38,10 @@ export type Run = z.infer<typeof runSchema>;
  * `youcam.tools.ts` validates the result before anything is sent.
  */
 export function bodyFor(run: Run, photoIds: readonly string[], refId: string | undefined): Record<string, unknown> {
-  const source = run.photos ? { src_file_ids: photoIds } : { src_file_id: photoIds[0] };
+  // A text to image run has no photo at all.
+  let source = {};
+  if (run.photos) source = { src_file_ids: photoIds };
+  else if (run.photo) source = { src_file_id: photoIds[0] };
   return { ...source, ...(refId ? { ref_file_id: refId } : {}), ...run.params };
 }
 
