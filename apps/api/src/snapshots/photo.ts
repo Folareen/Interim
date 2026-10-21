@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
-import { UnprocessableEntityException } from '@nestjs/common';
+import { SHARPNESS_OFFSET, STATS_LONG_SIDE } from '@interim/rules';
 import convertHeic from 'heic-convert';
 import sharp from 'sharp';
+import { CaptureError, captureError } from './capture-error';
 
 /** The long side photos are capped to: the strictest limit any YouCam tool sends (beard style, under 1024 px). */
 export const MAX_LONG_SIDE = 1000;
@@ -35,16 +36,20 @@ export interface NormalisedPhoto {
   width: number;
   height: number;
   format: PhotoFormat;
+  /** Mean brightness, 0 to 255, for the light check. */
+  meanLuma: number;
+  /** Variance of a Laplacian filter, for the blur check. Measured at `STATS_LONG_SIDE`, like the device does. */
+  sharpness: number;
 }
 
 /**
  * Turns an upload into the JPEG every later step uses: HEIC converted, orientation applied, all
  * EXIF and location data dropped, long side capped.
- * @throws UnprocessableEntityException with a plain sentence when the file cannot be used.
+ * @throws CaptureError with a problem code when the file cannot be used.
  */
 export async function normalisePhoto(bytes: Buffer): Promise<NormalisedPhoto> {
   const format = detectFormat(bytes);
-  if (!format) throw new UnprocessableEntityException('Use a JPEG, PNG or HEIC photo.');
+  if (!format) throw captureError('wrong_format');
 
   try {
     const decoded =
@@ -57,18 +62,34 @@ export async function normalisePhoto(bytes: Buffer): Promise<NormalisedPhoto> {
       .toBuffer({ resolveWithObject: true });
 
     if (Math.min(info.width, info.height) < MIN_SHORT_SIDE) {
-      throw new UnprocessableEntityException('This photo is too small. Take it again closer to the camera.');
+      throw captureError('too_small');
     }
+    const stats = await measure(data);
     return {
       jpeg: data,
       sha256: createHash('sha256').update(data).digest('hex'),
       width: info.width,
       height: info.height,
       format,
+      ...stats,
     };
   } catch (error) {
-    if (error instanceof UnprocessableEntityException) throw error;
-    // Corrupt or oversized images land here; the person gets a sentence, not a decoder message.
-    throw new UnprocessableEntityException('We could not read this photo. Try taking it again.');
+    if (error instanceof CaptureError) throw error;
+    // Corrupt or oversized images land here; the person gets a code, not a decoder message.
+    throw captureError('unreadable');
   }
+}
+
+// The same measures as `lib/photo-check.ts` in the web app, so the device and the server agree.
+async function measure(jpeg: Buffer) {
+  const small = sharp(jpeg).resize({ width: STATS_LONG_SIDE, height: STATS_LONG_SIDE, fit: 'inside', withoutEnlargement: true });
+  const gray = await small.clone().grayscale().raw().toBuffer();
+  const meanLuma = gray.reduce((sum, v) => sum + v, 0) / gray.length;
+  const edges = await small
+    .clone()
+    .grayscale()
+    .convolve({ width: 3, height: 3, kernel: [0, 1, 0, 1, -4, 1, 0, 1, 0], scale: 1, offset: SHARPNESS_OFFSET })
+    .stats();
+  const stdev = edges.channels[0]?.stdev ?? 0;
+  return { meanLuma, sharpness: stdev * stdev };
 }

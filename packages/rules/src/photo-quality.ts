@@ -10,6 +10,15 @@ export interface PhotoStats {
   sharpness: number;
 }
 
+/**
+ * The long side photos are shrunk to before light and sharpness are measured. The device and the
+ * server both use it, because the sharpness number depends on the resolution.
+ */
+export const STATS_LONG_SIDE = 640;
+
+/** Added to every pixel of the sharpness filter so negative responses are not clipped to black. */
+export const SHARPNESS_OFFSET = 128;
+
 // Provisional until the panel run (docs/product/spec.md section 17, item 4): they were set on
 // synthetic and portrait photos, and must be tuned so people of every skin tone and hair type
 // pass at a similar rate. Keep them here, never inline in a caller.

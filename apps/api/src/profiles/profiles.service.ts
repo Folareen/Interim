@@ -27,6 +27,8 @@ const visible = {
   bodyPhotos: profile.bodyPhotos,
   judgeSample: profile.judgeSample,
   createdAt: profile.createdAt,
+  // So the capture wizard knows whether the next check in is the baseline.
+  hasBaseline: sql<boolean>`exists (select 1 from ${snapshot} where ${snapshot.profileId} = ${profile.id})`.as('has_baseline'),
 };
 
 /** Profile lifecycle for one owner: create, consent, read, export and hard delete. */
@@ -146,6 +148,7 @@ export class ProfilesService {
     // The rows are gone, so a failed delete must not fail the request: the sweep finds the files.
     await Promise.allSettled([
       this.storage.deletePrefix(`photos/${id}/`),
+      this.storage.deletePrefix(`renders/${id}/`),
       this.storage.deletePrefix(`raw/${id}/`),
     ]);
   }

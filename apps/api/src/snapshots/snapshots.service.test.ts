@@ -1,5 +1,5 @@
 import type { Db } from '@interim/db';
-import { ForbiddenException, PayloadTooLargeException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
 import type { ProfilesService } from '../profiles/profiles.service';
 import type { StorageService } from '../storage/storage.service';
@@ -36,7 +36,7 @@ describe('SnapshotsService.createUploads', () => {
           { kind: 'left', sizeBytes: 1001 },
         ],
       }),
-    ).rejects.toThrow(PayloadTooLargeException);
+    ).rejects.toMatchObject({ code: 'too_large', kind: 'left' });
     expect(presignPut).not.toHaveBeenCalled();
   });
 

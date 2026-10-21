@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { UnprocessableEntityException } from '@nestjs/common';
 import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
+import { blurredJpeg, darkJpeg, texturedJpeg } from '../test/photos';
 import { MAX_LONG_SIDE, detectFormat, normalisePhoto } from './photo';
 
 const solid = (width: number, height: number) =>
@@ -58,15 +58,24 @@ describe('normalisePhoto', () => {
   });
 
   it('rejects a file that is not an image, whatever it is called', async () => {
-    await expect(normalisePhoto(Buffer.from('hello'))).rejects.toThrow(UnprocessableEntityException);
+    await expect(normalisePhoto(Buffer.from('hello'))).rejects.toMatchObject({ code: 'wrong_format' });
   });
 
   it('rejects a photo that is too small', async () => {
-    await expect(normalisePhoto(await solid(300, 300).jpeg().toBuffer())).rejects.toThrow(/too small/);
+    await expect(normalisePhoto(await solid(300, 300).jpeg().toBuffer())).rejects.toMatchObject({ code: 'too_small' });
   });
 
   it('rejects a corrupt image with a plain message', async () => {
     const truncated = (await solid(800, 600).jpeg().toBuffer()).subarray(0, 40);
-    await expect(normalisePhoto(truncated)).rejects.toThrow(/could not read/);
+    await expect(normalisePhoto(truncated)).rejects.toMatchObject({ code: 'unreadable' });
+  });
+
+  it('measures brightness and sharpness the way the quality rule reads them', async () => {
+    const textured = await normalisePhoto(await texturedJpeg());
+    expect(textured.meanLuma).toBeGreaterThan(100);
+    expect(textured.meanLuma).toBeLessThan(160);
+    expect(textured.sharpness).toBeGreaterThan(100);
+    expect((await normalisePhoto(await blurredJpeg())).sharpness).toBeLessThan(5);
+    expect((await normalisePhoto(await darkJpeg())).meanLuma).toBeLessThan(55);
   });
 });

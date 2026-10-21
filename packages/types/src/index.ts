@@ -280,6 +280,7 @@ export const captureProblemCodes = [
   'retake_light',
   'retake_no_face',
   'retake_framing',
+  'retake_other',
 ] as const;
 export const captureProblemSchema = z.enum(captureProblemCodes);
 export type CaptureProblem = z.infer<typeof captureProblemSchema>;

@@ -93,6 +93,7 @@ export class CleanupService {
     for (const [prefix, graceMs] of [
       ['raw/', RAW_GRACE_MS],
       ['photos/', PHOTO_GRACE_MS],
+      ['renders/', PHOTO_GRACE_MS],
     ] as const) {
       for await (const page of this.storage.list(prefix)) {
         const orphans = await this.findOrphans(page, graceMs, now);
@@ -130,14 +131,13 @@ export class CleanupService {
     const alive = new Set(
       (await this.db.select({ id: profile.id }).from(profile).where(inArray(profile.id, ids))).map((r) => r.id),
     );
-    const referenced = new Set(
-      (
-        await this.db
-          .select({ key: photo.objectKey })
-          .from(photo)
-          .where(inArray(photo.objectKey, page.map((o) => o.key)))
-      ).map((r) => r.key),
-    );
+    const keys = page.map((o) => o.key);
+    const referenced = new Set([
+      ...(await this.db.select({ key: photo.objectKey }).from(photo).where(inArray(photo.objectKey, keys))).map((r) => r.key),
+      ...(await this.db.select({ key: render.objectKey }).from(render).where(inArray(render.objectKey, keys))).flatMap((r) =>
+        r.key ? [r.key] : [],
+      ),
+    ]);
     return page
       .filter((o) => {
         const id = profileIdOf(o.key);

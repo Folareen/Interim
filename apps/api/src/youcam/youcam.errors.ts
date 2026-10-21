@@ -1,4 +1,4 @@
-import { youcamErrorCodeSchema, type YoucamErrorCode } from '@interim/types';
+import { type CaptureProblem, youcamErrorCodeSchema, type YoucamErrorCode } from '@interim/types';
 
 /** Transport and policy failures. A task that failed inside an HTTP 200 is not thrown: `getTask` returns it with an action. */
 export type YoucamErrorKind =
@@ -83,4 +83,43 @@ const actions: Record<YoucamErrorCode, TaskErrorAction> = {
 export function taskErrorAction(code: string): TaskErrorAction {
   const known = youcamErrorCodeSchema.safeParse(code);
   return known.success ? actions[known.data] : 'fault';
+}
+
+/**
+ * Which instruction to give for a task that failed with `new_photo`, so the person knows what to
+ * change (docs/product/spec.md section 11). A code that is not listed gets the general one.
+ */
+export function retakeProblem(code: string): CaptureProblem {
+  switch (code) {
+    case 'error_face_angle_invalid':
+    case 'error_large_face_angle':
+    case 'error_face_not_forward_facing':
+    case 'error_face_angle_upward':
+    case 'error_face_angle_downward':
+    case 'error_face_angle_leftward':
+    case 'error_face_angle_rightward':
+    case 'error_face_angle_left_tilt':
+    case 'error_face_angle_right_tilt':
+    case 'error_face_pose':
+    case 'error_pose':
+      return 'retake_angle';
+    case 'error_insufficient_lighting':
+    case 'error_lighting_dark':
+      return 'retake_light';
+    case 'error_no_face':
+    case 'error_no_shoulder':
+    case 'error_insufficient_landmarks':
+      return 'retake_no_face';
+    case 'error_face_position_invalid':
+    case 'error_face_position_too_small':
+    case 'error_face_position_out_of_boundary':
+    case 'error_src_face_too_small':
+    case 'error_src_face_out_of_bound':
+    case 'error_multiple_people':
+    case 'error_multi_person':
+    case 'error_invalid_src':
+      return 'retake_framing';
+    default:
+      return 'retake_other';
+  }
 }

@@ -52,7 +52,7 @@ describe('expiry', () => {
   it('removes the image of an expired render but keeps the row', async () => {
     const key = `renders/${alive}/r.jpg`;
     await put(key);
-    await db.insert(render).values({ snapshotId, tool: 'hairstyle', inputHash: 'h', objectKey: key, label: 'preview', expiresAt: ago(HOUR) });
+    await db.insert(render).values({ snapshotId, tool: 'hairstyle', strategy: 'cut', inputHash: 'h', objectKey: key, label: 'preview', expiresAt: ago(HOUR) });
 
     const report = await cleanup.run(now);
 
@@ -85,6 +85,21 @@ describe('bucket sweep', () => {
 
     expect(report.orphansDeleted).toBe(2);
     expect(keys()).toEqual([referenced, `photos/${alive}/x/fresh.jpg`, `raw/${alive}/fresh`].sort());
+  });
+
+  it('keeps a render image a row points at and sweeps one nothing points at', async () => {
+    const kept = `renders/${alive}/${snapshotId}/kept.jpg`;
+    await put(kept, 2 * HOUR);
+    await db.insert(render).values({
+      snapshotId, tool: 'hairstyle', strategy: 'cut', inputHash: 'h', objectKey: kept, label: 'preview', expiresAt: new Date(now.getTime() + HOUR),
+    });
+    await put(`renders/${alive}/${snapshotId}/stale.jpg`, 2 * HOUR);
+    await put(`renders/${deleted}/${snapshotId}/gone.jpg`, 1000);
+
+    const report = await cleanup.run(now);
+
+    expect(report.orphansDeleted).toBe(2);
+    expect(keys()).toEqual([kept]);
   });
 
   it('leaves keys that do not follow the layout alone', async () => {
