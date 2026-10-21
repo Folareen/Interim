@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Interim',
     start_url: '/',
     display: 'standalone',
-    background_color: '#fafaf9',
-    theme_color: '#4f46e5',
+    background_color: '#f1f5f6',
+    theme_color: '#f1f5f6',
   };
 }

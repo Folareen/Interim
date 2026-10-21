@@ -1,5 +1,6 @@
 import type { LiveLocale, Moment, TemplateKey, Tone } from '@interim/types';
 import { en } from './copy/en';
+import type { UiCopy } from './ui-copy';
 
 /** Fixed user facing copy for one language. */
 export interface Copy {
@@ -9,6 +10,8 @@ export interface Copy {
   companionFallback: Record<Tone, string>;
   /** Lines the person can use when someone asks. Empty for moments without other people. */
   whatToSay: Record<Moment, readonly string[]>;
+  /** The app's screens. */
+  ui: UiCopy;
 }
 
 /** All fixed copy by language. Adding a live locale fails the build until its copy is here. */

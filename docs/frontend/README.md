@@ -4,12 +4,16 @@ Next.js App Router PWA in `apps/web`, mobile first. Pages and flows: [architectu
 
 ## Conventions
 - Server components by default. Add `'use client'` only for state, effects, camera or browser APIs, and keep those components small.
-- The browser only talks to the Interim API (`NEXT_PUBLIC_API_URL`). No YouCam or LLM keys or calls from the browser.
+- The browser only calls `/api/*`, which the web server forwards to the API (`API_ORIGIN`, server side only), so the owner cookie is first party. No YouCam or LLM keys or calls from the browser.
 - Validate API responses with the zod schemas from `@interim/types` at the fetch boundary; pass typed data down.
 - Capture checks (angle, light, resolution) run on the device and block upload on failure. They are advisory; the server checks again.
 - Photos upload straight to storage through presigned links from the API.
 - Test the camera and install flow on iOS Safari and Android Chrome.
-- Call the API through the `/api/*` proxy so the owner cookie is first party.
+
+## Screens and state
+Setup runs welcome, language, situation, setup, consent, then ready. The language and theme live in cookies (`interim_locale`, `interim_theme`) that the server reads, so pages render in the right language and theme from the first paint. The situation travels in the address of the setup step. The profile is created when setup is submitted, and later screens read it by id on the server with the person's cookie. The language and situation screens are plain forms and work without JavaScript.
+
+Before a screen is done, check it in both themes at 320px and 390px wide, with the keyboard only, and with an axe audit that reports no violations.
 
 ## Copy
 User facing strings follow the language rules in [../product/overview.md](../product/overview.md) and are scanned with `@interim/rules`.

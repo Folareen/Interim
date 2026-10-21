@@ -150,7 +150,7 @@ All routes check consent version and ownership. Share links expire, can be revok
 
 ## 10. Web app
 
-* **Pages.** Template picker, age and consent, capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
+* **Pages.** Welcome, language, situation, setup (tone, head covering, age), consent and ready, then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
 * **Capture wizard.** Uses the YouCam JS Camera Kit where possible for angle and lighting guidance. Runs checks on the device and blocks upload on failure. Offers a timer for the top photo. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
 * **Run progress.** Shows the live trace in short lines, so the agent is visible.
 * **Stage Card.** Before and after slider for renders, a clear preview label, shopping list, share, export and delete actions.
