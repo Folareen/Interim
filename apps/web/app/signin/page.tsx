@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SignIn({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const { next, error } = await searchParams;
-  const target = safeNext(next, '/account');
+  const target = safeNext(next, '/');
   if (await getMe()) redirect(target);
   const [t, config] = await Promise.all([getTranslations('auth'), getAuthConfig()]);
   return (

@@ -7,7 +7,7 @@ import { LanguageLink } from './language-link';
 import { ThemeToggle } from './theme-toggle';
 
 /** How many steps the setup has, so the progress line can show where the person is. */
-export const TOTAL_STEPS = 4;
+export const TOTAL_STEPS = 3;
 
 /**
  * The frame every screen sits in: a single column that is comfortable on a phone, a header with a

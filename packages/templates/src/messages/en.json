@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) may process my photos.",
     "confirmGoogle": "Google may process my measurements and settings, but not my photos.",
     "confirmOwn": "The photos will only be of me.",
-    "noRecovery": "Without an account, Interim remembers you on this device only. If you clear your browser data, this profile cannot be recovered. An account keeps it safe.",
     "deleteAnytime": "You can delete your profile and everything in it at any time.",
     "incomplete": "Choose how long to keep photos and tick each box to continue.",
     "submit": "I agree and continue",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Yes, delete everything",
     "deleteCancel": "Keep my profile",
     "deleting": "Deleting…",
-    "saveTitle": "Keep this profile safe",
-    "saveBody": "Without an account, this profile lives only in this browser. Create one to open it from any device and keep it if you clear your browser data.",
-    "saveAction": "Create an account"
+    "editAction": "Change my choices"
   },
   "auth": {
     "signInTitle": "Sign in",
@@ -178,10 +175,6 @@
     "noProfiles": "You have no profiles yet.",
     "open": "Open",
     "startNew": "Start a new profile",
-    "claimTitle": "Profiles on this device",
-    "claimBody": "Some profiles you made on this device are not in your account yet. Add them to open them from anywhere.",
-    "claimAction": "Add them to my account",
-    "claiming": "Adding…",
     "passwordTitle": "Password",
     "passwordSet": "You sign in with a password. You can choose a new one by email.",
     "passwordNone": "You have no password. You can sign in with a link or Google, or choose a password by email.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Choose a new Interim password", "intro": "Use this link to choose a new password. It works once and expires in 30 minutes.", "action": "Choose a new password" },
     "exists": { "subject": "You already have an Interim account", "intro": "Someone used this email to create an Interim account, but you already have one. You can sign in below.", "action": "Sign in" },
     "ignore": "If you did not ask for this, you can ignore this email."
+  },
+  "settings": {
+    "title": "Your choices",
+    "intro": "Change how Interim talks to you, or whether it shows hair. You can change these any time.",
+    "submit": "Save",
+    "saving": "Saving…",
+    "saved": "Saved."
   },
   "templateLabels": {
     "hair_loss_ahead": "Hair loss ahead",

@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) na iya sarrafa hotunana.",
     "confirmGoogle": "Google na iya sarrafa ma’aunina da saitunana, amma ba hotunana ba.",
     "confirmOwn": "Hotunan za su zama nawa ne kaɗai.",
-    "noRecovery": "Idan babu asusu, Interim yana gane ku a wannan na’urar kawai. Idan kuka share bayanan browser ɗinku, ba za a iya dawo da wannan bayanan ba. Asusu yana kiyaye shi.",
     "deleteAnytime": "Kuna iya share bayananku da duk abin da ke cikinsu a kowane lokaci.",
     "incomplete": "Ku zaɓi tsawon lokacin adana hotuna, sannan ku yi alama a kowane akwati don ci gaba.",
     "submit": "Na yarda, ina ci gaba",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Eh, share komai",
     "deleteCancel": "Ajiye bayanana",
     "deleting": "Ana sharewa…",
-    "saveTitle": "Ku kiyaye wannan bayanan",
-    "saveBody": "Idan babu asusu, wannan bayanan yana cikin wannan browser kawai. Ku ƙirƙiri asusu don buɗe shi daga kowace na’ura kuma ku riƙe shi koda kun share bayanan browser.",
-    "saveAction": "Ƙirƙiri asusu"
+    "editAction": "Canza zaɓuɓɓana"
   },
   "auth": {
     "signInTitle": "Shiga",
@@ -178,10 +175,6 @@
     "noProfiles": "Ba ku da wani bayani tukuna.",
     "open": "Buɗe",
     "startNew": "Fara sabon bayani",
-    "claimTitle": "Bayanai a wannan na’urar",
-    "claimBody": "Wasu bayanan da kuka ƙirƙira a wannan na’urar ba su cikin asusunku tukuna. Ku ƙara su don buɗe su daga ko’ina.",
-    "claimAction": "Ƙara su cikin asusuna",
-    "claiming": "Ana ƙarawa…",
     "passwordTitle": "Kalmar sirri",
     "passwordSet": "Kuna shiga da kalmar sirri. Kuna iya zaɓar sabuwa ta imel.",
     "passwordNone": "Ba ku da kalmar sirri. Kuna iya shiga da hanya ko Google, ko ku zaɓi kalmar sirri ta imel.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Zaɓi sabuwar kalmar sirri ta Interim", "intro": "Ku yi amfani da wannan hanyar don zaɓar sabuwar kalmar sirri. Tana aiki sau ɗaya kuma tana ƙarewa cikin mintuna 30.", "action": "Zaɓi sabuwar kalmar sirri" },
     "exists": { "subject": "Kuna da asusun Interim tuni", "intro": "Wani ya yi amfani da wannan imel don ƙirƙirar asusun Interim, amma kuna da shi tuni. Kuna iya shiga a ƙasa.", "action": "Shiga" },
     "ignore": "Idan ba ku ne kuka nema ba, kuna iya yin watsi da wannan imel."
+  },
+  "settings": {
+    "title": "Zaɓuɓɓanku",
+    "intro": "Ku canza yadda Interim ke yi muku magana, da kuma ko zai nuna gashi. Kuna iya canza su a kowane lokaci.",
+    "submit": "Ajiye",
+    "saving": "Ana ajiyewa…",
+    "saved": "An ajiye."
   },
   "templateLabels": {
     "hair_loss_ahead": "Zubewar gashi na tafe",

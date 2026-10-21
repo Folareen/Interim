@@ -8,13 +8,13 @@ This spec covers the hackathon build: what the product does, what it stores, how
 
 ## 2. Users
 
-* **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards. Can start with no account, and add one so profiles survive cleared browser data and open on any device (section 12b).
+* **Individual.** Picks a situation and a tone, captures a baseline, then adds check ins. Reads Stage Cards. Signs up or signs in first, so a profile survives cleared browser data and opens on any device (section 12b).
 
 There are no admin or care team roles in this build.
 
 ## 3. Core concepts
 
-* **Account.** An optional sign in: an email address plus a password, a link sent by email or Google. A profile belongs to an account, or to one browser when its person has none.
+* **Account.** A sign in: an email address plus a password, a link sent by email or Google. Every profile belongs to an account.
 * **Profile.** One person's ledger, created from a situation template.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
@@ -262,7 +262,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 
 ## 12b. Accounts and sign in
 
-* **Optional.** A person can use Interim with no account. Their profile then belongs to that browser and cannot be recovered if its data is cleared; the consent screen says so. An account makes profiles belong to a person: they open on any device and survive cleared data.
+* **Account first.** A person signs up or signs in before anything else, so a profile always belongs to a person, opens on any device and survives cleared browser data. There is no anonymous profile and no device cookie. Setup after that is situation, tone and hair, then consent. The language is chosen from the header, not as a step. Someone who signs in again lands where they left off, and can change tone and head covering from the ready screen.
 * **Three ways in, one session.** Email and password, a link sent by email, or Google. Any of them ends in the same kind of session. Passkeys are not offered.
 * **What an account holds.** An email address, a password hash (never the password) and, for Google, the account's subject id. Google is asked for the `openid` and `email` scopes only, so no name or photo arrives. All of it is deleted with the account.
 * **The email address is personal data** tied to profiles whose situation can imply health. It is kept in its own table, and is never sent to YouCam or Gemini, put in a log, shown on a share link or used for advertising. Two processors see it: Brevo, which sends the email, and Google, only for people who choose Google. Neither receives photos. The sign up and sign in screens say so.
@@ -272,7 +272,6 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * **Sessions.** A random cookie token whose hash is stored. The cookie is httpOnly, Secure and SameSite=Lax, lasts 30 days and is extended while in use. A password reset signs out every browser. Sign out ends the one in use.
 * **No account guessing.** Sign up, asking for a link and asking for a reset answer the same whether or not the address has an account; a known address gets an email saying so. A wrong email and a wrong password are not told apart, and the work is the same.
 * **Limits.** Tries are counted per address and per email in the database, as hashes, and answer 429 past the limit: 8 sign in tries per email and 60 per address in 15 minutes; 5 sign ups or links per email and 10 or 20 per address in an hour.
-* **Bringing a device's profiles in.** After sign in, "Profiles on this device" offers to add the profiles made in this browser to the account. It is one tap and never automatic, so signing in on someone else's phone does not take their profiles. It moves only the profiles of this browser.
 * **Delete account.** Deletes every profile with its photos, measurements and cards, then the account, sessions and links. It asks for the password when the account has one.
 * **Emails.** Fixed copy in the language on screen, scanned like every other string. They say nothing about the situation or what the app is for.
 * **Judge mode** needs no account and sample profiles are never owned by one.
@@ -333,7 +332,7 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 20. Signing up, asking for a link and asking for a reset answer the same for a known and an unknown address.
 21. An emailed link works once and not after it expires, and a link of one kind is refused for another.
 22. A sign in link or Google on an address with an unconfirmed password account discards that password.
-23. Claiming moves only the profiles of the browser that asks.
+23. No profile can be created, read or changed without a signed in account, and one account never sees another's.
 24. Deleting an account removes its profiles, photos, sessions and links.
 25. Repeated wrong passwords for one email are answered 429.
 

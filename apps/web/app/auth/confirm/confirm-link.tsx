@@ -26,7 +26,7 @@ export function ConfirmLink({ kind, token }: { kind: 'verify' | 'magic'; token: 
     setError(undefined);
     try {
       await (kind === 'verify' ? confirmEmail : signInWithLink)({ token });
-      router.push('/account');
+      router.push('/');
       router.refresh();
     } catch (cause) {
       setError(describe(cause));

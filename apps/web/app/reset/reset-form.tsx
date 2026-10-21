@@ -28,7 +28,7 @@ export function ResetForm({ token }: { token: string }) {
     setError(undefined);
     try {
       await resetPassword({ token, password });
-      router.push('/account');
+      router.push('/');
       router.refresh();
     } catch (cause) {
       setExpired(authErrorKey(cause) === 'linkInvalid');

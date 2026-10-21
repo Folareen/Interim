@@ -30,7 +30,7 @@ Cloudflare R2 for local work and production, through the `@aws-sdk/client-s3` cl
 - Log at one boundary, structured, with run id and task id. Never log photo contents or personal text.
 
 ## Identity
-A profile's owner is a signed in account (`owner_ref = account:<id>`) or, with no account, a browser's cookie token (its HMAC in `owner_ref`); there are no partner or API keys. `OwnerGuard` resolves the caller, a session first and then the device cookie, and every hash is an HMAC keyed with `SESSION_SECRET`. Routes that need an account use `AccountGuard`. Check ownership in every controller that takes a profile, snapshot, run or card id. Services look rows up by id and `owner_ref` together and answer 404 for anyone else's, so ids do not leak. Public endpoints that can spend units sit behind the rate limits in architecture section 12.
+A profile's owner is a signed in account (`owner_ref = account:<id>`); there is no anonymous owner and there are no partner or API keys. `OwnerGuard` resolves the caller from the session cookie, whose hash is an HMAC keyed with `SESSION_SECRET`. `AccountGuard` is the same check for routes about the account itself. Check ownership in every controller that takes a profile, snapshot, run or card id. Services look rows up by id and `owner_ref` together and answer 404 for anyone else's, so ids do not leak. Public endpoints that can spend units sit behind the rate limits in architecture section 12.
 
 ## Auth
 Written in `apps/api/src/auth` with no auth library. Rules, limits and what is stored are in [product/spec.md](product/spec.md) section 12b; routes in [architecture.md](architecture.md) section 9.

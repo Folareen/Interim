@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) peut utiliser mes photos pour les analyser.",
     "confirmGoogle": "Google peut utiliser mes mesures et mes réglages, mais pas mes photos.",
     "confirmOwn": "Les photos ne montreront que moi.",
-    "noRecovery": "Sans compte, Interim ne vous reconnaît que sur cet appareil. Si vous effacez les données de votre navigateur, ce profil ne pourra pas être récupéré. Un compte le garde en sécurité.",
     "deleteAnytime": "Vous pouvez supprimer votre profil et tout ce qu’il contient à tout moment.",
     "incomplete": "Choisissez la durée de conservation des photos et cochez chaque case pour continuer.",
     "submit": "J’accepte et je continue",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Oui, tout supprimer",
     "deleteCancel": "Garder mon profil",
     "deleting": "Suppression…",
-    "saveTitle": "Gardez ce profil en sécurité",
-    "saveBody": "Sans compte, ce profil n’existe que dans ce navigateur. Créez-en un pour l’ouvrir depuis n’importe quel appareil et le garder si vous effacez les données du navigateur.",
-    "saveAction": "Créer un compte"
+    "editAction": "Modifier mes choix"
   },
   "auth": {
     "signInTitle": "Se connecter",
@@ -178,10 +175,6 @@
     "noProfiles": "Vous n’avez pas encore de profil.",
     "open": "Ouvrir",
     "startNew": "Commencer un nouveau profil",
-    "claimTitle": "Profils sur cet appareil",
-    "claimBody": "Certains profils créés sur cet appareil ne sont pas encore dans votre compte. Ajoutez-les pour les ouvrir de n’importe où.",
-    "claimAction": "Les ajouter à mon compte",
-    "claiming": "Ajout…",
     "passwordTitle": "Mot de passe",
     "passwordSet": "Vous vous connectez avec un mot de passe. Vous pouvez en choisir un nouveau par e-mail.",
     "passwordNone": "Vous n’avez pas de mot de passe. Vous pouvez vous connecter avec un lien ou Google, ou en choisir un par e-mail.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Choisissez un nouveau mot de passe Interim", "intro": "Utilisez ce lien pour choisir un nouveau mot de passe. Il ne fonctionne qu’une fois et expire dans 30 minutes.", "action": "Choisir un nouveau mot de passe" },
     "exists": { "subject": "Vous avez déjà un compte Interim", "intro": "Quelqu’un a utilisé cet e-mail pour créer un compte Interim, mais vous en avez déjà un. Vous pouvez vous connecter ci-dessous.", "action": "Se connecter" },
     "ignore": "Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail."
+  },
+  "settings": {
+    "title": "Vos choix",
+    "intro": "Changez la façon dont Interim vous parle, ou s’il montre des cheveux. Vous pouvez les modifier à tout moment.",
+    "submit": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré."
   },
   "templateLabels": {
     "hair_loss_ahead": "Chute de cheveux à venir",

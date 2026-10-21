@@ -107,11 +107,6 @@ export async function logout(): Promise<void> {
   await send('/auth/logout', 'POST');
 }
 
-/** Moves the profiles made on this device into the signed in account. */
-export async function claimProfiles(): Promise<void> {
-  await send('/auth/claim', 'POST');
-}
-
 /** Deletes the account and everything in it. The password is needed when the account has one. */
 export async function deleteAccount(password?: string): Promise<void> {
   await send('/auth/account', 'DELETE', { password });

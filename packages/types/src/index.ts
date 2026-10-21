@@ -275,11 +275,10 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export const deleteAccountSchema = z.object({ password: z.string().max(128).optional() });
 export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
 
-/** The signed in account as `GET /auth/me` returns it. `claimable` counts profiles made on this device before sign-in. */
+/** The signed in account as `GET /auth/me` returns it. */
 export const meSchema = z.object({
   email: z.string(),
   hasPassword: z.boolean(),
-  claimable: z.number().int().nonnegative(),
 });
 export type Me = z.infer<typeof meSchema>;
 

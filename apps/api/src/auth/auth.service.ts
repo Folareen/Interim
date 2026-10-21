@@ -18,12 +18,12 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, count, eq, gt, isNull } from 'drizzle-orm';
-import type { Request, Response } from 'express';
+import { and, eq, gt, isNull } from 'drizzle-orm';
+import type { Response } from 'express';
 import { DB } from '../db/db.token';
 import type { AccountSession } from '../guard/session.service';
 import { SessionService } from '../guard/session.service';
-import { OwnerService, accountRef } from '../guard/owner.service';
+import { accountRef } from '../guard/owner.service';
 import { hashToken, randomToken } from '../guard/token';
 import { MailService } from '../mail/mail.service';
 import { ProfilesService } from '../profiles/profiles.service';
@@ -60,7 +60,6 @@ export class AuthService {
     @Inject(OWNER_CONFIG) private readonly secrets: OwnerConfig,
     @Inject(PasswordService) private readonly passwords: PasswordService,
     @Inject(SessionService) private readonly sessions: SessionService,
-    @Inject(OwnerService) private readonly owners: OwnerService,
     @Inject(MailService) private readonly mail: MailService,
     @Inject(RateLimitService) private readonly limits: RateLimitService,
     @Inject(ProfilesService) private readonly profiles: ProfilesService,
@@ -89,7 +88,7 @@ export class AuthService {
    * @throws UnauthorizedException for a wrong email or password, which are not told apart.
    * @throws ForbiddenException when the password is right but the email is not yet confirmed.
    */
-  async login(input: LoginInput, ip: string, req: Request, res: Response): Promise<Me> {
+  async login(input: LoginInput, ip: string, res: Response): Promise<Me> {
     await this.limits.hit('login-ip', ip, 60, 15 * MINUTE_MS);
     await this.limits.hit('login-email', input.email, 8, 15 * MINUTE_MS);
     const found = await this.find(input.email);
@@ -97,7 +96,7 @@ export class AuthService {
     if (!found || !matches) throw new UnauthorizedException();
     if (!found.emailVerifiedAt) throw new ForbiddenException();
     await this.sessions.start(res, found.id);
-    return this.me({ accountId: found.id, email: found.email }, req);
+    return this.me({ accountId: found.id, email: found.email });
   }
 
   /** Sends a sign-in link. The account is created when the link is used, so this never says whether one exists. */
@@ -108,24 +107,24 @@ export class AuthService {
   }
 
   /** Signs in with a link, creating the account on first use. The link proves the inbox, so the email counts as confirmed. */
-  async useMagicLink(input: LinkToken, ip: string, req: Request, res: Response): Promise<Me> {
+  async useMagicLink(input: LinkToken, ip: string, res: Response): Promise<Me> {
     await this.limits.hit('consume-ip', ip, 30, 15 * MINUTE_MS);
     const email = await this.consume(input.token, 'magic_link');
     const found = await this.find(email);
     const id = found ? await this.confirmByInbox(found) : await this.create({ email, emailVerifiedAt: new Date() });
     await this.sessions.start(res, id);
-    return this.me({ accountId: id, email }, req);
+    return this.me({ accountId: id, email });
   }
 
   /** Confirms the email of a password account from its link, and signs in. */
-  async confirmEmail(input: LinkToken, ip: string, req: Request, res: Response): Promise<Me> {
+  async confirmEmail(input: LinkToken, ip: string, res: Response): Promise<Me> {
     await this.limits.hit('consume-ip', ip, 30, 15 * MINUTE_MS);
     const email = await this.consume(input.token, 'verify_email');
     const found = await this.find(email);
     if (!found) throw new BadRequestException('invalid_link');
     await this.db.update(account).set({ emailVerifiedAt: new Date() }).where(eq(account.id, found.id));
     await this.sessions.start(res, found.id);
-    return this.me({ accountId: found.id, email }, req);
+    return this.me({ accountId: found.id, email });
   }
 
   /** Sends a password reset link if the address has an account. Looks the same either way. */
@@ -137,7 +136,7 @@ export class AuthService {
   }
 
   /** Sets a new password from a reset link, signs every other browser out, and signs this one in. */
-  async resetPassword(input: ResetPasswordInput, ip: string, req: Request, res: Response): Promise<Me> {
+  async resetPassword(input: ResetPasswordInput, ip: string, res: Response): Promise<Me> {
     await this.limits.hit('consume-ip', ip, 30, 15 * MINUTE_MS);
     const email = await this.consume(input.token, 'reset_password');
     const found = await this.find(email);
@@ -149,7 +148,7 @@ export class AuthService {
       .where(eq(account.id, found.id));
     await this.sessions.endAll(found.id);
     await this.sessions.start(res, found.id);
-    return this.me({ accountId: found.id, email }, req);
+    return this.me({ accountId: found.id, email });
   }
 
   /** Signs in a verified Google identity, linking it to the account with the same email or creating one. */
@@ -168,30 +167,14 @@ export class AuthService {
     await this.sessions.start(res, id);
   }
 
-  /** The signed in account, and how many profiles made on this device are not in it yet. */
-  async me(signedIn: AccountSession, req: Request): Promise<Me> {
+  /** The signed in account. */
+  async me(signedIn: AccountSession): Promise<Me> {
     const [row] = await this.db
       .select({ passwordHash: account.passwordHash })
       .from(account)
       .where(eq(account.id, signedIn.accountId));
     if (!row) throw new UnauthorizedException();
-    const device = this.owners.resolveDevice(req);
-    const [claimable] = device
-      ? await this.db.select({ n: count() }).from(profile).where(eq(profile.ownerRef, device.ref))
-      : [{ n: 0 }];
-    return { email: signedIn.email, hasPassword: row.passwordHash !== null, claimable: claimable?.n ?? 0 };
-  }
-
-  /** Moves the profiles made on this device into the signed in account. Returns how many moved. */
-  async claim(signedIn: AccountSession, req: Request): Promise<number> {
-    const device = this.owners.resolveDevice(req);
-    if (!device) return 0;
-    const moved = await this.db
-      .update(profile)
-      .set({ ownerRef: accountRef(signedIn.accountId) })
-      .where(eq(profile.ownerRef, device.ref))
-      .returning({ id: profile.id });
-    return moved.length;
+    return { email: signedIn.email, hasPassword: row.passwordHash !== null };
   }
 
   /**

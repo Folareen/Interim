@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) inaweza kuchakata picha zangu.",
     "confirmGoogle": "Google inaweza kuchakata vipimo na mipangilio yangu, lakini si picha zangu.",
     "confirmOwn": "Picha zitakuwa zangu pekee.",
-    "noRecovery": "Bila akaunti, Interim inakutambua kwenye kifaa hiki tu. Ukifuta data ya kivinjari chako, wasifu huu hauwezi kurejeshwa. Akaunti huuweka salama.",
     "deleteAnytime": "Unaweza kufuta wasifu wako na kila kitu ndani yake wakati wowote.",
     "incomplete": "Chagua muda wa kuhifadhi picha na weka alama kwenye kila kisanduku ili kuendelea.",
     "submit": "Nakubali na ninaendelea",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Ndiyo, futa kila kitu",
     "deleteCancel": "Weka wasifu wangu",
     "deleting": "Inafuta…",
-    "saveTitle": "Linda wasifu huu",
-    "saveBody": "Bila akaunti, wasifu huu uko kwenye kivinjari hiki tu. Fungua akaunti ili uufungue kwenye kifaa chochote na uuhifadhi hata ukifuta data ya kivinjari.",
-    "saveAction": "Fungua akaunti"
+    "editAction": "Badilisha chaguo zangu"
   },
   "auth": {
     "signInTitle": "Ingia",
@@ -178,10 +175,6 @@
     "noProfiles": "Bado huna wasifu.",
     "open": "Fungua",
     "startNew": "Anza wasifu mpya",
-    "claimTitle": "Wasifu kwenye kifaa hiki",
-    "claimBody": "Baadhi ya wasifu uliounda kwenye kifaa hiki bado haupo kwenye akaunti yako. Uongeze ili uufungue popote.",
-    "claimAction": "Ongeza kwenye akaunti yangu",
-    "claiming": "Inaongeza…",
     "passwordTitle": "Nenosiri",
     "passwordSet": "Unaingia kwa nenosiri. Unaweza kuchagua jipya kwa barua pepe.",
     "passwordNone": "Huna nenosiri. Unaweza kuingia kwa kiungo au Google, au kuchagua nenosiri kwa barua pepe.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Chagua nenosiri jipya la Interim", "intro": "Tumia kiungo hiki kuchagua nenosiri jipya. Hufanya kazi mara moja na huisha muda baada ya dakika 30.", "action": "Chagua nenosiri jipya" },
     "exists": { "subject": "Tayari una akaunti ya Interim", "intro": "Mtu alitumia barua pepe hii kufungua akaunti ya Interim, lakini tayari unayo. Unaweza kuingia hapa chini.", "action": "Ingia" },
     "ignore": "Kama hukuomba hili, unaweza kupuuza barua pepe hii."
+  },
+  "settings": {
+    "title": "Chaguo zako",
+    "intro": "Badilisha jinsi Interim inavyozungumza nawe, au kama inaonyesha nywele. Unaweza kubadilisha wakati wowote.",
+    "submit": "Hifadhi",
+    "saving": "Inahifadhi…",
+    "saved": "Imehifadhiwa."
   },
   "templateLabels": {
     "hair_loss_ahead": "Kupotea kwa nywele kunakuja",

@@ -1,11 +1,21 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Actions } from '@/components/actions';
 import { primaryClass, secondaryClass } from '@/components/button';
 import { Shell } from '@/components/shell';
 import { StageDots } from '@/components/stage-dots';
+import { getMe, getProfiles } from '@/lib/server-api';
 
-export default async function Welcome() {
+export default async function Home() {
+  // Someone signed in goes back to where they left off, so the welcome only greets people who are new or signed out.
+  if (await getMe()) {
+    const profiles = await getProfiles();
+    const [only] = profiles;
+    if (profiles.length === 0) redirect('/situation');
+    if (profiles.length === 1 && only) redirect(only.consentCurrent ? `/ready/${only.id}` : `/consent/${only.id}`);
+    redirect('/account');
+  }
   const t = await getTranslations('welcome');
   return (
     <Shell>
@@ -17,7 +27,7 @@ export default async function Welcome() {
       <p className="mt-4 text-muted">{t('reassurance')}</p>
       <p className="mt-auto pt-10 pb-6 text-[0.9rem] text-muted">{t('footnote')}</p>
       <Actions>
-        <Link href="/language" className={primaryClass}>
+        <Link href="/signup" className={primaryClass}>
           {t('start')}
         </Link>
         <Link href="/signin" className={secondaryClass}>

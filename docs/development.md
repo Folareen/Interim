@@ -6,19 +6,27 @@ Node 22, pnpm 10, Docker (Postgres and Redis), and a Cloudflare R2 bucket with a
 ## First run
 ```bash
 pnpm install
-cp .env.example .env        # fill in keys; defaults run in replay mode
-docker compose up -d
+cp .env.example .env        # fill in the R2 and other keys; the defaults run in replay mode
+pnpm db:up                  # Postgres and Redis
 pnpm build                  # builds shared packages once
-pnpm --filter @interim/db db:generate
+pnpm db:migrate
 pnpm dev                    # web :3000, api :4000
 ```
-The worker is a separate process: `pnpm --filter @interim/api dev:worker`.
+The worker is a separate process: `pnpm dev:worker`.
 
 ## Signing in locally
 `MAIL_MODE=log` (the default) prints every email, with its link, in the API's console, so nothing is sent. To send real mail set `MAIL_MODE=brevo`, `BREVO_API_KEY` and `MAIL_FROM_EMAIL` (a sender verified in Brevo). Google sign in is off until `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set; create an OAuth web client in Google Cloud and register `<WEB_ORIGIN>/api/auth/google/callback` as its redirect address.
 
 ## Commands
-`pnpm build | lint | typecheck | test | format` run through Turborepo across all workspaces. Use `--filter @interim/<name>` for one.
+`pnpm build | lint | typecheck | test | format` run through Turborepo across all workspaces, and `pnpm check` runs lint, typecheck and test together. Use `--filter @interim/<name>` for one.
+
+| Script | Does |
+| --- | --- |
+| `pnpm db:up`, `pnpm db:down` | Start or stop Postgres and Redis in Docker |
+| `pnpm db:generate` | Write a migration from changes to `packages/db/src/schema.ts` |
+| `pnpm db:migrate` | Apply migrations to `DATABASE_URL` from `.env` |
+| `pnpm db:studio` | Open Drizzle Studio on the database |
+| `pnpm dev`, `dev:api`, `dev:web`, `dev:worker` | Run everything, or one process |
 
 ## Environment
 Variables are listed in `.env.example`. The API validates them once at startup (`apps/api/src/config/env.ts`). Only `NEXT_PUBLIC_*` reaches the browser. Never put the YouCam or Gemini keys there.

@@ -3,7 +3,6 @@ import { registerSchema } from '@interim/types';
 import { BadRequestException, ConflictException, ForbiddenException, HttpException, UnauthorizedException } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { OWNER_COOKIE, OwnerService } from '../guard/owner.service';
 import { SESSION_COOKIE, SessionService } from '../guard/session.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { FakeMail, fakeRes, reqWith } from '../test/http-fakes';
@@ -22,7 +21,6 @@ let db: Db;
 let mail: FakeMail;
 let storage: MemoryStorage;
 let sessions: SessionService;
-let owners: OwnerService;
 let profiles: ProfilesService;
 let auth: AuthService;
 
@@ -35,7 +33,6 @@ beforeEach(async () => {
   mail = new FakeMail();
   storage = new MemoryStorage();
   sessions = new SessionService(db, secrets);
-  owners = new OwnerService(secrets, sessions);
   profiles = new ProfilesService(db, storage.asService());
   auth = new AuthService(
     db,
@@ -43,7 +40,6 @@ beforeEach(async () => {
     secrets,
     new PasswordService(),
     sessions,
-    owners,
     mail.asService(),
     new RateLimitService(db, secrets),
     profiles,
@@ -57,7 +53,7 @@ const find = async (email = 'a@b.co') => (await db.select().from(account).where(
 async function signedUp(email = 'a@b.co') {
   await register(email);
   const { res, cookies } = fakeRes();
-  await auth.confirmEmail({ token: mail.lastToken() }, ip, reqWith(), res);
+  await auth.confirmEmail({ token: mail.lastToken() }, ip, res);
   return { session: cookies.get(SESSION_COOKIE) ?? '' };
 }
 
@@ -75,13 +71,13 @@ describe('register and confirm', () => {
 
   it('does not let an unconfirmed account sign in, then does once the link is used', async () => {
     await register();
-    await expect(auth.login({ email: 'a@b.co', password }, ip, reqWith(), fakeRes().res)).rejects.toThrow(ForbiddenException);
+    await expect(auth.login({ email: 'a@b.co', password }, ip, fakeRes().res)).rejects.toThrow(ForbiddenException);
 
     const { res, cookies } = fakeRes();
-    await auth.confirmEmail({ token: mail.lastToken() }, ip, reqWith(), res);
+    await auth.confirmEmail({ token: mail.lastToken() }, ip, res);
     expect(cookies.has(SESSION_COOKIE)).toBe(true);
     expect((await find())?.emailVerifiedAt).not.toBeNull();
-    await expect(auth.login({ email: 'a@b.co', password }, ip, reqWith(), fakeRes().res)).resolves.toMatchObject({ email: 'a@b.co' });
+    await expect(auth.login({ email: 'a@b.co', password }, ip, fakeRes().res)).resolves.toMatchObject({ email: 'a@b.co' });
   });
 
   it('looks the same for an address that already has an account, and tells that person instead', async () => {
@@ -110,42 +106,40 @@ describe('register and confirm', () => {
   it('accepts a link once only, and not after it expires', async () => {
     await register();
     const token = mail.lastToken();
-    await auth.confirmEmail({ token }, ip, reqWith(), fakeRes().res);
-    await expect(auth.confirmEmail({ token }, ip, reqWith(), fakeRes().res)).rejects.toThrow(BadRequestException);
+    await auth.confirmEmail({ token }, ip, fakeRes().res);
+    await expect(auth.confirmEmail({ token }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
 
     await auth.register({ email: 'c@d.co', password, locale: 'en' }, ip);
     await db.update(authToken).set({ expiresAt: new Date(Date.now() - 1000) }).where(eq(authToken.email, 'c@d.co'));
-    await expect(auth.confirmEmail({ token: mail.lastToken() }, ip, reqWith(), fakeRes().res)).rejects.toThrow(BadRequestException);
+    await expect(auth.confirmEmail({ token: mail.lastToken() }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
   });
 
   it('does not accept a link meant for something else', async () => {
     await register();
-    await expect(auth.useMagicLink({ token: mail.lastToken() }, ip, reqWith(), fakeRes().res)).rejects.toThrow(BadRequestException);
+    await expect(auth.useMagicLink({ token: mail.lastToken() }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
   });
 });
 
 describe('login', () => {
   it('does not tell a wrong password from an unknown email', async () => {
     await signedUp();
-    const wrong = auth.login({ email: 'a@b.co', password: 'wrong password!!' }, ip, reqWith(), fakeRes().res);
-    const unknown = auth.login({ email: 'nobody@b.co', password }, ip, reqWith(), fakeRes().res);
+    const wrong = auth.login({ email: 'a@b.co', password: 'wrong password!!' }, ip, fakeRes().res);
+    const unknown = auth.login({ email: 'nobody@b.co', password }, ip, fakeRes().res);
     await expect(wrong).rejects.toThrow(UnauthorizedException);
     await expect(unknown).rejects.toThrow(UnauthorizedException);
   });
 
-  it('sets a session cookie and counts profiles waiting on this device', async () => {
+  it('sets a session cookie and answers with the account', async () => {
     await signedUp();
-    const device = owners.resolveDevice(reqWith({ [OWNER_COOKIE]: 'device-token' }));
-    await profiles.create(device ?? { ref: '' }, { templateKey: 'going_grey', ageConfirmed: true });
     const { res, cookies } = fakeRes();
-    const me = await auth.login({ email: 'a@b.co', password }, ip, reqWith({ [OWNER_COOKIE]: 'device-token' }), res);
+    const me = await auth.login({ email: 'a@b.co', password }, ip, res);
     expect(cookies.has(SESSION_COOKIE)).toBe(true);
-    expect(me).toEqual({ email: 'a@b.co', hasPassword: true, claimable: 1 });
+    expect(me).toEqual({ email: 'a@b.co', hasPassword: true });
   });
 
   it('slows down repeated wrong passwords for one email with a 429', async () => {
     await signedUp();
-    const tries = Array.from({ length: 9 }, () => auth.login({ email: 'a@b.co', password: 'wrong password!!' }, ip, reqWith(), fakeRes().res));
+    const tries = Array.from({ length: 9 }, () => auth.login({ email: 'a@b.co', password: 'wrong password!!' }, ip, fakeRes().res));
     const results = await Promise.allSettled(tries);
     const limited = results.filter((r) => r.status === 'rejected' && r.reason instanceof HttpException && r.reason.getStatus() === 429);
     expect(limited).toHaveLength(1);
@@ -157,7 +151,7 @@ describe('sign-in links', () => {
     await auth.requestMagicLink({ email: 'new@b.co', locale: 'en' }, ip);
     expect(await find('new@b.co')).toBeUndefined();
     const { res, cookies } = fakeRes();
-    await auth.useMagicLink({ token: mail.lastToken() }, ip, reqWith(), res);
+    await auth.useMagicLink({ token: mail.lastToken() }, ip, res);
     expect(cookies.has(SESSION_COOKIE)).toBe(true);
     expect(await find('new@b.co')).toMatchObject({ passwordHash: null });
     expect((await find('new@b.co'))?.emailVerifiedAt).not.toBeNull();
@@ -167,18 +161,18 @@ describe('sign-in links', () => {
     await auth.requestMagicLink({ email: 'a@b.co', locale: 'en' }, ip);
     const old = mail.lastToken();
     await auth.requestMagicLink({ email: 'a@b.co', locale: 'en' }, ip);
-    await expect(auth.useMagicLink({ token: old }, ip, reqWith(), fakeRes().res)).rejects.toThrow(BadRequestException);
-    await expect(auth.useMagicLink({ token: mail.lastToken() }, ip, reqWith(), fakeRes().res)).resolves.toBeDefined();
+    await expect(auth.useMagicLink({ token: old }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
+    await expect(auth.useMagicLink({ token: mail.lastToken() }, ip, fakeRes().res)).resolves.toBeDefined();
   });
 
   it('discards the password of an unconfirmed account when the real owner proves the inbox', async () => {
     await register('victim@b.co'); // someone else typed the victim’s address
     await auth.requestMagicLink({ email: 'victim@b.co', locale: 'en' }, ip);
-    await auth.useMagicLink({ token: mail.lastToken() }, ip, reqWith(), fakeRes().res);
+    await auth.useMagicLink({ token: mail.lastToken() }, ip, fakeRes().res);
 
     const taken = await find('victim@b.co');
     expect(taken?.passwordHash).toBeNull();
-    await expect(auth.login({ email: 'victim@b.co', password }, ip, reqWith(), fakeRes().res)).rejects.toThrow(UnauthorizedException);
+    await expect(auth.login({ email: 'victim@b.co', password }, ip, fakeRes().res)).rejects.toThrow(UnauthorizedException);
   });
 });
 
@@ -192,22 +186,22 @@ describe('password reset', () => {
     const { session: oldSession } = await signedUp();
     await auth.requestPasswordReset({ email: 'a@b.co', locale: 'en' }, ip);
     const { res, cookies } = fakeRes();
-    await auth.resetPassword({ token: mail.lastToken(), password: 'a brand new password' }, ip, reqWith(), res);
+    await auth.resetPassword({ token: mail.lastToken(), password: 'a brand new password' }, ip, res);
 
     expect(await sessions.resolve(reqWith({ [SESSION_COOKIE]: oldSession }))).toBeUndefined();
     expect(await sessions.resolve(reqWith({ [SESSION_COOKIE]: cookies.get(SESSION_COOKIE) ?? '' }))).toBeDefined();
-    await expect(auth.login({ email: 'a@b.co', password }, ip, reqWith(), fakeRes().res)).rejects.toThrow(UnauthorizedException);
-    await expect(auth.login({ email: 'a@b.co', password: 'a brand new password' }, ip, reqWith(), fakeRes().res)).resolves.toBeDefined();
+    await expect(auth.login({ email: 'a@b.co', password }, ip, fakeRes().res)).rejects.toThrow(UnauthorizedException);
+    await expect(auth.login({ email: 'a@b.co', password: 'a brand new password' }, ip, fakeRes().res)).resolves.toBeDefined();
   });
 
   it('lets a link or Google account choose a password, and works only once', async () => {
     await auth.requestMagicLink({ email: 'a@b.co', locale: 'en' }, ip);
-    await auth.useMagicLink({ token: mail.lastToken() }, ip, reqWith(), fakeRes().res);
+    await auth.useMagicLink({ token: mail.lastToken() }, ip, fakeRes().res);
     await auth.requestPasswordReset({ email: 'a@b.co', locale: 'en' }, ip);
     const token = mail.lastToken();
-    await auth.resetPassword({ token, password }, ip, reqWith(), fakeRes().res);
+    await auth.resetPassword({ token, password }, ip, fakeRes().res);
     expect((await find())?.passwordHash).toMatch(/^scrypt\$/);
-    await expect(auth.resetPassword({ token, password }, ip, reqWith(), fakeRes().res)).rejects.toThrow(BadRequestException);
+    await expect(auth.resetPassword({ token, password }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
   });
 });
 
@@ -230,7 +224,7 @@ describe('Google', () => {
     await signedUp('g@b.co');
     await auth.signInWithGoogle(identity, fakeRes().res);
     expect(await find('g@b.co')).toMatchObject({ googleSub: 'g-1' });
-    await expect(auth.login({ email: 'g@b.co', password }, ip, reqWith(), fakeRes().res)).resolves.toBeDefined();
+    await expect(auth.login({ email: 'g@b.co', password }, ip, fakeRes().res)).resolves.toBeDefined();
   });
 
   it('discards the password of an unconfirmed account with the same email', async () => {
@@ -243,31 +237,6 @@ describe('Google', () => {
   it('refuses an email that is already tied to a different Google account', async () => {
     await auth.signInWithGoogle(identity, fakeRes().res);
     await expect(auth.signInWithGoogle({ sub: 'g-2', email: 'g@b.co' }, fakeRes().res)).rejects.toThrow(ConflictException);
-  });
-});
-
-describe('claiming device profiles', () => {
-  const deviceCookie = { [OWNER_COOKIE]: 'device-token' };
-  const device = () => owners.resolveDevice(reqWith(deviceCookie)) ?? { ref: '' };
-
-  it('moves this device’s profiles into the account and leaves other devices’ alone', async () => {
-    const { session: token } = await signedUp();
-    const mine = await profiles.create(device(), { templateKey: 'going_grey', ageConfirmed: true });
-    const theirs = await profiles.create({ ref: 'someone-else' }, { templateKey: 'going_grey', ageConfirmed: true });
-    const signedIn = (await sessions.resolve(reqWith({ [SESSION_COOKIE]: token }))) ?? { accountId: '', email: '' };
-
-    expect(await auth.claim(signedIn, reqWith(deviceCookie))).toBe(1);
-    const owner = await owners.resolve(reqWith({ [SESSION_COOKIE]: token }));
-    expect((await profiles.list(owner ?? { ref: '' })).map((p) => p.id)).toEqual([mine.id]);
-    await expect(profiles.get(mine.id, device())).rejects.toThrow();
-    expect((await profiles.get(theirs.id, { ref: 'someone-else' })).id).toBe(theirs.id);
-    expect(await auth.claim(signedIn, reqWith(deviceCookie))).toBe(0);
-  });
-
-  it('claims nothing without a device cookie', async () => {
-    const { session: token } = await signedUp();
-    const signedIn = (await sessions.resolve(reqWith({ [SESSION_COOKIE]: token }))) ?? { accountId: '', email: '' };
-    expect(await auth.claim(signedIn, reqWith())).toBe(0);
   });
 });
 
@@ -321,5 +290,20 @@ describe('RateLimitService', () => {
     const rows = await db.select().from(rateLimit);
     expect(rows.map((r) => r.hits).sort()).toEqual([1, 3]);
     expect(JSON.stringify(rows)).not.toContain('person@b.co');
+  });
+});
+
+describe('profile ownership', () => {
+  it('keeps one account’s profiles from another’s', async () => {
+    const first = await signedUp('a@b.co');
+    const second = await signedUp('c@d.co');
+    const ownerOf = async (token: string) => {
+      const signedIn = (await sessions.resolve(reqWith({ [SESSION_COOKIE]: token }))) ?? { accountId: '', email: '' };
+      return { ref: `account:${signedIn.accountId}` };
+    };
+    const mine = await profiles.create(await ownerOf(first.session), { templateKey: 'going_grey', ageConfirmed: true });
+    expect(await profiles.list(await ownerOf(second.session))).toEqual([]);
+    await expect(profiles.get(mine.id, await ownerOf(second.session))).rejects.toThrow();
+    expect((await profiles.get(mine.id, await ownerOf(first.session))).id).toBe(mine.id);
   });
 });

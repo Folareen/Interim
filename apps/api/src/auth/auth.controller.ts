@@ -79,7 +79,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Me> {
-    return this.auth.login(body, addressOf(req), req, res);
+    return this.auth.login(body, addressOf(req), res);
   }
 
   @HttpCode(202)
@@ -95,7 +95,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Me> {
-    return this.auth.useMagicLink(body, addressOf(req), req, res);
+    return this.auth.useMagicLink(body, addressOf(req), res);
   }
 
   @HttpCode(200)
@@ -105,7 +105,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Me> {
-    return this.auth.confirmEmail(body, addressOf(req), req, res);
+    return this.auth.confirmEmail(body, addressOf(req), res);
   }
 
   @HttpCode(202)
@@ -121,7 +121,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Me> {
-    return this.auth.resetPassword(body, addressOf(req), req, res);
+    return this.auth.resetPassword(body, addressOf(req), res);
   }
 
   @HttpCode(204)
@@ -132,15 +132,8 @@ export class AuthController {
 
   @UseGuards(AccountGuard)
   @Get('me')
-  me(@CurrentAccount() account: AccountSession, @Req() req: Request): Promise<Me> {
-    return this.auth.me(account, req);
-  }
-
-  @UseGuards(AccountGuard)
-  @HttpCode(200)
-  @Post('claim')
-  async claim(@CurrentAccount() account: AccountSession, @Req() req: Request): Promise<{ claimed: number }> {
-    return { claimed: await this.auth.claim(account, req) };
+  me(@CurrentAccount() account: AccountSession): Promise<Me> {
+    return this.auth.me(account);
   }
 
   @UseGuards(AccountGuard)

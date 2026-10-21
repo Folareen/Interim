@@ -6,48 +6,7 @@ import { type FormEvent, useState } from 'react';
 import { Button } from '@/components/button';
 import { Field } from '@/components/field';
 import { Notice } from '@/components/notice';
-import { ApiError, claimProfiles, deleteAccount, logout } from '@/lib/api';
-
-/** Brings the profiles made on this device into the account. */
-export function ClaimProfiles() {
-  const t = useTranslations('account');
-  const common = useTranslations('common');
-  const router = useRouter();
-  const [working, setWorking] = useState(false);
-  const [error, setError] = useState<string>();
-
-  async function claim() {
-    setWorking(true);
-    setError(undefined);
-    try {
-      await claimProfiles();
-      router.refresh();
-    } catch (cause) {
-      setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
-      setWorking(false);
-    }
-  }
-
-  return (
-    <section className="mt-8 rounded-card border border-accent bg-tint p-4">
-      <h2 className="text-[1.25rem]">{t('claimTitle')}</h2>
-      <p className="mt-2">{t('claimBody')}</p>
-      {error && (
-        <div className="mt-4">
-          <Notice>{error}</Notice>
-        </div>
-      )}
-      <p role="status" className="sr-only">
-        {working ? t('claiming') : ''}
-      </p>
-      <div className="mt-4">
-        <Button onClick={claim} disabled={working}>
-          {working ? t('claiming') : t('claimAction')}
-        </Button>
-      </div>
-    </section>
-  );
-}
+import { ApiError, deleteAccount, logout } from '@/lib/api';
 
 /** Signs this browser out. */
 export function SignOut() {

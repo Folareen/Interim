@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { claimProfiles, confirmEmail, deleteAccount, login, logout, register, requestMagicLink, resetPassword, signInWithLink } from './api';
+import { confirmEmail, deleteAccount, login, logout, register, requestMagicLink, resetPassword, signInWithLink } from './api';
 import { authErrorKey } from './auth-error';
 import { ApiError } from './api';
 
 const fetchMock = vi.fn<typeof fetch>();
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
-const me = { email: 'a@b.co', hasPassword: true, claimable: 2 };
+const me = { email: 'a@b.co', hasPassword: true };
 
 beforeEach(() => {
   fetchMock.mockReset();
@@ -46,14 +46,12 @@ describe('auth api client', () => {
     await expect(login({ email: 'a@b.co', password: 'x' })).rejects.toThrow();
   });
 
-  it('sends link requests, logout, claim and delete to their routes', async () => {
+  it('sends link requests, logout and delete to their routes', async () => {
     fetchMock.mockImplementation(() => Promise.resolve(new Response(null, { status: 204 })));
     await requestMagicLink({ email: 'a@b.co', locale: 'en' });
     expect(lastCall().url).toBe('/api/auth/magic');
     await logout();
     expect(lastCall()).toMatchObject({ url: '/api/auth/logout', method: 'POST' });
-    await claimProfiles();
-    expect(lastCall()).toMatchObject({ url: '/api/auth/claim', method: 'POST' });
     await deleteAccount('secret password');
     expect(lastCall()).toEqual({ url: '/api/auth/account', method: 'DELETE', body: { password: 'secret password' } });
   });

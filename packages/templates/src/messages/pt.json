@@ -96,7 +96,6 @@
     "confirmYoucam": "A YouCam (Perfect Corp) pode processar minhas fotos.",
     "confirmGoogle": "O Google pode processar minhas medidas e configurações, mas não minhas fotos.",
     "confirmOwn": "As fotos serão só minhas.",
-    "noRecovery": "Sem uma conta, o Interim reconhece você apenas neste aparelho. Se você limpar os dados do navegador, este perfil não poderá ser recuperado. Uma conta o mantém seguro.",
     "deleteAnytime": "Você pode excluir seu perfil e tudo o que há nele a qualquer momento.",
     "incomplete": "Escolha por quanto tempo guardar as fotos e marque cada caixa para continuar.",
     "submit": "Concordo e continuo",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Sim, apagar tudo",
     "deleteCancel": "Manter meu perfil",
     "deleting": "Excluindo…",
-    "saveTitle": "Mantenha este perfil seguro",
-    "saveBody": "Sem uma conta, este perfil existe apenas neste navegador. Crie uma para abri-lo em qualquer aparelho e mantê-lo se você limpar os dados do navegador.",
-    "saveAction": "Criar uma conta"
+    "editAction": "Alterar minhas escolhas"
   },
   "auth": {
     "signInTitle": "Entrar",
@@ -178,10 +175,6 @@
     "noProfiles": "Você ainda não tem perfis.",
     "open": "Abrir",
     "startNew": "Começar um novo perfil",
-    "claimTitle": "Perfis neste aparelho",
-    "claimBody": "Alguns perfis que você criou neste aparelho ainda não estão na sua conta. Adicione-os para abri-los de qualquer lugar.",
-    "claimAction": "Adicionar à minha conta",
-    "claiming": "Adicionando…",
     "passwordTitle": "Senha",
     "passwordSet": "Você entra com uma senha. Pode escolher uma nova por e-mail.",
     "passwordNone": "Você não tem senha. Pode entrar com um link ou com o Google, ou escolher uma senha por e-mail.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Escolha uma nova senha do Interim", "intro": "Use este link para escolher uma nova senha. Ele funciona uma vez e expira em 30 minutos.", "action": "Escolher uma nova senha" },
     "exists": { "subject": "Você já tem uma conta no Interim", "intro": "Alguém usou este e-mail para criar uma conta no Interim, mas você já tem uma. Você pode entrar abaixo.", "action": "Entrar" },
     "ignore": "Se não foi você quem pediu, pode ignorar este e-mail."
+  },
+  "settings": {
+    "title": "Suas escolhas",
+    "intro": "Mude como o Interim fala com você, ou se ele mostra cabelo. Você pode mudar isso a qualquer momento.",
+    "submit": "Salvar",
+    "saving": "Salvando…",
+    "saved": "Salvo."
   },
   "templateLabels": {
     "hair_loss_ahead": "Queda de cabelo a caminho",

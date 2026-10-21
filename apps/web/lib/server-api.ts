@@ -1,9 +1,11 @@
 import {
   type AuthConfig,
   type Me,
+  type Preferences,
   type Profile,
   authConfigSchema,
   meSchema,
+  preferencesSchema,
   profileListSchema,
   profileSchema,
 } from '@interim/types';
@@ -50,4 +52,15 @@ export async function getAuthConfig(): Promise<AuthConfig> {
   const response = await fetch(`${apiOrigin}/auth/config`, { cache: 'no-store' });
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return authConfigSchema.parse(await response.json());
+}
+
+/** The profile's companion settings, or undefined when the profile is not the person's. */
+export async function getPreferences(id: string): Promise<Preferences | undefined> {
+  const response = await fetch(`${apiOrigin}/profiles/${encodeURIComponent(id)}/preferences`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return preferencesSchema.parse(await response.json());
 }

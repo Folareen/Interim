@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) fit process my photos.",
     "confirmGoogle": "Google fit process my measurements and settings, but no be my photos.",
     "confirmOwn": "Di photos go be only me.",
-    "noRecovery": "If you no get account, Interim dey recognise you for dis device only. If you clear your browser data, we no go fit recover dis profile. Account dey keep am safe.",
     "deleteAnytime": "You fit delete your profile and everything inside am anytime.",
     "incomplete": "Choose how long to keep photos and tick each box to continue.",
     "submit": "I agree, make we continue",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Yes, delete everything",
     "deleteCancel": "Keep my profile",
     "deleting": "Dey delete…",
-    "saveTitle": "Keep dis profile safe",
-    "saveBody": "If you no get account, dis profile dey only inside dis browser. Create one make you fit open am from any device and keep am even if you clear your browser data.",
-    "saveAction": "Create account"
+    "editAction": "Change my choices"
   },
   "auth": {
     "signInTitle": "Sign in",
@@ -178,10 +175,6 @@
     "noProfiles": "You never get any profile yet.",
     "open": "Open",
     "startNew": "Start new profile",
-    "claimTitle": "Profiles for dis device",
-    "claimBody": "Some profiles wey you make for dis device never dey your account yet. Add dem so you fit open dem from anywhere.",
-    "claimAction": "Add dem to my account",
-    "claiming": "Dey add…",
     "passwordTitle": "Password",
     "passwordSet": "You dey sign in with password. You fit choose new one by email.",
     "passwordNone": "You no get password. You fit sign in with link or Google, or choose password by email.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Choose new Interim password", "intro": "Use dis link to choose new password. E dey work one time and e go expire after 30 minutes.", "action": "Choose new password" },
     "exists": { "subject": "You don get Interim account already", "intro": "Somebody use dis email create Interim account, but you don get one already. You fit sign in below.", "action": "Sign in" },
     "ignore": "If na no you ask for dis, you fit ignore dis email."
+  },
+  "settings": {
+    "title": "Your choices",
+    "intro": "Change how Interim dey talk to you, or if e go show hair. You fit change dem anytime.",
+    "submit": "Save",
+    "saving": "Dey save…",
+    "saved": "E don save."
   },
   "templateLabels": {
     "hair_loss_ahead": "Hair loss dey come",

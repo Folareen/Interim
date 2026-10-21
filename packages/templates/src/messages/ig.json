@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) nwere ike ịrụ ọrụ na foto m.",
     "confirmGoogle": "Google nwere ike ịrụ ọrụ na ihe e tụrụ m na ntọala m, ma ọ bụghị foto m.",
     "confirmOwn": "Foto ndị ahụ ga-abụ nke m naanị.",
-    "noRecovery": "Na-enweghị akaụntụ, Interim maara gị naanị n’ngwaọrụ a. Ọ bụrụ na ị hichapụ data nchọgharị gị, enweghị ike ịnweta profaịlụ a ọzọ. Akaụntụ na-echekwa ya.",
     "deleteAnytime": "Ị nwere ike ihichapụ profaịlụ gị na ihe niile dị na ya n’oge ọ bụla.",
     "incomplete": "Họrọ ogologo oge a ga-edebe foto ma maakị igbe ọ bụla ka ị gaa n’ihu.",
     "submit": "Ekwenyere m, ana m aga n’ihu",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Ee, hichapụ ihe niile",
     "deleteCancel": "Debe profaịlụ m",
     "deleting": "Na-ehichapụ…",
-    "saveTitle": "Chebe profaịlụ a",
-    "saveBody": "Na-enweghị akaụntụ, profaịlụ a nọ naanị n’nchọgharị a. Mepụta akaụntụ ka ị mepee ya site n’ngwaọrụ ọ bụla ma debe ya ọ bụrụgodị na ị hichapụ data nchọgharị gị.",
-    "saveAction": "Mepụta akaụntụ"
+    "editAction": "Gbanwee nhọrọ m"
   },
   "auth": {
     "signInTitle": "Banye",
@@ -178,10 +175,6 @@
     "noProfiles": "Ị nweghị profaịlụ ọ bụla.",
     "open": "Mepee",
     "startNew": "Malite profaịlụ ọhụrụ",
-    "claimTitle": "Profaịlụ dị n’ngwaọrụ a",
-    "claimBody": "Ụfọdụ profaịlụ ị mepụtara n’ngwaọrụ a anọghị n’akaụntụ gị. Tinye ha ka ị mepee ha n’ebe ọ bụla.",
-    "claimAction": "Tinye ha n’akaụntụ m",
-    "claiming": "Na-etinye…",
     "passwordTitle": "Paswọọdụ",
     "passwordSet": "Ị na-abanye site na paswọọdụ. Ị nwere ike ịhọrọ nke ọhụrụ site na email.",
     "passwordNone": "Ị nweghị paswọọdụ. Ị nwere ike ịbanye site na njikọ ma ọ bụ Google, ma ọ bụ họrọ paswọọdụ site na email.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Họrọ paswọọdụ Interim ọhụrụ", "intro": "Jiri njikọ a họrọ paswọọdụ ọhụrụ. Ọ na-arụ ọrụ otu ugboro ma ọ na-agwụ n’nkeji 30.", "action": "Họrọ paswọọdụ ọhụrụ" },
     "exists": { "subject": "Ị nwerelarị akaụntụ Interim", "intro": "Mmadụ jiri email a mepụta akaụntụ Interim, mana ị nwerelarị otu. Ị nwere ike ibanye n’okpuru.", "action": "Banye" },
     "ignore": "Ọ bụrụ na ọ bụghị gị rịọrọ nke a, ị nwere ike ileghara email a anya."
+  },
+  "settings": {
+    "title": "Nhọrọ gị",
+    "intro": "Gbanwee otú Interim si ekwu okwu na gị, ma ọ bụ ma ọ ga-egosi ntutu. Ị nwere ike ịgbanwe ha n’oge ọ bụla.",
+    "submit": "Chekwaa",
+    "saving": "Na-echekwa…",
+    "saved": "Echekwara."
   },
   "templateLabels": {
     "hair_loss_ahead": "Ntutu na-ada na-abịa",

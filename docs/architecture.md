@@ -61,8 +61,8 @@ interim/
 * **ledger.** Append only unit ledger, reservations and budget counters.
 * **youcam.** The only module allowed to talk to YouCam. See section 6.
 * **agent.** Planner, rules, composer, trace. See section 7.
-* **guard.** Who is calling (account session or device cookie), consent checks and request limits.
-* **auth.** Accounts, sign in with password, email link or Google, password reset, bringing device profiles into an account, account deletion, and the sign in rate limits. See section 12 and spec section 12b.
+* **guard.** Who is calling (the signed in account's session), consent checks and request limits.
+* **auth.** Accounts, sign in with password, email link or Google, password reset, account deletion, and the sign in rate limits. See section 12 and spec section 12b.
 * **mail.** The one place that sends email, through Brevo.
 * **cleanup.** Retention, deletion and bucket reconcile. See section 8.
 * **storage.** The R2 client: presigned uploads, reads, listing and deletes.
@@ -71,7 +71,7 @@ interim/
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (hash of the device cookie token, `account:<account id>` once the profile belongs to an account, or `sample`), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
+* **profile.** id, template_key, owner_ref (`account:<account id>`, or `sample` for judge mode), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
 * **account.** id, email (lower case, unique), email_verified_at, password_hash (scrypt, null without a password), google_sub (unique), created. Deleting a person's account deletes their profiles through `ProfilesService.remove`, which also removes the files.
 * **session.** id, account_id (cascade), token_hash (unique), expires_at.
 * **auth_token.** id, email, purpose (verify_email, magic_link or reset_password), token_hash (unique), expires_at, used_at. Keyed by email because a sign in link can create the account.
@@ -133,7 +133,7 @@ BullMQ on Redis.
 
 ## 9. HTTP API
 
-* POST /profiles with a template key and an age confirmation (open; mints the device cookie for a person with no session, and belongs to the account for someone signed in)
+* POST /profiles with a template key and an age confirmation (signed in; the profile belongs to the account)
 * GET /profiles (the caller's own) and GET /profiles/:id
 * POST /profiles/:id/consent (grant or withdraw)
 * GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos, head covering)
@@ -151,7 +151,7 @@ BullMQ on Redis.
 * GET /profiles/:id/ledger (the profile's ledger rows and held and spent totals)
 * GET /auth/config (which sign in methods are on)
 * POST /auth/register, POST /auth/login, POST /auth/magic, POST /auth/magic/use, POST /auth/verify-email, POST /auth/password/forgot, POST /auth/password/reset, POST /auth/logout
-* GET /auth/me, POST /auth/claim, DELETE /auth/account (signed in)
+* GET /auth/me, DELETE /auth/account (signed in)
 * GET /auth/google/start and GET /auth/google/callback (redirects; the callback is reached at `/api/auth/google/callback` on the web origin)
 * GET /templates
 * GET /judge/sample (opens a sample profile, replay only)
@@ -160,7 +160,7 @@ All routes check consent version and ownership. Share links expire, can be revok
 
 ## 10. Web app
 
-* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent and ready, then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
+* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
 * **Capture wizard.** Uses the YouCam JS Camera Kit where possible for angle and lighting guidance. Runs checks on the device and blocks upload on failure. Offers a timer for the top photo. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
 * **Run progress.** Shows the live trace in short lines, so the agent is visible.
 * **Stage Card.** Before and after slider for renders, a clear preview label, shopping list, share, export and delete actions.
@@ -174,7 +174,7 @@ Interim exposes no MCP server or partner API: every caller is the person, throug
 ## 12. Security and privacy
 
 * Secrets in environment variables on the server only.
-* **Who is calling.** Two cookies, both httpOnly, Secure and SameSite=Lax, and both random tokens of which only a keyed hash is stored. `interim_session` is a signed in account's session (30 days, extended while in use). `interim_owner` is a browser's own identity for a person with no account: a new profile mints it, and its hash is `profile.owner_ref`. A session wins over the device cookie, and a profile that belongs to an account has `owner_ref = account:<id>`, so every check in the services stays one comparison. The web app proxies `/api/*` so the cookies are first party and also work for server sent events. Without an account there is no recovery if the cookie is lost, and the consent screen says so.
+* **Who is calling.** One cookie, `interim_session`: a signed in account's session, a random token whose keyed hash is stored, httpOnly, Secure and SameSite=Lax, 30 days and extended while in use. Every profile route needs it, and a profile's `owner_ref` is `account:<id>`, so each service check stays one comparison. The web app proxies `/api/*` so the cookie is first party and also works for server sent events.
 * **Sign in.** Passwords use scrypt. Emailed links are one use hashes with short lives and are spent by a button, not on page load. Google uses the authorization code flow with PKCE, state and nonce, and the ID token is verified with Google's published keys. Cookies are SameSite=Lax and every state changing route is a JSON POST, PUT or DELETE, which a cross site form cannot send. Rules and limits are in spec section 12b.
 * **Abuse limits.** Rate limits per source address and per owner token (sign in steps are counted in the `rate_limit` table; `TRUST_PROXY_HOPS` says how many proxies sit in front of the API, so the address is the person's), a bot check on profile creation, a daily unit budget per source address, a maximum upload size and type checked by file signature, and image size limits that guard against decompression bombs.
 * Photos encrypted at rest with a key managed outside the code.

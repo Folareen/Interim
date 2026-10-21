@@ -96,7 +96,6 @@
     "confirmYoucam": "YouCam (Perfect Corp) puede procesar mis fotos.",
     "confirmGoogle": "Google puede procesar mis medidas y ajustes, pero no mis fotos.",
     "confirmOwn": "Las fotos serán solo mías.",
-    "noRecovery": "Sin una cuenta, Interim solo le reconoce en este dispositivo. Si borra los datos del navegador, este perfil no se podrá recuperar. Una cuenta lo mantiene a salvo.",
     "deleteAnytime": "Puede eliminar su perfil y todo lo que contiene en cualquier momento.",
     "incomplete": "Elija cuánto tiempo conservar las fotos y marque cada casilla para continuar.",
     "submit": "Acepto y continúo",
@@ -117,9 +116,7 @@
     "deleteConfirm": "Sí, borrar todo",
     "deleteCancel": "Conservar mi perfil",
     "deleting": "Eliminando…",
-    "saveTitle": "Mantenga este perfil a salvo",
-    "saveBody": "Sin una cuenta, este perfil solo existe en este navegador. Cree una para abrirlo desde cualquier dispositivo y conservarlo si borra los datos del navegador.",
-    "saveAction": "Crear una cuenta"
+    "editAction": "Cambiar mis opciones"
   },
   "auth": {
     "signInTitle": "Iniciar sesión",
@@ -178,10 +175,6 @@
     "noProfiles": "Aún no tiene perfiles.",
     "open": "Abrir",
     "startNew": "Empezar un perfil nuevo",
-    "claimTitle": "Perfiles en este dispositivo",
-    "claimBody": "Algunos perfiles que creó en este dispositivo todavía no están en su cuenta. Añádalos para abrirlos desde cualquier lugar.",
-    "claimAction": "Añadirlos a mi cuenta",
-    "claiming": "Añadiendo…",
     "passwordTitle": "Contraseña",
     "passwordSet": "Inicia sesión con una contraseña. Puede elegir una nueva por correo.",
     "passwordNone": "No tiene contraseña. Puede entrar con un enlace o con Google, o elegir una contraseña por correo.",
@@ -203,6 +196,13 @@
     "reset": { "subject": "Elija una nueva contraseña de Interim", "intro": "Use este enlace para elegir una nueva contraseña. Funciona una sola vez y caduca en 30 minutos.", "action": "Elegir una nueva contraseña" },
     "exists": { "subject": "Ya tiene una cuenta de Interim", "intro": "Alguien usó este correo para crear una cuenta de Interim, pero usted ya tiene una. Puede iniciar sesión abajo.", "action": "Iniciar sesión" },
     "ignore": "Si usted no lo pidió, puede ignorar este correo."
+  },
+  "settings": {
+    "title": "Sus opciones",
+    "intro": "Cambie cómo le habla Interim, o si muestra cabello. Puede cambiarlas en cualquier momento.",
+    "submit": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado."
   },
   "templateLabels": {
     "hair_loss_ahead": "Caída del cabello por venir",

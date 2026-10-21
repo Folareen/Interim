@@ -6,7 +6,7 @@ import { primaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
 import { getMe, getProfiles } from '@/lib/server-api';
-import { ClaimProfiles, DeleteAccount, SignOut } from './account-actions';
+import { DeleteAccount, SignOut } from './account-actions';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('account'))('title') };
@@ -23,8 +23,6 @@ export default async function Account() {
         <dt className="text-[0.9rem] text-muted">{t('emailLabel')}</dt>
         <dd className="break-all font-semibold">{me.email}</dd>
       </dl>
-
-      {me.claimable > 0 && <ClaimProfiles />}
 
       <section className="mt-8">
         <h2 className="text-[1.25rem]">{t('profilesTitle')}</h2>

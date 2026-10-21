@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SignUp() {
-  if (await getMe()) redirect('/account');
+  if (await getMe()) redirect('/');
   const [t, config] = await Promise.all([getTranslations('auth'), getAuthConfig()]);
   return (
     <Shell backHref="/">
