@@ -278,3 +278,4 @@ export const templates: Record<TemplateKey, Template> = {
 export * from './copy';
 export * from './looks';
 export * from './words';
+export * from './display';

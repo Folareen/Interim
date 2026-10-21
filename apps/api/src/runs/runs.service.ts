@@ -98,14 +98,22 @@ export class RunsService {
     );
   }
 
-  /** The card a run made, with short lived links to its images. */
-  async card(runId: string, owner: Owner): Promise<CardView> {
-    const { snapshotId } = await this.owned(runId, owner);
+  /** A card, with short lived links to its images. */
+  async card(cardId: string, owner: Owner): Promise<CardView> {
     const [row] = await this.db
-      .select({ id: stageCard.id, profileId: stageCard.profileId, card: stageCard.card, approvedAt: stageCard.approvedAt })
+      .select({
+        id: stageCard.id,
+        profileId: stageCard.profileId,
+        card: stageCard.card,
+        approvedAt: stageCard.approvedAt,
+        snapshotId: run.snapshotId,
+      })
       .from(stageCard)
-      .where(eq(stageCard.runId, runId));
+      .innerJoin(profile, eq(profile.id, stageCard.profileId))
+      .innerJoin(run, eq(run.id, stageCard.runId))
+      .where(and(eq(stageCard.id, cardId), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();
+    const { snapshotId } = row;
     const card = stageCardSchema.parse(row.card);
 
     const renders = await this.db

@@ -124,7 +124,7 @@ describe('who can see what (acceptance 23)', () => {
       () => service.start(snapshotId, bob, 's'),
       () => service.get(f.runId, bob),
       () => service.events(f.runId, bob),
-      () => service.card(f.runId, bob),
+      () => service.card(f.cardId, bob),
       () => service.approve(f.cardId, bob),
     ]) {
       await expect(attempt()).rejects.toThrow(NotFoundException);
@@ -154,7 +154,7 @@ describe('reading a run', () => {
 describe('the card', () => {
   it('returns the card with short lived links to its renders and the front photo', async () => {
     const f = await finished();
-    const view = await service.card(f.runId, alice);
+    const view = await service.card(f.cardId, alice);
     expect(view.card.stageKey).toBe('full');
     expect(view.renderUrls[f.renderId]).toContain(f.key);
     expect(view.photoUrl).toContain('front.jpg');
@@ -164,7 +164,7 @@ describe('the card', () => {
   it('leaves out the link of a render whose image has expired, and keeps the card', async () => {
     const f = await finished();
     await db.update(render).set({ objectKey: null }).where(eq(render.id, f.renderId));
-    const view = await service.card(f.runId, alice);
+    const view = await service.card(f.cardId, alice);
     expect(view.renderUrls).toEqual({});
     expect(view.card.options).toHaveLength(1);
   });
@@ -174,6 +174,6 @@ describe('the card', () => {
     const first = await service.approve(f.cardId, alice);
     const again = await service.approve(f.cardId, alice);
     expect(again.approvedAt).toBe(first.approvedAt);
-    expect((await service.card(f.runId, alice)).approvedAt).toBe(first.approvedAt);
+    expect((await service.card(f.cardId, alice)).approvedAt).toBe(first.approvedAt);
   });
 });

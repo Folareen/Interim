@@ -110,6 +110,14 @@ export const createUploadsSchema = z.object({
 });
 export type CreateUploadsInput = z.infer<typeof createUploadsSchema>;
 
+/** What `POST /profiles/:id/uploads` returns: one short lived PUT link per photo. */
+export const uploadsResponseSchema = z.object({
+  uploads: z.array(
+    z.object({ uploadId: z.string().uuid(), kind: photoKindSchema, method: z.literal('PUT'), url: z.string().url() }),
+  ),
+});
+export type UploadsResponse = z.infer<typeof uploadsResponseSchema>;
+
 /** Every language Interim plans to offer (docs/product/overview.md, Languages). */
 export const locales = ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig', 'pcm'] as const;
 export const localeSchema = z.enum(locales);
@@ -191,6 +199,10 @@ export const wordsQuerySchema = z.object({
     .refine((date) => !Number.isNaN(Date.parse(date)), 'Not a real date'),
 });
 export type WordsQuery = z.infer<typeof wordsQuerySchema>;
+
+/** The part of `POST /profiles/:id/snapshots`'s answer the app reads. */
+export const snapshotCreatedSchema = z.object({ id: z.string().uuid() });
+export type SnapshotCreated = z.infer<typeof snapshotCreatedSchema>;
 
 /** How much has changed since last time, as the person reports it. */
 export const changeReportSchema = z.enum(['none', 'some', 'lot']);
@@ -451,6 +463,7 @@ export type CardView = z.infer<typeof cardViewSchema>;
 /** `GET /profiles/:id/cards`: the profile's cards, newest first. */
 export const cardSummarySchema = z.object({ id: z.string().uuid(), takenAt: z.string(), stageKey: z.string() });
 export type CardSummary = z.infer<typeof cardSummarySchema>;
+export const cardSummaryListSchema = z.array(cardSummarySchema);
 
 /** An email address as sign-in uses it: trimmed, lower case, and short enough for the database. */
 export const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email());

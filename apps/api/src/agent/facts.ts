@@ -1,4 +1,4 @@
-import { messages } from '@interim/templates';
+import { measuredValueText } from '@interim/templates';
 import type { ChangeReport, LiveLocale, MeasureTool, MeasuredValue } from '@interim/types';
 
 /** A reading or an answer, as the planner cites it and the card shows it (docs/product/spec.md sections 8 and 9). */
@@ -16,60 +16,12 @@ export interface Fact {
   direction?: 'lower' | 'similar' | 'higher';
 }
 
-type DensityKey = keyof (typeof messages)['en']['terms']['density'];
-type LengthKey = keyof (typeof messages)['en']['terms']['length'];
-
-// YouCam's own wording. The docs spell the first density grade "Extremely"; the live API says "Extreme".
-const densityKeys: Record<string, DensityKey> = {
-  'Extreme Low Density': 'extremeLow',
-  'Extremely Low Density': 'extremeLow',
-  'Low Density': 'low',
-  'Medium Density': 'medium',
-  'High Density': 'high',
-};
-
-const lengthKeys: Record<string, LengthKey> = {
-  'above the ears': 'aboveEars',
-  'ear length': 'earLength',
-  'ear length or longer': 'earLengthOrLonger',
-  'short hair': 'short',
-  'short hair or longer': 'shortOrLonger',
-  'above chest': 'aboveChest',
-  'above chest or longer': 'aboveChestOrLonger',
-  'long hair': 'long',
-};
-
 /**
  * The text that fills a `{m:<ref>}` placeholder, in the person's language. Code writes every term,
  * number and size, so a figure on the card always comes from a record.
- * @throws Error for a term YouCam adds later, rather than showing an untranslated word.
  */
 export function factText(fact: Fact, locale: LiveLocale): string {
-  const { terms } = messages[locale];
-  const { value } = fact;
-  switch (value.kind) {
-    case 'density': {
-      const key = densityKeys[value.term];
-      if (!key) throw new Error(`Unknown density term: ${value.term}`);
-      return terms.density[key];
-    }
-    case 'length': {
-      const key = lengthKeys[value.term];
-      if (!key) throw new Error(`Unknown length term: ${value.term}`);
-      return terms.length[key];
-    }
-    case 'hair_type':
-    case 'face_shape':
-      return value.term;
-    case 'face_ratio':
-      return new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value.ratio);
-    case 'skin_colour':
-      return value.hex;
-    case 'reported_size':
-      return terms.size.replace('{size}', value.size);
-    case 'reported_change':
-      return terms.change[value.changed];
-  }
+  return measuredValueText(fact.value, locale);
 }
 
 /** Brightness of a `#rrggbb` colour, 0 to 255, for comparing skin colour with the baseline. */

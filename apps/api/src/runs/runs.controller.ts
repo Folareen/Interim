@@ -31,7 +31,7 @@ export class RunsController {
     return this.runs.events(id, owner);
   }
 
-  @Get('runs/:id/card')
+  @Get('cards/:id')
   card(@Param('id', idPipe) id: string, @CurrentOwner() owner: Owner) {
     return this.runs.card(id, owner);
   }
