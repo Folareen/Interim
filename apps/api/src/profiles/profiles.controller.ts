@@ -31,14 +31,15 @@ export class ProfilesController {
     @Inject(OwnerService) private readonly owners: OwnerService,
   ) {}
 
-  // Open to anyone: a new person has no identity yet, so the first profile mints their cookie.
+  // Open to anyone: a new person has no identity yet, so the first profile mints their device cookie.
+  // A signed in person's profile belongs to their account instead.
   @Post()
-  create(
+  async create(
     @Body(new ZodPipe(createProfileSchema)) body: CreateProfileInput,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const owner = this.owners.resolve(req) ?? this.owners.mint(res);
+    const owner = (await this.owners.resolve(req, res)) ?? this.owners.mint(res);
     return this.profiles.create(owner, body);
   }
 

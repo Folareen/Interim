@@ -12,7 +12,7 @@ const owner = { ref: 'alice' };
 const consent = (retention: 'standard' | 'extended') =>
   ({
     action: 'grant',
-    version: '2',
+    version: '3',
     retention,
     acceptStorage: true,
     acceptYoucam: true,

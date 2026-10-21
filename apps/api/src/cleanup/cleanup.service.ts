@@ -1,4 +1,4 @@
-import { type Db, deletionRequest, photo, profile, render } from '@interim/db';
+import { type Db, authToken, deletionRequest, photo, profile, rateLimit, render, session } from '@interim/db';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { and, asc, gt, inArray, isNotNull, isNull, lte } from 'drizzle-orm';
 import { DB } from '../db/db.token';
@@ -19,6 +19,8 @@ export interface CleanupReport {
   /** Photos whose row exists but whose file does not. Nothing can restore them. */
   missingPhotoIds: string[];
   completedDeletions: number;
+  /** Expired sessions and emailed links, and rate limit windows more than a day old. */
+  purgedSignInRows: number;
 }
 
 /**
@@ -41,9 +43,10 @@ export class CleanupService {
     // Deletion requests hold no profile reference, so they are completed as a group: any request
     // made before this run started has had its objects swept by now.
     const completedDeletions = await this.completeDeletions(now);
+    const purgedSignInRows = await this.purgeSignIn(now);
 
     if (missingPhotoIds.length > 0) this.log.warn(`Photos with missing files: ${missingPhotoIds.join(', ')}`);
-    return { expiredPhotos, expiredRenders, orphansDeleted, missingPhotoIds, completedDeletions };
+    return { expiredPhotos, expiredRenders, orphansDeleted, missingPhotoIds, completedDeletions, purgedSignInRows };
   }
 
   /** Deletes the file first, then the row, so a failed delete is retried on the next run. */
@@ -152,5 +155,15 @@ export class CleanupService {
       .where(and(isNull(deletionRequest.completedAt), lte(deletionRequest.requestedAt, now)))
       .returning({ id: deletionRequest.id });
     return done.length;
+  }
+
+  private async purgeSignIn(now: Date): Promise<number> {
+    const sessions = await this.db.delete(session).where(lte(session.expiresAt, now)).returning({ id: session.id });
+    const links = await this.db.delete(authToken).where(lte(authToken.expiresAt, now)).returning({ id: authToken.id });
+    const windows = await this.db
+      .delete(rateLimit)
+      .where(lte(rateLimit.windowStart, new Date(now.getTime() - 24 * HOUR_MS)))
+      .returning({ key: rateLimit.key });
+    return sessions.length + links.length + windows.length;
   }
 }

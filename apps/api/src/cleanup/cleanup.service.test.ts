@@ -1,4 +1,4 @@
-import { type Db, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
+import { type Db, account, authToken, deletionRequest, photo, profile, rateLimit, render, session, snapshot } from '@interim/db';
 import { eq, sql } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { MemoryStorage } from '../test/memory-storage';
@@ -117,6 +117,33 @@ describe('deletion requests', () => {
   });
 });
 
+describe('sign in rows', () => {
+  it('removes expired sessions and links and day old rate limit windows, and keeps live ones', async () => {
+    const [owner] = await db.insert(account).values({ email: 'a@b.co' }).returning();
+    const accountId = owner?.id ?? '';
+    const later = new Date(now.getTime() + HOUR);
+    await db.insert(session).values([
+      { accountId, tokenHash: 'old', expiresAt: ago(HOUR) },
+      { accountId, tokenHash: 'live', expiresAt: later },
+    ]);
+    await db.insert(authToken).values([
+      { email: 'a@b.co', purpose: 'magic_link', tokenHash: 'old', expiresAt: ago(HOUR) },
+      { email: 'a@b.co', purpose: 'magic_link', tokenHash: 'live', expiresAt: later },
+    ]);
+    await db.insert(rateLimit).values([
+      { key: 'old', windowStart: ago(25 * HOUR), hits: 1 },
+      { key: 'recent', windowStart: ago(HOUR), hits: 1 },
+    ]);
+
+    const report = await cleanup.run(now);
+
+    expect(report.purgedSignInRows).toBe(3);
+    expect((await db.select().from(session)).map((r) => r.tokenHash)).toEqual(['live']);
+    expect((await db.select().from(authToken)).map((r) => r.tokenHash)).toEqual(['live']);
+    expect((await db.select().from(rateLimit)).map((r) => r.key)).toEqual(['recent']);
+  });
+});
+
 describe('repeat runs', () => {
   it('does nothing the second time', async () => {
     await addPhoto(`photos/${alive}/${snapshotId}/old.jpg`, ago(HOUR));
@@ -130,6 +157,7 @@ describe('repeat runs', () => {
       orphansDeleted: 0,
       missingPhotoIds: [],
       completedDeletions: 0,
+      purgedSignInRows: 0,
     });
   });
 });

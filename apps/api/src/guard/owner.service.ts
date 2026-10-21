@@ -1,12 +1,14 @@
-import { createHmac, randomBytes } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { OWNER_CONFIG, type OwnerConfig } from './config';
+import { SessionService } from './session.service';
+import { hashToken, randomToken } from './token';
 
-/** Name of the cookie that carries the owner token. */
+/** Name of the cookie that carries the device owner token. */
 export const OWNER_COOKIE = 'interim_owner';
 const OWNER_COOKIE_MAX_AGE_MS = 730 * 24 * 60 * 60 * 1000; // matches the 24 month retention ceiling
 
-/** Who is calling. `ref` is what `profile.owner_ref` stores; it never holds the raw token. */
+/** Who is calling. `ref` is what `profile.owner_ref` stores; it never holds a raw token. */
 export interface Owner {
   ref: string;
 }
@@ -14,29 +16,36 @@ export interface Owner {
 /** A request that `OwnerGuard` has resolved an owner for. */
 export type OwnedRequest = Request & { owner?: Owner };
 
-/** Secrets and cookie settings for `OwnerService`. */
-export interface OwnerConfig {
-  /** Keys the owner token hash. */
-  secret: string;
-  secureCookie: boolean;
+/** The `owner_ref` of every profile an account owns. Device refs are 64 hex characters, so the two never collide. */
+export function accountRef(accountId: string): string {
+  return `account:${accountId}`;
 }
-export const OWNER_CONFIG = Symbol('OWNER_CONFIG');
 
-/** Identifies the person calling by their owner cookie (docs/backend.md, Identity). */
+/** Identifies the person calling: their account when signed in, else this device's cookie (docs/backend.md, Identity). */
 @Injectable()
 export class OwnerService {
-  constructor(@Inject(OWNER_CONFIG) private readonly config: OwnerConfig) {}
+  constructor(
+    @Inject(OWNER_CONFIG) private readonly config: OwnerConfig,
+    @Inject(SessionService) private readonly sessions: SessionService,
+  ) {}
 
-  /** Reads the caller from the owner cookie. */
-  resolve(req: Request): Owner | undefined {
+  /** The account when the request has a session, else the device. Pass `res` so a session in use is extended. */
+  async resolve(req: Request, res?: Response): Promise<Owner | undefined> {
+    const signedIn = await this.sessions.resolve(req, res);
+    if (signedIn) return { ref: accountRef(signedIn.accountId) };
+    return this.resolveDevice(req);
+  }
+
+  /** The device cookie alone. A signed in person uses it to bring profiles made before sign-in into their account. */
+  resolveDevice(req: Request): Owner | undefined {
     const token: unknown = req.cookies?.[OWNER_COOKIE];
-    if (typeof token === 'string' && token !== '') return { ref: this.hash(token) };
+    if (typeof token === 'string' && token !== '') return { ref: hashToken(this.config.secret, token) };
     return undefined;
   }
 
-  /** Starts a new person identity and sets its cookie on the response. */
+  /** Starts a new device identity and sets its cookie on the response. */
   mint(res: Response): Owner {
-    const token = randomBytes(32).toString('base64url');
+    const token = randomToken();
     res.cookie(OWNER_COOKIE, token, {
       httpOnly: true,
       secure: this.config.secureCookie,
@@ -44,10 +53,6 @@ export class OwnerService {
       maxAge: OWNER_COOKIE_MAX_AGE_MS,
       path: '/',
     });
-    return { ref: this.hash(token) };
-  }
-
-  private hash(token: string): string {
-    return createHmac('sha256', this.config.secret).update(token).digest('hex');
+    return { ref: hashToken(this.config.secret, token) };
   }
 }
