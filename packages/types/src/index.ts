@@ -127,6 +127,16 @@ export type LiveLocale = z.infer<typeof liveLocaleSchema>;
 export const toneSchema = z.enum(['practical', 'warm', 'light']);
 export type Tone = z.infer<typeof toneSchema>;
 
+/** A profile as `GET /profiles/:id` returns it. Only the fields the app reads. */
+export const profileSchema = z.object({
+  id: z.string().uuid(),
+  templateKey: templateKeySchema,
+  consentCurrent: z.boolean(),
+  retention: retentionSchema,
+  tone: toneSchema,
+});
+export type Profile = z.infer<typeof profileSchema>;
+
 /** What the person is getting ready for. A fixed list, never free text, because it reaches the model. */
 export const momentSchema = z.enum([
   'back_to_work',

@@ -1,13 +1,21 @@
 import { crisisContacts, findBannedWord, findCompanionPhrase } from '@interim/rules';
 import { liveLocales, templateKeys, wordsSetSchema } from '@interim/types';
 import { describe, expect, it } from 'vitest';
-import { copy, templates, wordsForDay, wordsLibrary } from './index';
+import { copy, fillCopy, localeNames, templates, wordsForDay, wordsLibrary } from './index';
+
+const leaves = (value: unknown): string[] => {
+  if (typeof value === 'string') return [value];
+  if (Array.isArray(value)) return value.flatMap(leaves);
+  if (value && typeof value === 'object') return Object.values(value).flatMap(leaves);
+  return [];
+};
 
 // Spec section 16, tests 5, 10 and 10a: every fixed user facing string passes both scans in its
 // own language.
 const userFacing = liveLocales.flatMap((locale) => {
   const c = copy[locale];
   const texts = [
+    ...leaves(c.ui),
     ...Object.values(c.templateLabels),
     ...Object.values(c.companionFallback),
     ...Object.values(c.whatToSay).flat(),
@@ -66,3 +74,28 @@ describe('wordsForDay', () => {
     expect(wordsForDay('gentle', '1969-12-31', 'en').text).toBeTruthy();
   });
 });
+
+describe('fillCopy', () => {
+  it('puts values at their marks, wherever the language needs them', () => {
+    expect(fillCopy('Step {current} of {total}', { current: 2, total: 5 })).toBe('Step 2 of 5');
+    expect(fillCopy('{total} steps, now on {current}', { current: 2, total: 5 })).toBe('5 steps, now on 2');
+  });
+
+  it('fails loudly when a value is missing rather than printing a mark', () => {
+    expect(() => fillCopy('Step {current} of {total}', { current: 2 })).toThrow(/total/);
+  });
+
+  it('is used by every English string with a mark, and only with marks it can fill', () => {
+    const marked = leaves(copy.en.ui).filter((text) => text.includes('{'));
+    expect(marked).toEqual(['Step {current} of {total}']);
+  });
+});
+
+describe('language names', () => {
+  it('has a name for every planned language, in that language', () => {
+    expect(localeNames.en).toBe('English');
+    expect(localeNames.yo).toBe('Yorùbá');
+    expect(Object.keys(localeNames)).toHaveLength(10);
+  });
+});
+
