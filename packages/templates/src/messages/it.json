@@ -245,5 +245,29 @@
       "Preferisco non parlarne oggi."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "densità molto bassa",
+      "low": "densità bassa",
+      "medium": "densità media",
+      "high": "densità alta"
+    },
+    "length": {
+      "aboveEars": "sopra le orecchie",
+      "earLength": "all’altezza delle orecchie",
+      "earLengthOrLonger": "all’altezza delle orecchie o più lunghi",
+      "short": "capelli corti",
+      "shortOrLonger": "capelli corti o più lunghi",
+      "aboveChest": "sopra il petto",
+      "aboveChestOrLonger": "sopra il petto o più lunghi",
+      "long": "capelli lunghi"
+    },
+    "change": {
+      "none": "nessun cambiamento",
+      "some": "qualche cambiamento",
+      "lot": "molti cambiamenti"
+    },
+    "size": "taglia {size}"
   }
 }

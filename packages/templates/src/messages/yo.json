@@ -245,5 +245,29 @@
       "Mo fẹ́ kí a má ṣe sọ̀rọ̀ nípa rẹ̀ lónìí."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "irun tó tín-ín-rín gan-an",
+      "low": "irun tó tín-ín-rín",
+      "medium": "irun tó wà ní àárín",
+      "high": "irun tó nípọn"
+    },
+    "length": {
+      "aboveEars": "lókè etí",
+      "earLength": "gígùn etí",
+      "earLengthOrLonger": "gígùn etí tàbí tó gùn jù",
+      "short": "irun kúkúrú",
+      "shortOrLonger": "irun kúkúrú tàbí tó gùn jù",
+      "aboveChest": "lókè àyà",
+      "aboveChestOrLonger": "lókè àyà tàbí tó gùn jù",
+      "long": "irun gígùn"
+    },
+    "change": {
+      "none": "kò sí ìyípadà",
+      "some": "ìyípadà díẹ̀",
+      "lot": "ìyípadà púpọ̀"
+    },
+    "size": "ìwọ̀n {size}"
   }
 }

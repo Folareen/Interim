@@ -245,5 +245,29 @@
       "Na gwammace kada mu shiga cikinsa a yau."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "yawan gashi kaɗan sosai",
+      "low": "yawan gashi kaɗan",
+      "medium": "yawan gashi matsakaici",
+      "high": "yawan gashi mai yawa"
+    },
+    "length": {
+      "aboveEars": "sama da kunnuwa",
+      "earLength": "tsawon kunne",
+      "earLengthOrLonger": "tsawon kunne ko fiye",
+      "short": "gajeren gashi",
+      "shortOrLonger": "gajeren gashi ko fiye",
+      "aboveChest": "sama da ƙirji",
+      "aboveChestOrLonger": "sama da ƙirji ko fiye",
+      "long": "dogon gashi"
+    },
+    "change": {
+      "none": "babu canji",
+      "some": "ɗan canji",
+      "lot": "canji mai yawa"
+    },
+    "size": "girman {size}"
   }
 }

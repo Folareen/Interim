@@ -245,5 +245,29 @@
       "Ningependa tusiyazungumzie leo."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "msongamano wa chini sana",
+      "low": "msongamano wa chini",
+      "medium": "msongamano wa kati",
+      "high": "msongamano wa juu"
+    },
+    "length": {
+      "aboveEars": "juu ya masikio",
+      "earLength": "urefu wa masikio",
+      "earLengthOrLonger": "urefu wa masikio au zaidi",
+      "short": "nywele fupi",
+      "shortOrLonger": "nywele fupi au zaidi",
+      "aboveChest": "juu ya kifua",
+      "aboveChestOrLonger": "juu ya kifua au zaidi",
+      "long": "nywele ndefu"
+    },
+    "change": {
+      "none": "hakuna mabadiliko",
+      "some": "mabadiliko kidogo",
+      "lot": "mabadiliko mengi"
+    },
+    "size": "saizi {size}"
   }
 }

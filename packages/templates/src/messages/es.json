@@ -245,5 +245,29 @@
       "Prefiero no hablar de eso hoy."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "densidad muy baja",
+      "low": "densidad baja",
+      "medium": "densidad media",
+      "high": "densidad alta"
+    },
+    "length": {
+      "aboveEars": "por encima de las orejas",
+      "earLength": "a la altura de las orejas",
+      "earLengthOrLonger": "a la altura de las orejas o más largo",
+      "short": "pelo corto",
+      "shortOrLonger": "pelo corto o más largo",
+      "aboveChest": "por encima del pecho",
+      "aboveChestOrLonger": "por encima del pecho o más largo",
+      "long": "pelo largo"
+    },
+    "change": {
+      "none": "sin cambios",
+      "some": "algunos cambios",
+      "lot": "muchos cambios"
+    },
+    "size": "talla {size}"
   }
 }

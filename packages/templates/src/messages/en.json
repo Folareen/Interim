@@ -245,5 +245,29 @@
       "I’d rather not get into it today."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "very low density",
+      "low": "low density",
+      "medium": "medium density",
+      "high": "high density"
+    },
+    "length": {
+      "aboveEars": "above the ears",
+      "earLength": "ear length",
+      "earLengthOrLonger": "ear length or longer",
+      "short": "short hair",
+      "shortOrLonger": "short hair or longer",
+      "aboveChest": "above the chest",
+      "aboveChestOrLonger": "above the chest or longer",
+      "long": "long hair"
+    },
+    "change": {
+      "none": "no change",
+      "some": "some change",
+      "lot": "a lot of change"
+    },
+    "size": "size {size}"
   }
 }

@@ -16,6 +16,7 @@ const envSchema = z
     YOUCAM_BASE_URL: z.string().url().default('https://yce-api-01.makeupar.com'),
     YOUCAM_MODE: youcamModeSchema.default('replay'),
     YOUCAM_FIXTURES_DIR: z.string().default('../../packages/fixtures/youcam'), // relative to apps/api
+    PLANNER_FIXTURES_DIR: z.string().default('../../packages/fixtures/planner'), // recorded planner output, relative to apps/api
     JUDGE_MODE_FORCE_REPLAY: z.enum(['true', 'false']).default('true'),
     GOOGLE_GENERATIVE_AI_API_KEY: z.string().default(''),
     LLM_MODEL: z.string().default('gemini-2.5-flash'),

@@ -245,5 +245,29 @@
       "Achọghị m ịkọ banyere ya taa."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "ntutu dị ntakịrị nke ukwuu",
+      "low": "ntutu dị ntakịrị",
+      "medium": "ntutu dị n’etiti",
+      "high": "ntutu dị ukwuu"
+    },
+    "length": {
+      "aboveEars": "n’elu ntị",
+      "earLength": "ogologo ntị",
+      "earLengthOrLonger": "ogologo ntị ma ọ bụ karịa",
+      "short": "ntutu mkpụmkpụ",
+      "shortOrLonger": "ntutu mkpụmkpụ ma ọ bụ karịa",
+      "aboveChest": "n’elu obi",
+      "aboveChestOrLonger": "n’elu obi ma ọ bụ karịa",
+      "long": "ntutu ogologo"
+    },
+    "change": {
+      "none": "enweghị mgbanwe",
+      "some": "mgbanwe ntakịrị",
+      "lot": "mgbanwe dị ukwuu"
+    },
+    "size": "nha {size}"
   }
 }

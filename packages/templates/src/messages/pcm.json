@@ -245,5 +245,29 @@
       "I no wan talk about am today."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "hair wey thin well well",
+      "low": "hair wey thin",
+      "medium": "hair wey dey middle",
+      "high": "hair wey thick"
+    },
+    "length": {
+      "aboveEars": "above di ears",
+      "earLength": "ear length",
+      "earLengthOrLonger": "ear length or longer",
+      "short": "short hair",
+      "shortOrLonger": "short hair or longer",
+      "aboveChest": "above di chest",
+      "aboveChestOrLonger": "above di chest or longer",
+      "long": "long hair"
+    },
+    "change": {
+      "none": "no change",
+      "some": "small change",
+      "lot": "plenty change"
+    },
+    "size": "size {size}"
   }
 }

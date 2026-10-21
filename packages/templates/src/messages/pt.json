@@ -245,5 +245,29 @@
       "Prefiro não entrar nesse assunto hoje."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "densidade muito baixa",
+      "low": "densidade baixa",
+      "medium": "densidade média",
+      "high": "densidade alta"
+    },
+    "length": {
+      "aboveEars": "acima das orelhas",
+      "earLength": "na altura das orelhas",
+      "earLengthOrLonger": "na altura das orelhas ou mais comprido",
+      "short": "cabelo curto",
+      "shortOrLonger": "cabelo curto ou mais comprido",
+      "aboveChest": "acima do peito",
+      "aboveChestOrLonger": "acima do peito ou mais comprido",
+      "long": "cabelo comprido"
+    },
+    "change": {
+      "none": "nenhuma mudança",
+      "some": "alguma mudança",
+      "lot": "muita mudança"
+    },
+    "size": "tamanho {size}"
   }
 }

@@ -245,5 +245,29 @@
       "Je préfère ne pas en parler aujourd’hui."
     ],
     "everyday": []
+  },
+  "terms": {
+    "density": {
+      "extremeLow": "très faible densité",
+      "low": "faible densité",
+      "medium": "densité moyenne",
+      "high": "forte densité"
+    },
+    "length": {
+      "aboveEars": "au-dessus des oreilles",
+      "earLength": "à hauteur des oreilles",
+      "earLengthOrLonger": "à hauteur des oreilles ou plus long",
+      "short": "cheveux courts",
+      "shortOrLonger": "cheveux courts ou plus longs",
+      "aboveChest": "au-dessus de la poitrine",
+      "aboveChestOrLonger": "au-dessus de la poitrine ou plus long",
+      "long": "cheveux longs"
+    },
+    "change": {
+      "none": "aucun changement",
+      "some": "un peu de changement",
+      "lot": "beaucoup de changement"
+    },
+    "size": "taille {size}"
   }
 }
