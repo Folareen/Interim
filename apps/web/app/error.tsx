@@ -1,0 +1,20 @@
+'use client';
+
+import { copy } from '@interim/templates';
+import { liveLocaleSchema } from '@interim/types';
+import { Button } from '@/components/button';
+import { PageHeading } from '@/components/page-heading';
+
+/** Shown when a screen cannot load, with a way to try again. */
+export default function ErrorScreen({ reset }: { error: Error; reset: () => void }) {
+  const locale = liveLocaleSchema.safeParse(document.documentElement.lang);
+  const { ui } = copy[locale.success ? locale.data : 'en'];
+  return (
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pt-24">
+      <PageHeading title={ui.common.genericError} />
+      <div className="mt-8">
+        <Button onClick={reset}>{ui.common.tryAgain}</Button>
+      </div>
+    </div>
+  );
+}
