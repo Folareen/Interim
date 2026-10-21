@@ -7,11 +7,20 @@
   },
   "scripts": {
     "dev": "turbo run dev",
+    "dev:api": "pnpm --filter @interim/api dev",
+    "dev:worker": "pnpm --filter @interim/api dev:worker",
+    "dev:web": "pnpm --filter @interim/web dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\" --ignore-path .gitignore"
+    "check": "turbo run lint typecheck test",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\" --ignore-path .gitignore",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate": "pnpm --filter @interim/db db:generate",
+    "db:migrate": "pnpm --filter @interim/db db:migrate",
+    "db:studio": "pnpm --filter @interim/db db:studio"
   },
   "devDependencies": {
     "prettier": "^3.9.10",
