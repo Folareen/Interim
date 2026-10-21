@@ -167,4 +167,4 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 ## Out of scope for the hackathon build
 
-Native apps, voice input, accounts for care teams, any health data, insurance features, real checkout and payments, and live retailer catalog sync. A sample catalog is enough.
+Native apps, voice input, accounts for care teams, any health data, insurance features, real checkout and payments, live retailer catalog sync, and anyone under 18 (spec section 12). A sample catalog is enough.
