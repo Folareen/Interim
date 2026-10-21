@@ -6,3 +6,8 @@ export * from './consent';
 export * from './capture';
 export * from './retention';
 export * from './budget';
+export * from './eligibility';
+export * from './placement';
+export * from './measurements';
+export * from './photo-quality';
+export * from './model-text';

@@ -1,4 +1,4 @@
-import type { PhotoKind } from '@interim/types';
+import type { CapturePlan, CaptureProblem, ChangeReport, PhotoKind, Size } from '@interim/types';
 
 /** What the photo and self report checks need to know about a snapshot. */
 export interface SnapshotContext {
@@ -10,40 +10,49 @@ export interface SnapshotContext {
 }
 
 /**
- * Checks the photo set for a snapshot against spec section 5. The top photo is always optional
+ * What a snapshot asks for (docs/product/spec.md section 5). The top photo is always optional
  * because a person cannot take it alone; left and right are baseline only.
- * @returns A plain sentence for the person, or undefined when the set is complete.
  */
-export function photoSetProblem(kinds: readonly PhotoKind[], context: SnapshotContext): string | undefined {
-  const present = new Set(kinds);
-  if (present.size !== kinds.length) return 'Send one photo of each kind.';
-
-  if (!context.isBaseline && (present.has('left') || present.has('right'))) {
-    return 'The side photos are only needed for the first set.';
-  }
-
-  if (!context.bodyPhotos && present.has('body')) return 'Body photos are off. Turn them on to add one.';
-
+export function capturePlan(context: SnapshotContext): CapturePlan {
   const required: PhotoKind[] = ['front'];
   if (context.isBaseline) required.push('left', 'right');
-  if (context.usesFit && context.bodyPhotos) required.push('body');
+  const wantsBody = context.usesFit && context.bodyPhotos;
+  if (wantsBody) required.push('body');
+  return {
+    isBaseline: context.isBaseline,
+    required,
+    optional: ['top'],
+    asksChange: !context.isBaseline,
+    asksSize: !context.isBaseline && context.usesFit,
+  };
+}
 
-  const missing = required.filter((kind) => !present.has(kind));
-  if (missing.length > 0) return `Add the ${missing.join(', ')} photo${missing.length > 1 ? 's' : ''}.`;
+/**
+ * Checks the photo set for a snapshot against `capturePlan`.
+ * @returns What is wrong, or undefined when the set is complete.
+ */
+export function photoSetProblem(kinds: readonly PhotoKind[], context: SnapshotContext): CaptureProblem | undefined {
+  const present = new Set(kinds);
+  if (present.size !== kinds.length) return 'duplicate_kind';
+  if (!context.isBaseline && (present.has('left') || present.has('right'))) return 'sides_baseline_only';
+  if (!context.bodyPhotos && present.has('body')) return 'body_photos_off';
+
+  const missing = capturePlan(context).required.find((kind) => !present.has(kind));
+  if (missing) return `missing_${missing}` as CaptureProblem;
   return undefined;
 }
 
 /**
  * Checks the check in questions. The baseline has no self report; later snapshots need the
  * "has anything changed" answer, and fit templates also need the current size.
- * @returns A plain sentence for the person, or undefined when the answers are complete.
+ * @returns What is wrong, or undefined when the answers are complete.
  */
 export function selfReportProblem(
-  report: { changed: 'none' | 'some' | 'lot'; reportedSize?: string } | undefined,
+  report: { changed: ChangeReport; reportedSize?: Size } | undefined,
   context: SnapshotContext,
-): string | undefined {
-  if (context.isBaseline) return report ? 'The first set does not need a check in answer.' : undefined;
-  if (!report) return 'Tell us whether anything has changed since last time.';
-  if (context.usesFit && !report.reportedSize) return 'Pick your current size.';
+): CaptureProblem | undefined {
+  if (context.isBaseline) return report ? 'baseline_has_report' : undefined;
+  if (!report) return 'needs_change_answer';
+  if (context.usesFit && !report.reportedSize) return 'needs_size';
   return undefined;
 }

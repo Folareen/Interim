@@ -145,6 +145,9 @@ export const profileSchema = z.object({
   consentCurrent: z.boolean(),
   retention: retentionSchema,
   tone: toneSchema,
+  bodyPhotos: z.boolean(),
+  /** Whether a first set of photos is already stored, so the next check in is not the baseline. */
+  hasBaseline: z.boolean(),
 });
 export type Profile = z.infer<typeof profileSchema>;
 
@@ -193,12 +196,17 @@ export type WordsQuery = z.infer<typeof wordsQuerySchema>;
 export const changeReportSchema = z.enum(['none', 'some', 'lot']);
 export type ChangeReport = z.infer<typeof changeReportSchema>;
 
+/** The sizes a person can report, smallest to largest, for the templates that use fit (docs/product/spec.md section 5). */
+export const sizeLadder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL'] as const;
+export const sizeSchema = z.enum(sizeLadder);
+export type Size = z.infer<typeof sizeSchema>;
+
 /** Body of POST /profiles/:id/snapshots: the uploaded photos by id, the check in answers and an optional moment. */
 export const createSnapshotSchema = z.object({
   uploads: z.array(z.object({ uploadId: z.string().uuid(), kind: photoKindSchema })).min(1).max(5),
   moment: momentSchema.optional(),
   selfReport: z
-    .object({ changed: changeReportSchema, reportedSize: z.string().min(1).max(20).optional() })
+    .object({ changed: changeReportSchema, reportedSize: sizeSchema.optional() })
     .optional(),
 });
 export type CreateSnapshotInput = z.infer<typeof createSnapshotSchema>;
@@ -215,28 +223,233 @@ export const ledgerEntrySchema = z.object({
 });
 export type LedgerEntry = z.infer<typeof ledgerEntrySchema>;
 
+/**
+ * How a stage is placed from what was measured or reported (docs/product/spec.md sections 4 and 6).
+ * Thresholds live in template config so they can be tuned without code changes.
+ */
+export type Placement =
+  | {
+      by: 'density';
+      /** Drops in `mapping` from the person's own baseline, largest first. The first band the drop reaches names the stage. */
+      bands: readonly { minDrop: number; stage: string }[];
+      /** The stage once `mapping` has risen this far above the lowest reading so far. */
+      recovery: { minRise: number; stage: string };
+    }
+  | {
+      by: 'length';
+      /** Hair length terms (as YouCam words them) and the stage each one places. */
+      stages: Readonly<Record<string, string>>;
+    }
+  | {
+      by: 'skin_colour';
+      /** Changes in brightness from the baseline, largest first. */
+      bands: readonly { minChange: number; stage: string }[];
+      settled: string;
+    }
+  | { by: 'reported_size'; steps: readonly [string, string, string]; settled: string }
+  | { by: 'reported_change' };
+
 /** What the agent advises for a stage. */
 export const strategySchema = z.enum(['cut', 'volume', 'colour', 'cover', 'hold']);
 export type Strategy = z.infer<typeof strategySchema>;
 
-/** The output of a check in (docs/product/spec.md section 9). */
+/**
+ * Why a photo, a photo set or an answer was refused. A code, never a sentence, so the web app can
+ * say it in the person's language (docs/frontend/README.md, Copy).
+ */
+export const captureProblemCodes = [
+  'duplicate_kind',
+  'sides_baseline_only',
+  'body_photos_off',
+  'missing_front',
+  'missing_left',
+  'missing_right',
+  'missing_body',
+  'baseline_has_report',
+  'needs_change_answer',
+  'needs_size',
+  'wrong_format',
+  'too_large',
+  'not_uploaded',
+  'unreadable',
+  'too_small',
+  'too_dark',
+  'too_bright',
+  'blurry',
+  'retake_angle',
+  'retake_light',
+  'retake_no_face',
+  'retake_framing',
+] as const;
+export const captureProblemSchema = z.enum(captureProblemCodes);
+export type CaptureProblem = z.infer<typeof captureProblemSchema>;
+
+/** The body of a 422 from the snapshot routes. `kind` names the photo that failed, when one did. */
+export const captureProblemBodySchema = z.object({
+  code: captureProblemSchema,
+  kind: photoKindSchema.optional(),
+});
+export type CaptureProblemBody = z.infer<typeof captureProblemBodySchema>;
+
+/** What a check in asks for, from `capturePlan` in `@interim/rules`. The wizard and the server read the same rule. */
+export const capturePlanSchema = z.object({
+  isBaseline: z.boolean(),
+  required: z.array(photoKindSchema),
+  optional: z.array(photoKindSchema),
+  asksChange: z.boolean(),
+  asksSize: z.boolean(),
+});
+export type CapturePlan = z.infer<typeof capturePlanSchema>;
+
+/** The tools that take measurements. */
+export const measureTools = ['hair_type', 'hair_density', 'hair_length', 'face_shape', 'skin_tone'] as const;
+export type MeasureTool = (typeof measureTools)[number];
+
+/** The tools that make previews. */
+export const renderTools = ['hairstyle', 'hair_volume', 'hair_color', 'beard_style', 'makeup_brows'] as const;
+export type RenderTool = (typeof renderTools)[number];
+
+/**
+ * What the agent did at each step, as a code. The web app turns each into a short sentence in the
+ * person's language, so a stored trace never holds English text.
+ */
+export const traceReasonSchema = z.enum([
+  'observed',
+  'measured',
+  'reused',
+  'not_due',
+  'blocked_head_covering',
+  'blocked_budget',
+  'blocked_photo',
+  'blocked_tool',
+  'blocked_not_allowed',
+  'retake_photo',
+  'not_recorded',
+  'placed_baseline',
+  'placed_measured',
+  'placed_reported',
+  'placed_previous',
+  'stage_changed',
+  'strategy_chosen',
+  'planner_fallback',
+  'rendered',
+  'earlier_look',
+  'composed',
+  'note_fallback',
+  'stopped_complete',
+  'stopped_budget',
+  'stopped_ineligible',
+  'stopped_retake',
+  'stopped_error',
+]);
+export type TraceReason = z.infer<typeof traceReasonSchema>;
+
+/** The seven steps of one run (docs/product/spec.md section 8). */
+export const agentStepSchema = z.enum(['observe', 'measure', 'place', 'decide', 'act', 'compose', 'stop']);
+export type AgentStep = z.infer<typeof agentStepSchema>;
+
+/** One line of a run's trace as the API returns it. `tool` is set when the step used one. */
+export const traceLineSchema = z.object({
+  seq: z.number().int().nonnegative(),
+  step: agentStepSchema,
+  reason: traceReasonSchema,
+  tool: z.string().nullable(),
+  costUnits: z.number().int().nonnegative(),
+});
+export type TraceLine = z.infer<typeof traceLineSchema>;
+
+/** Where a run stands. */
+export const runStatusSchema = z.enum(['queued', 'running', 'done', 'failed']);
+export type RunStatus = z.infer<typeof runStatusSchema>;
+
+/** `GET /runs/:id`, and what the progress stream sends each second. */
+export const runViewSchema = z.object({
+  id: z.string().uuid(),
+  status: runStatusSchema,
+  stopReason: traceReasonSchema.nullable(),
+  retake: captureProblemSchema.nullable(),
+  cardId: z.string().uuid().nullable(),
+  trace: z.array(traceLineSchema),
+});
+export type RunView = z.infer<typeof runViewSchema>;
+
+/** The look an option shows: a preview of a style, or an earlier render from this person's own photos. */
+export const optionLabelSchema = z.enum(['preview', 'earlier_look']);
+export type OptionLabel = z.infer<typeof optionLabelSchema>;
+
+/**
+ * A number on the card, as data. The web app formats it in the person's language, and the card
+ * never carries digits in text the model wrote (docs/product/spec.md section 8).
+ */
+export const measuredValueSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('density'), term: z.string(), mapping: z.number() }),
+  z.object({ kind: z.literal('length'), term: z.string() }),
+  z.object({ kind: z.literal('hair_type'), term: z.string() }),
+  z.object({ kind: z.literal('face_ratio'), ratio: z.number() }),
+  z.object({ kind: z.literal('face_shape'), term: z.string() }),
+  z.object({ kind: z.literal('skin_colour'), hex: z.string() }),
+  z.object({ kind: z.literal('reported_size'), size: sizeSchema }),
+  z.object({ kind: z.literal('reported_change'), changed: changeReportSchema }),
+]);
+export type MeasuredValue = z.infer<typeof measuredValueSchema>;
+
+/** The output of a check in (docs/product/spec.md section 9). Stage and strategy are keys, never display text. */
 export const stageCardSchema = z.object({
-  title: z.string(),
-  date: z.string(),
-  companionNote: z.object({ text: z.string(), tone: toneSchema, moment: momentSchema.nullable() }),
-  situationLabel: z.string(),
-  stage: z.string(),
-  changes: z.array(z.object({ text: z.string(), measurementId: z.string(), tool: z.string() })),
+  templateKey: templateKeySchema,
+  stageKey: z.string(),
+  previousStageKey: z.string().nullable(),
+  locale: liveLocaleSchema,
+  takenAt: z.string(),
+  companionNote: z.object({
+    text: z.string(),
+    tone: toneSchema,
+    moment: momentSchema.nullable(),
+    /** True when the fixed text for the tone was used because model text failed a check. */
+    fixed: z.boolean(),
+  }),
+  changes: z.array(
+    z.object({
+      tool: z.string(),
+      /** The measurement row, or null for a self report. */
+      measurementId: z.string().uuid().nullable(),
+      value: measuredValueSchema,
+      measuredAt: z.string(),
+      /** False when the value is from an earlier check in, so the card says "last measured on". */
+      current: z.boolean(),
+    }),
+  ),
   options: z.array(
-    z.object({ renderId: z.string(), reason: z.string(), label: z.literal('preview') }),
+    z.object({
+      renderId: z.string().uuid(),
+      tool: z.string(),
+      strategy: strategySchema,
+      label: optionLabelSchema,
+    }),
   ),
   holdOffBuying: z.array(z.object({ item: z.string(), reason: z.string() })),
-  shoppingList: z.array(z.object({ sku: z.string(), size: z.string() })),
   whatToSay: z.array(z.string()),
-  traceSummary: z.array(z.string()),
-  professionalNote: z.string().nullable(),
+  trace: z.array(traceLineSchema),
+  /** Shows the professional line and the link to someone to talk to. */
+  sensitive: z.boolean(),
 });
 export type StageCard = z.infer<typeof stageCardSchema>;
+
+/** `GET /runs/:id/card`: the card, with short lived links to the images it shows. */
+export const cardViewSchema = z.object({
+  id: z.string().uuid(),
+  profileId: z.string().uuid(),
+  approvedAt: z.string().nullable(),
+  card: stageCardSchema,
+  /** Render id to link. A render that has expired has no entry. */
+  renderUrls: z.record(z.string(), z.string().url()),
+  /** The photo this check in was taken from, for the show my photo toggle. Null once it has expired. */
+  photoUrl: z.string().url().nullable(),
+});
+export type CardView = z.infer<typeof cardViewSchema>;
+
+/** `GET /profiles/:id/cards`: the profile's cards, newest first. */
+export const cardSummarySchema = z.object({ id: z.string().uuid(), takenAt: z.string(), stageKey: z.string() });
+export type CardSummary = z.infer<typeof cardSummarySchema>;
 
 /** An email address as sign-in uses it: trimmed, lower case, and short enough for the database. */
 export const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email());
