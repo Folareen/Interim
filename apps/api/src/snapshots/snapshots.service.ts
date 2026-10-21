@@ -132,7 +132,7 @@ export class SnapshotsService {
         normalised.map(({ kind, photo: p }) => ({
           snapshotId,
           kind,
-          s3Key: photoKey(profileId, snapshotId, kind),
+          objectKey: photoKey(profileId, snapshotId, kind),
           sha256: p.sha256,
           expiresAt: photoExpiry,
         })),

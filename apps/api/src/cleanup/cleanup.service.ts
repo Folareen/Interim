@@ -51,7 +51,7 @@ export class CleanupService {
     let total = 0;
     for (;;) {
       const batch = await this.db
-        .select({ id: photo.id, key: photo.s3Key })
+        .select({ id: photo.id, key: photo.objectKey })
         .from(photo)
         .where(lte(photo.expiresAt, now))
         .limit(BATCH);
@@ -67,13 +67,13 @@ export class CleanupService {
     let total = 0;
     for (;;) {
       const batch = await this.db
-        .select({ id: render.id, key: render.s3Key })
+        .select({ id: render.id, key: render.objectKey })
         .from(render)
-        .where(and(lte(render.expiresAt, now), isNotNull(render.s3Key)))
+        .where(and(lte(render.expiresAt, now), isNotNull(render.objectKey)))
         .limit(BATCH);
       if (batch.length === 0) return total;
       await this.storage.deleteMany(batch.flatMap((r) => (r.key ? [r.key] : [])));
-      await this.db.update(render).set({ s3Key: null }).where(inArray(render.id, batch.map((r) => r.id)));
+      await this.db.update(render).set({ objectKey: null }).where(inArray(render.id, batch.map((r) => r.id)));
       total += batch.length;
     }
   }
@@ -105,7 +105,7 @@ export class CleanupService {
     let after: string | undefined;
     for (;;) {
       const rows = await this.db
-        .select({ id: photo.id, key: photo.s3Key })
+        .select({ id: photo.id, key: photo.objectKey })
         .from(photo)
         .where(and(lte(photo.createdAt, settled), after ? gt(photo.id, after) : undefined))
         .orderBy(asc(photo.id))
@@ -130,9 +130,9 @@ export class CleanupService {
     const referenced = new Set(
       (
         await this.db
-          .select({ key: photo.s3Key })
+          .select({ key: photo.objectKey })
           .from(photo)
-          .where(inArray(photo.s3Key, page.map((o) => o.key)))
+          .where(inArray(photo.objectKey, page.map((o) => o.key)))
       ).map((r) => r.key),
     );
     return page

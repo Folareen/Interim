@@ -10,6 +10,7 @@ services:
   redis:
     image: redis:7
     ports: ["6379:6379"]
+  # Local stand-in for Cloudflare R2. Nothing here is used in production.
   minio:
     image: minio/minio
     command: server /data --console-address ":9001"

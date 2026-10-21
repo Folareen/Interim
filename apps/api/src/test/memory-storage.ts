@@ -39,7 +39,7 @@ export class MemoryStorage {
   }
 
   presignPut(key: string, sizeBytes: number) {
-    return Promise.resolve({ url: `https://s3.test/${key}?size=${sizeBytes}`, expiresInSeconds: 600 });
+    return Promise.resolve({ url: `https://r2.test/${key}?size=${sizeBytes}`, expiresInSeconds: 600 });
   }
 
   asService(): StorageService {

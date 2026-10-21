@@ -77,11 +77,11 @@ describe('consent', () => {
     const last = new Date('2026-03-10T00:00:00Z');
     for (const takenAt of [first, last]) {
       const [s] = await db.insert(snapshot).values({ profileId: id, takenAt }).returning({ id: snapshot.id });
-      await db.insert(photo).values({ snapshotId: s?.id ?? '', kind: 'front', s3Key: `k${takenAt.getTime()}`, sha256: 'h', expiresAt: new Date('2030-01-01') });
+      await db.insert(photo).values({ snapshotId: s?.id ?? '', kind: 'front', objectKey: `k${takenAt.getTime()}`, sha256: 'h', expiresAt: new Date('2030-01-01') });
     }
 
     await profiles.consent(id, alice, grant('standard'));
-    const standard = (await db.select({ at: photo.expiresAt, key: photo.s3Key }).from(photo)).map((p) => [p.key, p.at.toISOString()]);
+    const standard = (await db.select({ at: photo.expiresAt, key: photo.objectKey }).from(photo)).map((p) => [p.key, p.at.toISOString()]);
     expect(Object.fromEntries(standard)).toEqual({
       [`k${first.getTime()}`]: '2026-02-09T00:00:00.000Z',
       [`k${last.getTime()}`]: '2026-04-09T00:00:00.000Z',
@@ -151,7 +151,7 @@ describe('remove', () => {
   it('hard deletes everything under the profile and its files, and records a deletion request', async () => {
     const { id } = await create();
     const [s] = await db.insert(snapshot).values({ profileId: id }).returning({ id: snapshot.id });
-    await db.insert(photo).values({ snapshotId: s?.id ?? '', kind: 'front', s3Key: `photos/${id}/x/front.jpg`, sha256: 'h', expiresAt: new Date() });
+    await db.insert(photo).values({ snapshotId: s?.id ?? '', kind: 'front', objectKey: `photos/${id}/x/front.jpg`, sha256: 'h', expiresAt: new Date() });
     await storage.put(`photos/${id}/x/front.jpg`, Buffer.from('x'));
     await storage.put(`raw/${id}/u`, Buffer.from('x'));
     await storage.put('photos/other/keep.jpg', Buffer.from('x'));

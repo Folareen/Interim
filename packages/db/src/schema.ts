@@ -85,7 +85,7 @@ export const photo = pgTable('photo', {
   id: id(),
   snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
   kind: photoKind('kind').notNull(),
-  s3Key: text('s3_key').notNull(),
+  objectKey: text('object_key').notNull(),
   sha256: text('sha256').notNull(), // of the normalised file
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: createdAt(),
@@ -105,7 +105,7 @@ export const render = pgTable('render', {
   snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
   tool: text('tool').notNull(),
   inputHash: text('input_hash').notNull(),
-  s3Key: text('s3_key'), // null once the image has expired
+  objectKey: text('object_key'), // null once the image has expired
   label: text('label').notNull(), // preview | earlier look
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: createdAt(),
