@@ -2,6 +2,7 @@ import { createHmac, randomBytes } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
+/** Name of the cookie that carries the owner token. */
 export const OWNER_COOKIE = 'interim_owner';
 const OWNER_COOKIE_MAX_AGE_MS = 730 * 24 * 60 * 60 * 1000; // matches the 24 month retention ceiling
 
@@ -13,6 +14,7 @@ export interface Owner {
 /** A request that `OwnerGuard` has resolved an owner for. */
 export type OwnedRequest = Request & { owner?: Owner };
 
+/** Secrets and cookie settings for `OwnerService`. */
 export interface OwnerConfig {
   /** Keys the owner token hash. */
   secret: string;

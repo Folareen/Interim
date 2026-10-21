@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { YoucamError, taskErrorAction, type TaskErrorAction } from './youcam.errors';
 import { tools, type ToolName, type ToolRequest, type ToolResult } from './youcam.tools';
 
+/** What the client is built from. `retryBaseMs` is the first wait after a 429 and doubles each time. */
 export type YoucamConfig = {
   apiKey: string;
   baseUrl: string;
@@ -15,16 +16,17 @@ export type YoucamConfig = {
   retryBaseMs: number; // first wait after a 429; doubles each time, with jitter
 };
 
+/** A normalised photo to upload. */
 export type Photo = {
   bytes: Uint8Array;
   contentType: 'image/jpg' | 'image/png'; // the spelling used in the YouCam examples
   fileName: string;
 };
 
-// What the caller keeps for an open task. `fixtureKey` is the call_cache key (photo hash, tool,
-// API version, parameter hash) and names the fixture in record and replay.
+/** What the caller keeps for an open task. `fixtureKey` is the call_cache key and names the fixture. */
 export type TaskRef = { tool: ToolName; fixtureKey: string; taskId: string };
 
+/** Where a task stands: still running, finished with a typed result, or failed with an action. */
 export type TaskStatus<T extends ToolName> =
   | { state: 'running' }
   | { state: 'success'; result: ToolResult<T> }
@@ -54,7 +56,7 @@ const createSchema = z.object({ data: z.object({ task_id: z.string().min(1) }) }
 
 const statusSchema = z.object({
   data: z.object({
-    // Makeup VTO's docs also list `queued` and `processing`; all three mean not finished yet.
+    // Makeup VTO also reports `queued` and `processing`; all three mean not finished.
     task_status: z.enum(['running', 'queued', 'processing', 'success', 'error']),
     error: z.string().nullish(),
     error_message: z.string().nullish(),
@@ -62,15 +64,15 @@ const statusSchema = z.object({
   }),
 });
 
-// HTTP errors look like { status, error, error_code }. CreditInsufficiency means out of units.
+// HTTP errors are { status, error, error_code }; CreditInsufficiency means out of units.
 const httpErrorSchema = z.object({ error_code: z.string().optional() });
 
-// Credit batches by type. Units a call can spend are the batches whose type starts with `Api`.
+// Only batches whose type starts with `Api` can pay for a call.
 const creditSchema = z.object({
   results: z.array(z.object({ type: z.string(), amount: z.number() })),
 });
 
-// Checked against the live API on 2026-10-21; the docs do not describe this response.
+// Taken from the live API; the docs do not describe this response.
 const featureCostSchema = z.object({
   result: z.object({
     next_token: z.string().nullish(),
@@ -85,13 +87,15 @@ const featureCostSchema = z.object({
     ),
   }),
 });
+
+/** One price from Get_Feature_Cost. */
 export type FeatureCost = z.infer<typeof featureCostSchema>['result']['skus'][number];
 
-// The only place allowed to talk to YouCam. See docs/integrations/youcam.md.
-// Per-call flow: consent, live switch and caps, eligibility, call_cache, ledger reserve,
-// task row as intent, upload, create task, store task id, poll, parse, settle or release, cache.
-// This class owns the YouCam steps only (upload, create, poll, parse, record, replay). The
-// ledger, task rows, cache and the poll queue call it and stay outside.
+/**
+ * The only place that talks to YouCam (docs/integrations/youcam.md). It owns the YouCam steps
+ * only: upload, create, poll, parse, record and replay. The ledger, task rows, cache and poll
+ * queue call it and stay outside.
+ */
 @Injectable()
 export class YoucamClient {
   readonly mode: YoucamMode;
@@ -100,7 +104,7 @@ export class YoucamClient {
     this.mode = config.mode;
   }
 
-  // Returns the YouCam file id. Files expire after 24 hours; upload again when one has.
+  /** Uploads a photo and returns its YouCam file id, which expires after 24 hours. */
   async uploadPhoto(photo: Photo): Promise<string> {
     if (this.mode === 'replay') return 'replay-file';
     this.assertLive();
@@ -119,7 +123,7 @@ export class YoucamClient {
     const [file] = init.data.files;
     const [target] = file.requests;
 
-    // Content-Length is set by fetch from the body.
+    // fetch sets Content-Length from the body.
     const headers = Object.fromEntries(
       Object.entries(target.headers)
         .filter(([name]) => name.toLowerCase() !== 'content-length')
@@ -130,8 +134,10 @@ export class YoucamClient {
     return file.file_id;
   }
 
-  // Never call twice for the same logical task: there is no idempotency key. A throw of kind
-  // unknown_outcome means the task may exist; leave the row as `unknown` and reconcile.
+  /**
+   * Creates a task. Never call it twice for one logical task: YouCam has no idempotency key.
+   * @throws YoucamError of kind `unknown_outcome` when the task may exist; leave its row `unknown` and reconcile.
+   */
   async createTask<T extends ToolName>(
     tool: T,
     body: ToolRequest<T>,
@@ -156,7 +162,7 @@ export class YoucamClient {
     return { tool, fixtureKey, taskId: created.data.task_id };
   }
 
-  // A task with status `error` arrives inside an HTTP 200 and is returned, not thrown.
+  /** Reads a task's state. A task that failed arrives inside an HTTP 200 and is returned as `error`, not thrown. */
   async getTask<T extends ToolName>(ref: TaskRef & { tool: T }): Promise<TaskStatus<T>> {
     const definition = tools[ref.tool];
     let raw: string;
@@ -186,22 +192,21 @@ export class YoucamClient {
     return { state: 'success', result: definition.result.parse(data.results) as ToolResult<T> };
   }
 
-  // Units the API key can still spend. Free to call, live only.
+  /** Units the API key can still spend. Free, live only. */
   async getSpendableUnits(): Promise<number> {
     this.assertLive();
     const credit = creditSchema.parse(await this.request('GET', '/s2s/v1.0/client/credit', 'read'));
     return credit.results.filter((batch) => batch.type.startsWith('Api')).reduce((sum, batch) => sum + batch.amount, 0);
   }
 
-  // One page of a template list, such as `hair-transfer`. Free, live only. The response shape is
-  // not yet confirmed, so the spike prints it raw and the schema is written from what it shows.
+  /** One page of a template list such as `hair-transfer`. Free, live only. The response shape is unvalidated, so the spike prints it raw. */
   async getTemplatePage(feature: string, version: string, startingToken?: string): Promise<unknown> {
     this.assertLive();
     const query = startingToken ? `&starting_token=${encodeURIComponent(startingToken)}` : '';
     return this.request('GET', `/s2s/${version}/task/template/${encodeURIComponent(feature)}?page_size=20${query}`, 'read');
   }
 
-  // Live only. Replay has no cost fixture; use the table in youcam.constants.ts.
+  /** Every price YouCam lists. Live only: replay has no cost fixture, so use `unitCosts`. */
   async getFeatureCosts(): Promise<FeatureCost[]> {
     this.assertLive();
     const costs: FeatureCost[] = [];
@@ -217,7 +222,7 @@ export class YoucamClient {
     return costs;
   }
 
-  // Record and live both spend units, so both need the switch.
+  // Record spends units like live, so both need the switch.
   private assertLive(): void {
     if (!this.config.liveCallsEnabled) {
       throw new YoucamError('live_disabled', 'LIVE_CALLS_ENABLED is not true');
@@ -255,8 +260,7 @@ export class YoucamClient {
     throw this.httpError(response.status, text, intent);
   }
 
-  // Retries only a 429, which means the task was not created. There is no Retry-After header,
-  // so the wait doubles with jitter.
+  // Retries only a 429, which means no task was created. YouCam sends no Retry-After, so the wait doubles with jitter.
   private async send(
     method: string,
     url: string,
@@ -300,7 +304,7 @@ export class YoucamClient {
     try {
       errorCode = httpErrorSchema.parse(JSON.parse(text)).error_code;
     } catch {
-      // The body is not the documented error envelope; report the raw text below.
+      // Not the usual error body; the raw text is reported below.
     }
     if (errorCode === 'CreditInsufficiency') {
       return new YoucamError('out_of_units', 'YouCam account is out of units');
@@ -309,7 +313,7 @@ export class YoucamClient {
   }
 
   private fixturePath(tool: ToolName, fixtureKey: string): string {
-    // The key names a file, so keep it to plain characters.
+    // The key becomes a file name.
     if (!/^[A-Za-z0-9_-]+$/.test(fixtureKey)) {
       throw new YoucamError('invalid_request', 'Fixture key has unsupported characters');
     }
@@ -325,7 +329,7 @@ export class YoucamClient {
     }
   }
 
-  // Signed result links carry credentials in the query string, so they are cut before saving.
+  // Result links carry a signature in the query string, so it is cut before saving.
   private async writeFixture(tool: ToolName, fixtureKey: string, raw: string): Promise<void> {
     const file = this.fixturePath(tool, fixtureKey);
     await mkdir(path.dirname(file), { recursive: true });

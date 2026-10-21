@@ -1,10 +1,9 @@
 import type { LiveLocale } from '@interim/types';
 import { wholeWords } from './whole-words';
 
-// docs/product/overview.md (The companion) and spec section 13. Plain code, never the model: the
-// device runs this on reflection text, and a match replaces the screen with crisis contacts.
-// It errs towards showing contacts; a false match costs one screen, a missed one costs far more.
-// Each language's list is written and reviewed by a native speaker.
+// Plain code, never the model (docs/product/spec.md section 13): the device runs this on reflection
+// text and a match replaces the screen with crisis contacts. It errs towards matching, since a
+// false match costs one screen and a missed one costs far more. Each language's list is native-reviewed.
 const apostrophe = "['’]?";
 const patterns: Record<LiveLocale, RegExp> = {
   en: wholeWords([
@@ -34,6 +33,7 @@ export function soundsLikeCrisis(text: string, locale: LiveLocale): boolean {
   return patterns[locale].test(text) || patterns.en.test(text);
 }
 
+/** Regions with their own crisis contacts. `other` points to a directory. */
 export type CrisisRegion = 'us' | 'ca' | 'gb' | 'ie' | 'au' | 'other';
 
 /** One crisis service. `phone` is null for a directory that lists services instead. */
@@ -58,8 +58,8 @@ export const crisisContacts: Record<CrisisRegion, readonly CrisisContact[]> = {
 const regions: Record<string, CrisisRegion> = { US: 'us', CA: 'ca', GB: 'gb', UK: 'gb', IE: 'ie', AU: 'au' };
 
 /**
- * Picks the crisis region from a BCP 47 locale such as the browser's `navigator.language`. The
- * person can change it, so an unknown or missing region falls back to the directory.
+ * Picks the crisis region from a BCP 47 locale such as `navigator.language`. An unknown or missing
+ * region falls back to the directory.
  * @example crisisRegionFor('en-GB') // 'gb'
  */
 export function crisisRegionFor(locale: string): CrisisRegion {

@@ -1,18 +1,17 @@
 import { z } from 'zod';
 
-// One entry per YouCam tool Interim uses: where it lives, what it takes and what comes back.
-// Source: the OpenAPI bundles at docs.perfectcorp.com/_bundle/reference, read 2026-10-20.
-// Request bodies are validated here because the planner chooses their parameters.
-// The result is what `data.results` holds when the task status is `success`.
+// One entry per YouCam tool Interim uses. Schemas come from YouCam's OpenAPI bundles, corrected
+// where the live API differed. Requests are validated here because the planner chooses their
+// parameters; `result` is what `data.results` holds on success.
 
 const srcFile = z.object({ src_file_id: z.string().min(1) });
 const singleUrl = z.object({ url: z.string().url() });
 const hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/);
 
-// How strict the face angle check is, from `strict` (4 to 6 degrees) to `flexible` (30 degrees).
+// Angle limit of the face check, from `strict` (about 5 degrees) to `flexible` (30).
 const faceAngleStrictness = z.enum(['strict', 'high', 'medium', 'low', 'flexible']);
 
-// Returned with the face analysers. YouCam's own read of the photo, such as "good".
+// YouCam's own read of the photo, returned with the face analysers (values such as "good").
 const faceQuality = z.object({
   has_face: z.boolean().optional(),
   area: z.string().optional(),
@@ -60,7 +59,7 @@ const hairStyleSource = z.union([
 ]);
 
 export const tools = {
-  // Three photos in the order front, right, left. Short side at least 320 px, jpg or png.
+  // Three photos, in the order front, right, left.
   hair_type: {
     version: 'v2.0',
     path: 'hair-type-detection',
@@ -130,7 +129,6 @@ export const tools = {
     ),
     result: singleUrl,
   },
-  // Fields beyond template_id are not documented; this follows the template list flow.
   hair_volume: {
     version: 'v2.0',
     path: 'hair-vol',
@@ -149,9 +147,7 @@ export const tools = {
     request: srcFile.extend({ version: z.literal('1.0') }), // required, though the docs page omits it
     result: z.object({ fitzpatrick_scale: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']) }),
   },
-  // Facial colour tones, 20 units, charged only on success. Only `skin_color` is reliable: in the
-  // spike it moved about 2 hex units when a photo was dimmed, brightened or warmed, while the eye
-  // and hair colour names changed with the light and a bald man read as "Blonde".
+  // Only `skin_color` is reliable: the eye and hair colour names change with the light.
   skin_tone: {
     version: 'v2.0',
     path: 'skin-tone-analysis',
@@ -169,9 +165,8 @@ export const tools = {
       }),
     }),
   },
-  // Only face shape and its aspect ratio are allowed. The analyser can also return age and gender,
-  // which Interim never asks for (docs/product/overview.md, Language and safety rules). 10 units
-  // for 1 to 5 features.
+  // Face shape and aspect ratio only: the analyser can also return age and gender, which Interim
+  // never requests (overview, Language and safety rules).
   face_shape: {
     version: 'v2.0',
     path: 'face-attr-analysis',
@@ -186,8 +181,7 @@ export const tools = {
         .optional(),
     }),
   },
-  // Clothes try on v4. The cost is not in the docs table; read it with Get_Feature_Cost. The docs
-  // disagree on whether the person photo is full body or chest up (docs/product/spec.md section 17).
+  // Keeps the person's face, pose and background and changes only the garment.
   cloth_v4: {
     version: 'v2.0',
     path: 'cloth-v4',
@@ -199,17 +193,15 @@ export const tools = {
     }),
     result: singleUrl,
   },
-  // Brow makeup, the fallback when hair tools are blocked. 1 unit. The docs show the result both
-  // as `{ url }` and as a list of `{ download_url }`; the live API returned `{ url }` every time.
+  // The docs show the result as `{ url }` and as a list of `{ download_url }`; the live API always returned `{ url }`.
   makeup_brows: {
     version: 'v2.0',
     path: 'makeup-vto',
     request: srcFile.extend({ effects: z.tuple([browEffect]) }),
     result: singleUrl,
   },
-  // The next two make synthetic test photos for the spike runner (docs/integrations/youcam.md,
-  // Spike runner). The product never calls them. 1 unit each. `size` is width*height, and the
-  // text to image sizes are limited to five values.
+  // The next two make synthetic test photos for the spike runner. The product never calls them.
+  // `size` is width*height; text to image accepts only five sizes.
   text_to_image: {
     version: 'v2.0',
     path: 'text-to-image/youcam',
@@ -222,7 +214,6 @@ export const tools = {
     }),
     result: singleUrl,
   },
-  // Edits one to three photos from a prompt, such as "the same person with a shaved head".
   image_to_image: {
     version: 'v2.0',
     path: 'image-to-image/youcam',
@@ -239,6 +230,8 @@ export const tools = {
 } as const;
 
 export type ToolName = keyof typeof tools;
+
+/** The names in `tools`, for checking input. */
 export const toolNames = Object.keys(tools) as ToolName[];
 export type ToolRequest<T extends ToolName> = z.input<(typeof tools)[T]['request']>;
 export type ToolResult<T extends ToolName> = z.infer<(typeof tools)[T]['result']>;

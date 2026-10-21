@@ -9,4 +9,6 @@ export function createDb(databaseUrl: string) {
   const pool = new Pool({ connectionString: databaseUrl });
   return { db: drizzle(pool, { schema }), pool };
 }
+
+/** The Drizzle client, typed with the schema. */
 export type Db = ReturnType<typeof createDb>['db'];

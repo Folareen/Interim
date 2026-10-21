@@ -1,7 +1,6 @@
 import type { Copy } from '../copy';
 
-// English is the reference copy. Every other language translates this file and passes both
-// language scans in its own language (docs/product/spec.md section 13).
+/** English, the reference copy. Every other language translates this file and passes both language scans (docs/product/spec.md section 13). */
 export const en: Copy = {
   templateLabels: {
     hair_loss_ahead: 'Hair loss ahead',

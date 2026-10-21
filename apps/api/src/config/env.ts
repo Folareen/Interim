@@ -30,5 +30,5 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
-// Validated once at startup. Everything else receives typed config.
+/** The environment, validated once at startup. Everything else receives typed config. */
 export const env: Env = envSchema.parse(process.env);

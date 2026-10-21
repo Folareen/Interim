@@ -2,7 +2,7 @@
 
 Read [docs/README.md](docs/README.md) to find the owning doc before changing anything.
 
-- Follow [docs/typescript.md](docs/typescript.md). Validate at boundaries with zod; keep internal code simple and typed.
+- Follow [docs/typescript.md](docs/typescript.md). Validate at boundaries with zod; keep internal code simple and typed. Comments explain why, never what, and exported code gets short JSDoc.
 - Only `apps/api/src/youcam` calls YouCam. API keys never reach the browser.
 - Eligibility, budgets and consent are plain code in `packages/rules`; the model only plans and explains.
 - User facing copy must pass the banned-word scan (see docs/product/overview.md).
