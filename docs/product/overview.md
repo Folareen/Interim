@@ -12,7 +12,7 @@ Serious illness can change how someone looks within weeks: hair falls out, the f
 
 At each check in it takes a few photos, measures what changed with YouCam's hair, skin and try on AI, and returns one Stage Card. The card has a short, honest note in the tone the person chose. It says what to wear and how to style hair and makeup for what is coming up, what to hold off buying, and which sizes to buy now.
 
-The same engine helps anyone whose body is changing fast: gaining or losing weight, on purpose or not, a new baby, midlife, going grey, growing out hair or a beard. It works in ten languages, can read every screen aloud, and stays practical and kind, never medical.
+The same engine helps anyone whose body is changing fast: gaining or losing weight, on purpose or not, a new baby, midlife, going grey, growing out hair or a beard. It works in ten languages and stays practical and kind, never medical.
 
 ## The problem
 
@@ -79,14 +79,13 @@ This section owns what the companion says and does. The spec (sections 9 and 13)
 * **Notifications.** Words for today and a check in reminder, each off until the person turns it on. By default a notification says only that something is ready, because lock screens are seen by others and a verse can reveal faith. It never names the situation or counts days (spec section 12a).
 * **Someone to talk to.** Every sensitive card links to crisis contacts for the person's region. If anything the person writes on the device suggests crisis or self-harm, Interim stops and shows those contacts first. That check is plain code.
 
-## Languages and read aloud
+## Languages and accessibility
 
 Free in every language, like the rest of the companion. The person picks a language at setup and can change it at any time.
 
 * **Ten languages:** English, French, Spanish, Italian, Portuguese, Swahili, Hausa, Yoruba, Igbo and Nigerian Pidgin are all in the app. English is reviewed. The other nine ship as drafts, marked on screen, until a native speaker has checked them. Arabic follows once the app supports right to left layout. The model writes the note and explanations in the person's language, and Yoruba keeps its tone marks.
 * **Safety travels with the language.** A language is offered only when it has its own banned word, companion phrase and crisis phrase lists and its fixed copy passes both scans (spec section 13). The lists and copy of a draft language are written carefully but still need a native speaker's review, and the reflection feature does not run in a language before that review (spec section 17). Words for today come only from public domain translations in that language; where a set has none, the person sees it in English, with a note saying why.
-* **Read aloud.** Every screen can be read aloud, and the capture wizard guides the photos by voice, using the phone's own voice or Interim's voice service (spec section 12b). It helps people who are too tired to read, whose eyesight blurs, or who find Yoruba, Hausa or Igbo easier to hear than to read.
-* **No voice input.** Almost everything is a tap or a photo, with large, clearly labelled choices. The one free text field, the reflection, can use the phone keyboard's own microphone, so Interim never receives audio.
+* **Large, clear choices.** Almost everything is a tap or a photo, with large, clearly labelled choices. The one free text field is the reflection.
 * **Screen readers.** Pages are built for VoiceOver and TalkBack, with the page language set to the person's language and every control labelled.
 * **Crisis contacts** follow the person's region, not their language.
 
@@ -167,4 +166,4 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 ## Out of scope for the hackathon build
 
-Native apps, voice input, accounts for care teams, any health data, insurance features, real checkout and payments, live retailer catalog sync, and anyone under 18 (spec section 12). A sample catalog is enough.
+Native apps, accounts for care teams, any health data, insurance features, real checkout and payments, live retailer catalog sync, and anyone under 18 (spec section 12). A sample catalog is enough.

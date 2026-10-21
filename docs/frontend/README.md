@@ -30,7 +30,7 @@ The app uses [next-intl](https://next-intl.dev). The server reads the person's l
 ## Accessibility
 Every control is keyboard reachable and labelled; contrast meets WCAG AA; do not rely on color alone; respect reduced motion. The page's `lang` is the person's language, a language's own name carries its own `lang` on the language screen, a button that is off says why through `aria-describedby`, and a status line announces when a form is working. The theme and language buttons are labelled by what they do.
 
-The screen reader pass (VoiceOver and TalkBack testing) and read aloud ([../product/spec.md](../product/spec.md) section 12b) come after the core flow works end to end. Until then the basics above still apply to every component.
+The screen reader pass (VoiceOver and TalkBack testing) comes after the core flow works end to end. Until then the basics above still apply to every component.
 
 ## PWA
 `app/manifest.ts` defines the manifest. Icons and service worker are still to add.
