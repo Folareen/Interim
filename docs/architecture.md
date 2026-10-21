@@ -21,7 +21,7 @@ Components, from the user inward:
 * **Agent module.** Planner, eligibility rules, composer, trace writer.
 * **PostgreSQL.** All records.
 * **Redis.** Queues, the shared rate limit bucket and short lived locks.
-* **Object storage.** Encrypted photos and renders in Cloudflare R2, reached through its S3 compatible API (no AWS account is involved). MinIO stands in for it locally.
+* **Object storage.** Encrypted photos and renders in Cloudflare R2, reached through its S3 compatible API (no AWS account is involved), with a separate bucket for development.
 * **YouCam API.** External. Called only from the worker.
 
 Request flow for one check in:
@@ -180,7 +180,7 @@ Server environment variables, by name:
 * YOUCAM_BASE_URL
 * DATABASE_URL
 * REDIS_URL
-* R2_ENDPOINT, R2_BUCKET, R2_REGION, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
+* R2_ENDPOINT, R2_BUCKET, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
 * GOOGLE_GENERATIVE_AI_API_KEY and LLM_MODEL (Gemini through the Vercel AI SDK)
 * UNIT_BUDGET_PER_RUN, UNIT_BUDGET_PER_PROFILE, UNIT_BUDGET_PER_DAY, UNIT_BUDGET_PER_SOURCE_PER_DAY
 * YOUCAM_MODE with values live, record or replay

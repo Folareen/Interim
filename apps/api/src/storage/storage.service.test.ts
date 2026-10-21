@@ -4,7 +4,6 @@ import { StorageService } from './storage.service';
 const storage = new StorageService({
   endpoint: 'http://localhost:9000',
   bucket: 'interim',
-  region: 'us-east-1',
   accessKeyId: 'id',
   secretAccessKey: 'secret',
 });

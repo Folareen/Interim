@@ -4,8 +4,4 @@ Helps you feel like yourself while your body changes, built first for people who
 
 TypeScript monorepo: Next.js PWA (`apps/web`), NestJS API and worker (`apps/api`), shared packages in `packages/`.
 
-```bash
-pnpm install && cp .env.example .env && docker compose up -d && pnpm dev
-```
-
-Docs start at [docs/README.md](docs/README.md). Setup details: [docs/development.md](docs/development.md).
+Setup, including the Cloudflare R2 bucket for photos, is in [docs/development.md](docs/development.md). Docs start at [docs/README.md](docs/README.md).
