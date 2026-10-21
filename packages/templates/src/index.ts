@@ -267,10 +267,10 @@ export const templates: Record<TemplateKey, Template> = {
     tracks: [],
     placement: { by: 'reported_change' },
     strategies: {
-      clean: ['colour', 'hold'],
-      stubble: ['colour', 'hold'],
-      short: ['colour', 'hold'],
-      full: ['colour', 'hold'],
+      clean: ['cut', 'colour', 'hold'],
+      stubble: ['cut', 'colour', 'hold'],
+      short: ['cut', 'colour', 'hold'],
+      full: ['cut', 'colour', 'hold'],
     },
   },
 };

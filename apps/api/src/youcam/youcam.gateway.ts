@@ -144,7 +144,13 @@ export class YoucamGateway {
     body: (fileIds: string[]) => ToolRequest<T>,
     finish: (result: unknown, ref: TaskRef) => Promise<string>,
   ): Promise<({ kind: 'done'; resultRef: string; taskId: string; units: number }) | CallFailure> {
-    const existing = await this.findTask(context, key);
+    let existing = await this.findTask(context, key);
+    if (existing?.state === 'failed' && !existing.youcamTaskId) {
+      // It failed before anything was created at YouCam and its units were released, so trying again
+      // is safe. It gets a new task id, because the ledger has already closed the old one.
+      await this.db.delete(youcamTask).where(eq(youcamTask.id, existing.id));
+      existing = undefined;
+    }
     if (existing && (existing.state === 'intent' || existing.state === 'unknown')) {
       // A crash between writing the row and storing YouCam's id: the task may exist, so never send again.
       await this.setTask(existing.id, { state: 'unknown' });

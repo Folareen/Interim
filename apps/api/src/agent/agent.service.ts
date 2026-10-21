@@ -558,6 +558,12 @@ export class AgentService {
         ctx.remaining = await this.ledger.remaining(this.budgetOf(ctx));
         continue;
       }
+      if (outcome.kind === 'not_recorded') {
+        // A preview that was never recorded is skipped, not fatal: the card rests on the measurements,
+        // and the rest of this tool's looks would be missing the same way.
+        await ctx.trace.add('act', 'not_recorded', { tool });
+        break;
+      }
       const fatal = await this.handleFailure(ctx, 'act', tool, outcome);
       if (fatal) return { count, fatal };
       // A blocked tool is blocked for every look it makes.
@@ -722,6 +728,7 @@ function renderRequest(look: Look): [Record<string, string>, (ids: string[]) => 
     case 'hairstyle':
       return [params, (ids) => ({ src_file_id: ids[0] ?? '', template_id: look.templateId, hair_color: 'src' })];
     case 'hair_volume':
+    case 'beard_style':
       return [params, (ids) => ({ src_file_id: ids[0] ?? '', template_id: look.templateId })];
     case 'hair_color':
       return [params, (ids) => ({ src_file_id: ids[0] ?? '', preset: look.preset })];

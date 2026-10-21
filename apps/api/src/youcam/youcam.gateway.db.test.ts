@@ -169,6 +169,20 @@ describe('measure', () => {
   });
 });
 
+describe('trying again', () => {
+  it('asks again for a call that failed before anything was created, once it can be answered', async () => {
+    expect(await measure()).toEqual({ kind: 'not_recorded' });
+    await writeYoucamFixture(dir, 'hair_density', keyOf('hair_density'), { results: density });
+
+    expect(await measure()).toMatchObject({ kind: 'result', result: density });
+
+    const kinds = (await db.select().from(ledgerEntry)).map((e) => e.kind).sort();
+    expect(kinds).toEqual(['release', 'reserve', 'reserve', 'settle']);
+    const [counter] = await db.select().from(budgetCounter).where(eq(budgetCounter.scope, `run:${runId}`));
+    expect(counter?.reservedUnits).toBe(0);
+  });
+});
+
 describe('render', () => {
   const imageKey = `renders/${profileId}/${snapshotId}/a.jpg`;
   const params = { template: 'male_short_curly' };

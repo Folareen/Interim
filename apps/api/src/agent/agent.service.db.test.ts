@@ -87,7 +87,7 @@ interface Seeded {
 /** A profile with its first snapshot, or another snapshot of an existing profile. */
 async function seed(opts: {
   profileId?: string;
-  templateKey?: 'hair_loss_ahead' | 'weight_change';
+  templateKey?: 'hair_loss_ahead' | 'weight_change' | 'beard_growth';
   headCovering?: boolean;
   baseline?: boolean;
   kinds: PhotoKind[];
@@ -143,7 +143,7 @@ async function recordBaseline(s: Seeded, density = ['2.50', 'High Density']) {
   await record('face_shape', [front], faceParams, results.face_shape);
   await record('skin_tone', [front], skinParams, results.skin_tone);
 }
-const recordLooks = (front: string, tool: 'hairstyle' | 'makeup_brows' | 'hair_volume', looks: string[]) =>
+const recordLooks = (front: string, tool: 'hairstyle' | 'makeup_brows' | 'hair_volume' | 'beard_style', looks: string[]) =>
   Promise.all(looks.map((look) => record(tool, [front], { look }, results.image, true)));
 
 const cardOf = async (runId: string): Promise<StageCard> => {
@@ -181,7 +181,8 @@ describe('baseline run', () => {
 
     const [settled] = await db.select().from(budgetCounter).where(eq(budgetCounter.scope, `run:${s.runId}`));
     expect(settled).toMatchObject({ reservedUnits: 0, settledUnits: 0 });
-    expect((await db.select().from(ledgerEntry)).every((e) => e.kind === 'reserve' || e.kind === 'settle')).toBe(true);
+    // The one preview that was never recorded reserved and released, so it spent nothing.
+    expect((await db.select().from(ledgerEntry)).filter((e) => e.kind === 'settle').every((e) => e.units === 0)).toBe(true);
   });
 
   it('puts every figure on the card there from a record, never from the model (acceptance 4)', async () => {
@@ -275,6 +276,28 @@ describe('check in', () => {
   });
 });
 
+describe('beard template', () => {
+  it('previews beard styles, which no other template offers', async () => {
+    const s = await seed({ templateKey: 'beard_growth', kinds: ['front', 'left', 'right', 'top'] });
+    await recordBaseline(s);
+    await recordLooks(s.sha.front ?? '', 'beard_style', ['beard_goatee', 'beard_circle', 'beard_anchor']);
+
+    await agent.run(s.runId);
+
+    const card = await cardOf(s.runId);
+    expect(card.options.map((o) => o.tool)).toEqual(['beard_style', 'beard_style', 'beard_style']);
+    expect(card.stageKey).toBe('clean');
+  });
+
+  it('keeps beard styles out of every other template', async () => {
+    const s = await seed({ kinds: ['front', 'left', 'right', 'top'] });
+    await recordBaseline(s);
+    await recordLooks(s.sha.front ?? '', 'hairstyle', ['style_short_curly', 'style_blunt_bob', 'style_buzz_cut']);
+    await agent.run(s.runId);
+    expect((await cardOf(s.runId)).options.map((o) => o.tool)).toEqual(['hairstyle', 'hairstyle', 'hairstyle']);
+  });
+});
+
 describe('what is allowed', () => {
   it('never offers hair try on or hair measures when head covering is on (acceptance 10d)', async () => {
     const s = await seed({ kinds: ['front', 'left', 'right', 'top'], headCovering: true });
@@ -351,6 +374,20 @@ describe('when something is missing', () => {
   });
 });
 
+describe('previews that were never recorded', () => {
+  it('skips them, says so once, and still writes the card from what exists', async () => {
+    const s = await seed({ kinds: ['front', 'left', 'right', 'top'] });
+    await recordBaseline(s);
+    await recordLooks(s.sha.front ?? '', 'hairstyle', ['style_short_curly']);
+
+    await agent.run(s.runId);
+
+    expect(await runOf(s.runId)).toMatchObject({ status: 'done' });
+    expect((await cardOf(s.runId)).options).toHaveLength(1);
+    expect((await traceReasons(s.runId)).filter((r) => r === 'not_recorded')).toHaveLength(1);
+  });
+});
+
 describe('delivered twice', () => {
   it('does nothing for a finished run', async () => {
     const s = await seed({ kinds: ['front', 'left', 'right', 'top'] });
@@ -367,7 +404,7 @@ describe('delivered twice', () => {
   it('picks up an interrupted run without paying, measuring or rendering twice', async () => {
     const s = await seed({ kinds: ['front', 'left', 'right', 'top'] });
     await recordBaseline(s);
-    await recordLooks(s.sha.front ?? '', 'hairstyle', ['style_short_curly', 'style_blunt_bob']);
+    await recordLooks(s.sha.front ?? '', 'hairstyle', ['style_short_curly', 'style_blunt_bob', 'style_buzz_cut']);
     await agent.run(s.runId);
     const counts = async () => [
       (await db.select().from(ledgerEntry)).length,
