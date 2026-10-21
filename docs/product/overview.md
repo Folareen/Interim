@@ -1,6 +1,5 @@
 # Interim: Product Overview
 
-Version 1.3, October 20, 2026
 Built for the YouCam API Skin AI and eCommerce VTO Hackathon (Perfect Corp, Devpost). Submissions close Nov 2, 2026 at 11:45am EST.
 
 ## One liner
@@ -17,20 +16,18 @@ The same engine helps anyone whose body is changing fast: gaining or losing weig
 
 ## The problem
 
-Almost every beauty and fashion tool assumes a fixed person. The same face, the same hair, the same size. Real people change, and serious illness changes them fastest, often while they still have to go to work, see family and be photographed.
+Almost every beauty and fashion tool assumes a fixed person: the same face, hair and size.
 
 * Appearance change from illness is common and hard. Chemotherapy causes substantial hair loss in about 65% of people who receive it (2023 review, Current Oncology). Body image distress is reported in 31% to 67% of breast cancer survivors and up to 74% after head and neck cancer. Long-term steroids change face shape in up to 63% of people in one study.
 * It changes everyday life, not only the mirror. Survivors returning to work most want to hide the change. Some delay going back or avoid meeting colleagues, and people who cannot dress the way they want go out less.
 * What helps is practical and kind, not cheerful. One-off appearance workshops, a single self-compassion writing exercise (tested in a randomised trial) and practice in handling other people's reactions all reduce distress. Forced positivity and battle language can make it worse.
-* The same gap exists for other fast changes. 73% of current GLP 1 users reported a meaningful change in clothing size (PwC, 3,089 consumers, May 2026), and NRF and Happy Returns estimate 19.3% of online sales were returned in 2025, with size and fit the top apparel reason.
+* Other fast changes have the same gap. 73% of current GLP 1 users reported a meaningful change in clothing size (PwC, 3,089 consumers, May 2026), and NRF and Happy Returns estimate 19.3% of online sales were returned in 2025, with size and fit the top apparel reason.
 
-Figures above come from secondary sources and were not rechecked against the originals (last verified: never). Check each one and record the date here before it appears in any public copy.
+These figures come from secondary sources and were never checked against the originals. Check each one and record the date here before it appears in public copy.
 
 ## Who it serves
 
-Built first for people whose appearance is changing because of serious illness or its care: hair loss, face and body shape changes, scars, skin colour changes. It serves anyone in a fast change just as well: weight gain or loss in either direction and for any reason, a new baby, midlife, going grey or a grow out.
-
-Today they guess, buy the wrong size, book the wrong cut, or stop going out for a while because nothing feels like them this month. Nobody builds for the in between months.
+Built first for people whose appearance is changing because of serious illness or its care: hair loss, face and body shape changes, scars, skin colour changes. It serves anyone in a fast change just as well: weight gain or loss in either direction and for any reason, a new baby, midlife, going grey or a grow out. Today these people guess, buy the wrong size, book the wrong cut, or stop going out for a while because nothing feels like them this month. Nobody builds for the in between months.
 
 ## The core idea
 
@@ -42,7 +39,7 @@ One engine, one steady voice.
 
 **The stage model.** For each situation, a template defines the expected path (for example full hair, thinning, short, none, growing in), how often to check in, which YouCam tools are valid at each stage, and what to do when a tool does not apply. The stage decides the tools, not the situation.
 
-The YouCam hair try on works on bald, shaved and very short hair as well as full hair, so a person with no hair can preview a hairstyle or a wig on their own photo. It also replaces whatever is on the head, including a hijab or head wrap, so a person who covers their hair says so once and hair try on is never shown to them. For them, and whenever a hair tool does not apply, the agent switches to clothes, brow and colour options, and uses the baseline renders from earlier photos for as long as those photos are kept (30 days in standard mode, or until the person deletes them or 24 months after the last check in if they choose to keep their history).
+YouCam's hair try on works on bald, shaved and very short hair as well as full hair, so a person with no hair can preview a hairstyle or a wig on their own photo. It also replaces whatever is on the head, including a hijab or head wrap, so a person who covers their hair says so once and never sees hair try on. For them, and whenever a hair tool does not apply, the agent turns to clothes, brow and colour options and to earlier renders, for as long as the photos are kept (30 days, or up to 24 months after the last check in if the person keeps their history).
 
 ## Templates
 
@@ -78,21 +75,19 @@ This section owns what the companion says and does. The spec (sections 9 and 13)
 * **Moments.** At a check in the person can name what is coming up: back at work, a family event, a date, photos, a video call, going out, or just everyday. Strategy, renders and the note plan for that moment. Moments come from a fixed list, with no free text.
 * **What to say.** For moments with other people, the card can offer two or three short, fixed lines for when someone stares or asks. They are based on published social-skills approaches for visible difference.
 * **Reflection.** After a check in where the person reports a lot of change, Interim offers, never pushes, one short self-compassion prompt such as "What would you say to a friend going through this?". What they write stays on their device. It is never sent to the server or the model.
-* **Words for today.** Off unless the person turns it on. They pick one set: *Gentle words* (public domain quotes and lines written for Interim), *Christian* (King James Version), *Muslim* (Pickthall's translation of the Qur'an) or *Jewish* (JPS 1917 Tanakh). One passage a day, the same for everyone who chose that set, shown in the app and, if the person also turns it on, as a daily notification. It never depends on the situation. Passages come only from a fixed, reviewed library and are never written, paraphrased or chosen by the model. More traditions are added once passages have been checked by someone from that tradition.
-* **Notifications.** Two kinds, each off until the person turns it on: words for today at a time they pick, and a check in reminder on the template's cadence. By default the notification says only that something is ready, because lock screens are seen by others and a verse can reveal faith. The person can choose to show the words on the lock screen. Notifications never name the situation and never count days or streaks.
+* **Words for today.** Off unless the person turns it on. They pick one set: *Gentle words* (public domain quotes and lines written for Interim), *Christian* (King James Version), *Muslim* (Pickthall's translation of the Qur'an) or *Jewish* (JPS 1917 Tanakh). One passage a day, the same for everyone on that set, whatever their situation. Passages come only from a fixed, reviewed library and are never written, paraphrased or chosen by the model. More traditions are added once someone from that tradition has checked the passages.
+* **Notifications.** Words for today and a check in reminder, each off until the person turns it on. By default a notification says only that something is ready, because lock screens are seen by others and a verse can reveal faith. It never names the situation or counts days (spec section 12a).
 * **Someone to talk to.** Every sensitive card links to crisis contacts for the person's region. If anything the person writes on the device suggests crisis or self-harm, Interim stops and shows those contacts first. That check is plain code.
 
 ## Languages and read aloud
 
-Free in every language, like the rest of the companion. The person picks a language at setup and can change it any time.
+Free in every language, like the rest of the companion. The person picks a language at setup and can change it at any time.
 
-* **Ten languages:** English, French, Spanish, Italian, Portuguese and Swahili first, then Hausa, Yoruba, Igbo and Nigerian Pidgin once native speakers have reviewed them. Arabic follows once the app supports right to left layout.
-* **What changes per language:** app copy, template labels, fixed companion text and what to say lines come from translated copy files. The model writes the companion note and explanations in the person's language. Yoruba text keeps its tone marks.
-* **Read aloud.** Every screen can be read aloud: the card, words for today and each capture step, which guides the person through the photos by voice. It uses the phone's own voice when it has one for the language, and Interim's voice service when it does not. This matters for people who are too tired to read, whose eyesight blurs, or who speak Yoruba, Hausa or Igbo more easily than they read it.
-* **No voice input.** Almost everything is a tap or a photo, with large, clearly labelled choices and the read aloud guide. The one free text field, the reflection, can use the phone keyboard's own microphone, so Interim never receives audio.
+* **Ten languages:** English, French, Spanish, Italian, Portuguese and Swahili first, then Hausa, Yoruba, Igbo and Nigerian Pidgin once native speakers have reviewed them. Arabic follows once the app supports right to left layout. The model writes the note and explanations in the person's language, and Yoruba keeps its tone marks.
+* **Safety travels with the language.** A language goes live only when it has its own banned word and companion phrase lists, reviewed by a native speaker, and its fixed copy passes both (spec section 13). Words for today come only from public domain translations in that language; where a set has none, the person sees it in English, with a note saying why.
+* **Read aloud.** Every screen can be read aloud, and the capture wizard guides the photos by voice, using the phone's own voice or Interim's voice service (spec section 12b). It helps people who are too tired to read, whose eyesight blurs, or who find Yoruba, Hausa or Igbo easier to hear than to read.
+* **No voice input.** Almost everything is a tap or a photo, with large, clearly labelled choices. The one free text field, the reflection, can use the phone keyboard's own microphone, so Interim never receives audio.
 * **Screen readers.** Pages are built for VoiceOver and TalkBack, with the page language set to the person's language and every control labelled.
-* **Safety travels with the language.** A language goes live only when it has its own banned word list and companion phrase list, reviewed by a native speaker, and its fixed copy passes both. Until then the language is not offered. English lists stay the reference.
-* **Words for today per language** come only from public domain translations in that language, checked like the English ones. Where a set has none yet, the person sees it in English or picks another set, with a plain note saying why.
 * **Crisis contacts** follow the person's region, not their language.
 
 ## What the agent does
@@ -163,14 +158,12 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 
 ## Risks and open questions
 
-* Technical unknowns still open (hair density with the real pose, fairness across skin tones and hair types, whether skin colour and face fullness follow real change, and support for templates 2 to 5) are tracked in spec section 17, which owns them. Hair try on, clothes try on and chaining them were confirmed on 2026-10-21.
+* Technical unknowns (hair density on real photos, fairness across skin tones and hair types, whether skin colour and face fullness follow real change, and support for templates 2 to 5) are tracked in spec section 17, which owns them.
 * No user research yet. The plan is in spec section 18.
 * Some US states (Illinois and Nevada from 2025) ban AI mental health care. Interim stays a cosmetic tool with a kind voice. The language rules and the on-device reflection keep it there.
 * Photographing yourself six ways at every check in may be too much, especially when unwell. The check in set is kept small for that reason.
 * A demo with a real person needs dated photos of one consenting person, which is harder for illness than for weight change, so the demo uses the synthetic sample profiles and shows real photos only with consent.
 * Medical and body image sensitivity needs careful wording on every screen.
-
-The first 48 hours of the build exist to answer the technical unknowns.
 
 ## Out of scope for the hackathon build
 

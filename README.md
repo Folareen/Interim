@@ -1,6 +1,6 @@
 # Interim
 
-An AI agent that keeps you looking like yourself while your hair, skin and body change. Built for the YouCam API Skin AI and eCommerce VTO Hackathon.
+Helps you feel like yourself while your body changes, built first for people whose appearance changes with serious illness. Built for the YouCam API Skin AI and eCommerce VTO Hackathon.
 
 TypeScript monorepo: Next.js PWA (`apps/web`), NestJS API and worker (`apps/api`), shared packages in `packages/`.
 
