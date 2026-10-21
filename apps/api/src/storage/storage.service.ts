@@ -28,7 +28,7 @@ export interface StoredObject {
   lastModified: Date;
 }
 
-/** Cloudflare R2 object storage, reached through its S3-compatible API. MinIO stands in for it locally. Only keys are stored elsewhere. */
+/** Cloudflare R2 object storage, reached through its S3-compatible API. Only keys are stored elsewhere. */
 @Injectable()
 export class StorageService {
   private readonly client: S3Client;
@@ -39,7 +39,7 @@ export class StorageService {
     this.client = new S3Client({
       endpoint: config.endpoint,
       region: config.region,
-      forcePathStyle: true, // MinIO and R2 do not use bucket subdomains
+      forcePathStyle: true, // R2 is addressed by path, not by bucket subdomain
       credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
     });
   }
