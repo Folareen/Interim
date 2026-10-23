@@ -12,3 +12,4 @@ export * from './placement';
 export * from './measurements';
 export * from './photo-quality';
 export * from './model-text';
+export * from './garments';

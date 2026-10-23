@@ -64,6 +64,13 @@
       "when": 1792779365502,
       "tag": "0008_numerous_solo",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792798274072,
+      "tag": "0009_fancy_zeigeist",
+      "breakpoints": true
     }
   ]
 }

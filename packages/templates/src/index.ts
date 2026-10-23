@@ -7,6 +7,8 @@ export interface Template {
   checkInEveryDays: number;
   sensitive: boolean;
   usesFit: boolean;
+  /** Stages in which a fitted piece can be bought; in any other stage the size is still moving. Empty where the situation does not use fit. */
+  buyStages: readonly string[];
   /** Whether a new profile starts with body photos on. The person can switch it either way at any time. */
   bodyPhotosByDefault: boolean;
   unitBudgetPerRun: number;
@@ -28,6 +30,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 14,
     sensitive: true,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -55,6 +58,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 30,
     sensitive: true,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -81,6 +85,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 30,
     sensitive: true,
     usesFit: true,
+    buyStages: ['usual'],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -100,6 +105,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 21,
     sensitive: true,
     usesFit: true,
+    buyStages: ['settled'],
     bodyPhotosByDefault: false,
     unitBudgetPerRun: 50,
     version: 1,
@@ -118,6 +124,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 45,
     sensitive: true,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -141,6 +148,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 30,
     sensitive: true,
     usesFit: true,
+    buyStages: ['usual_size', 'settled'],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 2,
@@ -164,6 +172,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 60,
     sensitive: true,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -189,6 +198,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 30,
     sensitive: true,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -211,6 +221,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 45,
     sensitive: false,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -229,6 +240,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 45,
     sensitive: false,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,
@@ -260,6 +272,7 @@ export const templates: Record<TemplateKey, Template> = {
     checkInEveryDays: 14,
     sensitive: false,
     usesFit: false,
+    buyStages: [],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
     version: 1,

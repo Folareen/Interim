@@ -5,11 +5,24 @@ const open: EligibilityContext = {
   templateKey: 'hair_loss_ahead',
   headCovering: false,
   hasDensity: true,
+  usesFit: true,
+  hasBodyPhoto: true,
   blockedTools: new Set(),
   remainingUnits: 50,
 };
 
 describe('toolEligibility', () => {
+  it('allows clothes only where the situation uses fit and the body photo is stored (rule 9)', () => {
+    expect(toolEligibility('cloth_v4', 2, open)).toEqual({ allowed: true });
+    expect(toolEligibility('cloth_v4', 2, { ...open, usesFit: false })).toEqual({ allowed: false, reason: 'blocked_not_allowed' });
+    expect(toolEligibility('cloth_v4', 2, { ...open, hasBodyPhoto: false })).toEqual({ allowed: false, reason: 'blocked_photo' });
+    expect(toolEligibility('cloth_v4', 2, { ...open, remainingUnits: 1 })).toEqual({ allowed: false, reason: 'blocked_budget' });
+  });
+
+  it('shows clothes on a covered head, since they change nothing on it', () => {
+    expect(toolEligibility('cloth_v4', 2, { ...open, headCovering: true })).toEqual({ allowed: true });
+  });
+
   it('allows hair transfer on any head, bald included (rule 4)', () => {
     expect(toolEligibility('hairstyle', 2, open)).toEqual({ allowed: true });
   });
