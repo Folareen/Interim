@@ -119,21 +119,26 @@ export class RunsService {
     const renders = await this.db
       .select({ id: render.id, key: render.objectKey })
       .from(render)
-      .where(inArray(render.id, card.options.map((o) => o.renderId)));
+      .where(inArray(render.id, [...card.options, ...card.clothes].map((o) => o.renderId)));
     const renderUrls: Record<string, string> = {};
     for (const r of renders) if (r.key) renderUrls[r.id] = await this.storage.presignGet(r.key);
 
-    const [front] = await this.db
-      .select({ key: photo.objectKey })
+    const photos = await this.db
+      .select({ kind: photo.kind, key: photo.objectKey })
       .from(photo)
-      .where(and(eq(photo.snapshotId, snapshotId), eq(photo.kind, 'front')));
+      .where(and(eq(photo.snapshotId, snapshotId), inArray(photo.kind, ['front', 'body'])));
+    const urlOf = async (kind: 'front' | 'body') => {
+      const found = photos.find((p) => p.kind === kind);
+      return found ? this.storage.presignGet(found.key) : null;
+    };
     return {
       id: row.id,
       profileId: row.profileId,
       approvedAt: row.approvedAt?.toISOString() ?? null,
       card,
       renderUrls,
-      photoUrl: front ? await this.storage.presignGet(front.key) : null,
+      photoUrl: await urlOf('front'),
+      bodyPhotoUrl: await urlOf('body'),
     };
   }
 

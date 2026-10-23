@@ -118,7 +118,8 @@
     "deleting": "Inafuta…",
     "editAction": "Badilisha chaguo zangu",
     "startAction": "Anza ukaguzi",
-    "cardAction": "Ona kadi yangu ya hivi karibuni"
+    "cardAction": "Ona kadi yangu ya hivi karibuni",
+    "clothesAction": "Chagua nguo za kujaribu"
   },
   "reflect": {
     "title": "Tafakari",
@@ -432,7 +433,8 @@
     "hair_volume": "onyesho la awali la ujazo",
     "hair_color": "onyesho la awali la rangi",
     "beard_style": "onyesho la awali la ndevu",
-    "makeup_brows": "onyesho la awali la nyusi"
+    "makeup_brows": "onyesho la awali la nyusi",
+    "cloth_v4": "onyesho la awali la nguo"
   },
   "stages": {
     "full": "Kamili",
@@ -503,6 +505,32 @@
     "approving": "Inaidhinisha…",
     "approved": "Iliidhinishwa tarehe {date}",
     "toneAction": "Badilisha sauti yangu",
-    "backAction": "Rudi kwenye wasifu wangu"
+    "backAction": "Rudi kwenye wasifu wangu",
+    "clothesTitle": "Nguo zako kwenye picha yako",
+    "clothesIntro": "Haya ni maonyesho ya awali ya nguo ulizohifadhi, kwenye picha yako ya ukaguzi huu. Onyesho la awali halihakikishi nguo itakukaa vipi.",
+    "clothesAlt": "Onyesho la awali la {item} kwenye picha yako",
+    "clothesEmpty": "Hifadhi nguo kadhaa nazo zitaonekana hapa kwenye ukaguzi ujao.",
+    "shoppingTitle": "Orodha ya kununua",
+    "shoppingIntro": "Saizi hutoka kwa saizi uliyotuambia na jedwali la saizi la kila duka, si kutoka kwenye maonyesho ya awali.",
+    "shoppingLine": "{item}: saizi {size}",
+    "holdTitle": "Subiri kabla ya kununua",
+    "holdReasons": {
+      "size_moving": "Saizi yako bado inatulia, kwa hivyo subiri kabla ya kununua nguo ya kipimo mahususi.",
+      "size_unknown": "Tuambie saizi yako kwenye ukaguzi ujao nasi tutaichagua.",
+      "size_not_offered": "Duka halina nguo hii kwa saizi yako."
+    }
+  },
+  "clothes": {
+    "title": "Nguo za kujaribu",
+    "intro": "Hifadhi nguo unazofikiria kununua. Kila ukaguzi, zinaonyeshwa kwenye picha yako, pamoja na saizi kutoka jedwali la saizi la duka.",
+    "saveAction": "Hifadhi {item}",
+    "removeAction": "Ondoa {item}",
+    "saved": "Imehifadhiwa"
+  },
+  "garments": {
+    "tee-crew": "Fulana ya shingo ya duara",
+    "shirt-oxford": "Shati la oxford",
+    "jumper-knit": "Sweta ya kusokotwa",
+    "jacket-light": "Koti jepesi"
   }
 }

@@ -143,7 +143,8 @@ export const render = pgTable(
     id: id(),
     snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
     tool: text('tool').notNull(),
-    strategy: strategy('strategy').notNull(),
+    strategy: strategy('strategy'), // null for a clothes render, which follows no strategy
+    garmentSku: text('garment_sku').references(() => catalogItem.sku), // set for a clothes render
     inputHash: text('input_hash').notNull(),
     objectKey: text('object_key'), // null once the image has expired
     label: text('label').notNull(), // preview | earlier_look
@@ -258,16 +259,25 @@ export const callCache = pgTable('call_cache', {
 
 export const catalogItem = pgTable('catalog_item', {
   sku: text('sku').primaryKey(),
-  name: text('name').notNull(),
-  sizeChart: jsonb('size_chart_json').notNull(),
+  name: text('name').notNull(), // English, for logs. People see the name from the message catalogs.
+  category: text('category').notNull(), // upper_body | outer, the garment category sent to YouCam
+  fit: text('fit').notNull(), // relaxed | fitted
+  sizeChart: jsonb('size_chart_json').notNull(), // reported size to the label on the piece; sizes not offered are absent
+  imageKey: text('image_key').notNull(),
+  imageSha256: text('image_sha256').notNull(), // names the call's fixture, like a photo hash
 });
 
-export const garment = pgTable('garment', {
-  id: id(),
-  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
-  catalogSku: text('catalog_sku').notNull().references(() => catalogItem.sku),
-  savedAt: timestamp('saved_at').notNull().defaultNow(),
-});
+export const garment = pgTable(
+  'garment',
+  {
+    id: id(),
+    profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+    catalogSku: text('catalog_sku').notNull().references(() => catalogItem.sku),
+    savedAt: timestamp('saved_at').notNull().defaultNow(),
+  },
+  // Saving a piece twice keeps the first save.
+  (t) => [uniqueIndex('garment_profile_sku').on(t.profileId, t.catalogSku)],
+);
 
 export const shareLink = pgTable('share_link', {
   id: id(),

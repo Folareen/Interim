@@ -1,6 +1,8 @@
 import { createHash, randomUUID } from 'node:crypto';
 import {
   type Db,
+  catalogItem,
+  garment,
   measurement,
   photo,
   profile,
@@ -10,11 +12,21 @@ import {
   snapshot,
   stageCard,
 } from '@interim/db';
-import { expiresAt, hairTransferFallback, measurementsDue, placeStage, strategyTools, toolEligibility } from '@interim/rules';
+import {
+  type SavedPiece,
+  expiresAt,
+  hairTransferFallback,
+  measurementsDue,
+  placeStage,
+  shoppingAdvice,
+  strategyTools,
+  toolEligibility,
+} from '@interim/rules';
 import { type Look, looksByStrategy, messages, templates } from '@interim/templates';
 import {
   type CaptureProblem,
   type ChangeReport,
+  type GarmentCategory,
   type MeasureTool,
   type MeasuredValue,
   type PhotoKind,
@@ -23,6 +35,8 @@ import {
   type StageCard,
   type Strategy,
   type TraceReason,
+  garmentCategorySchema,
+  garmentFitSchema,
   liveLocaleSchema,
   measureTools,
   measuredValueSchema,
@@ -30,7 +44,7 @@ import {
   templateKeySchema,
 } from '@interim/types';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { and, asc, desc, eq, ne } from 'drizzle-orm';
+import { and, asc, desc, eq, isNotNull, ne } from 'drizzle-orm';
 import { z } from 'zod';
 import { DB } from '../db/db.token';
 import { LedgerService } from '../ledger/ledger.service';
@@ -45,6 +59,8 @@ import { TraceWriter } from './trace';
 /** Most previews one run makes. The spec asks for two to four, and the budget bounds it first. */
 const MAX_RENDERS = 3;
 const MAX_EARLIER_LOOKS = 2;
+/** Most saved pieces shown on the body photo in one run, so clothes cannot use the whole budget. */
+const MAX_GARMENT_RENDERS = 4;
 // How strongly a brow preview applies its colour, out of 100.
 const BROW_INTENSITY = 60;
 
@@ -78,6 +94,13 @@ interface Reading {
   value: MeasuredValue;
   reliable: boolean;
   at: Date;
+}
+
+/** A piece the person saved, with what the try on and the size rule need from the catalog. */
+interface SavedGarment extends SavedPiece {
+  category: GarmentCategory;
+  imageKey: string;
+  imageSha256: string;
 }
 
 /** A call that ended the run, rather than a tool that was merely unavailable. */
@@ -182,15 +205,22 @@ export class AgentService {
     const facts = this.facts(ctx, readings, history.baselineSnapshotId);
     const plan = await this.decide(ctx, placed.stageKey, history.previousStage, facts, hasDensity);
 
-    const act = await this.act(ctx, plan.strategy, hasDensity);
+    const pieces = await this.savedGarments(ctx);
+    const act = await this.act(ctx, plan.strategy, hasDensity, pieces);
     if (act.fatal) return this.end(ctx, act.fatal);
 
-    if (ctx.retake && act.options.length === 0 && facts.every((f) => f.tool === 'self_report')) {
+    if (ctx.retake && act.options.length === 0 && act.clothes.length === 0 && facts.every((f) => f.tool === 'self_report')) {
       await ctx.trace.add('stop', 'stopped_retake');
       await this.db.update(run).set({ retake: ctx.retake }).where(eq(run.id, ctx.run.id));
       return this.finish(ctx, 'failed', 'stopped_retake');
     }
-    await this.compose(ctx, placed.stageKey, history.previousStage, facts, plan, act.options);
+    const advice = shoppingAdvice({
+      stage: placed.stageKey,
+      buyStages: ctx.template.buyStages,
+      reportedSize: ctx.report?.reportedSize ?? undefined,
+      pieces,
+    });
+    await this.compose(ctx, placed.stageKey, history.previousStage, facts, plan, { options: act.options, clothes: act.clothes, ...advice });
   }
 
   // ---- what is already known ----
@@ -251,6 +281,25 @@ export class AgentService {
       value: measuredValueSchema.parse(m.value),
       reliable: m.reliable,
       at: m.createdAt,
+    }));
+  }
+
+  /** The pieces the person saved, oldest first. A situation that does not use fit has none to show. */
+  private async savedGarments(ctx: RunContext): Promise<SavedGarment[]> {
+    if (!ctx.template.usesFit) return [];
+    const rows = await this.db
+      .select({ item: catalogItem })
+      .from(garment)
+      .innerJoin(catalogItem, eq(catalogItem.sku, garment.catalogSku))
+      .where(eq(garment.profileId, ctx.profile.id))
+      .orderBy(asc(garment.savedAt), asc(garment.id));
+    return rows.map(({ item }) => ({
+      sku: item.sku,
+      category: garmentCategorySchema.parse(item.category),
+      fit: garmentFitSchema.parse(item.fit),
+      sizeChart: sizeChartSchema.parse(item.sizeChart),
+      imageKey: item.imageKey,
+      imageSha256: item.imageSha256,
     }));
   }
 
@@ -471,7 +520,7 @@ export class AgentService {
 
   // ---- act ----
 
-  private async act(ctx: RunContext, chosen: Strategy, hasDensity: boolean) {
+  private async act(ctx: RunContext, chosen: Strategy, hasDensity: boolean, pieces: readonly SavedGarment[]) {
     const options: StageCard['options'] = [];
     let fatal: Fatal | undefined;
     const front = ctx.photos.get('front');
@@ -497,8 +546,94 @@ export class AgentService {
       }
     }
 
-    if (options.length === 0 && !fatal) await this.addEarlierLooks(ctx, options);
-    return { options, fatal };
+    if (fatal) return { options, clothes: [], fatal };
+
+    if (options.length === 0) await this.addEarlierLooks(ctx, options);
+    // Saved clothes follow no strategy: a fit template shows them at every check in (spec section 8, step 5).
+    const worn = await this.tryOnClothes(ctx, pieces);
+    return { options, clothes: worn.clothes, fatal: worn.fatal };
+  }
+
+  /** Shows each saved piece on the body photo, up to `MAX_GARMENT_RENDERS`. A piece YouCam cannot show on this photo is skipped alone. */
+  private async tryOnClothes(
+    ctx: RunContext,
+    pieces: readonly SavedGarment[],
+  ): Promise<{ clothes: StageCard['clothes']; fatal?: Fatal }> {
+    const clothes: StageCard['clothes'] = [];
+    if (pieces.length === 0) return { clothes };
+    const body = ctx.photos.get('body');
+    if (!body) {
+      // Rule 9: a body photo that passed the capture checks is what clothes are shown on.
+      await this.noteBlocked(ctx, 'act', 'cloth_v4', 'blocked_photo');
+      return { clothes };
+    }
+    let missingNoted = false;
+
+    for (const piece of pieces.slice(0, MAX_GARMENT_RENDERS)) {
+      if (ctx.retake) break;
+      const inputHash = createHash('sha256').update(`${body.sha256}:${piece.sku}:${piece.imageSha256}`).digest('hex');
+      const [existing] = await this.db
+        .select({ id: render.id })
+        .from(render)
+        .where(and(eq(render.snapshotId, ctx.snapshot.id), eq(render.inputHash, inputHash)));
+      if (existing) {
+        clothes.push({ renderId: existing.id, sku: piece.sku });
+        continue;
+      }
+
+      const eligible = toolEligibility('cloth_v4', priceOf('cloth_v4'), { ...this.eligibility(ctx, false), remainingUnits: ctx.remaining });
+      if (!eligible.allowed) {
+        // What refuses one piece, budget or a blocked tool, refuses every piece after it.
+        await this.noteBlocked(ctx, 'act', 'cloth_v4', eligible.reason);
+        break;
+      }
+
+      const renderId = randomUUID();
+      const imageKey = `renders/${ctx.profile.id}/${ctx.snapshot.id}/${renderId}.jpg`;
+      const context: CallContext = {
+        ...this.budgetOf(ctx),
+        photos: [
+          { objectKey: body.objectKey, sha256: body.sha256 },
+          { objectKey: piece.imageKey, sha256: piece.imageSha256 },
+        ],
+      };
+      const outcome = await this.gateway.render(context, 'cloth_v4', imageKey, { garment: piece.sku, category: piece.category }, (ids) => ({
+        src_file_id: ids[0] ?? '',
+        ref_file_id: ids[1] ?? '',
+        garment_category: piece.category,
+      }));
+      if (outcome.kind === 'image') {
+        await this.db.insert(render).values({
+          id: renderId,
+          snapshotId: ctx.snapshot.id,
+          tool: 'cloth_v4',
+          garmentSku: piece.sku,
+          inputHash,
+          objectKey: outcome.objectKey,
+          label: 'preview',
+          expiresAt: expiresAt(ctx.profile.retention, ctx.snapshot.takenAt),
+        });
+        clothes.push({ renderId, sku: piece.sku });
+        await ctx.trace.add('act', outcome.reused ? 'reused' : 'rendered', { tool: 'cloth_v4', costUnits: outcome.units });
+        ctx.remaining = await this.ledger.remaining(this.budgetOf(ctx));
+        continue;
+      }
+      if (outcome.kind === 'not_recorded') {
+        // Each piece is its own call, so one missing answer says nothing about the next.
+        if (!missingNoted) await ctx.trace.add('act', 'not_recorded', { tool: 'cloth_v4' });
+        missingNoted = true;
+        continue;
+      }
+      if (outcome.kind === 'blocked' && outcome.reason === 'blocked_tool') {
+        // This piece cannot be shown on this photo; another may. The tool itself stays open.
+        await ctx.trace.add('act', 'blocked_tool', { tool: 'cloth_v4' });
+        continue;
+      }
+      const fatal = await this.handleFailure(ctx, 'act', 'cloth_v4', outcome);
+      if (fatal) return { clothes, fatal };
+      if (outcome.kind === 'blocked') break;
+    }
+    return { clothes };
   }
 
   private async renderStrategy(
@@ -578,11 +713,14 @@ export class AgentService {
       .select({ id: render.id, tool: render.tool, strategy: render.strategy, objectKey: render.objectKey })
       .from(render)
       .innerJoin(snapshot, eq(snapshot.id, render.snapshotId))
-      .where(and(eq(snapshot.profileId, ctx.profile.id), ne(render.snapshotId, ctx.snapshot.id)))
+      // Clothes renders have no strategy and are shown from the saved pieces, not as earlier looks.
+      .where(and(eq(snapshot.profileId, ctx.profile.id), ne(render.snapshotId, ctx.snapshot.id), isNotNull(render.strategy)))
       .orderBy(desc(snapshot.takenAt))
       .limit(10);
     const kept = earlier.filter((r) => r.objectKey !== null).slice(0, MAX_EARLIER_LOOKS);
-    for (const r of kept) options.push({ renderId: r.id, tool: r.tool, strategy: r.strategy, label: 'earlier_look' });
+    for (const r of kept) {
+      if (r.strategy) options.push({ renderId: r.id, tool: r.tool, strategy: r.strategy, label: 'earlier_look' });
+    }
     if (kept.length > 0) await ctx.trace.add('act', 'earlier_look');
   }
 
@@ -594,7 +732,7 @@ export class AgentService {
     previousStage: string | null,
     facts: Fact[],
     plan: { strategy: Strategy; citation: string; note: string; source: 'model' | 'fixture' | 'fallback' },
-    options: StageCard['options'],
+    shown: Pick<StageCard, 'options' | 'clothes' | 'shoppingList' | 'holdOffBuying'>,
   ): Promise<void> {
     const locale = liveLocaleSchema.parse(ctx.profile.locale);
     const note = plan.note.replace(/\{m:([^{}]*)\}/g, (_, ref: string) => {
@@ -619,8 +757,7 @@ export class AgentService {
         measuredAt: f.measuredAt.toISOString(),
         current: f.current,
       })),
-      options,
-      holdOffBuying: [],
+      ...shown,
       whatToSay: ctx.snapshot.moment ? messages[locale].whatToSay[ctx.snapshot.moment] : [],
       trace: await ctx.trace.lines(),
       sensitive: ctx.template.sensitive,
@@ -671,6 +808,8 @@ export class AgentService {
       templateKey: ctx.template.key,
       headCovering: ctx.profile.headCovering,
       hasDensity,
+      usesFit: ctx.template.usesFit,
+      hasBodyPhoto: ctx.photos.has('body'),
       blockedTools: ctx.blocked,
       remainingUnits: ctx.remaining,
     };
@@ -706,6 +845,8 @@ interface History {
 }
 
 const measureToolSchema = z.enum(measureTools);
+// A partial map: a size the piece is not made in is absent, and the rule reads that as not offered.
+const sizeChartSchema = z.partialRecord(sizeSchema, z.string());
 
 function priceOf(tool: MeasureTool | RenderTool): number {
   const price = unitCosts[tool];

@@ -118,7 +118,8 @@
     "deleting": "Eliminazione…",
     "editAction": "Cambia le mie scelte",
     "startAction": "Inizia un controllo",
-    "cardAction": "Vedi la mia ultima scheda"
+    "cardAction": "Vedi la mia ultima scheda",
+    "clothesAction": "Scegli i vestiti da provare"
   },
   "reflect": {
     "title": "Riflessione",
@@ -432,7 +433,8 @@
     "hair_volume": "anteprima di volume",
     "hair_color": "anteprima di colore",
     "beard_style": "anteprima di barba",
-    "makeup_brows": "anteprima di sopracciglia"
+    "makeup_brows": "anteprima di sopracciglia",
+    "cloth_v4": "anteprima di capo"
   },
   "stages": {
     "full": "Pieno",
@@ -503,6 +505,32 @@
     "approving": "Approvazione…",
     "approved": "Approvata il {date}",
     "toneAction": "Cambia il mio tono",
-    "backAction": "Torna al mio profilo"
+    "backAction": "Torna al mio profilo",
+    "clothesTitle": "I tuoi vestiti sulla tua foto",
+    "clothesIntro": "Anteprime dei capi che hai salvato, mostrate sulla tua foto di questo controllo. Un’anteprima non promette come ti starà un capo.",
+    "clothesAlt": "Anteprima di {item} sulla tua foto",
+    "clothesEmpty": "Salva dei vestiti e compariranno qui al prossimo controllo.",
+    "shoppingTitle": "Lista degli acquisti",
+    "shoppingIntro": "Le taglie vengono dalla taglia che ci hai indicato e dalla tabella taglie di ogni negozio, non dalle anteprime.",
+    "shoppingLine": "{item}: taglia {size}",
+    "holdTitle": "Meglio non comprare ancora",
+    "holdReasons": {
+      "size_moving": "La tua taglia si sta ancora assestando: aspetta prima di comprare un capo sagomato.",
+      "size_unknown": "Dicci la tua taglia al prossimo controllo e la sceglieremo.",
+      "size_not_offered": "Il negozio non lo ha nella tua taglia."
+    }
+  },
+  "clothes": {
+    "title": "Vestiti da provare",
+    "intro": "Salva i capi a cui stai pensando. A ogni controllo vengono mostrati sulla tua foto, con una taglia dalla tabella taglie del negozio.",
+    "saveAction": "Salva {item}",
+    "removeAction": "Rimuovi {item}",
+    "saved": "Salvato"
+  },
+  "garments": {
+    "tee-crew": "T-shirt girocollo",
+    "shirt-oxford": "Camicia oxford",
+    "jumper-knit": "Maglione in maglia",
+    "jacket-light": "Giacca leggera"
   }
 }

@@ -2,6 +2,7 @@ import {
   type AuthConfig,
   type CardSummary,
   type CardView,
+  type GarmentItem,
   type Me,
   type Preferences,
   type Profile,
@@ -10,6 +11,7 @@ import {
   authConfigSchema,
   cardSummaryListSchema,
   cardViewSchema,
+  garmentListSchema,
   meSchema,
   preferencesSchema,
   profileListSchema,
@@ -114,4 +116,15 @@ export async function getReflections(profileId: string): Promise<ReflectionsView
   if (response.status === 404 || response.status === 400 || response.status === 401 || response.status === 403) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return reflectionsViewSchema.parse(await response.json());
+}
+
+/** The sample catalog with the pieces the profile saved marked, or undefined when the profile is not the person's or does not use clothes. */
+export async function getGarments(profileId: string): Promise<GarmentItem[] | undefined> {
+  const response = await fetch(`${apiOrigin}/profiles/${encodeURIComponent(profileId)}/garments`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if ([400, 401, 403, 404, 409].includes(response.status)) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return garmentListSchema.parse(await response.json());
 }

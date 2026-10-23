@@ -1,4 +1,4 @@
-import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
+import { type Db, consentEvent, deletionRequest, garment, photo, profile, render, snapshot } from '@interim/db';
 import { CONSENT_VERSION, expiresAt, hasCurrentConsent } from '@interim/rules';
 import { templates, wordsForDay } from '@interim/templates';
 import { liveLocaleSchema } from '@interim/types';
@@ -184,7 +184,8 @@ export class ProfilesService {
       .where(eq(consentEvent.profileId, id))
       .orderBy(consentEvent.createdAt);
     const preferences = await this.preferences(id, owner);
-    return { exportedAt: new Date(), profile: current, preferences, consentEvents };
+    const garments = await this.db.select({ sku: garment.catalogSku, savedAt: garment.savedAt }).from(garment).where(eq(garment.profileId, id));
+    return { exportedAt: new Date(), profile: current, preferences, consentEvents, garments };
   }
 }
 

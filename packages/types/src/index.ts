@@ -333,7 +333,7 @@ export const measureTools = ['hair_type', 'hair_density', 'hair_length', 'face_s
 export type MeasureTool = (typeof measureTools)[number];
 
 /** The tools that make previews. */
-export const renderTools = ['hairstyle', 'hair_volume', 'hair_color', 'beard_style', 'makeup_brows'] as const;
+export const renderTools = ['hairstyle', 'hair_volume', 'hair_color', 'beard_style', 'makeup_brows', 'cloth_v4'] as const;
 export type RenderTool = (typeof renderTools)[number];
 
 /**
@@ -370,6 +370,21 @@ export const traceReasonSchema = z.enum([
   'stopped_error',
 ]);
 export type TraceReason = z.infer<typeof traceReasonSchema>;
+
+/** Where a sample catalog piece sits on the body, which is what YouCam's clothes tool is told to replace. */
+export const garmentCategorySchema = z.enum(['upper_body', 'outer']);
+export type GarmentCategory = z.infer<typeof garmentCategorySchema>;
+
+/**
+ * How a piece is cut. A fitted piece waits while the person's size is still moving, and a relaxed
+ * one can be bought at today's size (docs/product/spec.md section 4, the hold or buy rule).
+ */
+export const garmentFitSchema = z.enum(['relaxed', 'fitted']);
+export type GarmentFit = z.infer<typeof garmentFitSchema>;
+
+/** Why a saved piece is on the hold off buying list. A code, so the web app can say it in the person's language. */
+export const holdReasonSchema = z.enum(['size_moving', 'size_unknown', 'size_not_offered']);
+export type HoldReason = z.infer<typeof holdReasonSchema>;
 
 /** The seven steps of one run (docs/product/spec.md section 8). */
 export const agentStepSchema = z.enum(['observe', 'measure', 'place', 'decide', 'act', 'compose', 'stop']);
@@ -454,7 +469,12 @@ export const stageCardSchema = z.object({
       label: optionLabelSchema,
     }),
   ),
-  holdOffBuying: z.array(z.object({ item: z.string(), reason: z.string() })),
+  /** Saved clothes shown on the body photo from this check in. */
+  clothes: z.array(z.object({ renderId: z.string().uuid(), sku: z.string() })).default([]),
+  /** Saved pieces to buy now. `size` is the label the catalog's size chart gives the reported size, never read from a render. */
+  shoppingList: z.array(z.object({ sku: z.string(), size: z.string() })).default([]),
+  /** Saved pieces to wait on. `item` is the catalog sku. */
+  holdOffBuying: z.array(z.object({ item: z.string(), reason: holdReasonSchema })),
   whatToSay: z.array(z.string()),
   trace: z.array(traceLineSchema),
   /** Shows the professional line and the link to someone to talk to. */
@@ -472,6 +492,8 @@ export const cardViewSchema = z.object({
   renderUrls: z.record(z.string(), z.string().url()),
   /** The photo this check in was taken from, for the show my photo toggle. Null once it has expired. */
   photoUrl: z.string().url().nullable(),
+  /** The body photo the saved clothes are shown on. Null when there is none or it has expired. */
+  bodyPhotoUrl: z.string().url().nullable(),
 });
 export type CardView = z.infer<typeof cardViewSchema>;
 
@@ -479,6 +501,17 @@ export type CardView = z.infer<typeof cardViewSchema>;
 export const cardSummarySchema = z.object({ id: z.string().uuid(), takenAt: z.string(), stageKey: z.string() });
 export type CardSummary = z.infer<typeof cardSummarySchema>;
 export const cardSummaryListSchema = z.array(cardSummarySchema);
+
+/** One piece of the sample catalog as `GET /profiles/:id/garments` lists it. Names live in the message catalogs, keyed by sku. */
+export const garmentItemSchema = z.object({
+  sku: z.string(),
+  category: garmentCategorySchema,
+  fit: garmentFitSchema,
+  saved: z.boolean(),
+  imageUrl: z.string().url(),
+});
+export type GarmentItem = z.infer<typeof garmentItemSchema>;
+export const garmentListSchema = z.array(garmentItemSchema);
 
 /** An email address as sign-in uses it: trimmed, lower case, and short enough for the database. */
 export const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email());

@@ -118,7 +118,8 @@
     "deleting": "Suppression…",
     "editAction": "Modifier mes choix",
     "startAction": "Commencer un suivi",
-    "cardAction": "Voir ma dernière carte"
+    "cardAction": "Voir ma dernière carte",
+    "clothesAction": "Choisir des vêtements à essayer"
   },
   "reflect": {
     "title": "Réflexion",
@@ -432,7 +433,8 @@
     "hair_volume": "aperçu de volume",
     "hair_color": "aperçu de couleur",
     "beard_style": "aperçu de barbe",
-    "makeup_brows": "aperçu de sourcils"
+    "makeup_brows": "aperçu de sourcils",
+    "cloth_v4": "aperçu de vêtement"
   },
   "stages": {
     "full": "Complet",
@@ -503,6 +505,32 @@
     "approving": "Approbation…",
     "approved": "Approuvée le {date}",
     "toneAction": "Changer mon ton",
-    "backAction": "Retour à mon profil"
+    "backAction": "Retour à mon profil",
+    "clothesTitle": "Vos vêtements sur votre photo",
+    "clothesIntro": "Aperçus des pièces enregistrées, montrés sur votre photo de ce suivi. Un aperçu ne promet pas la façon dont une pièce vous ira.",
+    "clothesAlt": "Aperçu de {item} sur votre photo",
+    "clothesEmpty": "Enregistrez des vêtements et ils apparaîtront ici à votre prochain suivi.",
+    "shoppingTitle": "Liste d’achats",
+    "shoppingIntro": "Les tailles viennent de la taille que vous avez indiquée et du guide des tailles de chaque boutique, pas des aperçus.",
+    "shoppingLine": "{item} : taille {size}",
+    "holdTitle": "À ne pas acheter pour l’instant",
+    "holdReasons": {
+      "size_moving": "Votre taille se stabilise encore : attendez avant d’acheter une pièce ajustée.",
+      "size_unknown": "Indiquez-nous votre taille à votre prochain suivi et nous trouverons la bonne.",
+      "size_not_offered": "La boutique ne la propose pas dans votre taille."
+    }
+  },
+  "clothes": {
+    "title": "Vêtements à essayer",
+    "intro": "Enregistrez les pièces auxquelles vous pensez. À chaque suivi, elles sont montrées sur votre photo, avec une taille tirée du guide des tailles de la boutique.",
+    "saveAction": "Enregistrer {item}",
+    "removeAction": "Retirer {item}",
+    "saved": "Enregistré"
+  },
+  "garments": {
+    "tee-crew": "T-shirt col rond",
+    "shirt-oxford": "Chemise oxford",
+    "jumper-knit": "Pull en maille",
+    "jacket-light": "Veste légère"
   }
 }

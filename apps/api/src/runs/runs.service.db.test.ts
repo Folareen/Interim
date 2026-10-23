@@ -51,6 +51,8 @@ const card = (renderId: string): StageCard => ({
   companionNote: { text: 'A short note.', tone: 'warm', moment: null, fixed: false },
   changes: [],
   options: [{ renderId, tool: 'hairstyle', strategy: 'cut', label: 'preview' }],
+  clothes: [],
+  shoppingList: [],
   holdOffBuying: [],
   whatToSay: [],
   trace: [],
@@ -158,7 +160,18 @@ describe('the card', () => {
     expect(view.card.stageKey).toBe('full');
     expect(view.renderUrls[f.renderId]).toContain(f.key);
     expect(view.photoUrl).toContain('front.jpg');
+    expect(view.bodyPhotoUrl).toBeNull();
     expect(view.approvedAt).toBeNull();
+  });
+
+  it('reads a card stored before clothes were added, with none shown', async () => {
+    const f = await finished();
+    const older: Partial<StageCard> = card(f.renderId);
+    delete older.clothes;
+    delete older.shoppingList;
+    await db.update(stageCard).set({ card: older }).where(eq(stageCard.id, f.cardId));
+    const view = await service.card(f.cardId, alice);
+    expect(view.card).toMatchObject({ clothes: [], shoppingList: [], holdOffBuying: [] });
   });
 
   it('leaves out the link of a render whose image has expired, and keeps the card', async () => {

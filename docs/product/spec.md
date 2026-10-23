@@ -39,7 +39,7 @@ A template is configuration, not code. Each template defines:
 * ordered list of stages with the measurement thresholds that place a person in each one
 * check in cadence, a minimum gap between runs, and how many check ins may pass before measurements are taken again (`remeasure_every`, default 3)
 * per stage list of allowed tools and the fallback order when one is not allowed
-* a hold or buy rule for garments, where the template uses fit
+* a hold or buy rule for garments, where the template uses fit: `buyStages`, the stages in which a fitted piece can be bought. In any other stage the size is still moving, so a fitted piece waits and a relaxed one can be bought at today's size
 * a unit budget per run
 * whether the situation is sensitive (drives the professional line, the link to someone to talk to and the body image rules)
 * whether body photos are on by default (off for after_surgery until the person turns them on)
@@ -176,7 +176,8 @@ Fields:
 * what changed, each line with the measurement and tool that produced it, or the word "reported" for self reported size, and the date it was last measured
 * options, each with a render, a short reason and a label saying preview
 * what to hold off buying, with the reason
-* shopping list with sizes. The size comes from the reported size and the catalog size chart. A render is a preview and never a fit guarantee.
+* shopping list with sizes. The size comes from the reported size and the catalog size chart. A render is a preview and never a fit guarantee. A piece with no reported size yet, or that the catalog does not make in that size, goes under what to hold off buying instead, with that reason
+* the saved clothes shown on this check in's body photo, for templates that use fit
 * trace summary (what the agent decided and why)
 * what to say, two or three fixed lines, shown only for moments with other people
 * one line suggesting a professional for health questions and a link to someone to talk to, shown only on sensitive situations

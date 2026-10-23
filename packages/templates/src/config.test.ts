@@ -22,6 +22,12 @@ describe('template config', () => {
     }
   });
 
+  it.each(templateKeys)('%s sets buy stages only where it uses fit, and only stages it has', (key) => {
+    const { buyStages, stages, usesFit } = templates[key];
+    expect(buyStages.length > 0, key).toBe(usesFit);
+    for (const stage of buyStages) expect(stages, `${key} buys in ${stage}`).toContain(stage);
+  });
+
   it('offers volume only where density is tracked', () => {
     for (const key of templateKeys) {
       const { strategies, tracks } = templates[key];

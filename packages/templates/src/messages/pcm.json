@@ -118,7 +118,8 @@
     "deleting": "Dey delete…",
     "editAction": "Change my choices",
     "startAction": "Start check in",
-    "cardAction": "See my latest card"
+    "cardAction": "See my latest card",
+    "clothesAction": "Pick clothes to try on"
   },
   "reflect": {
     "title": "Reflection",
@@ -432,7 +433,8 @@
     "hair_volume": "volume preview",
     "hair_color": "colour preview",
     "beard_style": "beard preview",
-    "makeup_brows": "eyebrow preview"
+    "makeup_brows": "eyebrow preview",
+    "cloth_v4": "clothes preview"
   },
   "stages": {
     "full": "Full",
@@ -503,6 +505,32 @@
     "approving": "Dey approve…",
     "approved": "We approve am on {date}",
     "toneAction": "Change my tone",
-    "backAction": "Go back to my profile"
+    "backAction": "Go back to my profile",
+    "clothesTitle": "Your clothes for your photo",
+    "clothesIntro": "Dis na preview of di clothes wey you save, for your photo from dis check in. Preview no promise how di cloth go sit on you.",
+    "clothesAlt": "Preview of {item} for your photo",
+    "clothesEmpty": "Save some clothes and dem go show here for your next check in.",
+    "shoppingTitle": "Shopping list",
+    "shoppingIntro": "Di sizes come from di size wey you tell us and di shop size chart, no be from di previews.",
+    "shoppingLine": "{item}: size {size}",
+    "holdTitle": "Hold on before you buy",
+    "holdReasons": {
+      "size_moving": "Your size still dey settle, so wait before you buy fitted cloth.",
+      "size_unknown": "Tell us your size for your next check in and we go pick am.",
+      "size_not_offered": "Di shop no get am for your size."
+    }
+  },
+  "clothes": {
+    "title": "Clothes to try on",
+    "intro": "Save di clothes wey you dey think to buy. For every check in, dem go show for your photo, with size from di shop size chart.",
+    "saveAction": "Save {item}",
+    "removeAction": "Remove {item}",
+    "saved": "Don save"
+  },
+  "garments": {
+    "tee-crew": "Round neck tee",
+    "shirt-oxford": "Oxford shirt",
+    "jumper-knit": "Knit jumper",
+    "jacket-light": "Light jacket"
   }
 }

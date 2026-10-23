@@ -118,7 +118,8 @@
     "deleting": "Deleting…",
     "editAction": "Change my choices",
     "startAction": "Start a check in",
-    "cardAction": "See my latest card"
+    "cardAction": "See my latest card",
+    "clothesAction": "Choose clothes to try on"
   },
   "reflect": {
     "title": "Reflection",
@@ -432,7 +433,8 @@
     "hair_volume": "volume preview",
     "hair_color": "colour preview",
     "beard_style": "beard preview",
-    "makeup_brows": "brow preview"
+    "makeup_brows": "brow preview",
+    "cloth_v4": "clothes preview"
   },
   "stages": {
     "full": "Full",
@@ -503,6 +505,32 @@
     "approving": "Approving…",
     "approved": "Approved on {date}",
     "toneAction": "Change my tone",
-    "backAction": "Back to my profile"
+    "backAction": "Back to my profile",
+    "clothesTitle": "Your clothes on your photo",
+    "clothesIntro": "Previews of the pieces you saved, shown on your photo from this check in. A preview does not promise how a piece will fit.",
+    "clothesAlt": "Preview of {item} on your photo",
+    "clothesEmpty": "Save some clothes and they will show here at your next check in.",
+    "shoppingTitle": "Shopping list",
+    "shoppingIntro": "Sizes come from the size you told us and each shop’s size chart, not from the previews.",
+    "shoppingLine": "{item}: size {size}",
+    "holdTitle": "Hold off buying",
+    "holdReasons": {
+      "size_moving": "Your size is still settling, so wait before buying a fitted piece.",
+      "size_unknown": "Tell us your size at your next check in and we will size it.",
+      "size_not_offered": "The shop does not make it in your size."
+    }
+  },
+  "clothes": {
+    "title": "Clothes to try on",
+    "intro": "Save the pieces you are thinking about. At each check in they are shown on your photo, with a size from the shop’s size chart.",
+    "saveAction": "Save {item}",
+    "removeAction": "Remove {item}",
+    "saved": "Saved"
+  },
+  "garments": {
+    "tee-crew": "Crew neck tee",
+    "shirt-oxford": "Oxford shirt",
+    "jumper-knit": "Knit jumper",
+    "jacket-light": "Light jacket"
   }
 }

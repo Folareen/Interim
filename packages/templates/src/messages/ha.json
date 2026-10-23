@@ -118,7 +118,8 @@
     "deleting": "Ana sharewa…",
     "editAction": "Canza zaɓuɓɓana",
     "startAction": "Fara dubawa",
-    "cardAction": "Duba katina na ƙarshe"
+    "cardAction": "Duba katina na ƙarshe",
+    "clothesAction": "Zaɓi tufafi da za a gwada"
   },
   "reflect": {
     "title": "Tunani",
@@ -432,7 +433,8 @@
     "hair_volume": "samfotin yalwar gashi",
     "hair_color": "samfotin launi",
     "beard_style": "samfotin gemu",
-    "makeup_brows": "samfotin gira"
+    "makeup_brows": "samfotin gira",
+    "cloth_v4": "samfotin tufafi"
   },
   "stages": {
     "full": "Cikakke",
@@ -503,6 +505,32 @@
     "approving": "Ana amincewa…",
     "approved": "An amince a {date}",
     "toneAction": "Canja yanayina",
-    "backAction": "Koma bayanina"
+    "backAction": "Koma bayanina",
+    "clothesTitle": "Tufafinka a hotonka",
+    "clothesIntro": "Samfoti ne na tufafin da ka adana, a hotonka na wannan dubawa. Samfoti ba ya alƙawarin yadda tufa za ta zauna a jikinka.",
+    "clothesAlt": "Samfotin {item} a hotonka",
+    "clothesEmpty": "Adana wasu tufafi, za su bayyana a nan a dubawa na gaba.",
+    "shoppingTitle": "Jerin sayayya",
+    "shoppingIntro": "Girman yana fitowa daga girman da ka gaya mana da teburin girma na kowane shago, ba daga samfoti ba.",
+    "shoppingLine": "{item}: girman {size}",
+    "holdTitle": "Ka jira kafin saye",
+    "holdReasons": {
+      "size_moving": "Girmanka yana ci gaba da daidaitawa, don haka ka jira kafin ka sayi tufa mai takamaiman awo.",
+      "size_unknown": "Gaya mana girmanka a dubawa na gaba, mu zaɓa maka.",
+      "size_not_offered": "Shagon ba shi da ita da girmanka."
+    }
+  },
+  "clothes": {
+    "title": "Tufafin da za a gwada",
+    "intro": "Adana tufafin da kake tunanin saye. A kowane dubawa, za a nuna su a hotonka, tare da girman daga teburin girma na shagon.",
+    "saveAction": "Adana {item}",
+    "removeAction": "Cire {item}",
+    "saved": "An adana"
+  },
+  "garments": {
+    "tee-crew": "Riga mai wuya zagaye",
+    "shirt-oxford": "Rigar oxford",
+    "jumper-knit": "Sweta ta saƙa",
+    "jacket-light": "Jaket mai sauƙi"
   }
 }

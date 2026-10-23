@@ -10,6 +10,10 @@ export interface EligibilityContext {
   headCovering: boolean;
   /** A reliable density reading exists for this person, which hair volume previews need. */
   hasDensity: boolean;
+  /** The situation uses fit, so saved clothes are shown. */
+  usesFit: boolean;
+  /** This snapshot has a body photo, which passed the capture checks when it was stored. */
+  hasBodyPhoto: boolean;
   /** Tools the capture check refused, or that YouCam marked blocked, for this snapshot. */
   blockedTools: ReadonlySet<string>;
   /** Units left under the tightest cap that applies to this call. */
@@ -36,13 +40,16 @@ export function toolEligibility(tool: MeasureTool | RenderTool, cost: number, co
     return { allowed: false, reason: 'blocked_not_allowed' };
   }
   if (tool === 'hair_volume' && !context.hasDensity) return { allowed: false, reason: 'blocked_not_allowed' };
+  if (tool === 'cloth_v4' && !context.usesFit) return { allowed: false, reason: 'blocked_not_allowed' };
+  if (tool === 'cloth_v4' && !context.hasBodyPhoto) return { allowed: false, reason: 'blocked_photo' };
   if (cost > context.remainingUnits) return { allowed: false, reason: 'blocked_budget' };
   return { allowed: true };
 }
 
 /**
  * The tools a strategy renders with, in the order to try them. Hat and scarf try on are not used
- * (spec section 7, rule 6), so cover has no tool, and hold renders nothing.
+ * (spec section 7, rule 6), so cover has no tool, and hold renders nothing. Clothes follow no
+ * strategy: saved pieces are shown at every check in of a fit template.
  */
 export function strategyTools(strategy: Strategy, templateKey: TemplateKey): readonly RenderTool[] {
   switch (strategy) {
