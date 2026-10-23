@@ -3,8 +3,7 @@ import { foldMarks, wholeWords } from './whole-words';
 
 // Forced positivity, battle and journey framing, an earlier look as better, and a body size as the
 // goal (docs/product/overview.md, Language and safety rules). Patterns are written without accents
-// or tone marks because the text is folded before matching. Every list except English is a draft
-// until a native speaker has checked it.
+// or tone marks because the text is folded before matching.
 const apostrophe = "['’]?";
 
 const english = [

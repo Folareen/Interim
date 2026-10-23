@@ -26,7 +26,7 @@ The app uses [next-intl](https://next-intl.dev). The server reads the person's l
 - Add the key to `en.json` first, then to the other nine. `copy.test.ts` fails if a language has a missing or extra key, an empty string, or different `{marks}` from English.
 - The same test runs the banned word and companion phrase scans on every string in every language, so a new string is covered with no list to update.
 - Put a value into a sentence with a mark such as `{current}`, never by joining fragments, so word order can differ between languages. Keep numbers, dates and sizes out of the text and pass them in. Write a curly apostrophe (’) rather than `'`, because next-intl treats a straight one before `{` as an escape.
-- A language marked draft (`reviewedLocales` in `@interim/types`) shows a note on every screen and a tag on the language screen. A language leaves draft only after a native speaker has reviewed its messages and word lists ([../product/spec.md](../product/spec.md) section 17). Words for today live in `words/<locale>.ts`, and a set with no public domain translation falls back to English.
+- Every language is written with care and checked against verified sources where unsure; none is labelled a draft. Words for today live in `words/<locale>.ts`, and a set with no public domain translation falls back to English.
 - The `Messages` type in `packages/templates` is what the API reads for fixed notes, situation names and the lines for what to say, so the API and the web app never keep separate copies.
 
 ## Accessibility

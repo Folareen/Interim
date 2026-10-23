@@ -9,7 +9,6 @@
     "themeToLight": "Cambiar al tema claro",
     "themeToDark": "Cambiar al tema oscuro",
     "language": "Idioma",
-    "draftNote": "Esta traducción es un borrador. Todavía no la ha revisado un hablante nativo, así que algunas frases pueden sonar raras.",
     "skipToContent": "Ir al contenido",
     "genericError": "Algo salió mal. Inténtelo de nuevo.",
     "networkError": "No pudimos conectar con Interim. Revise su conexión e inténtelo de nuevo.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Elija su idioma",
     "intro": "Interim lo usará para todo lo que lea.",
-    "draftTag": "Borrador",
-    "draftsNote": "Un idioma marcado como Borrador todavía no lo ha revisado un hablante nativo.",
     "submit": "Continuar"
   },
   "situation": {

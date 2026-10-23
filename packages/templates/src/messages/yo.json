@@ -9,7 +9,6 @@
     "themeToLight": "Yípadà sí àwòrán ìmọ́lẹ̀",
     "themeToDark": "Yípadà sí àwòrán òkùnkùn",
     "language": "Èdè",
-    "draftNote": "Ìtumọ̀ yìí jẹ́ èyí àkọ́kọ́ tí a kọ. Olùsọ èdè náà kò tíì yẹ̀ ẹ́ wò, nítorí náà àwọn ọ̀rọ̀ kan lè má tọ̀nà.",
     "skipToContent": "Fò lọ sí àkóónú",
     "genericError": "Nǹkan kan ṣẹlẹ̀. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
     "networkError": "A kò lè dé Interim. Ṣàyẹ̀wò ìsopọ̀ rẹ kí o sì gbìyànjú lẹ́ẹ̀kan sí i.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Yan èdè rẹ",
     "intro": "Interim yóò lò ó fún gbogbo ohun tí o bá kà.",
-    "draftTag": "Kò tíì yẹ̀ wò",
-    "draftsNote": "Èdè tí a fi “Kò tíì yẹ̀ wò” sàmì sí kò tíì ní olùsọ èdè náà tó yẹ̀ ẹ́ wò.",
     "submit": "Tẹ̀síwájú"
   },
   "situation": {

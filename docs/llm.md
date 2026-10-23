@@ -9,6 +9,9 @@ Keep prompts in `apps/api/src/agent/prompts/` as versioned files (`planner.v1.ts
 
 Planner output is recorded to `PLANNER_FIXTURES_DIR` (`packages/fixtures/planner`) as `<prompt version>-<input hash>.json` and replayed from there, so replay mode never calls the model. A missing or stale recording is not an error: the run uses the fixed note for the tone. The model is called only in `live` or `record` mode with `LIVE_CALLS_ENABLED` and a key. Use the paid Gemini tier so inputs are not used for training. What the model receives is listed in [product/spec.md](product/spec.md) section 8.
 
+## Safety review
+The only free text the model sees is a reflection the plain check flagged (spec section 13). It gets that text and its language, nothing else, replies `concern`, `clear` or `unsure` as JSON parsed with zod, and may only raise a flag. A failure counts as `concern`. Record and replay it like the planner, so tests never call the model.
+
 ## Open
 - Confirm the model and its tool-calling reliability.
 - Token and cost budget per run.

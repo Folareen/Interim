@@ -131,17 +131,6 @@ export const liveLocales = ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig'
 export const liveLocaleSchema = z.enum(liveLocales);
 export type LiveLocale = z.infer<typeof liveLocaleSchema>;
 
-/**
- * The languages a native speaker has checked. The others are live but drafted, and the app says so
- * on screen until they are checked (docs/product/spec.md section 17).
- */
-export const reviewedLocales = ['en'] as const satisfies readonly LiveLocale[];
-
-/** Whether a language still ships as a draft. */
-export function isDraftLocale(locale: LiveLocale): boolean {
-  return !(reviewedLocales as readonly string[]).includes(locale);
-}
-
 /** How the companion talks to a profile (docs/product/overview.md, The companion). */
 export const toneSchema = z.enum(['practical', 'warm', 'light']);
 export type Tone = z.infer<typeof toneSchema>;

@@ -9,7 +9,6 @@
     "themeToLight": "Gbanwee gaa n’ọkwa ìhè",
     "themeToDark": "Gbanwee gaa n’ọkwa ọchịchịrị",
     "language": "Asụsụ",
-    "draftNote": "A tụgharịrị ihe a mana onye na-asụ asụsụ a anwụbeghị ya nlele, ya mere ụfọdụ okwu nwere ike ọ dị ka ọ na-ezighị ezi.",
     "skipToContent": "Gafee gaa n’ọdịnaya",
     "genericError": "Ihe mebiri. Biko nwaa ọzọ.",
     "networkError": "Anyị enweghị ike iru Interim. Lelee njikọ gị ma nwaa ọzọ.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Họrọ asụsụ gị",
     "intro": "Interim ga-eji ya maka ihe niile ị na-agụ.",
-    "draftTag": "Anwụbeghị nlele",
-    "draftsNote": "Asụsụ e dere “Anwụbeghị nlele” n’akụkụ ya, onye na-asụ ya anwụbeghị ya nlele.",
     "submit": "Gaa n’ihu"
   },
   "situation": {

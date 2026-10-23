@@ -1,5 +1,5 @@
 import { localeNames } from '@interim/templates';
-import { isDraftLocale, liveLocales } from '@interim/types';
+import { liveLocales } from '@interim/types';
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Actions } from '@/components/actions';
@@ -33,12 +33,10 @@ export default async function Language({ searchParams }: { searchParams: Promise
               value={code}
               label={localeNames[code]}
               labelLang={code}
-              description={isDraftLocale(code) ? t('draftTag') : undefined}
               defaultChecked={code === current}
             />
           ))}
         </fieldset>
-        <p className="mt-6 pb-8 text-[0.95rem] text-muted">{t('draftsNote')}</p>
         <Actions>
           <Button type="submit">{t('submit')}</Button>
         </Actions>

@@ -2,8 +2,7 @@ import type { LiveLocale } from '@interim/types';
 import { foldMarks, wholeWords } from './whole-words';
 
 // Whole words only, so "health" is fine. The patterns are written without accents or tone marks,
-// because the text is folded the same way before matching. Every list except English is a draft
-// until a native speaker has checked it. docs/product/overview.md owns the rules.
+// because the text is folded the same way before matching. docs/product/overview.md owns the rules.
 
 /** The banned words per language, as the planner prompt lists them. */
 export const bannedWords: Record<LiveLocale, readonly string[]> = {

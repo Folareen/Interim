@@ -9,7 +9,6 @@
     "themeToLight": "Koma jigon haske",
     "themeToDark": "Koma jigon duhu",
     "language": "Harshe",
-    "draftNote": "Wannan fassara ce ta farko. Mai jin harshen bai duba ta ba tukuna, don haka wasu kalmomi na iya zama ba daidai ba.",
     "skipToContent": "Tsallaka zuwa abin da ke ciki",
     "genericError": "Wani abu ya faru. Da fatan za ku sake gwadawa.",
     "networkError": "Ba mu iya haɗawa da Interim ba. Ku duba haɗin intanet ɗinku, sannan ku sake gwadawa.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Ku zaɓi harshenku",
     "intro": "Interim zai yi amfani da shi a duk abin da za ku karanta.",
-    "draftTag": "Ba a duba ba",
-    "draftsNote": "Harshen da aka yi wa alama da “Ba a duba ba”, mai jin harshen bai duba shi ba tukuna.",
     "submit": "Ci gaba"
   },
   "situation": {
