@@ -91,6 +91,8 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **call_cache.** key (`<profile id>:<tool>:` plus the fixture key from the normalised photo hash, API version and parameters hash), profile_id (cascade), tool, outcome (success or blocked), result_ref (a measurement's result as JSON, or a render's object key). Transient failures are never cached. The profile is part of the key, so one person's result is never served to another.
 * **catalog_item.** sku, name, size chart (sample catalog).
 * **garment.** id, profile_id, catalog_sku, saved_at.
+* **reflection.** id, profile_id (cascade), text (encrypted), locale, safety (none, match or flagged), created_at.
+* **safety_review.** id, reflection_id (cascade), reason, verdict (pending, concern, clear or unsure), reviewed_at, dismissed_at. No email or profile data.
 * **share_link.** id, card_id, token_hash, expires_at, revoked_at.
 * **deletion_request.** id, requested_at, completed_at. Holds no profile reference.
 

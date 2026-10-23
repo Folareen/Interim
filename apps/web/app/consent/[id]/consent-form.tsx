@@ -22,7 +22,7 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
   const t = useTranslations('consent');
   const common = useTranslations('common');
   const router = useRouter();
-  const [retention, setRetention] = useState<Retention>();
+  const [retention, setRetention] = useState<Retention>('extended');
   const [confirmed, setConfirmed] = useState<Record<Confirmation, boolean>>({ store: false, youcam: false, google: false, own: false });
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string>();
