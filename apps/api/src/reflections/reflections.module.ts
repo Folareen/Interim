@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AgentModule } from '../agent/agent.module';
+import { ModelModule } from '../agent/model.module';
 import { SafetyReviewer } from '../agent/safety-reviewer';
 import { env } from '../config/env';
 import { GuardModule } from '../guard/guard.module';
@@ -9,7 +9,7 @@ import { BullSafetyQueue, SAFETY_QUEUE, SAFETY_REDIS_URL } from './safety.queue'
 import { SafetyWorker } from './safety.worker';
 
 @Module({
-  imports: [GuardModule, AgentModule],
+  imports: [GuardModule, ModelModule],
   controllers: [ReflectionsController],
   providers: [
     { provide: REFLECTION_KEY, useValue: env.DATA_KEY },
