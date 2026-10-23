@@ -95,8 +95,9 @@
     "confirmYoucam": "YouCam (Perfect Corp) puede procesar mis fotos.",
     "confirmGoogle": "Google puede procesar mis medidas y ajustes, y una reflexión que escriba si puede indicar que estoy pasando por un momento difícil, pero no mis fotos.",
     "confirmOwn": "Las fotos serán solo mías.",
+    "confirmAll": "Acepto todo lo anterior.",
     "deleteAnytime": "Puede eliminar su perfil y todo lo que contiene en cualquier momento.",
-    "incomplete": "Elija cuánto tiempo conservar las fotos y marque cada casilla para continuar.",
+    "incomplete": "Marque la casilla para continuar.",
     "submit": "Acepto y continúo",
     "submitting": "Guardando…",
     "outdated": "El texto del consentimiento ha cambiado. Recargue esta página y léalo de nuevo."

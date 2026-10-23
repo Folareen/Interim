@@ -15,15 +15,16 @@ const confirmations = ['store', 'youcam', 'google', 'own'] as const;
 type Confirmation = (typeof confirmations)[number];
 
 /**
- * The consent screen: what is kept, who helps, how long photos stay, and four separate
- * confirmations. Nothing is preselected, and the button stays off until every choice is made.
+ * The consent screen: what is kept, who helps, how long photos stay, the four statements read
+ * together, and one agreement to all of them. The button stays off until it is ticked. The API still
+ * records each acceptance, because each processor is named in its own statement.
  */
 export function ConsentForm({ profileId, version }: { profileId: string; version: string }) {
   const t = useTranslations('consent');
   const common = useTranslations('common');
   const router = useRouter();
   const [retention, setRetention] = useState<Retention>('extended');
-  const [confirmed, setConfirmed] = useState<Record<Confirmation, boolean>>({ store: false, youcam: false, google: false, own: false });
+  const [agreed, setAgreed] = useState(false);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -33,7 +34,7 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
     google: t('confirmGoogle'),
     own: t('confirmOwn'),
   };
-  const complete = retention !== undefined && confirmations.every((key) => confirmed[key]);
+  const complete = retention !== undefined && agreed;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -92,16 +93,14 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
 
         <fieldset className="space-y-3">
           <legend className="mb-3 text-[1.25rem] font-medium font-serif">{t('confirmTitle')}</legend>
-          {confirmations.map((key) => (
-            <ChoiceRow
-              key={key}
-              kind="checkbox"
-              name={key}
-              label={label[key]}
-              checked={confirmed[key]}
-              onChange={(event) => setConfirmed((current) => ({ ...current, [key]: event.target.checked }))}
-            />
-          ))}
+          <ul className="space-y-3 rounded-card border border-border bg-surface p-4">
+            {confirmations.map((key) => (
+              <li key={key} className="border-l-2 border-accent pl-4">
+                {label[key]}
+              </li>
+            ))}
+          </ul>
+          <ChoiceRow kind="checkbox" name="agree" label={t('confirmAll')} checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />
         </fieldset>
 
         <p className="text-[0.95rem] text-muted">{t('deleteAnytime')}</p>

@@ -95,8 +95,9 @@
     "confirmYoucam": "YouCam (Perfect Corp) inaweza kuchakata picha zangu.",
     "confirmGoogle": "Google inaweza kuchakata vipimo na mipangilio yangu, pamoja na tafakari ninayoandika ikiwa inaweza kuonyesha kuwa ninapitia wakati mgumu, lakini si picha zangu.",
     "confirmOwn": "Picha zitakuwa zangu pekee.",
+    "confirmAll": "Nakubali yote yaliyo hapo juu.",
     "deleteAnytime": "Unaweza kufuta wasifu wako na kila kitu ndani yake wakati wowote.",
-    "incomplete": "Chagua muda wa kuhifadhi picha na weka alama kwenye kila kisanduku ili kuendelea.",
+    "incomplete": "Weka alama kwenye kisanduku ili kuendelea.",
     "submit": "Nakubali na ninaendelea",
     "submitting": "Inahifadhi…",
     "outdated": "Maandishi ya idhini yamebadilika. Pakia upya ukurasa huu na uyasome tena."
