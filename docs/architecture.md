@@ -82,7 +82,7 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **self_report.** id, snapshot_id, changed (none, some, lot), reported_size (nullable).
 * **photo.** id, snapshot_id, kind (front, left, right, top, body), object_key, sha256 of the normalised file, expires_at.
 * **measurement.** id, snapshot_id, tool, value_json (a `MeasuredValue`, not YouCam's raw result), reliable, youcam_task_id. One per tool per snapshot. `reliable` is false when YouCam's own read of the photo was not all good, and such a reading never places a stage. Cost is read from the ledger through the task id.
-* **render.** id, snapshot_id, tool, strategy, input_hash, object_key (null once expired), label (preview or earlier_look), expires_at. One per snapshot and input hash.
+* **render.** id, snapshot_id, tool, strategy (null for a clothes render), garment_sku (set for a clothes render), input_hash, object_key (null once expired), label (preview or earlier_look), expires_at. One per snapshot and input hash.
 * **run.** id, snapshot_id (unique: one run per snapshot), template_key, template_version, status (queued, running, done or failed), stop_reason (a trace reason code), retake (a capture problem code, when YouCam asked for a new photo), budget_units, source_hash. Spent units are summed from the ledger.
 * **trace_entry.** id, run_id, seq, step (observe, measure, place, decide, act, compose or stop), tool (null when none), inputs_json (no personal data; the decide step keeps the strategy and the fact it cites), outputs_ref, cost_units, reason (a code the web app translates, never text).
 * **stage_card.** id, run_id (unique), profile_id, card_json, approved_at. The card stores keys and values, never display text for stages, tools or numbers; the web app writes those in the person's language.
@@ -90,8 +90,8 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **ledger_entry.** id, profile_ref, run_id, tool, kind (reserve, settle or release), units, task_id. `profile_ref` is a random id with no foreign key. Ledger rows hold no personal data and are not deleted with the profile.
 * **budget_counter.** scope (run, profile, day, source), reserved_units, settled_units. Locked in a transaction while reserving.
 * **call_cache.** key (`<profile id>:<tool>:` plus the fixture key from the normalised photo hash, API version and parameters hash), profile_id (cascade), tool, outcome (success or blocked), result_ref (a measurement's result as JSON, or a render's object key). Transient failures are never cached. The profile is part of the key, so one person's result is never served to another.
-* **catalog_item.** sku, name, size chart (sample catalog).
-* **garment.** id, profile_id, catalog_sku, saved_at.
+* **catalog_item.** sku, name (English, for logs), category (upper_body or outer), fit (relaxed or fitted), size_chart_json (reported size to the label on the piece; a size the piece is not made in is absent), image_key and image_sha256. Written from `apps/api/src/catalog/sample-catalog.ts` when the API or worker starts, with the pictures copied to `catalog/` in the bucket, which cleanup never touches.
+* **garment.** id, profile_id (cascade), catalog_sku, saved_at. One per profile and sku.
 * **reflection.** id, profile_id (cascade), text (encrypted), locale, safety (none, match or flagged), created_at.
 * **safety_review.** id, reflection_id (cascade), reason, verdict (pending, concern, clear or unsure), reviewed_at, dismissed_at. No email or profile data.
 * **share_link.** id, card_id, token_hash, expires_at, revoked_at.
@@ -150,7 +150,8 @@ BullMQ on Redis.
 * POST /snapshots/:id/runs (starts the agent; starting twice returns the same run)
 * GET /runs/:id (status, stop reason, trace)
 * GET /runs/:id/events (server sent events: the same view once a second until the run finishes)
-* GET /cards/:id (the card with short lived links to its renders and the front photo)
+* GET /cards/:id (the card with short lived links to its renders, the front photo and the body photo)
+* GET /profiles/:id/garments (the sample catalog with the profile's saved pieces marked and a link to each picture), PUT and DELETE /profiles/:id/garments/:sku (save or remove; both repeat safely; only for a template that uses fit)
 * GET /profiles/:id/cards (newest first)
 * POST /cards/:id/approve
 * POST /cards/:id/share (creates an expiring link)
@@ -167,10 +168,10 @@ All routes check consent version and ownership. Share links expire, can be revok
 
 ## 10. Web app
 
-* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
+* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
 * **Capture wizard.** Asks for what `capturePlan` in `packages/rules` says, the same rule the server applies. Uses the YouCam JS Camera Kit for the front, both sides (one hair type capture) and the top photo (its five second countdown is the timer), and a plain file input for the body photo and whenever the kit does not load or the camera is refused. Runs `photoQualityProblem` on each photo on the device and blocks upload on failure. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
 * **Run progress.** Shows the live trace in short lines, so the agent is visible. It listens to the event stream and asks every two seconds if the stream is not available.
-* **Stage Card.** Before and after slider for renders, a clear preview label, shopping list, share, export and delete actions.
+* **Stage Card.** Before and after slider for renders, a clear preview label, saved clothes on the body photo, shopping list, what to hold off buying, share, export and delete actions.
 * **Ledger view.** Every call, its cost and the reason it was made.
 * **Mobile first.** Designed and filmed on a phone. Installable as a PWA.
 

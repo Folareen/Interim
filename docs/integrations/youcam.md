@@ -102,6 +102,7 @@ Found by running the tools against the live API, on professional portraits and o
 - Reconciling `unknown` tasks, and switching live calls off by itself on `auth` or `out_of_units`.
 - A tool entry for skin analysis (`skin-analysis`). Its prices are in `youcam.constants.ts`.
 - Wrappers for bg-replace, image-to-video, look-vto and the template lists, which only the spike runner reads.
+- Clothes v4 is called with the body photo and a catalog picture as `ref_file_id`, one call per saved piece, and the fixture key hashes both pictures. The spike ran it on real garment photos; the sample catalog's pictures are drawn placeholders, so none of its calls is recorded yet. Live clothes calls for the sample personas wait on a catalog with licensed pictures and an agreed cap.
 - Not yet seen succeed live: hair type (needs three angle photos), hair color and beard style. The template lists were read once (116 hair transfer templates, 15 beard style ones, all unisex `all_` ids for beards) and the looks in `packages/templates/src/looks.ts` come from them.
 
 ## Spike runner
