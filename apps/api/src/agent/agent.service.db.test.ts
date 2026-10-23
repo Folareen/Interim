@@ -6,6 +6,8 @@ import {
   type Db,
   budgetCounter,
   callCache,
+  catalogItem,
+  garment,
   ledgerEntry,
   measurement,
   photo,
@@ -21,6 +23,7 @@ import { messages } from '@interim/templates';
 import { type Moment, type PhotoKind, type StageCard, stageCardSchema } from '@interim/types';
 import { eq, sql } from 'drizzle-orm';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { CatalogService, catalogImageDir } from '../catalog/catalog.service';
 import { LedgerService } from '../ledger/ledger.service';
 import type { ProfilesService } from '../profiles/profiles.service';
 import { MemoryStorage } from '../test/memory-storage';
@@ -295,6 +298,146 @@ describe('beard template', () => {
     await recordLooks(s.sha.front ?? '', 'hairstyle', ['style_short_curly', 'style_blunt_bob', 'style_buzz_cut']);
     await agent.run(s.runId);
     expect((await cardOf(s.runId)).options.map((o) => o.tool)).toEqual(['hairstyle', 'hairstyle', 'hairstyle']);
+  });
+});
+
+describe('saved clothes', () => {
+  const pieces = ['tee-crew', 'shirt-oxford', 'jumper-knit', 'jacket-light'] as const;
+  const category = (sku: string) => (sku === 'jacket-light' ? 'outer' : 'upper_body');
+
+  /** Fills the sample catalog and saves pieces for a profile, oldest first. */
+  async function savePieces(profileId: string, skus: readonly string[]) {
+    await db.execute(sql`truncate catalog_item cascade`);
+    await new CatalogService(db, storage.asService(), catalogImageDir).sync();
+    for (const [i, sku] of skus.entries()) {
+      await db.insert(garment).values({ profileId, catalogSku: sku, savedAt: new Date(Date.UTC(2026, 8, 1 + i)) });
+    }
+  }
+  async function recordClothes(bodySha: string, skus: readonly string[]) {
+    for (const sku of skus) {
+      const [item] = await db.select().from(catalogItem).where(eq(catalogItem.sku, sku));
+      await record('cloth_v4', [bodySha, item?.imageSha256 ?? ''], { garment: sku, category: category(sku) }, results.image, true);
+    }
+  }
+  /** A weight change profile whose last check in reported M, and a new one reporting L: one size away. */
+  async function oneSizeAway(kinds: PhotoKind[] = ['front', 'body']) {
+    const first = await seed({ templateKey: 'weight_change', baseline: false, kinds: ['front', 'body'], report: { changed: 'none', reportedSize: 'M' } });
+    await db.update(snapshot).set({ stageKey: 'usual_size' }).where(eq(snapshot.id, first.snapshotId));
+    const next = await seed({ profileId: first.profileId, templateKey: 'weight_change', baseline: false, kinds, report: { changed: 'some', reportedSize: 'L' } });
+    answer = () =>
+      JSON.stringify({ strategy: 'hold', citation: 'r1', note: 'You shared that your size is {m:r2}. That is common at this stage. Take it day by day.' });
+    return next;
+  }
+
+  it('shows saved clothes on the current photo, with a sized shopping list and what to wait on', async () => {
+    const s = await oneSizeAway();
+    await savePieces(s.profileId, pieces);
+    await recordClothes(s.sha.body ?? '', pieces);
+
+    await agent.run(s.runId);
+
+    const card = await cardOf(s.runId);
+    expect(card.stageKey).toBe('one_size_away');
+    expect(card.clothes.map((c) => c.sku)).toEqual(pieces);
+    // Relaxed pieces are listed at the label the size chart gives L. Fitted ones wait while the size moves.
+    expect(card.shoppingList).toEqual([
+      { sku: 'tee-crew', size: 'L' },
+      { sku: 'jumper-knit', size: 'L' },
+    ]);
+    expect(card.holdOffBuying).toEqual([
+      { item: 'shirt-oxford', reason: 'size_moving' },
+      { item: 'jacket-light', reason: 'size_moving' },
+    ]);
+    for (const { renderId, sku } of card.clothes) {
+      const [row] = await db.select().from(render).where(eq(render.id, renderId));
+      expect(row).toMatchObject({ tool: 'cloth_v4', strategy: null, garmentSku: sku, label: 'preview' });
+      expect(row?.objectKey && storage.objects.has(row.objectKey)).toBe(true);
+    }
+  });
+
+  it('puts every clothes call in the ledger and the trace', async () => {
+    const s = await oneSizeAway();
+    await savePieces(s.profileId, pieces.slice(0, 2));
+    await recordClothes(s.sha.body ?? '', pieces.slice(0, 2));
+
+    await agent.run(s.runId);
+
+    const entries = (await db.select().from(ledgerEntry)).filter((e) => e.tool === 'cloth_v4');
+    expect(entries.map((e) => e.kind).sort()).toEqual(['reserve', 'reserve', 'settle', 'settle']);
+    const lines = (await db.select().from(traceEntry).where(eq(traceEntry.tool, 'cloth_v4'))).map((t) => [t.step, t.reason]);
+    expect(lines).toEqual([['act', 'rendered'], ['act', 'rendered']]);
+    expect((await cardOf(s.runId)).trace.filter((t) => t.tool === 'cloth_v4')).toHaveLength(2);
+  });
+
+  it('lists a piece the shop does not make in the reported size under what to wait on, whatever the stage', async () => {
+    const first = await seed({ templateKey: 'weight_change', baseline: false, kinds: ['front', 'body'], report: { changed: 'none', reportedSize: 'M' } });
+    await db.update(snapshot).set({ stageKey: 'usual_size' }).where(eq(snapshot.id, first.snapshotId));
+    // The oxford shirt is not made in XS.
+    const s = await seed({ profileId: first.profileId, templateKey: 'weight_change', baseline: false, kinds: ['front', 'body'], report: { changed: 'some', reportedSize: 'M' } });
+    await db.update(selfReport).set({ reportedSize: 'XS' }).where(eq(selfReport.snapshotId, s.snapshotId));
+    await savePieces(s.profileId, ['shirt-oxford']);
+    await recordClothes(s.sha.body ?? '', ['shirt-oxford']);
+    answer = () => JSON.stringify({ strategy: 'hold', citation: 'r1', note: 'You shared that your size is {m:r2}. That is common at this stage. Take it day by day.' });
+
+    await agent.run(s.runId);
+
+    expect((await cardOf(s.runId)).holdOffBuying).toEqual([{ item: 'shirt-oxford', reason: 'size_not_offered' }]);
+  });
+
+  it('keeps the list and the advice when there is no body photo, and says the clothes were skipped', async () => {
+    const s = await oneSizeAway(['front']);
+    await savePieces(s.profileId, pieces);
+
+    await agent.run(s.runId);
+
+    const card = await cardOf(s.runId);
+    expect(card.clothes).toEqual([]);
+    expect(card.shoppingList).toHaveLength(2);
+    expect(await db.select().from(ledgerEntry)).toEqual([]);
+    const [skipped] = await db.select().from(traceEntry).where(eq(traceEntry.reason, 'blocked_photo'));
+    expect(skipped).toMatchObject({ step: 'act', tool: 'cloth_v4' });
+  });
+
+  it('skips one piece YouCam cannot show on this photo and still shows the rest', async () => {
+    const s = await oneSizeAway();
+    await savePieces(s.profileId, pieces.slice(0, 3));
+    await recordClothes(s.sha.body ?? '', ['tee-crew', 'jumper-knit']);
+    const [shirt] = await db.select().from(catalogItem).where(eq(catalogItem.sku, 'shirt-oxford'));
+    await recordError('cloth_v4', [s.sha.body ?? '', shirt?.imageSha256 ?? ''], { garment: 'shirt-oxford', category: 'upper_body' }, 'error_apply_region_mismatch');
+
+    await agent.run(s.runId);
+
+    expect((await cardOf(s.runId)).clothes.map((c) => c.sku)).toEqual(['tee-crew', 'jumper-knit']);
+    expect(await runOf(s.runId)).toMatchObject({ status: 'done', stopReason: 'stopped_complete' });
+    const [blocked] = await db.select().from(traceEntry).where(eq(traceEntry.reason, 'blocked_tool'));
+    expect(blocked).toMatchObject({ step: 'act', tool: 'cloth_v4' });
+  });
+
+  it('shows no clothes when the run budget cannot cover a piece, and still gives the advice', async () => {
+    const s = await oneSizeAway();
+    await db.update(run).set({ budgetUnits: 1 }).where(eq(run.id, s.runId));
+    await savePieces(s.profileId, pieces);
+    await recordClothes(s.sha.body ?? '', pieces);
+
+    await agent.run(s.runId);
+
+    expect(await runOf(s.runId)).toMatchObject({ status: 'done', stopReason: 'stopped_budget' });
+    const card = await cardOf(s.runId);
+    expect(card.clothes).toEqual([]);
+    expect(card.shoppingList).toHaveLength(2);
+    expect(await db.select().from(ledgerEntry)).toEqual([]);
+  });
+
+  it('shows nothing for a situation that does not use fit, even with pieces saved', async () => {
+    const s = await seed({ kinds: ['front', 'left', 'right', 'top', 'body'] });
+    await recordBaseline(s);
+    await recordLooks(s.sha.front ?? '', 'hairstyle', ['style_short_curly', 'style_blunt_bob']);
+    await savePieces(s.profileId, pieces);
+
+    await agent.run(s.runId);
+
+    expect(await cardOf(s.runId)).toMatchObject({ clothes: [], shoppingList: [], holdOffBuying: [] });
+    expect((await db.select().from(ledgerEntry)).some((e) => e.tool === 'cloth_v4')).toBe(false);
   });
 });
 
