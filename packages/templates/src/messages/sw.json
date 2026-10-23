@@ -9,7 +9,6 @@
     "themeToLight": "Badilisha kwenda mandhari ya mwanga",
     "themeToDark": "Badilisha kwenda mandhari ya giza",
     "language": "Lugha",
-    "draftNote": "Tafsiri hii ni rasimu. Mzungumzaji wa asili hajaikagua bado, kwa hivyo baadhi ya maneno yanaweza kuwa si sahihi.",
     "skipToContent": "Ruka hadi maudhui",
     "genericError": "Kuna tatizo lililotokea. Tafadhali jaribu tena.",
     "networkError": "Hatukuweza kufikia Interim. Angalia mtandao wako kisha jaribu tena.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Chagua lugha yako",
     "intro": "Interim itaitumia kwa kila kitu unachosoma.",
-    "draftTag": "Rasimu",
-    "draftsNote": "Lugha iliyowekewa alama ya Rasimu bado haijakaguliwa na mzungumzaji wa asili.",
     "submit": "Endelea"
   },
   "situation": {

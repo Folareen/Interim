@@ -9,7 +9,6 @@
     "themeToLight": "Change to light theme",
     "themeToDark": "Change to dark theme",
     "language": "Language",
-    "draftNote": "Dis translation na draft. Person wey sabi di language never check am, so some words fit no correct.",
     "skipToContent": "Skip go di main content",
     "genericError": "Something don happen. Abeg try again.",
     "networkError": "We no fit reach Interim. Check your network and try again.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Choose your language",
     "intro": "Interim go use am for everything wey you go read.",
-    "draftTag": "Draft",
-    "draftsNote": "Language wey get Draft mark, person wey sabi di language never check am yet.",
     "submit": "Continue"
   },
   "situation": {

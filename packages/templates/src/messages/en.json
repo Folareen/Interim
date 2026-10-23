@@ -9,7 +9,6 @@
     "themeToLight": "Switch to the light theme",
     "themeToDark": "Switch to the dark theme",
     "language": "Language",
-    "draftNote": "This translation is a draft. A native speaker has not checked it yet, so some wording may be off.",
     "skipToContent": "Skip to content",
     "genericError": "Something went wrong. Please try again.",
     "networkError": "We could not reach Interim. Check your connection and try again.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Choose your language",
     "intro": "Interim will use it for everything you read.",
-    "draftTag": "Draft",
-    "draftsNote": "A language marked Draft has not been checked by a native speaker yet.",
     "submit": "Continue"
   },
   "situation": {

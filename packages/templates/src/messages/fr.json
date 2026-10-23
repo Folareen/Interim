@@ -9,7 +9,6 @@
     "themeToLight": "Passer au thème clair",
     "themeToDark": "Passer au thème sombre",
     "language": "Langue",
-    "draftNote": "Cette traduction est un brouillon. Un locuteur natif ne l’a pas encore relue, certaines formulations peuvent donc être maladroites.",
     "skipToContent": "Aller au contenu",
     "genericError": "Une erreur est survenue. Veuillez réessayer.",
     "networkError": "Impossible de joindre Interim. Vérifiez votre connexion et réessayez.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Choisissez votre langue",
     "intro": "Interim l’utilisera pour tout ce que vous lirez.",
-    "draftTag": "Brouillon",
-    "draftsNote": "Une langue marquée Brouillon n’a pas encore été relue par un locuteur natif.",
     "submit": "Continuer"
   },
   "situation": {

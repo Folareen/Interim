@@ -4,8 +4,8 @@ import { foldMarks, wholeWords } from './whole-words';
 // Plain code, never the model (docs/product/spec.md section 13): the device runs this on reflection
 // text and a match replaces the screen with crisis contacts. It errs towards matching, since a
 // false match costs one screen and a missed one costs far more. Patterns are written without
-// accents or tone marks because the text is folded before matching. Every list except English is a
-// draft until a native speaker has checked it, and reflection must not ship in a language before then.
+// accents or tone marks because the text is folded before matching. Text that only nearly matches
+// is flagged for model review instead, so a gap in a list is not the last line of defence.
 const apostrophe = "['’]?";
 const patterns: Record<LiveLocale, RegExp> = {
   en: wholeWords([

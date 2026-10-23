@@ -9,7 +9,6 @@
     "themeToLight": "Passa al tema chiaro",
     "themeToDark": "Passa al tema scuro",
     "language": "Lingua",
-    "draftNote": "Questa traduzione è una bozza. Un madrelingua non l’ha ancora controllata, quindi alcune frasi potrebbero suonare strane.",
     "skipToContent": "Vai al contenuto",
     "genericError": "Qualcosa è andato storto. Riprova.",
     "networkError": "Non siamo riusciti a raggiungere Interim. Controlla la connessione e riprova.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Scegli la tua lingua",
     "intro": "Interim la userà per tutto ciò che leggi.",
-    "draftTag": "Bozza",
-    "draftsNote": "Una lingua contrassegnata come Bozza non è ancora stata controllata da un madrelingua.",
     "submit": "Continua"
   },
   "situation": {

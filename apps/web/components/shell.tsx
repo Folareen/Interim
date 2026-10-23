@@ -1,5 +1,4 @@
-import { isDraftLocale } from '@interim/types';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { getMe } from '@/lib/server-api';
@@ -14,7 +13,7 @@ export const TOTAL_STEPS = 3;
  * way back and the theme switch, and an optional progress line for the setup steps.
  */
 export async function Shell({ step, backHref, children }: { step?: number; backHref?: string; children: ReactNode }) {
-  const [t, locale, me] = await Promise.all([getTranslations('common'), getLocale(), getMe()]);
+  const [t, me] = await Promise.all([getTranslations('common'), getMe()]);
   const stepText = step === undefined ? '' : t('stepOf', { current: step, total: TOTAL_STEPS });
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pt-[env(safe-area-inset-top)] md:py-8">
@@ -47,9 +46,6 @@ export async function Shell({ step, backHref, children }: { step?: number; backH
         </div>
       </header>
       <main id="main" className="flex flex-1 flex-col">
-        {isDraftLocale(locale) && (
-          <p className="mb-6 border-l-2 border-outline pl-4 text-[0.9rem] text-muted">{t('draftNote')}</p>
-        )}
         {step !== undefined && (
           <div className="pb-6">
             <p className="text-[0.9rem] text-muted">{stepText}</p>

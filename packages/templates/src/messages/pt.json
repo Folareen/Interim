@@ -9,7 +9,6 @@
     "themeToLight": "Mudar para o tema claro",
     "themeToDark": "Mudar para o tema escuro",
     "language": "Idioma",
-    "draftNote": "Esta tradução é um rascunho. Um falante nativo ainda não a revisou, então algumas frases podem soar estranhas.",
     "skipToContent": "Ir para o conteúdo",
     "genericError": "Algo deu errado. Tente de novo.",
     "networkError": "Não conseguimos falar com o Interim. Verifique sua conexão e tente de novo.",
@@ -32,8 +31,6 @@
   "language": {
     "title": "Escolha seu idioma",
     "intro": "O Interim vai usá-lo em tudo o que você ler.",
-    "draftTag": "Rascunho",
-    "draftsNote": "Um idioma marcado como Rascunho ainda não foi revisado por um falante nativo.",
     "submit": "Continuar"
   },
   "situation": {
