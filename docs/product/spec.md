@@ -366,6 +366,8 @@ In the style of the Round 1 winners, publish measured results.
 * units per baseline and units per check in, and the money cost of each
 * how often the eligibility rules prevented a paid failure
 
+Measured on the sample personas (front photo only, no density), live on 2026-10-23: a baseline cost 38 units (2.09 dollars: hair length 2, face shape 10, skin tone 20, three hair style previews 6), and a check in cost 8 units (0.44 dollars: hair length 2, three previews 6). Ten runs cost 140 units (7.70 dollars), and the balance fell by exactly that.
+
 Product measures, tracked in the build and reported in the readme:
 
 * baseline completion rate

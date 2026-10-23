@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "spike": "tsx --env-file=../../.env src/youcam/spike/spike.ts"
+    "spike": "tsx --env-file=../../.env src/youcam/spike/spike.ts",
+    "record-samples": "tsx --env-file=../../.env src/youcam/spike/record-samples.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",
