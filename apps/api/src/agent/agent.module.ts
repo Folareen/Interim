@@ -7,6 +7,7 @@ import { LedgerModule } from '../ledger/ledger.module';
 import { YoucamModule } from '../youcam/youcam.module';
 import { AgentService } from './agent.service';
 import { PLANNER_CONFIG, PLANNER_MODEL, Planner } from './planner';
+import { SafetyReviewer } from './safety-reviewer';
 
 @Module({
   imports: [YoucamModule, LedgerModule],
@@ -25,8 +26,9 @@ import { PLANNER_CONFIG, PLANNER_MODEL, Planner } from './planner';
       useValue: async (prompt: string) => (await generateText({ model: google(env.LLM_MODEL), prompt })).text,
     },
     Planner,
+    SafetyReviewer,
     AgentService,
   ],
-  exports: [AgentService],
+  exports: [AgentService, SafetyReviewer],
 })
 export class AgentModule {}

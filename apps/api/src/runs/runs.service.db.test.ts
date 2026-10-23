@@ -35,7 +35,7 @@ async function seed(opts: { consented?: boolean; owner?: string } = {}) {
     id: profileId,
     templateKey: 'hair_loss_ahead',
     ownerRef: opts.owner ?? alice.ref,
-    consentVersion: '3',
+    consentVersion: '4',
     consentedAt: opts.consented === false ? null : new Date(),
   });
   await db.insert(snapshot).values({ id: snapshotId, profileId, isBaseline: true, stageKey: 'full' });

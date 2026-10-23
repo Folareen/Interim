@@ -17,13 +17,17 @@ import { z } from 'zod';
 import { CurrentOwner, OwnerGuard } from '../guard/owner.guard';
 import type { Owner } from '../guard/owner.service';
 import { ZodPipe } from '../guard/zod.pipe';
+import { ReflectionsService } from '../reflections/reflections.service';
 import { ProfilesService } from './profiles.service';
 
 const idPipe = new ZodPipe(z.string().uuid());
 
 @Controller('profiles')
 export class ProfilesController {
-  constructor(@Inject(ProfilesService) private readonly profiles: ProfilesService) {}
+  constructor(
+    @Inject(ProfilesService) private readonly profiles: ProfilesService,
+    @Inject(ReflectionsService) private readonly reflections: ReflectionsService,
+  ) {}
 
   @UseGuards(OwnerGuard)
   @Post()
@@ -89,7 +93,8 @@ export class ProfilesController {
 
   @UseGuards(OwnerGuard)
   @Get(':id/export')
-  export(@Param('id', idPipe) id: string, @CurrentOwner() owner: Owner) {
-    return this.profiles.export(id, owner);
+  async export(@Param('id', idPipe) id: string, @CurrentOwner() owner: Owner) {
+    const exported = await this.profiles.export(id, owner);
+    return { ...exported, reflections: await this.reflections.forExport(id, owner) };
   }
 }

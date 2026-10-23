@@ -100,7 +100,7 @@ async function seed(opts: {
       id: profileId,
       templateKey: opts.templateKey ?? 'hair_loss_ahead',
       ownerRef: 'o',
-      consentVersion: '3',
+      consentVersion: '4',
       consentedAt: new Date(),
       headCovering: opts.headCovering ?? false,
     });

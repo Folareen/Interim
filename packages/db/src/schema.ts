@@ -25,6 +25,9 @@ export const moment = pgEnum('moment', [
   'going_out',
   'everyday',
 ]);
+export const reflectionSafety = pgEnum('reflection_safety', ['none', 'match', 'flagged']);
+export const reviewReason = pgEnum('review_reason', ['match', 'near']);
+export const reviewVerdict = pgEnum('review_verdict', ['pending', 'concern', 'clear', 'unsure']);
 export const runStatus = pgEnum('run_status', ['queued', 'running', 'done', 'failed']);
 export const agentStep = pgEnum('agent_step', ['observe', 'measure', 'place', 'decide', 'act', 'compose', 'stop']);
 export const strategy = pgEnum('strategy', ['cut', 'volume', 'colour', 'cover', 'hold']);
@@ -63,6 +66,29 @@ export const consentEvent = pgTable('consent_event', {
   profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
   version: text('version').notNull(),
   action: consentAction('action').notNull(),
+  createdAt: createdAt(),
+});
+
+// What the person writes after a check in (docs/product/spec.md section 12). The text is encrypted
+// with the app's data key, so a database dump alone does not read it.
+export const reflection = pgTable('reflection', {
+  id: id(),
+  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+  text: text('text').notNull(),
+  locale: locale('locale').notNull(),
+  safety: reflectionSafety('safety').notNull().default('none'),
+  createdAt: createdAt(),
+});
+
+// One row for each reflection the safety check caught or flagged (spec section 13). Holds no email
+// or profile data. A `match` starts as `concern` without a model, because the exact check is enough.
+export const safetyReview = pgTable('safety_review', {
+  id: id(),
+  reflectionId: uuid('reflection_id').notNull().unique().references(() => reflection.id, { onDelete: 'cascade' }),
+  reason: reviewReason('reason').notNull(),
+  verdict: reviewVerdict('verdict').notNull().default('pending'),
+  reviewedAt: timestamp('reviewed_at'),
+  dismissedAt: timestamp('dismissed_at'), // the person closed the contacts card
   createdAt: createdAt(),
 });
 

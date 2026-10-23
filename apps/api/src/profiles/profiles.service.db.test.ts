@@ -11,7 +11,7 @@ const alice = { ref: 'alice' };
 const bob = { ref: 'bob' };
 const grant = (retention: 'standard' | 'extended'): ConsentRequest => ({
   action: 'grant',
-  version: '3',
+  version: '4',
   retention,
   acceptStorage: true,
   acceptYoucam: true,
@@ -56,9 +56,9 @@ describe('consent', () => {
     const { id } = await create();
 
     const granted = await profiles.consent(id, alice, grant('extended'));
-    expect(granted).toMatchObject({ consentCurrent: true, retention: 'extended', consentVersion: '3' });
+    expect(granted).toMatchObject({ consentCurrent: true, retention: 'extended', consentVersion: '4' });
 
-    const withdrawn = await profiles.consent(id, alice, { action: 'withdraw', version: '3' });
+    const withdrawn = await profiles.consent(id, alice, { action: 'withdraw', version: '4' });
     expect(withdrawn).toMatchObject({ consentCurrent: false, consentedAt: null });
 
     const events = await db.select().from(consentEvent);
