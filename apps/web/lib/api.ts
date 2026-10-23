@@ -12,12 +12,14 @@ import {
   type RegisterInput,
   type ResetPasswordInput,
   type EmailLinkRequest,
+  type ReflectionCreated,
   type RunView,
   type UploadsResponse,
   captureProblemBodySchema,
   meSchema,
   preferencesSchema,
   profileSchema,
+  reflectionCreatedSchema,
   runViewSchema,
   snapshotCreatedSchema,
   uploadsResponseSchema,
@@ -163,4 +165,19 @@ export async function approveCard(cardId: string): Promise<void> {
 /** A run's progress, for when the live stream is not available. */
 export async function fetchRun(runId: string): Promise<RunView> {
   return runViewSchema.parse(await (await send(`/runs/${runId}`, 'GET')).json());
+}
+
+/** Saves a reflection. The answer says whether the contacts card should show. */
+export async function saveReflection(profileId: string, text: string): Promise<ReflectionCreated> {
+  return reflectionCreatedSchema.parse(await (await send(`/profiles/${profileId}/reflections`, 'POST', { text })).json());
+}
+
+/** Deletes one reflection. */
+export async function deleteReflection(profileId: string, reflectionId: string): Promise<void> {
+  await send(`/profiles/${profileId}/reflections/${reflectionId}`, 'DELETE');
+}
+
+/** Closes the contacts card until a later reflection is flagged. */
+export async function dismissContacts(profileId: string): Promise<void> {
+  await send(`/profiles/${profileId}/reflections/contacts/dismiss`, 'POST');
 }

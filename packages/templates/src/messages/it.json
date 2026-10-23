@@ -75,10 +75,10 @@
     "title": "Prima di aggiungere foto",
     "intro": "Le tue foto, e ciò che Interim ne ricava, sono personali. Ecco esattamente cosa succede.",
     "keepTitle": "Cosa conserva Interim",
-    "keepBody": "Le tue foto, le misure ricavate da esse, le tue risposte e le tue schede. Niente viene venduto o usato per la pubblicità.",
+    "keepBody": "Le tue foto, le misure ricavate da esse, le tue risposte, le tue schede e le riflessioni che scrivi. Niente viene venduto o usato per la pubblicità.",
     "helpersTitle": "Chi aiuta",
     "helperYoucam": "YouCam, di Perfect Corp, riceve le tue foto per misurarle e mostrare anteprime di look.",
-    "helperGoogle": "Google riceve le misure, la tua situazione, per cosa ti stai preparando e il tono che hai scelto, per poter scrivere le tue note. Non riceve mai foto.",
+    "helperGoogle": "Google riceve le misure, la tua situazione, per cosa ti stai preparando e il tono che hai scelto, per poter scrivere le tue note. Se una riflessione che scrivi può indicare che stai attraversando un momento difficile, Google legge anche quel testo, e nient’altro su di te, solo per verificarlo. Non riceve mai foto.",
     "retentionTitle": "Per quanto tempo conservare le foto",
     "retention": {
       "standard": {
@@ -93,7 +93,7 @@
     "confirmTitle": "Conferma, per favore",
     "confirmStore": "Interim può conservare le mie foto e le mie misure.",
     "confirmYoucam": "YouCam (Perfect Corp) può elaborare le mie foto.",
-    "confirmGoogle": "Google può elaborare le mie misure e impostazioni, ma non le mie foto.",
+    "confirmGoogle": "Google può elaborare le mie misure e impostazioni, e una riflessione che scrivo se può indicare che sto attraversando un momento difficile, ma non le mie foto.",
     "confirmOwn": "Le foto ritrarranno solo me.",
     "deleteAnytime": "Puoi eliminare il tuo profilo e tutto ciò che contiene in qualsiasi momento.",
     "incomplete": "Scegli per quanto tempo conservare le foto e spunta ogni casella per continuare.",
@@ -118,6 +118,26 @@
     "editAction": "Cambia le mie scelte",
     "startAction": "Inizia un controllo",
     "cardAction": "Vedi la mia ultima scheda"
+  },
+  "reflect": {
+    "title": "Riflessione",
+    "intro": "Solo se ne hai voglia. Quello che scrivi viene salvato nel tuo account, non viene mai mostrato a nessun altro e puoi cancellarlo in qualsiasi momento.",
+    "prompt": "Cosa diresti a un amico che sta vivendo questo?",
+    "save": "Salva",
+    "saving": "Salvataggio…",
+    "empty": "Ancora niente di salvato.",
+    "previousTitle": "Quello che hai scritto prima",
+    "deleteAction": "Elimina",
+    "tooMany": "Oggi hai scritto molto. Torna domani.",
+    "offerBody": "Se ne hai voglia, puoi mettere qualche parola su come ti senti. È solo per te.",
+    "offerAction": "Scrivi una riflessione",
+    "readyAction": "Riflessione",
+    "contactsLink": "Hai bisogno di parlare con qualcuno?",
+    "contactsTitle": "Qualcuno con cui parlare",
+    "contactsIntro": "Se tutto sembra molto pesante, questi servizi ti ascolteranno, a qualsiasi ora. Non devi essere sicuro che sia una crisi.",
+    "contactsClose": "Chiudi",
+    "regionLabel": "Dove ti trovi?",
+    "regionOther": "Altrove"
   },
   "auth": {
     "signInTitle": "Accedi",

@@ -1,5 +1,5 @@
 /** Version of the consent text on screen. Bump it when the wording or processors change. */
-export const CONSENT_VERSION = '3';
+export const CONSENT_VERSION = '4';
 
 /**
  * Whether a profile may be used. Consent given for an older text does not count, so a

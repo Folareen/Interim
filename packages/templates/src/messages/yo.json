@@ -75,10 +75,10 @@
     "title": "Kí o tó fi fọ́tò kún un",
     "intro": "Àwọn fọ́tò rẹ, àti ohun tí Interim kọ́ láti inú wọn, jẹ́ ti ara ẹni. Èyí ni gangan ohun tó ń ṣẹlẹ̀ sí wọn.",
     "keepTitle": "Ohun tí Interim ń pamọ́",
-    "keepBody": "Àwọn fọ́tò rẹ, ìwọ̀n tí a mú láti inú wọn, àwọn èsì rẹ àti àwọn káàdì rẹ. A kì í tà ohunkóhun tàbí lò ó fún ìpolówó.",
+    "keepBody": "Àwọn fọ́tò rẹ, ìwọ̀n tí a mú láti inú wọn, àwọn èsì rẹ, àwọn káàdì rẹ àti àwọn ìrònú tí o kọ sílẹ̀. A kì í tà ohunkóhun tàbí lò ó fún ìpolówó.",
     "helpersTitle": "Àwọn tó ń ṣèrànwọ́",
     "helperYoucam": "YouCam, láti ọwọ́ Perfect Corp, ń gba àwọn fọ́tò rẹ kí ó lè wọ̀n wọ́n kí ó sì fi ìrísí hàn ọ́ ṣáájú.",
-    "helperGoogle": "Google ń gba ìwọ̀n, ipò rẹ, ohun tí o ń múra sílẹ̀ fún àti ìró ọ̀rọ̀ tí o yàn, kí ó lè kọ àwọn àkọsílẹ̀ rẹ. Kì í gba fọ́tò rárá.",
+    "helperGoogle": "Google ń gba ìwọ̀n, ipò rẹ, ohun tí o ń múra sílẹ̀ fún àti ìró ọ̀rọ̀ tí o yàn, kí ó lè kọ àwọn àkọsílẹ̀ rẹ. Tí ìrònú tí o kọ bá lè fi hàn pé o wà nínú ìṣòro, Google yóò ka ọ̀rọ̀ yẹn náà, kì í sì í ṣe ohun mìíràn nípa rẹ, láti ṣàyẹ̀wò rẹ̀ nìkan. Kì í gba fọ́tò rárá.",
     "retentionTitle": "Ìgbà wo ni a ó fi pa àwọn fọ́tò rẹ mọ́",
     "retention": {
       "standard": {
@@ -93,7 +93,7 @@
     "confirmTitle": "Jọ̀wọ́ jẹ́rìí",
     "confirmStore": "Interim lè pa àwọn fọ́tò àti ìwọ̀n mi mọ́.",
     "confirmYoucam": "YouCam (Perfect Corp) lè ṣiṣẹ́ lórí àwọn fọ́tò mi.",
-    "confirmGoogle": "Google lè ṣiṣẹ́ lórí ìwọ̀n àti ètò mi, ṣùgbọ́n kì í ṣe lórí fọ́tò mi.",
+    "confirmGoogle": "Google lè ṣiṣẹ́ lórí ìwọ̀n àti ètò mi, àti ìrònú tí mo kọ tí ó bá lè fi hàn pé mo wà nínú ìṣòro, ṣùgbọ́n kì í ṣe lórí fọ́tò mi.",
     "confirmOwn": "Àwọn fọ́tò náà yóò jẹ́ ti èmi nìkan.",
     "deleteAnytime": "O lè pa àkọsílẹ̀ rẹ àti gbogbo ohun tó wà nínú rẹ̀ rẹ́ nígbàkúgbà.",
     "incomplete": "Yan ìgbà tí a ó fi pa àwọn fọ́tò mọ́ kí o sì samisi àpótí kọ̀ọ̀kan láti tẹ̀síwájú.",
@@ -118,6 +118,26 @@
     "editAction": "Yí àwọn yíyàn mi padà",
     "startAction": "Bẹ̀rẹ̀ àyẹ̀wò",
     "cardAction": "Wo káàdì mi tó kẹ́yìn"
+  },
+  "reflect": {
+    "title": "Ìrònú",
+    "intro": "Tí o bá fẹ́ nìkan. Ohun tí o kọ wà nínú àkáǹtì rẹ, a kì í fi hàn ẹnikẹ́ni mìíràn, o sì lè pa á rẹ́ nígbàkúgbà.",
+    "prompt": "Kí ni ìwọ yóò sọ fún ọ̀rẹ́ kan tí ó ń la èyí kọjá?",
+    "save": "Fipamọ́",
+    "saving": "Ń fipamọ́…",
+    "empty": "Kò sí ohun tí a ti fipamọ́ síbẹ̀.",
+    "previousTitle": "Ohun tí o kọ tẹ́lẹ̀",
+    "deleteAction": "Parẹ́",
+    "tooMany": "O ti kọ púpọ̀ lónìí. Jọ̀wọ́ padà wá lọ́la.",
+    "offerBody": "Tí o bá fẹ́, o lè kọ ọ̀rọ̀ díẹ̀ nípa bí nǹkan ṣe rí lára rẹ. Fún ọ nìkan ni.",
+    "offerAction": "Kọ ìrònú",
+    "readyAction": "Ìrònú",
+    "contactsLink": "Ṣé o nílò láti bá ẹnì kan sọ̀rọ̀?",
+    "contactsTitle": "Ẹni láti bá sọ̀rọ̀",
+    "contactsIntro": "Tí nǹkan bá wúwo jù, àwọn iṣẹ́ wọ̀nyí yóò gbọ́ tìrẹ, nígbàkúgbà. Kò pọn dandan kí o dá ọ lójú pé ìṣòro ńlá ni.",
+    "contactsClose": "Pa á",
+    "regionLabel": "Níbo ni o wà?",
+    "regionOther": "Ibòmíràn"
   },
   "auth": {
     "signInTitle": "Wọlé",

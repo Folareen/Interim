@@ -356,7 +356,6 @@ This section owns every open question. What the live runs settled is in [integra
 10. YouCam's Camera Kit (`plugins-media.makeupar.com`) runs on the capture screen with camera access. Its documentation does not say what it sends to Perfect Corp's servers, whether frames leave the device, or how it behaves on iOS Safari, and the consent text names Perfect Corp only as the processor of uploaded photos. Settle this and the wording before launch. The file input stays as the way to avoid the kit.
 11. Accounts (section 12b): checking new passwords against leaked ones, changing the email address, recovering an account when the inbox is lost, and legal review of the sign up wording where it names Brevo and Google. None is built.
 12. Whether a person at Interim ever looks at reflections the model rates `concern`, and the legal wording for sending flagged text to Gemini.
-13. Not built yet: the reflection screen, saved reflections, the near match check, the safety review queue and the consent line for it (sections 12 and 13).
 
 ## 18. Numbers and measures
 

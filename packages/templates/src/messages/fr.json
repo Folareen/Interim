@@ -75,10 +75,10 @@
     "title": "Avant d’ajouter des photos",
     "intro": "Vos photos, et ce qu’Interim en apprend, sont personnelles. Voici exactement ce qu’il en advient.",
     "keepTitle": "Ce qu’Interim conserve",
-    "keepBody": "Vos photos, les mesures prises à partir de celles-ci, vos réponses et vos fiches. Rien n’est vendu ni utilisé pour la publicité.",
+    "keepBody": "Vos photos, les mesures prises à partir de celles-ci, vos réponses, vos fiches et les réflexions que vous écrivez. Rien n’est vendu ni utilisé pour la publicité.",
     "helpersTitle": "Qui intervient",
     "helperYoucam": "YouCam, de Perfect Corp, reçoit vos photos pour les mesurer et prévisualiser des looks.",
-    "helperGoogle": "Google reçoit les mesures, votre situation, ce pour quoi vous vous préparez et le ton que vous avez choisi, afin de rédiger vos notes. Il ne reçoit jamais de photos.",
+    "helperGoogle": "Google reçoit les mesures, votre situation, ce pour quoi vous vous préparez et le ton que vous avez choisi, afin de rédiger vos notes. Si une réflexion que vous écrivez laisse penser que vous traversez un moment difficile, Google lit aussi ce texte, et rien d’autre sur vous, uniquement pour s’en assurer. Il ne reçoit jamais de photos.",
     "retentionTitle": "Combien de temps conserver vos photos",
     "retention": {
       "standard": {
@@ -93,7 +93,7 @@
     "confirmTitle": "Veuillez confirmer",
     "confirmStore": "Interim peut conserver mes photos et mes mesures.",
     "confirmYoucam": "YouCam (Perfect Corp) peut utiliser mes photos pour les analyser.",
-    "confirmGoogle": "Google peut utiliser mes mesures et mes réglages, mais pas mes photos.",
+    "confirmGoogle": "Google peut utiliser mes mesures et mes réglages, ainsi qu’une réflexion que j’écris si elle laisse penser que je traverse un moment difficile, mais pas mes photos.",
     "confirmOwn": "Les photos ne montreront que moi.",
     "deleteAnytime": "Vous pouvez supprimer votre profil et tout ce qu’il contient à tout moment.",
     "incomplete": "Choisissez la durée de conservation des photos et cochez chaque case pour continuer.",
@@ -118,6 +118,26 @@
     "editAction": "Modifier mes choix",
     "startAction": "Commencer un suivi",
     "cardAction": "Voir ma dernière carte"
+  },
+  "reflect": {
+    "title": "Réflexion",
+    "intro": "Seulement si vous en avez envie. Ce que vous écrivez est enregistré dans votre compte, n’est jamais montré à personne d’autre, et vous pouvez le supprimer à tout moment.",
+    "prompt": "Que diriez-vous à un ami qui traverse la même chose ?",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "empty": "Rien d’enregistré pour l’instant.",
+    "previousTitle": "Ce que vous avez écrit avant",
+    "deleteAction": "Supprimer",
+    "tooMany": "Vous avez beaucoup écrit aujourd’hui. Revenez demain.",
+    "offerBody": "Si vous en avez envie, vous pouvez mettre quelques mots sur ce que vous ressentez. C’est seulement pour vous.",
+    "offerAction": "Écrire une réflexion",
+    "readyAction": "Réflexion",
+    "contactsLink": "Besoin de parler à quelqu’un ?",
+    "contactsTitle": "Quelqu’un à qui parler",
+    "contactsIntro": "Si tout semble très lourd, ces services vous écoutent, à toute heure. Vous n’avez pas besoin d’être sûr que c’est une crise.",
+    "contactsClose": "Fermer",
+    "regionLabel": "Où êtes-vous ?",
+    "regionOther": "Ailleurs"
   },
   "auth": {
     "signInTitle": "Se connecter",

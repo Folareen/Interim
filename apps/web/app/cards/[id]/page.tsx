@@ -27,8 +27,9 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
   if (!view) notFound();
   const { card } = view;
 
-  const [t, trace, tools, stages, labels, locale, format] = await Promise.all([
+  const [t, reflect, trace, tools, stages, labels, locale, format] = await Promise.all([
     getTranslations('card'),
+    getTranslations('reflect'),
     getTranslations('trace'),
     getTranslations('tools'),
     getTranslations('stages'),
@@ -40,6 +41,8 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
   // The person's current language, not the one the card was made in, so the screen reads in one language.
   const valueText = (value: Parameters<typeof measuredValueText>[0]) => measuredValueText(value, liveLocaleSchema.parse(locale));
   const stage = isStageKey(card.stageKey) ? stages(card.stageKey) : '';
+  // Offered, never pushed, after a check in where the person reports a lot of change (overview, Reflection).
+  const reportedALot = card.changes.some((c) => c.value.kind === 'reported_change' && c.value.changed === 'lot');
 
   return (
     <Shell backHref={`/ready/${view.profileId}`}>
@@ -110,6 +113,15 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {reportedALot && (
+        <section className="mt-8 space-y-3">
+          <p>{reflect('offerBody')}</p>
+          <Link href={`/reflect/${view.profileId}`} className={secondaryClass}>
+            {reflect('offerAction')}
+          </Link>
         </section>
       )}
 

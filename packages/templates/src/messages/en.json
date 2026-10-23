@@ -75,10 +75,10 @@
     "title": "Before you add photos",
     "intro": "Your photos, and what Interim learns from them, are personal. Here is exactly what happens to them.",
     "keepTitle": "What Interim keeps",
-    "keepBody": "Your photos, the measurements taken from them, your answers and your cards. Nothing is sold or used for advertising.",
+    "keepBody": "Your photos, the measurements taken from them, your answers, your cards and the reflections you write. Nothing is sold or used for advertising.",
     "helpersTitle": "Who helps",
     "helperYoucam": "YouCam, by Perfect Corp, receives your photos so it can measure them and preview looks.",
-    "helperGoogle": "Google receives measurements, your situation, what you are getting ready for and the tone you chose, so it can write your notes. It never receives photos.",
+    "helperGoogle": "Google receives measurements, your situation, what you are getting ready for and the tone you chose, so it can write your notes. If a reflection you write may show you are having a hard time, Google also reads that text, and nothing else about you, only to check on it. It never receives photos.",
     "retentionTitle": "How long to keep your photos",
     "retention": {
       "standard": {
@@ -93,7 +93,7 @@
     "confirmTitle": "Please confirm",
     "confirmStore": "Interim may store my photos and measurements.",
     "confirmYoucam": "YouCam (Perfect Corp) may process my photos.",
-    "confirmGoogle": "Google may process my measurements and settings, but not my photos.",
+    "confirmGoogle": "Google may process my measurements and settings, and a reflection I write if it may show I am having a hard time, but not my photos.",
     "confirmOwn": "The photos will only be of me.",
     "deleteAnytime": "You can delete your profile and everything in it at any time.",
     "incomplete": "Choose how long to keep photos and tick each box to continue.",
@@ -118,6 +118,26 @@
     "editAction": "Change my choices",
     "startAction": "Start a check in",
     "cardAction": "See my latest card"
+  },
+  "reflect": {
+    "title": "Reflection",
+    "intro": "Only if you feel like it. What you write is saved to your account, is never shown to anyone else, and you can delete it any time.",
+    "prompt": "What would you say to a friend going through this?",
+    "save": "Save",
+    "saving": "Saving…",
+    "empty": "Nothing saved yet.",
+    "previousTitle": "What you wrote before",
+    "deleteAction": "Delete",
+    "tooMany": "You have written a lot today. Please come back tomorrow.",
+    "offerBody": "If you feel like it, you can put a few words on how this feels. It is only for you.",
+    "offerAction": "Write a reflection",
+    "readyAction": "Reflection",
+    "contactsLink": "Need to talk to someone?",
+    "contactsTitle": "Someone to talk to",
+    "contactsIntro": "If things feel very heavy, these services will listen, any time. You do not need to be sure it is a crisis.",
+    "contactsClose": "Close",
+    "regionLabel": "Where are you?",
+    "regionOther": "Somewhere else"
   },
   "auth": {
     "signInTitle": "Sign in",

@@ -75,10 +75,10 @@
     "title": "Kafin ku ƙara hotuna",
     "intro": "Hotunanku, da abin da Interim ke koya daga cikinsu, na sirri ne. Ga ainihin abin da ke faruwa da su.",
     "keepTitle": "Abin da Interim ke adanawa",
-    "keepBody": "Hotunanku, ma’aunin da aka ɗauka daga cikinsu, amsoshinku da katunanku. Ba a sayar da komai ko amfani da shi don talla.",
+    "keepBody": "Hotunanku, ma’aunin da aka ɗauka daga cikinsu, amsoshinku, katunanku da tunanin da kuke rubutawa. Ba a sayar da komai ko amfani da shi don talla.",
     "helpersTitle": "Waɗanda ke taimakawa",
     "helperYoucam": "YouCam, na Perfect Corp, yana karɓar hotunanku don ya auna su kuma ya nuna samfurin kamannin.",
-    "helperGoogle": "Google yana karɓar ma’auni, yanayinku, abin da kuke shiryawa da salon magana da kuka zaɓa, don ya rubuta saƙonninku. Ba ya karɓar hotuna ko kaɗan.",
+    "helperGoogle": "Google yana karɓar ma’auni, yanayinku, abin da kuke shiryawa da salon magana da kuka zaɓa, don ya rubuta saƙonninku. Idan tunanin da kuka rubuta zai iya nuna cewa kuna cikin wahala, Google yana karanta wannan rubutu ma, ba wani abu game da ku ba, don tabbatarwa kawai. Ba ya karɓar hotuna ko kaɗan.",
     "retentionTitle": "Har yaushe za a adana hotunanku",
     "retention": {
       "standard": {
@@ -93,7 +93,7 @@
     "confirmTitle": "Da fatan za ku tabbatar",
     "confirmStore": "Interim na iya adana hotuna da ma’aunina.",
     "confirmYoucam": "YouCam (Perfect Corp) na iya sarrafa hotunana.",
-    "confirmGoogle": "Google na iya sarrafa ma’aunina da saitunana, amma ba hotunana ba.",
+    "confirmGoogle": "Google na iya sarrafa ma’aunina da saitunana, da tunanin da na rubuta idan zai iya nuna cewa ina cikin wahala, amma ba hotunana ba.",
     "confirmOwn": "Hotunan za su zama nawa ne kaɗai.",
     "deleteAnytime": "Kuna iya share bayananku da duk abin da ke cikinsu a kowane lokaci.",
     "incomplete": "Ku zaɓi tsawon lokacin adana hotuna, sannan ku yi alama a kowane akwati don ci gaba.",
@@ -118,6 +118,26 @@
     "editAction": "Canza zaɓuɓɓana",
     "startAction": "Fara dubawa",
     "cardAction": "Duba katina na ƙarshe"
+  },
+  "reflect": {
+    "title": "Tunani",
+    "intro": "Idan kuna so kawai. Abin da kuka rubuta ana ajiye shi a asusunku, ba a nuna shi ga kowa ba, kuma kuna iya share shi a kowane lokaci.",
+    "prompt": "Me za ku gaya wa aboki da ke cikin wannan hali?",
+    "save": "Ajiye",
+    "saving": "Ana ajiyewa…",
+    "empty": "Ba a ajiye komai ba tukuna.",
+    "previousTitle": "Abin da kuka rubuta a baya",
+    "deleteAction": "Share",
+    "tooMany": "Kun rubuta da yawa yau. Ku dawo gobe.",
+    "offerBody": "Idan kuna so, kuna iya rubuta ’yan kalmomi kan yadda kuke ji. Na ku ne kawai.",
+    "offerAction": "Rubuta tunani",
+    "readyAction": "Tunani",
+    "contactsLink": "Kuna buƙatar magana da wani?",
+    "contactsTitle": "Wanda za ku yi magana da shi",
+    "contactsIntro": "Idan abubuwa sun yi nauyi sosai, waɗannan ayyuka za su saurare ku, a kowane lokaci. Ba sai kun tabbata rikici ne ba.",
+    "contactsClose": "Rufe",
+    "regionLabel": "Ina kuke?",
+    "regionOther": "Wani wuri dabam"
   },
   "auth": {
     "signInTitle": "Shiga",
