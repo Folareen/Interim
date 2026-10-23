@@ -26,6 +26,7 @@ const envSchema = z
     UNIT_BUDGET_PER_SOURCE_PER_DAY: z.coerce.number().default(100),
     LIVE_CALLS_ENABLED: z.enum(['true', 'false']).default('false'),
     SESSION_SECRET: z.string().min(32),
+    DATA_KEY: z.string().regex(/^[0-9a-f]{64}$/i, 'DATA_KEY must be 64 hex characters (32 bytes)'), // encrypts saved reflections; losing it makes them unreadable
     MAX_UPLOAD_BYTES: z.coerce.number().default(12 * 1024 * 1024),
     TURNSTILE_SECRET_KEY: z.string().default(''),
     WEB_ORIGIN: z.string().url().default('http://localhost:3000'), // where the browser reaches the web app; emailed links and Google's return address start here

@@ -57,6 +57,13 @@
       "when": 1792609980980,
       "tag": "0007_steady_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792779365502,
+      "tag": "0008_numerous_solo",
+      "breakpoints": true
     }
   ]
 }

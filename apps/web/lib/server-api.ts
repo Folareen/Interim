@@ -5,6 +5,7 @@ import {
   type Me,
   type Preferences,
   type Profile,
+  type ReflectionsView,
   type RunView,
   authConfigSchema,
   cardSummaryListSchema,
@@ -13,6 +14,7 @@ import {
   preferencesSchema,
   profileListSchema,
   profileSchema,
+  reflectionsViewSchema,
   runViewSchema,
 } from '@interim/types';
 import { cookies } from 'next/headers';
@@ -101,4 +103,15 @@ export async function getCards(profileId: string): Promise<CardSummary[]> {
   });
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return cardSummaryListSchema.parse(await response.json());
+}
+
+/** The profile's saved reflections and whether the contacts card is showing. Undefined when the profile is not theirs. */
+export async function getReflections(profileId: string): Promise<ReflectionsView | undefined> {
+  const response = await fetch(`${apiOrigin}/profiles/${encodeURIComponent(profileId)}/reflections`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if (response.status === 404 || response.status === 400 || response.status === 401 || response.status === 403) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return reflectionsViewSchema.parse(await response.json());
 }

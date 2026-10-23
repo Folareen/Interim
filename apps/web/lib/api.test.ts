@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, createProfile, deleteProfile, getPreferences, grantConsent } from './api';
+import { ApiError, createProfile, deleteProfile, deleteReflection, dismissContacts, getPreferences, grantConsent, saveReflection } from './api';
 
 const fetchMock = vi.fn<typeof fetch>();
 const json = (body: unknown, status = 200) =>
@@ -67,5 +67,34 @@ describe('api client', () => {
     expect(url).toBe('/api/profiles/abc');
     expect(init?.method).toBe('DELETE');
     expect(init?.body).toBeUndefined();
+  });
+});
+
+describe('reflections', () => {
+  const reflection = { id: '12373736-c2c3-4394-8a5b-df5169fa5e08', text: 'A calm day', safety: 'none', createdAt: '2026-10-23T10:00:00.000Z' };
+
+  it('saves a reflection and reads whether the contacts card should show', async () => {
+    fetchMock.mockResolvedValueOnce(json({ reflection, contacts: true }, 201));
+    const saved = await saveReflection('p1', 'A calm day');
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
+    expect(url).toBe('/api/profiles/p1/reflections');
+    expect(JSON.parse(String(init?.body))).toEqual({ text: 'A calm day' });
+    expect(saved.contacts).toBe(true);
+    expect(saved.reflection.createdAt).toBeInstanceOf(Date);
+  });
+
+  it('reports a daily limit as a 429 the screen can tell apart', async () => {
+    fetchMock.mockResolvedValueOnce(json({ message: 'Too many' }, 429));
+    await expect(saveReflection('p1', 'again')).rejects.toMatchObject({ status: 429 });
+  });
+
+  it('deletes a reflection and dismisses the card', async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
+    await deleteReflection('p1', 'r1');
+    await dismissContacts('p1');
+    expect(fetchMock.mock.calls.map(([url, init]) => `${init?.method} ${String(url)}`)).toEqual([
+      'DELETE /api/profiles/p1/reflections/r1',
+      'POST /api/profiles/p1/reflections/contacts/dismiss',
+    ]);
   });
 });

@@ -65,6 +65,7 @@ interim/
 * **auth.** Accounts, sign in with password, email link or Google, password reset, account deletion, and the sign in rate limits. See section 12 and spec section 12b.
 * **mail.** The one place that sends email, through Brevo.
 * **cleanup.** Retention, deletion and bucket reconcile. See section 8.
+* **reflections.** Save, list and delete a profile's reflections, run the plain crisis check on each, and queue the near matches for the model review. The model call itself lives in the agent module (`SafetyReviewer`).
 * **storage.** The R2 client: presigned uploads, reads, listing and deletes.
 
 ## 5. Data model (PostgreSQL)
@@ -130,6 +131,7 @@ BullMQ on Redis.
 
 * **run queue.** One job per run. Concurrency of one per profile.
 * **poll queue.** Not a separate queue yet: the gateway polls inside the run job with a growing delay, and a task row left in `created` is polled again if the job is delivered twice.
+* **safety queue.** One job per flagged reflection, keyed by the review id, with three tries. It runs the model review and stores the verdict, and a worker start queues any review still pending. Jobs carry the id only.
 * **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `object_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
@@ -141,7 +143,8 @@ BullMQ on Redis.
 * GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos, head covering)
 * GET /profiles/:id/words?date=YYYY-MM-DD (today's passage in the profile's language or English, or null while off; the person only)
 * DELETE /profiles/:id
-* GET /profiles/:id/export
+* GET /profiles/:id/export (includes the reflections)
+* GET and POST /profiles/:id/reflections, DELETE /profiles/:id/reflections/:reflectionId, POST /profiles/:id/reflections/contacts/dismiss (the person only; need current consent; the server runs the check itself and allows 20 a day per profile)
 * POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
 * POST /profiles/:id/snapshots (upload ids with kinds, self report and an optional moment; normalises, stores, then deletes the raw uploads)
 * POST /snapshots/:id/runs (starts the agent; starting twice returns the same run)
@@ -201,7 +204,7 @@ Server environment variables, by name:
 * YOUCAM_MODE with values live, record or replay, and YOUCAM_FIXTURES_DIR and PLANNER_FIXTURES_DIR for what record writes and replay serves
 * LIVE_CALLS_ENABLED, false unless set
 * JUDGE_MODE_FORCE_REPLAY
-* SESSION_SECRET, MAX_UPLOAD_BYTES, TURNSTILE_SECRET_KEY
+* SESSION_SECRET, DATA_KEY (64 hex characters that encrypt reflections; back it up), MAX_UPLOAD_BYTES, TURNSTILE_SECRET_KEY
 * WEB_ORIGIN (where the browser reaches the web app; emailed links and Google's return address start here) and TRUST_PROXY_HOPS
 * MAIL_MODE (`log` or `brevo`; production must be `brevo`), BREVO_API_KEY, MAIL_FROM_EMAIL and MAIL_FROM_NAME
 * GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (optional; Google sign in is off without them)

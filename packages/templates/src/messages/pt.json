@@ -75,10 +75,10 @@
     "title": "Antes de adicionar fotos",
     "intro": "Suas fotos, e o que o Interim aprende com elas, são pessoais. Veja exatamente o que acontece com elas.",
     "keepTitle": "O que o Interim guarda",
-    "keepBody": "Suas fotos, as medidas tiradas delas, suas respostas e suas fichas. Nada é vendido nem usado em publicidade.",
+    "keepBody": "Suas fotos, as medidas tiradas delas, suas respostas, suas fichas e as reflexões que você escrever. Nada é vendido nem usado em publicidade.",
     "helpersTitle": "Quem ajuda",
     "helperYoucam": "A YouCam, da Perfect Corp, recebe suas fotos para medi-las e mostrar prévias de looks.",
-    "helperGoogle": "O Google recebe as medidas, a sua situação, para que você está se preparando e o tom que escolheu, para poder escrever suas notas. Ele nunca recebe fotos.",
+    "helperGoogle": "O Google recebe as medidas, a sua situação, para que você está se preparando e o tom que escolheu, para poder escrever suas notas. Se uma reflexão que você escrever puder indicar que você está passando por um momento difícil, o Google também lê esse texto, e nada mais sobre você, só para verificar. Ele nunca recebe fotos.",
     "retentionTitle": "Por quanto tempo guardar suas fotos",
     "retention": {
       "standard": {
@@ -93,10 +93,11 @@
     "confirmTitle": "Por favor, confirme",
     "confirmStore": "O Interim pode guardar minhas fotos e medidas.",
     "confirmYoucam": "A YouCam (Perfect Corp) pode processar minhas fotos.",
-    "confirmGoogle": "O Google pode processar minhas medidas e configurações, mas não minhas fotos.",
+    "confirmGoogle": "O Google pode processar minhas medidas e configurações, e uma reflexão que eu escrever se ela puder indicar que estou passando por um momento difícil, mas não minhas fotos.",
     "confirmOwn": "As fotos serão só minhas.",
+    "confirmAll": "Aceito tudo o que está acima.",
     "deleteAnytime": "Você pode excluir seu perfil e tudo o que há nele a qualquer momento.",
-    "incomplete": "Escolha por quanto tempo guardar as fotos e marque cada caixa para continuar.",
+    "incomplete": "Marque a caixa para continuar.",
     "submit": "Concordo e continuo",
     "submitting": "Salvando…",
     "outdated": "O texto do consentimento mudou. Recarregue esta página e leia de novo."
@@ -118,6 +119,26 @@
     "editAction": "Alterar minhas escolhas",
     "startAction": "Começar uma verificação",
     "cardAction": "Ver meu último cartão"
+  },
+  "reflect": {
+    "title": "Reflexão",
+    "intro": "Só se você quiser. O que você escrever é salvo na sua conta, nunca é mostrado a mais ninguém e você pode apagar quando quiser.",
+    "prompt": "O que você diria a um amigo que está passando por isso?",
+    "save": "Salvar",
+    "saving": "Salvando…",
+    "empty": "Nada salvo ainda.",
+    "previousTitle": "O que você escreveu antes",
+    "deleteAction": "Apagar",
+    "tooMany": "Você escreveu bastante hoje. Volte amanhã.",
+    "offerBody": "Se quiser, você pode pôr em palavras como se sente. É só para você.",
+    "offerAction": "Escrever uma reflexão",
+    "readyAction": "Reflexão",
+    "contactsLink": "Precisa conversar com alguém?",
+    "contactsTitle": "Alguém para conversar",
+    "contactsIntro": "Se tudo parece muito pesado, estes serviços vão ouvir você, a qualquer hora. Você não precisa ter certeza de que é uma crise.",
+    "contactsClose": "Fechar",
+    "regionLabel": "Onde você está?",
+    "regionOther": "Em outro lugar"
   },
   "auth": {
     "signInTitle": "Entrar",

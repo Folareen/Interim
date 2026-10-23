@@ -5,7 +5,8 @@ import { notFound, redirect } from 'next/navigation';
 import { primaryClass, secondaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getCards, getMe, getProfile } from '@/lib/server-api';
+import { getCards, getMe, getProfile, getReflections } from '@/lib/server-api';
+import { FlaggedContacts } from '../../reflect/[id]/flagged-contacts';
 import { DeleteProfile } from './delete-profile';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,12 +19,14 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
   const profile = await getProfile(id);
   if (!profile) notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
-  const [cards, t, labels, setup, consent] = await Promise.all([
+  const [cards, reflections, t, labels, setup, consent, reflect] = await Promise.all([
     getCards(id),
+    getReflections(id),
     getTranslations('ready'),
     getTranslations('templateLabels'),
     getTranslations('setup'),
     getTranslations('consent'),
+    getTranslations('reflect'),
   ]);
   const summary = [
     [t('situationLabel'), labels(profile.templateKey)],
@@ -33,6 +36,11 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
   return (
     <Shell>
       <PageHeading title={t('title')} intro={t('intro')} />
+      {reflections?.contacts && (
+        <div className="mt-8">
+          <FlaggedContacts profileId={id} />
+        </div>
+      )}
       <section className="mt-8">
         <h2 className="text-[1.25rem]">{t('summaryTitle')}</h2>
         <dl className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">
@@ -54,6 +62,9 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
             {t('cardAction')}
           </Link>
         )}
+        <Link href={`/reflect/${id}`} className={secondaryClass}>
+          {reflect('readyAction')}
+        </Link>
         <Link href={`/settings/${id}`} className={secondaryClass}>
           {t('editAction')}
         </Link>

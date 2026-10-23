@@ -75,10 +75,10 @@
     "title": "Tupu ịgbakwunye foto",
     "intro": "Foto gị, na ihe Interim na-amụta site na ha, bụ nke onwe gị. Nke a bụ ihe na-eme ha n’ezie.",
     "keepTitle": "Ihe Interim na-edebe",
-    "keepBody": "Foto gị, ihe e tụrụ site na ha, azịza gị na kaadị gị. Ọ nweghị ihe a na-ere ma ọ bụ jiri ya mee mgbasa ozi.",
+    "keepBody": "Foto gị, ihe e tụrụ site na ha, azịza gị, kaadị gị na echiche ị na-ede. Ọ nweghị ihe a na-ere ma ọ bụ jiri ya mee mgbasa ozi.",
     "helpersTitle": "Ndị na-enyere aka",
     "helperYoucam": "YouCam, nke Perfect Corp, na-anata foto gị ka ọ tụọ ha ma gosi ọdịdị tupu oge.",
-    "helperGoogle": "Google na-anata ihe e tụrụ, ọnọdụ gị, ihe ị na-akwado maka ya na ụdị okwu ị họọrọ, ka ọ nwee ike dee ndetu gị. Ọ naghị anata foto ọ bụla.",
+    "helperGoogle": "Google na-anata ihe e tụrụ, ọnọdụ gị, ihe ị na-akwado maka ya na ụdị okwu ị họọrọ, ka ọ nwee ike dee ndetu gị. Ọ bụrụ na echiche ị dere nwere ike igosi na ị nọ n’oge siri ike, Google na-agụkwa ederede ahụ, na ọ nweghị ihe ọzọ banyere gị, naanị iji lelee ya. Ọ naghị anata foto ọ bụla.",
     "retentionTitle": "Ogologo oge a ga-ebu debe foto gị",
     "retention": {
       "standard": {
@@ -93,10 +93,11 @@
     "confirmTitle": "Biko kwenye",
     "confirmStore": "Interim nwere ike idebe foto m na ihe e tụrụ m.",
     "confirmYoucam": "YouCam (Perfect Corp) nwere ike ịrụ ọrụ na foto m.",
-    "confirmGoogle": "Google nwere ike ịrụ ọrụ na ihe e tụrụ m na ntọala m, ma ọ bụghị foto m.",
+    "confirmGoogle": "Google nwere ike ịrụ ọrụ na ihe e tụrụ m na ntọala m, na echiche m dere ma ọ bụrụ na ọ nwere ike igosi na m nọ n’oge siri ike, ma ọ bụghị foto m.",
     "confirmOwn": "Foto ndị ahụ ga-abụ nke m naanị.",
+    "confirmAll": "Anabatara m ihe niile dị n’elu.",
     "deleteAnytime": "Ị nwere ike ihichapụ profaịlụ gị na ihe niile dị na ya n’oge ọ bụla.",
-    "incomplete": "Họrọ ogologo oge a ga-edebe foto ma maakị igbe ọ bụla ka ị gaa n’ihu.",
+    "incomplete": "Tinye akara n’igbe ahụ ka ịga n’ihu.",
     "submit": "Ekwenyere m, ana m aga n’ihu",
     "submitting": "Na-edebe…",
     "outdated": "Ederede nkwenye agbanweela. Bugharịa ibe a ma gụọ ya ọzọ."
@@ -118,6 +119,26 @@
     "editAction": "Gbanwee nhọrọ m",
     "startAction": "Malite nlele",
     "cardAction": "Lee kaadị m ikpeazụ"
+  },
+  "reflect": {
+    "title": "Echiche",
+    "intro": "Ọ bụrụ na ịchọrọ naanị. A na-edebe ihe ị dere n’akaụntụ gị, a naghị egosi ya onye ọzọ, ị nwekwara ike ihichapụ ya mgbe ọ bụla.",
+    "prompt": "Gịnị ka ị ga-agwa enyi na-agafe nke a?",
+    "save": "Chekwaa",
+    "saving": "Na-echekwa…",
+    "empty": "Ọ nweghị ihe echekwara ugbu a.",
+    "previousTitle": "Ihe ị dere na mbụ",
+    "deleteAction": "Hichapụ",
+    "tooMany": "I dewo ọtụtụ taa. Biko laghachi echi.",
+    "offerBody": "Ọ bụrụ na ịchọrọ, ị nwere ike ide okwu ole na ole banyere etu ọ dị gị. Ọ bụ naanị maka gị.",
+    "offerAction": "Dee echiche",
+    "readyAction": "Echiche",
+    "contactsLink": "Ị chọrọ ịgwa onye okwu?",
+    "contactsTitle": "Onye ị ga-agwa okwu",
+    "contactsIntro": "Ọ bụrụ na ihe dị gị arọ nke ukwuu, ọrụ ndị a ga-ege gị ntị, n’oge ọ bụla. Ọ dịghị mkpa ka ị doo anya na ọ bụ nsogbu dị egwu.",
+    "contactsClose": "Mechie",
+    "regionLabel": "Ebee ka ị nọ?",
+    "regionOther": "Ebe ọzọ"
   },
   "auth": {
     "signInTitle": "Banye",

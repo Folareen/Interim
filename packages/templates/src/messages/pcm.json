@@ -75,10 +75,10 @@
     "title": "Before you add photos",
     "intro": "Your photos, and wetin Interim learn from dem, na your private matter. Na exactly wetin go happen to dem be dis.",
     "keepTitle": "Wetin Interim dey keep",
-    "keepBody": "Your photos, di measurements wey dem take from dem, your answers and your cards. Dem no dey sell anything or use am for advert.",
+    "keepBody": "Your photos, di measurements wey dem take from dem, your answers, your cards and di reflections wey you write. Dem no dey sell anything or use am for advert.",
     "helpersTitle": "Who dey help",
     "helperYoucam": "YouCam, by Perfect Corp, dey receive your photos so e fit measure dem and show preview of looks.",
-    "helperGoogle": "Google dey receive measurements, your situation, wetin you dey get ready for and di tone wey you choose, so e fit write your notes. E no dey ever receive photos.",
+    "helperGoogle": "Google dey receive measurements, your situation, wetin you dey get ready for and di tone wey you choose, so e fit write your notes. If one reflection wey you write fit show say you dey pass through hard time, Google go read dat text too, and nothing else about you, just to check am. E no dey ever receive photos.",
     "retentionTitle": "How long to keep your photos",
     "retention": {
       "standard": {
@@ -93,10 +93,11 @@
     "confirmTitle": "Abeg confirm",
     "confirmStore": "Interim fit store my photos and measurements.",
     "confirmYoucam": "YouCam (Perfect Corp) fit process my photos.",
-    "confirmGoogle": "Google fit process my measurements and settings, but no be my photos.",
+    "confirmGoogle": "Google fit process my measurements and settings, and one reflection wey I write if e fit show say I dey pass through hard time, but no be my photos.",
     "confirmOwn": "Di photos go be only me.",
+    "confirmAll": "I agree to everything wey dey up there.",
     "deleteAnytime": "You fit delete your profile and everything inside am anytime.",
-    "incomplete": "Choose how long to keep photos and tick each box to continue.",
+    "incomplete": "Tick di box make you continue.",
     "submit": "I agree, make we continue",
     "submitting": "Dey save…",
     "outdated": "Di consent text don change. Reload dis page and read am again."
@@ -118,6 +119,26 @@
     "editAction": "Change my choices",
     "startAction": "Start check in",
     "cardAction": "See my latest card"
+  },
+  "reflect": {
+    "title": "Reflection",
+    "intro": "Na only if you wan do am. Wetin you write go dey save for your account, dem no go ever show anybody, and you fit delete am anytime.",
+    "prompt": "Wetin you go tell one friend wey dey pass through dis kain thing?",
+    "save": "Save",
+    "saving": "E dey save…",
+    "empty": "Nothing never save yet.",
+    "previousTitle": "Wetin you don write before",
+    "deleteAction": "Delete",
+    "tooMany": "You don write plenty today. Abeg come back tomorrow.",
+    "offerBody": "If you wan, you fit put small words for how e dey feel you. Na only for you.",
+    "offerAction": "Write reflection",
+    "readyAction": "Reflection",
+    "contactsLink": "You need talk to somebody?",
+    "contactsTitle": "Person to talk to",
+    "contactsIntro": "If tins dey too heavy, dis services go listen to you, anytime. You no need to sure say na crisis.",
+    "contactsClose": "Close",
+    "regionLabel": "Where you dey?",
+    "regionOther": "Another place"
   },
   "auth": {
     "signInTitle": "Sign in",

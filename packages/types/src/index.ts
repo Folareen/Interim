@@ -131,6 +131,31 @@ export const liveLocales = ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig'
 export const liveLocaleSchema = z.enum(liveLocales);
 export type LiveLocale = z.infer<typeof liveLocaleSchema>;
 
+/** What the person writes after a check in. */
+export const createReflectionSchema = z.object({ text: z.string().trim().min(1).max(4000) });
+export type CreateReflectionInput = z.infer<typeof createReflectionSchema>;
+
+/** How the safety check read a reflection: `match` replaces the screen, `flagged` is reviewed by a model. */
+export const reflectionSafetySchema = z.enum(['none', 'match', 'flagged']);
+export type ReflectionSafety = z.infer<typeof reflectionSafetySchema>;
+
+/** A saved reflection. */
+export const reflectionSchema = z.object({
+  id: z.string().uuid(),
+  text: z.string(),
+  safety: reflectionSafetySchema,
+  createdAt: z.coerce.date(),
+});
+export type Reflection = z.infer<typeof reflectionSchema>;
+
+/** A profile's reflections, newest first, and whether the crisis contacts card is showing. */
+export const reflectionsViewSchema = z.object({ reflections: z.array(reflectionSchema), contacts: z.boolean() });
+export type ReflectionsView = z.infer<typeof reflectionsViewSchema>;
+
+/** The answer to saving a reflection, so the screen can show the contacts at once on a match. */
+export const reflectionCreatedSchema = z.object({ reflection: reflectionSchema, contacts: z.boolean() });
+export type ReflectionCreated = z.infer<typeof reflectionCreatedSchema>;
+
 /** How the companion talks to a profile (docs/product/overview.md, The companion). */
 export const toneSchema = z.enum(['practical', 'warm', 'light']);
 export type Tone = z.infer<typeof toneSchema>;

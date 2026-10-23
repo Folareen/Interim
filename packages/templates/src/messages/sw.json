@@ -75,10 +75,10 @@
     "title": "Kabla ya kuongeza picha",
     "intro": "Picha zako, na kile ambacho Interim inajifunza kutoka kwazo, ni za kibinafsi. Hiki ndicho hasa kinachotokea kwazo.",
     "keepTitle": "Interim inachohifadhi",
-    "keepBody": "Picha zako, vipimo vilivyochukuliwa kutoka kwazo, majibu yako na kadi zako. Hakuna kinachouzwa wala kutumika kwa matangazo.",
+    "keepBody": "Picha zako, vipimo vilivyochukuliwa kutoka kwazo, majibu yako, kadi zako na tafakari unazoandika. Hakuna kinachouzwa wala kutumika kwa matangazo.",
     "helpersTitle": "Nani anasaidia",
     "helperYoucam": "YouCam, ya Perfect Corp, inapokea picha zako ili iweze kuzipima na kuonyesha mwonekano wa awali.",
-    "helperGoogle": "Google inapokea vipimo, hali yako, unachojiandaa nacho na sauti uliyochagua, ili iweze kuandika maelezo yako. Haipokei picha kamwe.",
+    "helperGoogle": "Google inapokea vipimo, hali yako, unachojiandaa nacho na sauti uliyochagua, ili iweze kuandika maelezo yako. Ikiwa tafakari unayoandika inaweza kuonyesha kuwa unapitia wakati mgumu, Google husoma pia maandishi hayo, na hakuna kingine kukuhusu, ili kuhakikisha tu. Haipokei picha kamwe.",
     "retentionTitle": "Picha zako zihifadhiwe kwa muda gani",
     "retention": {
       "standard": {
@@ -93,10 +93,11 @@
     "confirmTitle": "Tafadhali thibitisha",
     "confirmStore": "Interim inaweza kuhifadhi picha na vipimo vyangu.",
     "confirmYoucam": "YouCam (Perfect Corp) inaweza kuchakata picha zangu.",
-    "confirmGoogle": "Google inaweza kuchakata vipimo na mipangilio yangu, lakini si picha zangu.",
+    "confirmGoogle": "Google inaweza kuchakata vipimo na mipangilio yangu, pamoja na tafakari ninayoandika ikiwa inaweza kuonyesha kuwa ninapitia wakati mgumu, lakini si picha zangu.",
     "confirmOwn": "Picha zitakuwa zangu pekee.",
+    "confirmAll": "Nakubali yote yaliyo hapo juu.",
     "deleteAnytime": "Unaweza kufuta wasifu wako na kila kitu ndani yake wakati wowote.",
-    "incomplete": "Chagua muda wa kuhifadhi picha na weka alama kwenye kila kisanduku ili kuendelea.",
+    "incomplete": "Weka alama kwenye kisanduku ili kuendelea.",
     "submit": "Nakubali na ninaendelea",
     "submitting": "Inahifadhi…",
     "outdated": "Maandishi ya idhini yamebadilika. Pakia upya ukurasa huu na uyasome tena."
@@ -118,6 +119,26 @@
     "editAction": "Badilisha chaguo zangu",
     "startAction": "Anza ukaguzi",
     "cardAction": "Ona kadi yangu ya hivi karibuni"
+  },
+  "reflect": {
+    "title": "Tafakari",
+    "intro": "Ikiwa tu unataka. Unachoandika huhifadhiwa kwenye akaunti yako, hakionyeshwi kwa mtu mwingine yeyote, na unaweza kukifuta wakati wowote.",
+    "prompt": "Ungemwambia nini rafiki anayepitia haya?",
+    "save": "Hifadhi",
+    "saving": "Inahifadhi…",
+    "empty": "Bado hakuna kilichohifadhiwa.",
+    "previousTitle": "Ulichoandika awali",
+    "deleteAction": "Futa",
+    "tooMany": "Umeandika sana leo. Tafadhali rudi kesho.",
+    "offerBody": "Ukipenda, unaweza kuandika maneno machache kuhusu unavyohisi. Ni kwa ajili yako tu.",
+    "offerAction": "Andika tafakari",
+    "readyAction": "Tafakari",
+    "contactsLink": "Unahitaji kuzungumza na mtu?",
+    "contactsTitle": "Mtu wa kuzungumza naye",
+    "contactsIntro": "Ikiwa mambo yanahisi mazito sana, huduma hizi zitakusikiliza, wakati wowote. Huhitaji kuwa na uhakika kama ni dharura.",
+    "contactsClose": "Funga",
+    "regionLabel": "Uko wapi?",
+    "regionOther": "Mahali pengine"
   },
   "auth": {
     "signInTitle": "Ingia",
