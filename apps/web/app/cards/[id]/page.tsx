@@ -1,4 +1,4 @@
-import { measuredValueText } from '@interim/templates';
+import { measuredValueText, templates } from '@interim/templates';
 import { liveLocaleSchema } from '@interim/types';
 import type { Metadata } from 'next';
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server';
@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { secondaryClass } from '@/components/button';
 import { Shell } from '@/components/shell';
-import { isStageKey, isToolKey } from '@/lib/labels';
+import { isGarmentKey, isStageKey, isToolKey } from '@/lib/labels';
 import { getCard, getMe } from '@/lib/server-api';
 import { DeleteProfile } from '../../ready/[id]/delete-profile';
 import { ApproveCard } from './approve-card';
@@ -27,13 +27,15 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
   if (!view) notFound();
   const { card } = view;
 
-  const [t, reflect, trace, tools, stages, labels, locale, format] = await Promise.all([
+  const [t, ready, reflect, trace, tools, stages, labels, garments, locale, format] = await Promise.all([
     getTranslations('card'),
+    getTranslations('ready'),
     getTranslations('reflect'),
     getTranslations('trace'),
     getTranslations('tools'),
     getTranslations('stages'),
     getTranslations('templateLabels'),
+    getTranslations('garments'),
     getLocale(),
     getFormatter(),
   ]);
@@ -42,6 +44,8 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
   const valueText = (value: Parameters<typeof measuredValueText>[0]) => measuredValueText(value, liveLocaleSchema.parse(locale));
   const stage = isStageKey(card.stageKey) ? stages(card.stageKey) : '';
   // Offered, never pushed, after a check in where the person reports a lot of change (overview, Reflection).
+  const garmentName = (sku: string) => (isGarmentKey(sku) ? garments(sku) : '');
+  const hasClothes = card.clothes.length > 0 || card.shoppingList.length > 0 || card.holdOffBuying.length > 0;
   const reportedALot = card.changes.some((c) => c.value.kind === 'reported_change' && c.value.changed === 'lot');
 
   return (
@@ -102,6 +106,70 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
           })}
         </ul>
       </section>
+
+      {card.clothes.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-[1.25rem]">{t('clothesTitle')}</h2>
+          <p className="mt-2 text-[0.95rem] text-muted">{t('clothesIntro')}</p>
+          <ul className="mt-4 space-y-8">
+            {card.clothes.map((piece) => {
+              const url = view.renderUrls[piece.renderId];
+              return (
+                <li key={piece.renderId}>
+                  {url ? (
+                    <OptionImage
+                      previewUrl={url}
+                      photoUrl={view.bodyPhotoUrl}
+                      label={t('preview')}
+                      previewAlt={t('clothesAlt', { item: garmentName(piece.sku) })}
+                    />
+                  ) : (
+                    <p className="rounded-card border border-border bg-surface px-4 py-6 text-muted">{t('imageGone')}</p>
+                  )}
+                  <p className="mt-3 font-semibold">{garmentName(piece.sku)}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
+      {card.shoppingList.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-[1.25rem]">{t('shoppingTitle')}</h2>
+          <p className="mt-2 text-[0.95rem] text-muted">{t('shoppingIntro')}</p>
+          <ul className="mt-3 space-y-3">
+            {card.shoppingList.map((entry) => (
+              <li key={entry.sku} className="rounded-card border border-border bg-surface px-4 py-3 font-semibold">
+                {t('shoppingLine', { item: garmentName(entry.sku), size: entry.size })}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {card.holdOffBuying.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-[1.25rem]">{t('holdTitle')}</h2>
+          <ul className="mt-3 space-y-3">
+            {card.holdOffBuying.map((entry) => (
+              <li key={entry.item} className="rounded-card border border-border bg-surface px-4 py-3">
+                <p className="font-semibold">{garmentName(entry.item)}</p>
+                <p className="text-[0.95rem] text-muted">{t(`holdReasons.${entry.reason}`)}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {templates[card.templateKey].usesFit && !hasClothes && (
+        <section className="mt-8 space-y-3">
+          <p>{t('clothesEmpty')}</p>
+          <Link href={`/clothes/${view.profileId}`} className={secondaryClass}>
+            {ready('clothesAction')}
+          </Link>
+        </section>
+      )}
 
       {card.whatToSay.length > 0 && (
         <section className="mt-8">

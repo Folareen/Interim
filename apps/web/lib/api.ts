@@ -181,3 +181,13 @@ export async function deleteReflection(profileId: string, reflectionId: string):
 export async function dismissContacts(profileId: string): Promise<void> {
   await send(`/profiles/${profileId}/reflections/contacts/dismiss`, 'POST');
 }
+
+/** Saves a catalog piece, to be shown on the person's photo at each check in. Saving it again changes nothing. */
+export async function saveGarment(profileId: string, sku: string): Promise<void> {
+  await send(`/profiles/${profileId}/garments/${encodeURIComponent(sku)}`, 'PUT');
+}
+
+/** Removes a saved piece. */
+export async function removeGarment(profileId: string, sku: string): Promise<void> {
+  await send(`/profiles/${profileId}/garments/${encodeURIComponent(sku)}`, 'DELETE');
+}

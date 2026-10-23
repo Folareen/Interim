@@ -118,7 +118,8 @@
     "deleting": "Ń pa á rẹ́…",
     "editAction": "Yí àwọn yíyàn mi padà",
     "startAction": "Bẹ̀rẹ̀ àyẹ̀wò",
-    "cardAction": "Wo káàdì mi tó kẹ́yìn"
+    "cardAction": "Wo káàdì mi tó kẹ́yìn",
+    "clothesAction": "Yan aṣọ láti dánwò"
   },
   "reflect": {
     "title": "Ìrònú",
@@ -432,7 +433,8 @@
     "hair_volume": "àkọ́wò bí irun ṣe kún",
     "hair_color": "àkọ́wò àwọ̀",
     "beard_style": "àkọ́wò irungbọ̀n",
-    "makeup_brows": "àkọ́wò irun ojú"
+    "makeup_brows": "àkọ́wò irun ojú",
+    "cloth_v4": "àkọ́wò aṣọ"
   },
   "stages": {
     "full": "Kíkún",
@@ -503,6 +505,32 @@
     "approving": "Ń fọwọ́ sí i…",
     "approved": "A fọwọ́ sí i ní {date}",
     "toneAction": "Yí ohùn mi padà",
-    "backAction": "Padà sí àkọọ́lẹ̀ mi"
+    "backAction": "Padà sí àkọọ́lẹ̀ mi",
+    "clothesTitle": "Aṣọ rẹ lórí fọ́tò rẹ",
+    "clothesIntro": "Àkọ́wò àwọn aṣọ tí o ṣàfipamọ́ ni, lórí fọ́tò rẹ ti àyẹ̀wò yìí. Àkọ́wò kò ṣèlérí bí aṣọ yóò ṣe bá ọ mu.",
+    "clothesAlt": "Àkọ́wò {item} lórí fọ́tò rẹ",
+    "clothesEmpty": "Ṣàfipamọ́ àwọn aṣọ, wọn yóò hàn níbí ní àyẹ̀wò rẹ tó kàn.",
+    "shoppingTitle": "Àtòjọ ríra",
+    "shoppingIntro": "Ìwọ̀n wá láti inú ìwọ̀n tí o sọ fún wa àti tábìlì ìwọ̀n ṣọ́ọ̀bù kọ̀ọ̀kan, kì í ṣe láti inú àkọ́wò.",
+    "shoppingLine": "{item}: ìwọ̀n {size}",
+    "holdTitle": "Dúró kí o tó rà",
+    "holdReasons": {
+      "size_moving": "Ìwọ̀n rẹ ṣì ń dúró sójú kan, nítorí náà dúró kí o tó rà aṣọ tí ó péye sí ìwọ̀n.",
+      "size_unknown": "Sọ ìwọ̀n rẹ fún wa ní àyẹ̀wò rẹ tó kàn, a ó sì yan án.",
+      "size_not_offered": "Ṣọ́ọ̀bù kò ní i ní ìwọ̀n rẹ."
+    }
+  },
+  "clothes": {
+    "title": "Aṣọ láti dánwò",
+    "intro": "Ṣàfipamọ́ àwọn aṣọ tí o ń rò láti rà. Ní àyẹ̀wò kọ̀ọ̀kan, a ó fi wọ́n hàn lórí fọ́tò rẹ, pẹ̀lú ìwọ̀n láti inú tábìlì ìwọ̀n ṣọ́ọ̀bù.",
+    "saveAction": "Ṣàfipamọ́ {item}",
+    "removeAction": "Yọ {item} kúrò",
+    "saved": "A ti ṣàfipamọ́"
+  },
+  "garments": {
+    "tee-crew": "Ṣẹ́ẹ̀tì orí yíká",
+    "shirt-oxford": "Ṣẹ́ẹ̀tì oxford",
+    "jumper-knit": "Sweta híhun",
+    "jacket-light": "Jákẹ́ẹ̀tì fúyẹ́"
   }
 }

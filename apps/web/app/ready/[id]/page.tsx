@@ -1,3 +1,4 @@
+import { templates } from '@interim/templates';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
@@ -60,6 +61,11 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
         {cards[0] && (
           <Link href={`/cards/${cards[0].id}`} className={secondaryClass}>
             {t('cardAction')}
+          </Link>
+        )}
+        {templates[profile.templateKey].usesFit && (
+          <Link href={`/clothes/${id}`} className={secondaryClass}>
+            {t('clothesAction')}
           </Link>
         )}
         <Link href={`/reflect/${id}`} className={secondaryClass}>

@@ -118,7 +118,8 @@
     "deleting": "Excluindo…",
     "editAction": "Alterar minhas escolhas",
     "startAction": "Começar uma verificação",
-    "cardAction": "Ver meu último cartão"
+    "cardAction": "Ver meu último cartão",
+    "clothesAction": "Escolher roupas para experimentar"
   },
   "reflect": {
     "title": "Reflexão",
@@ -432,7 +433,8 @@
     "hair_volume": "prévia de volume",
     "hair_color": "prévia de cor",
     "beard_style": "prévia de barba",
-    "makeup_brows": "prévia de sobrancelhas"
+    "makeup_brows": "prévia de sobrancelhas",
+    "cloth_v4": "prévia de peça"
   },
   "stages": {
     "full": "Cheio",
@@ -503,6 +505,32 @@
     "approving": "Aprovando…",
     "approved": "Aprovado em {date}",
     "toneAction": "Mudar meu tom",
-    "backAction": "Voltar ao meu perfil"
+    "backAction": "Voltar ao meu perfil",
+    "clothesTitle": "Suas roupas na sua foto",
+    "clothesIntro": "Prévias das peças que você salvou, mostradas na sua foto desta verificação. Uma prévia não promete como a peça vai ficar.",
+    "clothesAlt": "Prévia de {item} na sua foto",
+    "clothesEmpty": "Salve algumas roupas e elas vão aparecer aqui na próxima verificação.",
+    "shoppingTitle": "Lista de compras",
+    "shoppingIntro": "Os tamanhos vêm do tamanho que você informou e da tabela de medidas de cada loja, não das prévias.",
+    "shoppingLine": "{item}: tamanho {size}",
+    "holdTitle": "Melhor não comprar ainda",
+    "holdReasons": {
+      "size_moving": "Seu tamanho ainda está se definindo, então espere antes de comprar uma peça de caimento justo.",
+      "size_unknown": "Diga seu tamanho na próxima verificação e vamos escolher o certo.",
+      "size_not_offered": "A loja não tem essa peça no seu tamanho."
+    }
+  },
+  "clothes": {
+    "title": "Roupas para experimentar",
+    "intro": "Salve as peças em que você está pensando. A cada verificação, elas aparecem na sua foto, com um tamanho da tabela de medidas da loja.",
+    "saveAction": "Salvar {item}",
+    "removeAction": "Remover {item}",
+    "saved": "Salva"
+  },
+  "garments": {
+    "tee-crew": "Camiseta gola redonda",
+    "shirt-oxford": "Camisa oxford",
+    "jumper-knit": "Suéter de tricô",
+    "jacket-light": "Jaqueta leve"
   }
 }

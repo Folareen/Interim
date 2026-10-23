@@ -118,7 +118,8 @@
     "deleting": "Na-ehichapụ…",
     "editAction": "Gbanwee nhọrọ m",
     "startAction": "Malite nlele",
-    "cardAction": "Lee kaadị m ikpeazụ"
+    "cardAction": "Lee kaadị m ikpeazụ",
+    "clothesAction": "Họrọ uwe ị ga-anwale"
   },
   "reflect": {
     "title": "Echiche",
@@ -432,7 +433,8 @@
     "hair_volume": "nlele ịdị mkpa ntutu",
     "hair_color": "nlele agba",
     "beard_style": "nlele afụ",
-    "makeup_brows": "nlele ntutu anya"
+    "makeup_brows": "nlele ntutu anya",
+    "cloth_v4": "nlele uwe"
   },
   "stages": {
     "full": "Zuru ezu",
@@ -503,6 +505,32 @@
     "approving": "Na-ekwenye…",
     "approved": "Kwenyere na {date}",
     "toneAction": "Gbanwee ụdị m",
-    "backAction": "Laghachi na profaịlụ m"
+    "backAction": "Laghachi na profaịlụ m",
+    "clothesTitle": "Uwe gị na foto gị",
+    "clothesIntro": "Ndị a bụ nlele uwe ị chekwara, na foto gị nke nlele a. Nlele adịghị ekwe nkwa otú uwe ga-esi dabara gị.",
+    "clothesAlt": "Nlele {item} na foto gị",
+    "clothesEmpty": "Chekwaa ụfọdụ uwe, ha ga-apụta ebe a na nlele ọzọ.",
+    "shoppingTitle": "Ndepụta ịzụta",
+    "shoppingIntro": "Nha si na nha ị gwara anyị na tebụl nha nke ụlọ ahịa ọ bụla, ọ bụghị site na nlele.",
+    "shoppingLine": "{item}: nha {size}",
+    "holdTitle": "Chere tupu ịzụta",
+    "holdReasons": {
+      "size_moving": "Nha gị ka na-edozi onwe ya, ya mere chere tupu ịzụta uwe nwere nha kpọmkwem.",
+      "size_unknown": "Gwa anyị nha gị na nlele ọzọ, anyị ga-ahọrọ ya.",
+      "size_not_offered": "Ụlọ ahịa enweghị ya n’nha gị."
+    }
+  },
+  "clothes": {
+    "title": "Uwe ị ga-anwale",
+    "intro": "Chekwaa uwe ndị ị na-eche ịzụta. Na nlele ọ bụla, a ga-egosi ha na foto gị, yana nha si na tebụl nha ụlọ ahịa.",
+    "saveAction": "Chekwaa {item}",
+    "removeAction": "Wepụ {item}",
+    "saved": "Echekwara"
+  },
+  "garments": {
+    "tee-crew": "T-shirt olu gburugburu",
+    "shirt-oxford": "Uwe elu oxford",
+    "jumper-knit": "Sweta e kpara",
+    "jacket-light": "Jakị dị mfe"
   }
 }
