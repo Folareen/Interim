@@ -591,5 +591,21 @@
     "colour_ash": "Àwọ̀ eérú",
     "brows_soft": "Irun ojú rírọ̀",
     "brows_deep": "Irun ojú dúdú"
+  },
+  "share": {
+    "title": "Pín káàdì yìí",
+    "note": "Ṣe ìjápọ̀ kan fún onídìrí, alágbẹ̀ tàbí ọ̀rẹ́. Wọ́n á rí àwọn àkọ́wò àti àtòjọ ríra nǹkan, wọn kò ní rí fọ́tò rẹ, orúkọ rẹ tàbí ímeèlì rẹ láéláé. Ìjápọ̀ náà á dáwọ́ iṣẹ́ dúró fúnra rẹ̀, o sì lè dá a dúró nígbàkigbà.",
+    "action": "Ṣe ìjápọ̀",
+    "making": "Ń ṣe ìjápọ̀ rẹ…",
+    "linkLabel": "Ìjápọ̀ rẹ",
+    "copy": "Daakọ ìjápọ̀",
+    "copied": "A ti daakọ ìjápọ̀",
+    "expires": "Ó ń ṣiṣẹ́ títí di {date}",
+    "stop": "Dáwọ́ pípín dúró",
+    "stopping": "Ń dúró…",
+    "viewTitle": "A pín in pẹ̀lú rẹ",
+    "viewIntro": "Àwọn àkọ́wò ìrísí àti àtòjọ ríra nǹkan, tí ẹni tí wọ́n jẹ́ tirẹ̀ pín. Àkọ́wò kì í ṣe ìlérí abájáde.",
+    "viewExpires": "Ìjápọ̀ yìí ń ṣiṣẹ́ títí di {date}.",
+    "viewEmpty": "Kò sí ohun tí a lè fi hàn lórí ìjápọ̀ yìí."
   }
 }

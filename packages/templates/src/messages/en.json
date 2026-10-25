@@ -591,5 +591,21 @@
     "colour_ash": "Ash grey",
     "brows_soft": "Soft brow",
     "brows_deep": "Deep brow"
+  },
+  "share": {
+    "title": "Share this card",
+    "note": "Make a link for a stylist, barber or friend. They see the previews and the shopping list, never your photos, name or email. The link stops working on its own, and you can stop it any time.",
+    "action": "Make a link",
+    "making": "Making your link…",
+    "linkLabel": "Your link",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "expires": "Works until {date}",
+    "stop": "Stop sharing",
+    "stopping": "Stopping…",
+    "viewTitle": "Shared with you",
+    "viewIntro": "Previews of looks and a shopping list, shared by the person they are for. A preview does not promise a result.",
+    "viewExpires": "This link works until {date}.",
+    "viewEmpty": "There is nothing to show on this link."
   }
 }

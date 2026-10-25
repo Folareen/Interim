@@ -591,5 +591,21 @@
     "colour_ash": "Gris ceniza",
     "brows_soft": "Cejas suaves",
     "brows_deep": "Cejas intensas"
+  },
+  "share": {
+    "title": "Compartir esta tarjeta",
+    "note": "Crea un enlace para un estilista, un barbero o un amigo. Verá las vistas previas y la lista de compras, nunca tus fotos, tu nombre ni tu correo. El enlace deja de funcionar solo y puedes detenerlo cuando quieras.",
+    "action": "Crear un enlace",
+    "making": "Creando tu enlace…",
+    "linkLabel": "Tu enlace",
+    "copy": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "expires": "Válido hasta el {date}",
+    "stop": "Dejar de compartir",
+    "stopping": "Deteniendo…",
+    "viewTitle": "Compartido contigo",
+    "viewIntro": "Vistas previas de looks y una lista de compras, compartidas por la persona a la que pertenecen. Una vista previa no promete un resultado.",
+    "viewExpires": "Este enlace es válido hasta el {date}.",
+    "viewEmpty": "No hay nada que mostrar en este enlace."
   }
 }

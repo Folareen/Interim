@@ -591,5 +591,21 @@
     "colour_ash": "Cinza acinzentado",
     "brows_soft": "Sobrancelha suave",
     "brows_deep": "Sobrancelha intensa"
+  },
+  "share": {
+    "title": "Compartilhar este cartão",
+    "note": "Crie um link para um cabeleireiro, um barbeiro ou um amigo. Essa pessoa vê as prévias e a lista de compras, nunca suas fotos, seu nome ou seu e-mail. O link deixa de funcionar sozinho e você pode interrompê-lo quando quiser.",
+    "action": "Criar um link",
+    "making": "Criando seu link…",
+    "linkLabel": "Seu link",
+    "copy": "Copiar link",
+    "copied": "Link copiado",
+    "expires": "Válido até {date}",
+    "stop": "Parar de compartilhar",
+    "stopping": "Interrompendo…",
+    "viewTitle": "Compartilhado com você",
+    "viewIntro": "Prévias de visuais e uma lista de compras, compartilhadas pela pessoa a quem pertencem. Uma prévia não promete um resultado.",
+    "viewExpires": "Este link é válido até {date}.",
+    "viewEmpty": "Não há nada para mostrar neste link."
   }
 }

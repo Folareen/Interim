@@ -8,6 +8,8 @@ import {
   type Profile,
   type ReflectionsView,
   type RunView,
+  type ShareList,
+  type SharedCard,
   authConfigSchema,
   cardSummaryListSchema,
   cardViewSchema,
@@ -18,6 +20,8 @@ import {
   profileSchema,
   reflectionsViewSchema,
   runViewSchema,
+  shareListSchema,
+  sharedCardSchema,
 } from '@interim/types';
 import { cookies } from 'next/headers';
 
@@ -127,4 +131,23 @@ export async function getGarments(profileId: string): Promise<GarmentItem[] | un
   if ([400, 401, 403, 404, 409].includes(response.status)) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return garmentListSchema.parse(await response.json());
+}
+
+/** The links of a card that still work, or an empty list when the card is not the person's. */
+export async function getShares(cardId: string): Promise<ShareList> {
+  const response = await fetch(`${apiOrigin}/cards/${encodeURIComponent(cardId)}/shares`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if ([400, 401, 404].includes(response.status)) return [];
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return shareListSchema.parse(await response.json());
+}
+
+/** What a share link shows, or undefined when the link is unknown, expired or revoked. Sends no cookie: the link is the only credential. */
+export async function getSharedCard(token: string): Promise<SharedCard | undefined> {
+  const response = await fetch(`${apiOrigin}/shared/${encodeURIComponent(token)}`, { cache: 'no-store' });
+  if (response.status === 404 || response.status === 400) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return sharedCardSchema.parse(await response.json());
 }

@@ -591,5 +591,21 @@
     "colour_ash": "Agba ntụ",
     "brows_soft": "Ntutu anya dị nro",
     "brows_deep": "Ntutu anya gbara ọchịchịrị"
+  },
+  "share": {
+    "title": "Kekọrịta kaadị a",
+    "note": "Mepụta njikọ maka onye na-ahazi ntutu, onye na-akpụ ntutu ma ọ bụ enyi. Ha ga-ahụ nlele na ndepụta ịzụ ahịa, ọ dịghị mgbe ha ga-ahụ foto gị, aha gị ma ọ bụ email gị. Njikọ ahụ na-akwụsị ịrụ ọrụ n’onwe ya, ị nwekwara ike ịkwụsị ya n’oge ọ bụla.",
+    "action": "Mepụta njikọ",
+    "making": "Na-emepụta njikọ gị…",
+    "linkLabel": "Njikọ gị",
+    "copy": "Detuo njikọ",
+    "copied": "E detuola njikọ",
+    "expires": "Na-arụ ọrụ ruo {date}",
+    "stop": "Kwụsị ịkekọrịta",
+    "stopping": "Na-akwụsị…",
+    "viewTitle": "E kekọrịtara gị",
+    "viewIntro": "Nlele nke ụdị na ndepụta ịzụ ahịa, onye ha bụ nke ya kekọrịtara. Nlele anaghị ekwe nkwa nsonaazụ.",
+    "viewExpires": "Njikọ a na-arụ ọrụ ruo {date}.",
+    "viewEmpty": "Enweghị ihe a ga-egosi na njikọ a."
   }
 }

@@ -591,5 +591,21 @@
     "colour_ash": "Kijivu cha majivu",
     "brows_soft": "Nyusi laini",
     "brows_deep": "Nyusi zilizokolea"
+  },
+  "share": {
+    "title": "Shiriki kadi hii",
+    "note": "Tengeneza kiungo kwa mtunzi wa nywele, kinyozi au rafiki. Wataona onyesho la awali na orodha ya ununuzi, kamwe si picha zako, jina lako wala barua pepe yako. Kiungo huacha kufanya kazi chenyewe, na unaweza kukisimamisha wakati wowote.",
+    "action": "Tengeneza kiungo",
+    "making": "Inatengeneza kiungo chako…",
+    "linkLabel": "Kiungo chako",
+    "copy": "Nakili kiungo",
+    "copied": "Kiungo kimenakiliwa",
+    "expires": "Kinafanya kazi hadi {date}",
+    "stop": "Acha kushiriki",
+    "stopping": "Inasimamisha…",
+    "viewTitle": "Umeshirikishwa",
+    "viewIntro": "Maonyesho ya awali ya mitindo na orodha ya ununuzi, vilivyoshirikishwa na mhusika. Onyesho la awali halihakikishi matokeo.",
+    "viewExpires": "Kiungo hiki kinafanya kazi hadi {date}.",
+    "viewEmpty": "Hakuna cha kuonyesha kwenye kiungo hiki."
   }
 }
