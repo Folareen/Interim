@@ -275,9 +275,55 @@ export type Placement =
   | { by: 'reported_size'; steps: readonly [string, string, string]; settled: string }
   | { by: 'reported_change' };
 
-/** What the agent advises for a stage. */
-export const strategySchema = z.enum(['cut', 'volume', 'colour', 'cover', 'hold']);
+/**
+ * What the agent advises for a stage. `part`, `neckline`, `frame`, `comfort` and `match` render
+ * nothing: their advice is plain code (docs/product/spec.md section 8).
+ */
+export const strategySchema = z.enum(['cut', 'volume', 'colour', 'brow', 'part', 'neckline', 'frame', 'comfort', 'match', 'cover', 'hold']);
 export type Strategy = z.infer<typeof strategySchema>;
+
+/**
+ * The advice lines a card can carry. Each belongs to one situation, so a card holds advice only that
+ * situation would give. A code, never a sentence, so the web app can say it in the person's language.
+ */
+export const adviceCodes = [
+  'patches_part',
+  'patches_brow',
+  'patches_volume',
+  'patches_own_report',
+  'fullness_neckline',
+  'fullness_collar',
+  'fullness_frame',
+  'surgery_soft',
+  'surgery_front_opening',
+  'surgery_relaxed_first',
+  'surgery_settled',
+  'surgery_photos_off',
+  'skin_match_clothes',
+  'skin_match_makeup',
+  'skin_match_recheck',
+  'skin_match_unmeasured',
+] as const;
+export const adviceCodeSchema = z.enum(adviceCodes);
+export type AdviceCode = z.infer<typeof adviceCodeSchema>;
+
+/** Named colours a card can suggest, each with the swatch the web app draws. */
+export const colourHex = {
+  forest: '#2f5d46',
+  navy: '#1f2f5a',
+  plum: '#5b2a54',
+  rust: '#a4502b',
+  cream: '#f1e6cf',
+  rose: '#c9788a',
+  coral: '#e2735f',
+  berry: '#8c2f4f',
+  gold: '#c79a2a',
+  olive: '#6b6b2f',
+  teal: '#1f7a7a',
+  camel: '#b98a56',
+} as const;
+export const colourCodeSchema = z.enum(Object.keys(colourHex) as [keyof typeof colourHex, ...(keyof typeof colourHex)[]]);
+export type ColourCode = z.infer<typeof colourCodeSchema>;
 
 /**
  * Why a photo, a photo set or an answer was refused. A code, never a sentence, so the web app can
@@ -467,8 +513,12 @@ export const stageCardSchema = z.object({
       tool: z.string(),
       strategy: strategySchema,
       label: optionLabelSchema,
+      /** The look rendered, so a preview is named by its look and never by who it is for. Absent on an earlier look from an old card. */
+      look: z.string().optional(),
     }),
   ),
+  /** Advice only this situation gives, in the order to read it. `colours` is set for the colour lines. */
+  advice: z.array(z.object({ code: adviceCodeSchema, colours: z.array(colourCodeSchema).default([]) })).default([]),
   /** Saved clothes shown on the body photo from this check in. */
   clothes: z.array(z.object({ renderId: z.string().uuid(), sku: z.string() })).default([]),
   /** Saved pieces to buy now. `size` is the label the catalog's size chart gives the reported size, never read from a render. */

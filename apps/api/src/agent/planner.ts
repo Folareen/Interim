@@ -6,7 +6,7 @@ import { messages } from '@interim/templates';
 import { type Strategy, type YoucamMode, strategySchema } from '@interim/types';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
-import { PLANNER_PROMPT_VERSION, type PlannerInput, plannerPrompt } from './prompts/planner.v1';
+import { PLANNER_PROMPT_VERSION, type PlannerInput, plannerPrompt } from './prompts/planner.v2';
 
 /** How the planner runs. `mode` follows the YouCam mode, and judge mode forces replay. */
 export interface PlannerConfig {

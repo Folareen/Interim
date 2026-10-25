@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { type MeasurementsContext, measurementsDue } from './measurements';
 
 const photos = (...kinds: PhotoKind[]) => new Set<PhotoKind>(kinds);
+const everyTool = ['hair_type', 'hair_density', 'hair_length', 'face_shape', 'skin_tone'] as const;
 const checkIn: MeasurementsContext = {
   isBaseline: false,
+  baseline: everyTool,
   tracks: ['hair_density', 'hair_length'],
   photos: photos('front', 'top'),
   headCovering: false,
@@ -18,6 +20,12 @@ describe('measurementsDue', () => {
   it('takes every baseline measure the photos allow', () => {
     const due = measurementsDue({ ...checkIn, isBaseline: true, photos: photos('front', 'left', 'right', 'top') });
     expect(due).toEqual(['hair_type', 'hair_density', 'hair_length', 'face_shape', 'skin_tone']);
+  });
+
+  it('takes only the tools a template reads at the baseline, and nothing when it reads none', () => {
+    const all = { ...checkIn, isBaseline: true, photos: photos('front', 'left', 'right', 'top') };
+    expect(measurementsDue({ ...all, baseline: ['skin_tone'] })).toEqual(['skin_tone']);
+    expect(measurementsDue({ ...all, baseline: [] })).toEqual([]);
   });
 
   it('measures density only when a top photo was taken, and hair type only with both sides', () => {

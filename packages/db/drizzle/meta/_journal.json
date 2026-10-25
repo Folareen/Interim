@@ -71,6 +71,13 @@
       "when": 1792798274072,
       "tag": "0009_fancy_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792966773698,
+      "tag": "0010_gifted_molly_hayes",
+      "breakpoints": true
     }
   ]
 }

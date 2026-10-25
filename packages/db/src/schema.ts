@@ -30,7 +30,7 @@ export const reviewReason = pgEnum('review_reason', ['match', 'near']);
 export const reviewVerdict = pgEnum('review_verdict', ['pending', 'concern', 'clear', 'unsure']);
 export const runStatus = pgEnum('run_status', ['queued', 'running', 'done', 'failed']);
 export const agentStep = pgEnum('agent_step', ['observe', 'measure', 'place', 'decide', 'act', 'compose', 'stop']);
-export const strategy = pgEnum('strategy', ['cut', 'volume', 'colour', 'cover', 'hold']);
+export const strategy = pgEnum('strategy', ['cut', 'volume', 'colour', 'brow', 'part', 'neckline', 'frame', 'comfort', 'match', 'cover', 'hold']);
 export const taskState = pgEnum('task_state', [
   'intent',
   'created',

@@ -14,13 +14,17 @@ export interface Template {
   unitBudgetPerRun: number;
   version: number;
   remeasureEvery: number;
-  /** The measurements followed over time, once the baseline has taken them all. */
+  /** The measurements the baseline takes. A situation reads only what its card uses, because each one costs units. */
+  baseline: readonly MeasureTool[];
+  /** The measurements followed over time, which the baseline has taken first. */
   tracks: readonly MeasureTool[];
   /** How a stage is placed (docs/product/spec.md section 6). Thresholds are tuned in the spike. */
   placement: Placement;
   /** The strategies the agent may choose in each stage. */
   strategies: Readonly<Record<string, readonly Strategy[]>>;
 }
+
+const allMeasures: readonly MeasureTool[] = ['hair_type', 'hair_density', 'hair_length', 'face_shape', 'skin_tone'];
 
 /** Every situation by key. Labels live in `copy`. Stage keys are internal and never shown, and stage thresholds are tuned in the spike. */
 export const templates: Record<TemplateKey, Template> = {
@@ -35,6 +39,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: ['hair_density', 'hair_length'],
     placement: {
       by: 'density',
@@ -63,6 +68,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: ['hair_type', 'hair_density', 'hair_length'],
     tracks: ['hair_density'],
     placement: {
       by: 'density',
@@ -72,11 +78,12 @@ export const templates: Record<TemplateKey, Template> = {
       ],
       recovery: { minRise: 0.7, stage: 'growing_in' },
     },
+    // Parting, brow and volume first; hair try on follows, and a covered head keeps the brow.
     strategies: {
-      full: ['cut', 'colour', 'hold'],
-      patchy: ['volume', 'cut', 'colour'],
-      widespread: ['cut', 'colour', 'hold'],
-      growing_in: ['cut', 'colour', 'hold'],
+      full: ['part', 'brow', 'cut'],
+      patchy: ['volume', 'part', 'brow', 'cut'],
+      widespread: ['part', 'brow', 'cut'],
+      growing_in: ['brow', 'part', 'cut'],
     },
   },
   face_fullness: {
@@ -90,12 +97,14 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: ['face_shape'],
     tracks: ['face_shape'],
     placement: { by: 'reported_change' },
+    // Neckline and frame choices; a cut that frames the face is the one render.
     strategies: {
-      usual: ['cut', 'colour', 'hold'],
-      fuller: ['cut', 'colour', 'hold'],
-      settling: ['cut', 'colour', 'hold'],
+      usual: ['frame', 'neckline', 'cut'],
+      fuller: ['neckline', 'frame', 'cut'],
+      settling: ['neckline', 'frame', 'cut'],
     },
   },
   // Body photos start off: scars, drains and a changed shape are the most private change Interim sees.
@@ -110,12 +119,14 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: [],
     tracks: [],
     placement: { by: 'reported_change' },
+    // Comfort and fit come first; the brow is the one render that needs nothing from the body.
     strategies: {
-      recovering: ['colour', 'hold'],
-      settling: ['cut', 'colour', 'hold'],
-      settled: ['cut', 'colour', 'hold'],
+      recovering: ['comfort', 'brow'],
+      settling: ['comfort', 'brow'],
+      settled: ['comfort', 'cut', 'brow'],
     },
   },
   skin_colour: {
@@ -129,16 +140,18 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: ['skin_tone'],
     tracks: ['skin_tone'],
     placement: {
       by: 'skin_colour',
       bands: [{ minChange: 8, stage: 'changing' }],
       settled: 'settled',
     },
+    // Colours for clothes and makeup from the skin colour reading.
     strategies: {
-      usual: ['cut', 'colour', 'hold'],
-      changing: ['cut', 'colour', 'hold'],
-      settled: ['cut', 'colour', 'hold'],
+      usual: ['match', 'hold'],
+      changing: ['match', 'hold'],
+      settled: ['match', 'hold'],
     },
   },
   weight_change: {
@@ -153,6 +166,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 2,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: [],
     placement: {
       by: 'reported_size',
@@ -177,6 +191,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: ['hair_density'],
     placement: {
       by: 'density',
@@ -203,6 +218,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: ['hair_density'],
     placement: {
       by: 'density',
@@ -226,6 +242,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: [],
     placement: { by: 'reported_change' },
     strategies: {
@@ -245,6 +262,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: ['hair_length'],
     placement: {
       by: 'length',
@@ -277,6 +295,7 @@ export const templates: Record<TemplateKey, Template> = {
     unitBudgetPerRun: 50,
     version: 1,
     remeasureEvery: 3,
+    baseline: allMeasures,
     tracks: [],
     placement: { by: 'reported_change' },
     strategies: {

@@ -13,3 +13,4 @@ export * from './measurements';
 export * from './photo-quality';
 export * from './model-text';
 export * from './garments';
+export * from './advice';

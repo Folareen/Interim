@@ -4,7 +4,7 @@ import path from 'node:path';
 import { messages } from '@interim/templates';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { type GenerateText, Planner, type PlannerConfig, plannerFixtureName } from './planner';
-import { type PlannerInput, plannerPrompt } from './prompts/planner.v1';
+import { type PlannerInput, plannerPrompt } from './prompts/planner.v2';
 
 const input: PlannerInput = {
   templateKey: 'hair_loss_ahead',

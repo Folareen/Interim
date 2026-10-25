@@ -52,6 +52,7 @@ const card = (renderId: string): StageCard => ({
   changes: [],
   options: [{ renderId, tool: 'hairstyle', strategy: 'cut', label: 'preview' }],
   clothes: [],
+  advice: [],
   shoppingList: [],
   holdOffBuying: [],
   whatToSay: [],

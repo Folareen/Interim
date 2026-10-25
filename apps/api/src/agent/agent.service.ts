@@ -14,12 +14,15 @@ import {
 } from '@interim/db';
 import {
   type SavedPiece,
+  adviceStrategies,
+  adviceStrategyAllowed,
   expiresAt,
   hairTransferFallback,
   measurementsDue,
   placeStage,
   shoppingAdvice,
   strategyTools,
+  templateAdvice,
   toolEligibility,
 } from '@interim/rules';
 import { type Look, looksByStrategy, messages, templates } from '@interim/templates';
@@ -53,7 +56,7 @@ import { unitCosts } from '../youcam/youcam.constants';
 import type { ToolRequest } from '../youcam/youcam.tools';
 import { type Fact, densityDirection, factText, isReliable, luma, reportedChange } from './facts';
 import { Planner } from './planner';
-import type { PlannerFact, PlannerInput } from './prompts/planner.v1';
+import type { PlannerFact, PlannerInput } from './prompts/planner.v2';
 import { TraceWriter } from './trace';
 
 /** Most previews one run makes. The spec asks for two to four, and the budget bounds it first. */
@@ -214,13 +217,28 @@ export class AgentService {
       await this.db.update(run).set({ retake: ctx.retake }).where(eq(run.id, ctx.run.id));
       return this.finish(ctx, 'failed', 'stopped_retake');
     }
-    const advice = shoppingAdvice({
+    const shopping = shoppingAdvice({
       stage: placed.stageKey,
       buyStages: ctx.template.buyStages,
       reportedSize: ctx.report?.reportedSize ?? undefined,
       pieces,
     });
-    await this.compose(ctx, placed.stageKey, history.previousStage, facts, plan, { options: act.options, clothes: act.clothes, ...advice });
+    // Advice only this situation gives: plain code from the stage, the strategy and the readings (spec section 9).
+    const advice = templateAdvice({
+      templateKey: ctx.template.key,
+      stage: placed.stageKey,
+      strategy: plan.strategy,
+      basis: placed.basis,
+      headCovering: ctx.profile.headCovering,
+      bodyPhotos: ctx.profile.bodyPhotos,
+      skinHex: facts.flatMap((f) => (f.value.kind === 'skin_colour' ? [f.value.hex] : [])).at(0),
+    });
+    await this.compose(ctx, placed.stageKey, history.previousStage, facts, plan, {
+      options: act.options,
+      clothes: act.clothes,
+      advice,
+      ...shopping,
+    });
   }
 
   // ---- what is already known ----
@@ -345,6 +363,7 @@ export class AgentService {
   private async measure(ctx: RunContext, history: History): Promise<Fatal | undefined> {
     const due = measurementsDue({
       isBaseline: ctx.snapshot.isBaseline,
+      baseline: ctx.template.baseline,
       tracks: ctx.template.tracks,
       photos: new Set(ctx.photos.keys()),
       headCovering: ctx.profile.headCovering,
@@ -481,7 +500,9 @@ export class AgentService {
     const usable = listed.filter(
       (s) =>
         s === 'hold' ||
-        strategyTools(s, ctx.template.key).some((tool) => toolEligibility(tool, priceOf(tool), eligibility).allowed),
+        (adviceStrategies.has(s)
+          ? adviceStrategyAllowed(s, eligibility)
+          : strategyTools(s, ctx.template.key).some((tool) => toolEligibility(tool, priceOf(tool), eligibility).allowed)),
     );
     // Holding is always possible: it renders nothing and spends nothing.
     const strategies: Strategy[] = usable.includes('hold') ? usable : [...usable, 'hold'];
@@ -659,7 +680,7 @@ export class AgentService {
         .from(render)
         .where(and(eq(render.snapshotId, ctx.snapshot.id), eq(render.inputHash, inputHash)));
       if (existing) {
-        options.push({ renderId: existing.id, tool, strategy, label: 'preview' });
+        options.push({ renderId: existing.id, tool, strategy, label: 'preview', look: look.id });
         count++;
         continue;
       }
@@ -687,7 +708,7 @@ export class AgentService {
           label: 'preview',
           expiresAt: expiresAt(ctx.profile.retention, ctx.snapshot.takenAt),
         });
-        options.push({ renderId, tool, strategy, label: 'preview' });
+        options.push({ renderId, tool, strategy, label: 'preview', look: look.id });
         count++;
         await ctx.trace.add('act', outcome.reused ? 'reused' : 'rendered', { tool, costUnits: outcome.units });
         ctx.remaining = await this.ledger.remaining(this.budgetOf(ctx));
@@ -732,7 +753,7 @@ export class AgentService {
     previousStage: string | null,
     facts: Fact[],
     plan: { strategy: Strategy; citation: string; note: string; source: 'model' | 'fixture' | 'fallback' },
-    shown: Pick<StageCard, 'options' | 'clothes' | 'shoppingList' | 'holdOffBuying'>,
+    shown: Pick<StageCard, 'options' | 'clothes' | 'advice' | 'shoppingList' | 'holdOffBuying'>,
   ): Promise<void> {
     const locale = liveLocaleSchema.parse(ctx.profile.locale);
     const note = plan.note.replace(/\{m:([^{}]*)\}/g, (_, ref: string) => {

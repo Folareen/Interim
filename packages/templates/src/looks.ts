@@ -46,6 +46,13 @@ export const looksByStrategy: Readonly<Record<Strategy, readonly Look[]>> = {
   cut: looks.filter((l) => l.tool === 'hairstyle' || l.tool === 'beard_style'),
   volume: looks.filter((l) => l.tool === 'hair_volume'),
   colour: looks.filter((l) => l.tool === 'hair_color' || l.tool === 'makeup_brows'),
+  brow: looks.filter((l) => l.tool === 'makeup_brows'),
+  // Advice only: their lines come from `templateAdvice` in `@interim/rules`.
+  part: [],
+  neckline: [],
+  frame: [],
+  comfort: [],
+  match: [],
   cover: [],
   hold: [],
 };
