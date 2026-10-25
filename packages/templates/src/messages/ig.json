@@ -119,7 +119,10 @@
     "editAction": "Gbanwee nhọrọ m",
     "startAction": "Malite nlele",
     "cardAction": "Lee kaadị m ikpeazụ",
-    "clothesAction": "Họrọ uwe ị ga-anwale"
+    "clothesAction": "Họrọ uwe ị ga-anwale",
+    "exportTitle": "Wepụ data gị",
+    "exportBody": "Faịlụ zip nwere profaịlụ gị, nlele gị, echiche gị na foto nlele ndị e debere ugbu a.",
+    "exportAction": "Budata data m"
   },
   "reflect": {
     "title": "Echiche",

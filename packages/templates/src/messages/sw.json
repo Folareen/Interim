@@ -119,7 +119,10 @@
     "editAction": "Badilisha chaguo zangu",
     "startAction": "Anza ukaguzi",
     "cardAction": "Ona kadi yangu ya hivi karibuni",
-    "clothesAction": "Chagua nguo za kujaribu"
+    "clothesAction": "Chagua nguo za kujaribu",
+    "exportTitle": "Hamisha data yako",
+    "exportBody": "Faili la zip lenye wasifu wako, ukaguzi wako, tafakari zako na picha za onyesho ambazo bado zimehifadhiwa.",
+    "exportAction": "Pakua data yangu"
   },
   "reflect": {
     "title": "Tafakari",

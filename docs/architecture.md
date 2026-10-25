@@ -143,7 +143,7 @@ BullMQ on Redis.
 * GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos, head covering)
 * GET /profiles/:id/words?date=YYYY-MM-DD (today's passage in the profile's language or English, or null while off; the person only)
 * DELETE /profiles/:id
-* GET /profiles/:id/export (includes the reflections and a short lived download link for each render still stored)
+* GET /profiles/:id/export (includes the reflections and a short lived download link for each render still stored), GET /profiles/:id/export.zip (the same as a file, with the render images inside)
 * GET and POST /profiles/:id/reflections, DELETE /profiles/:id/reflections/:reflectionId, POST /profiles/:id/reflections/contacts/dismiss (the person only; need current consent; the server runs the check itself and allows 20 a day per profile)
 * POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
 * POST /profiles/:id/snapshots (upload ids with kinds, self report and an optional moment; normalises, stores, then deletes the raw uploads)

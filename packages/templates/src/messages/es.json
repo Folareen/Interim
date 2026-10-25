@@ -119,7 +119,10 @@
     "editAction": "Cambiar mis opciones",
     "startAction": "Empezar un seguimiento",
     "cardAction": "Ver mi última tarjeta",
-    "clothesAction": "Elegir ropa para probar"
+    "clothesAction": "Elegir ropa para probar",
+    "exportTitle": "Exportar tus datos",
+    "exportBody": "Un archivo zip con tu perfil, tus revisiones, tus reflexiones y los renders que aún se conservan.",
+    "exportAction": "Descargar mis datos"
   },
   "reflect": {
     "title": "Reflexión",

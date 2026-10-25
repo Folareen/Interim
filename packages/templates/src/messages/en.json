@@ -119,7 +119,10 @@
     "editAction": "Change my choices",
     "startAction": "Start a check in",
     "cardAction": "See my latest card",
-    "clothesAction": "Choose clothes to try on"
+    "clothesAction": "Choose clothes to try on",
+    "exportTitle": "Export your data",
+    "exportBody": "A zip file with your profile, check ins, reflections and the renders that are still stored.",
+    "exportAction": "Download my data"
   },
   "reflect": {
     "title": "Reflection",

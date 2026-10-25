@@ -119,7 +119,10 @@
     "editAction": "Yí àwọn yíyàn mi padà",
     "startAction": "Bẹ̀rẹ̀ àyẹ̀wò",
     "cardAction": "Wo káàdì mi tó kẹ́yìn",
-    "clothesAction": "Yan aṣọ láti dánwò"
+    "clothesAction": "Yan aṣọ láti dánwò",
+    "exportTitle": "Kó ìwífún rẹ jáde",
+    "exportBody": "Fáìlì zip tí ó ní ìwífún rẹ, àwọn àyẹ̀wò rẹ, àwọn ìrònú rẹ àti àwọn àwòrán àkọ́wò tí a ṣì ń tọ́jú.",
+    "exportAction": "Gba ìwífún mi sílẹ̀"
   },
   "reflect": {
     "title": "Ìrònú",
