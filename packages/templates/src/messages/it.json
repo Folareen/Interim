@@ -119,7 +119,10 @@
     "editAction": "Cambia le mie scelte",
     "startAction": "Inizia un controllo",
     "cardAction": "Vedi la mia ultima scheda",
-    "clothesAction": "Scegli i vestiti da provare"
+    "clothesAction": "Scegli i vestiti da provare",
+    "exportTitle": "Esporta i tuoi dati",
+    "exportBody": "Un file zip con il tuo profilo, i controlli, le riflessioni e i render ancora conservati.",
+    "exportAction": "Scarica i miei dati"
   },
   "reflect": {
     "title": "Riflessione",
@@ -591,5 +594,21 @@
     "colour_ash": "Grigio cenere",
     "brows_soft": "Sopracciglia morbide",
     "brows_deep": "Sopracciglia intense"
+  },
+  "share": {
+    "title": "Condividi questa scheda",
+    "note": "Crea un link per un parrucchiere, un barbiere o un amico. Vedrà le anteprime e la lista della spesa, mai le tue foto, il tuo nome o la tua email. Il link smette di funzionare da solo e puoi fermarlo quando vuoi.",
+    "action": "Crea un link",
+    "making": "Creazione del link…",
+    "linkLabel": "Il tuo link",
+    "copy": "Copia il link",
+    "copied": "Link copiato",
+    "expires": "Valido fino al {date}",
+    "stop": "Smetti di condividere",
+    "stopping": "Interruzione…",
+    "viewTitle": "Condiviso con te",
+    "viewIntro": "Anteprime di look e una lista della spesa, condivise dalla persona a cui appartengono. Un’anteprima non promette un risultato.",
+    "viewExpires": "Questo link è valido fino al {date}.",
+    "viewEmpty": "Non c’è niente da mostrare su questo link."
   }
 }

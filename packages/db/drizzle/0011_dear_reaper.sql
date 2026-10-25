@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "share_link_token" ON "share_link" USING btree ("token_hash");

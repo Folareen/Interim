@@ -75,6 +75,14 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
           {t('editAction')}
         </Link>
       </div>
+      <section className="border-t border-border pt-8 pb-8">
+        <h2 className="text-[1.25rem]">{t('exportTitle')}</h2>
+        <p className="mt-2 text-[0.95rem] text-muted">{t('exportBody')}</p>
+        {/* A plain link: the cookie is first party and the API answers with a file, so it works without JavaScript. */}
+        <a href={`/api/profiles/${id}/export.zip`} download className={`${secondaryClass} mt-5`}>
+          {t('exportAction')}
+        </a>
+      </section>
       <DeleteProfile profileId={id} />
     </Shell>
   );

@@ -13,6 +13,7 @@ import {
   type ResetPasswordInput,
   type EmailLinkRequest,
   type ReflectionCreated,
+  type ShareCreated,
   type RunView,
   type UploadsResponse,
   captureProblemBodySchema,
@@ -20,6 +21,7 @@ import {
   preferencesSchema,
   profileSchema,
   reflectionCreatedSchema,
+  shareCreatedSchema,
   runViewSchema,
   snapshotCreatedSchema,
   uploadsResponseSchema,
@@ -160,6 +162,16 @@ export async function startRun(snapshotId: string): Promise<RunView> {
 /** Approves a card. */
 export async function approveCard(cardId: string): Promise<void> {
   await send(`/cards/${cardId}/approve`, 'POST');
+}
+
+/** Makes a share link for a card. The token comes back once. */
+export async function createShare(cardId: string): Promise<ShareCreated> {
+  return shareCreatedSchema.parse(await (await send(`/cards/${cardId}/share`, 'POST')).json());
+}
+
+/** Stops a share link working. */
+export async function revokeShare(shareId: string): Promise<void> {
+  await send(`/shares/${shareId}`, 'DELETE');
 }
 
 /** A run's progress, for when the live stream is not available. */

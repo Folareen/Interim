@@ -5,12 +5,14 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Inject,
   Param,
   Post,
   Put,
   Query,
+  StreamableFile,
   UseGuards,
 } from '@nestjs/common';
 import { z } from 'zod';
@@ -96,5 +98,16 @@ export class ProfilesController {
   async export(@Param('id', idPipe) id: string, @CurrentOwner() owner: Owner) {
     const exported = await this.profiles.export(id, owner);
     return { ...exported, reflections: await this.reflections.forExport(id, owner) };
+  }
+
+  /** The same export as a file the person keeps, with the render images inside. */
+  @UseGuards(OwnerGuard)
+  @Header('Content-Type', 'application/zip')
+  @Header('Content-Disposition', 'attachment; filename="interim-export.zip"')
+  @Header('Cache-Control', 'no-store')
+  @Get(':id/export.zip')
+  async exportFile(@Param('id', idPipe) id: string, @CurrentOwner() owner: Owner) {
+    const reflections = await this.reflections.forExport(id, owner);
+    return new StreamableFile(await this.profiles.archive(id, owner, { reflections }));
   }
 }

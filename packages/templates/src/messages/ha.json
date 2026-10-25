@@ -119,7 +119,10 @@
     "editAction": "Canza zaɓuɓɓana",
     "startAction": "Fara dubawa",
     "cardAction": "Duba katina na ƙarshe",
-    "clothesAction": "Zaɓi tufafi da za a gwada"
+    "clothesAction": "Zaɓi tufafi da za a gwada",
+    "exportTitle": "Fitar da bayananka",
+    "exportBody": "Fayil ɗin zip mai ɗauke da bayanin martabarka, binciken da ka yi, tunaninka da hotunan samfoti da har yanzu ke ajiye.",
+    "exportAction": "Zazzage bayanaina"
   },
   "reflect": {
     "title": "Tunani",
@@ -591,5 +594,21 @@
     "colour_ash": "Launin toka",
     "brows_soft": "Gira mai laushi",
     "brows_deep": "Gira mai duhu"
+  },
+  "share": {
+    "title": "Raba wannan kati",
+    "note": "Yi hanyar haɗi ga mai gyaran gashi, wanzami ko aboki. Zai ga samfoti da jerin siyayya, ba zai taɓa ganin hotunanka, sunanka ko imel ɗinka ba. Hanyar haɗin tana daina aiki da kanta, kuma za ka iya dakatar da ita a kowane lokaci.",
+    "action": "Yi hanyar haɗi",
+    "making": "Ana yin hanyar haɗinka…",
+    "linkLabel": "Hanyar haɗinka",
+    "copy": "Kwafi hanyar haɗi",
+    "copied": "An kwafi hanyar haɗi",
+    "expires": "Tana aiki har zuwa {date}",
+    "stop": "Daina rabawa",
+    "stopping": "Ana dakatarwa…",
+    "viewTitle": "An raba maka",
+    "viewIntro": "Samfotin kamanni da jerin siyayya, wanda mai su ya raba. Samfoti ba ya yi alkawarin sakamako.",
+    "viewExpires": "Wannan hanyar haɗi tana aiki har zuwa {date}.",
+    "viewEmpty": "Babu abin da za a nuna a wannan hanyar haɗi."
   }
 }

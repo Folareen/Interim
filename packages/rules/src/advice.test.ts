@@ -1,6 +1,6 @@
 import { adviceCodes, colourHex, templateKeys } from '@interim/types';
 import { describe, expect, it } from 'vitest';
-import { type AdviceInput, skinPalette, templateAdvice } from './advice';
+import { type AdviceInput, shareableAdvice, skinPalette, templateAdvice } from './advice';
 import { adviceStrategies, adviceStrategyAllowed, strategyTools } from './eligibility';
 
 const base: AdviceInput = {
@@ -111,5 +111,23 @@ describe('who gives which advice', () => {
   it('renders nothing for the advice strategies', () => {
     for (const strategy of adviceStrategies) expect(strategyTools(strategy, 'hair_patches')).toEqual([]);
     expect(strategyTools('brow', 'hair_patches')).toEqual(['makeup_brows']);
+  });
+});
+
+describe('shareableAdvice', () => {
+  it('keeps what a reader can act on and drops lines that speak of the stage, recovery or body photos', () => {
+    const lines = adviceCodes.map((code) => ({ code, colours: [] }));
+    const kept = shareableAdvice(lines).map((l) => l.code);
+    expect(kept).toEqual([
+      'patches_part',
+      'patches_brow',
+      'patches_volume',
+      'fullness_neckline',
+      'fullness_frame',
+      'skin_match_clothes',
+      'skin_match_makeup',
+    ]);
+    expect(kept).not.toContain('surgery_photos_off');
+    expect(kept).not.toContain('patches_own_report');
   });
 });

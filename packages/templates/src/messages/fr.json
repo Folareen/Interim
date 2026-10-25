@@ -119,7 +119,10 @@
     "editAction": "Modifier mes choix",
     "startAction": "Commencer un suivi",
     "cardAction": "Voir ma dernière carte",
-    "clothesAction": "Choisir des vêtements à essayer"
+    "clothesAction": "Choisir des vêtements à essayer",
+    "exportTitle": "Exporter vos données",
+    "exportBody": "Un fichier zip avec votre profil, vos bilans, vos réflexions et les rendus encore conservés.",
+    "exportAction": "Télécharger mes données"
   },
   "reflect": {
     "title": "Réflexion",
@@ -591,5 +594,21 @@
     "colour_ash": "Gris cendré",
     "brows_soft": "Sourcils doux",
     "brows_deep": "Sourcils foncés"
+  },
+  "share": {
+    "title": "Partager cette carte",
+    "note": "Créez un lien pour un coiffeur, un barbier ou un ami. Il voit les aperçus et la liste d’achats, jamais vos photos, votre nom ni votre e-mail. Le lien cesse de fonctionner tout seul, et vous pouvez l’arrêter à tout moment.",
+    "action": "Créer un lien",
+    "making": "Création du lien…",
+    "linkLabel": "Votre lien",
+    "copy": "Copier le lien",
+    "copied": "Lien copié",
+    "expires": "Valable jusqu’au {date}",
+    "stop": "Arrêter le partage",
+    "stopping": "Arrêt…",
+    "viewTitle": "Partagé avec vous",
+    "viewIntro": "Des aperçus de looks et une liste d’achats, partagés par la personne concernée. Un aperçu ne promet pas un résultat.",
+    "viewExpires": "Ce lien est valable jusqu’au {date}.",
+    "viewEmpty": "Il n’y a rien à afficher sur ce lien."
   }
 }

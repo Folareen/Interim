@@ -1,7 +1,8 @@
-import { type Db, consentEvent, deletionRequest, photo, profile, snapshot } from '@interim/db';
+import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
 import type { ConsentRequest } from '@interim/types';
 import { NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
+import { strFromU8, unzipSync } from 'fflate';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
@@ -143,7 +144,56 @@ describe('export', () => {
     expect(exported.profile.id).toBe(id);
     expect(exported.preferences).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true, headCovering: false });
     expect(exported.consentEvents).toHaveLength(1);
+    expect(exported.renders).toEqual([]);
     await expect(profiles.export(id, bob)).rejects.toThrow(NotFoundException);
+  });
+});
+
+describe('export of renders', () => {
+  it('links each render that is still stored, newest check in first, and skips an expired one', async () => {
+    const { id } = await create();
+    const [older] = await db.insert(snapshot).values({ profileId: id, takenAt: new Date('2026-01-01') }).returning({ id: snapshot.id });
+    const [newer] = await db.insert(snapshot).values({ profileId: id, takenAt: new Date('2026-02-01') }).returning({ id: snapshot.id });
+    const row = (snapshotId: string | undefined, inputHash: string, objectKey: string | null) => ({
+      snapshotId: snapshotId ?? '', tool: 'hairstyle', strategy: 'cut' as const, inputHash, objectKey, label: 'preview', expiresAt: new Date(Date.now() + 1e9),
+    });
+    await db.insert(render).values([
+      row(older?.id, 'a', 'renders/old.jpg'),
+      row(newer?.id, 'b', 'renders/new.jpg'),
+      row(newer?.id, 'c', null),
+    ]);
+
+    const { renders } = await profiles.export(id, alice);
+
+    expect(renders.map((r) => r.url)).toEqual(['https://r2.test/renders/new.jpg?signed=1', 'https://r2.test/renders/old.jpg?signed=1']);
+    await expect(profiles.export(id, bob)).rejects.toThrow(NotFoundException);
+  });
+});
+
+describe('archive', () => {
+  it('holds export.json and each stored image, and says which file each render is', async () => {
+    const { id } = await create();
+    const [s] = await db.insert(snapshot).values({ profileId: id }).returning({ id: snapshot.id });
+    const row = (inputHash: string, objectKey: string | null) => ({
+      snapshotId: s?.id ?? '', tool: 'hairstyle', strategy: 'cut' as const, inputHash, objectKey, label: 'preview', expiresAt: new Date(Date.now() + 1e9),
+    });
+    const [kept, expired] = await db.insert(render).values([row('a', 'renders/a.jpg'), row('b', null)]).returning({ id: render.id });
+    await storage.put('renders/a.jpg', Buffer.from('image-bytes'));
+
+    const files = unzipSync(await profiles.archive(id, alice, { reflections: [] }));
+
+    expect(Object.keys(files).sort()).toEqual(['export.json', `renders/${kept?.id}.jpg`]);
+    expect(strFromU8(files[`renders/${kept?.id}.jpg`] ?? new Uint8Array())).toBe('image-bytes');
+    const json = JSON.parse(strFromU8(files['export.json'] ?? new Uint8Array()));
+    expect(json.renders).toEqual([expect.objectContaining({ id: kept?.id, file: `renders/${kept?.id}.jpg` })]);
+    expect(JSON.stringify(json)).not.toContain(expired?.id ?? 'x');
+    expect(json.reflections).toEqual([]);
+    expect(JSON.stringify(json)).not.toContain('r2.test');
+  });
+
+  it('answers 404 to someone else', async () => {
+    const { id } = await create();
+    await expect(profiles.archive(id, bob, {})).rejects.toThrow(NotFoundException);
   });
 });
 

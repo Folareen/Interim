@@ -7,10 +7,11 @@ import { notFound, redirect } from 'next/navigation';
 import { secondaryClass } from '@/components/button';
 import { Shell } from '@/components/shell';
 import { isGarmentKey, isLookKey, isStageKey, isToolKey } from '@/lib/labels';
-import { getCard, getMe } from '@/lib/server-api';
+import { getCard, getMe, getShares } from '@/lib/server-api';
 import { DeleteProfile } from '../../ready/[id]/delete-profile';
 import { ApproveCard } from './approve-card';
 import { OptionImage } from './option-image';
+import { ShareCard } from './share-card';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('card'))('title') };
@@ -23,7 +24,7 @@ const isChangeTool = (tool: string): tool is ChangeTool => (changeTools as reado
 export default async function Card({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!(await getMe())) redirect('/signin');
-  const view = await getCard(id);
+  const [view, shares] = await Promise.all([getCard(id), getShares(id)]);
   if (!view) notFound();
   const { card } = view;
 
@@ -244,6 +245,10 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
           </a>
         </section>
       )}
+
+      <div className="mt-10">
+        <ShareCard cardId={view.id} links={shares} />
+      </div>
 
       <div className="mt-10 space-y-3">
         <ApproveCard cardId={view.id} approvedAt={view.approvedAt} />

@@ -10,9 +10,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { and, desc, eq, inArray, max, sql } from 'drizzle-orm';
+import { strToU8, zipSync } from 'fflate';
 import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { StorageService } from '../storage/storage.service';
+
+/** Larger than any render YouCam returns, so the cap only stops a bad object. */
+const MAX_RENDER_BYTES = 20 * 1024 * 1024;
 
 // Leaves out owner_ref (a credential hash) and the columns that can imply a religion or culture
 // (words_set, head_covering). Those are only read through the preferences, words and export paths.
@@ -175,8 +179,40 @@ export class ProfilesService {
       from ${snapshot} s where ${render.snapshotId} = s.id and s.profile_id = ${id}`);
   }
 
-  /** Everything stored about the profile, for the person's export. */
+  /** Everything stored about the profile, for the person's export. Each render has a short lived download link. */
   async export(id: string, owner: Owner) {
+    const data = await this.exportData(id, owner);
+    const renders = [];
+    for (const { key, ...rest } of await this.renderRows(id)) {
+      if (key) renders.push({ ...rest, url: await this.storage.presignGet(key) });
+    }
+    return { ...data, renders };
+  }
+
+  /**
+   * The export as a zip: `export.json` plus the images under `renders/`, so the person keeps the
+   * renders after the download links would have expired. A render whose image cannot be read is
+   * left out of the file list rather than failing the whole download.
+   * @param extra Parts of the export that other modules own, such as the reflections.
+   */
+  async archive(id: string, owner: Owner, extra: Record<string, unknown>): Promise<Uint8Array> {
+    const data = await this.exportData(id, owner);
+    const files: Record<string, Uint8Array> = {};
+    const renders = [];
+    for (const { key, ...rest } of await this.renderRows(id)) {
+      if (!key) continue;
+      const image = await this.storage.readCapped(key, MAX_RENDER_BYTES);
+      if (!image || image === 'too_large') continue;
+      const file = `renders/${rest.id}.jpg`;
+      files[file] = image;
+      renders.push({ ...rest, file });
+    }
+    files['export.json'] = strToU8(JSON.stringify({ ...data, ...extra, renders }, null, 2));
+    // Images are already compressed, so storing them is faster and no bigger.
+    return zipSync(files, { level: 0 });
+  }
+
+  private async exportData(id: string, owner: Owner) {
     const current = await this.get(id, owner);
     const consentEvents = await this.db
       .select({ version: consentEvent.version, action: consentEvent.action, createdAt: consentEvent.createdAt })
@@ -186,6 +222,16 @@ export class ProfilesService {
     const preferences = await this.preferences(id, owner);
     const garments = await this.db.select({ sku: garment.catalogSku, savedAt: garment.savedAt }).from(garment).where(eq(garment.profileId, id));
     return { exportedAt: new Date(), profile: current, preferences, consentEvents, garments };
+  }
+
+  /** Every render of the profile, newest check in first. `key` is null once the image has expired. */
+  private renderRows(profileId: string) {
+    return this.db
+      .select({ id: render.id, tool: render.tool, strategy: render.strategy, garmentSku: render.garmentSku, label: render.label, key: render.objectKey, takenAt: snapshot.takenAt })
+      .from(render)
+      .innerJoin(snapshot, eq(snapshot.id, render.snapshotId))
+      .where(eq(snapshot.profileId, profileId))
+      .orderBy(desc(snapshot.takenAt));
   }
 }
 

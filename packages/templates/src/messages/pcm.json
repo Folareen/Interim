@@ -119,7 +119,10 @@
     "editAction": "Change my choices",
     "startAction": "Start check in",
     "cardAction": "See my latest card",
-    "clothesAction": "Pick clothes to try on"
+    "clothesAction": "Pick clothes to try on",
+    "exportTitle": "Export your data",
+    "exportBody": "Zip file wey get your profile, your check ins, your reflections and di renders wey dem still keep.",
+    "exportAction": "Download my data"
   },
   "reflect": {
     "title": "Reflection",
@@ -591,5 +594,21 @@
     "colour_ash": "Ash grey",
     "brows_soft": "Soft eyebrow",
     "brows_deep": "Deep eyebrow"
+  },
+  "share": {
+    "title": "Share dis card",
+    "note": "Make link for stylist, barber or friend. Dem go see di previews and di shopping list, but dem no go ever see your photos, your name or your email. Di link go stop to work by itself, and you fit stop am any time.",
+    "action": "Make link",
+    "making": "Dey make your link…",
+    "linkLabel": "Your link",
+    "copy": "Copy link",
+    "copied": "Link don copy",
+    "expires": "E dey work till {date}",
+    "stop": "Stop to share",
+    "stopping": "Dey stop…",
+    "viewTitle": "Dem share am with you",
+    "viewIntro": "Previews of looks and shopping list wey di person wey get dem share. Preview no promise any result.",
+    "viewExpires": "Dis link dey work till {date}.",
+    "viewEmpty": "Nothing dey to show for dis link."
   }
 }
