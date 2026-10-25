@@ -96,7 +96,7 @@ Interim is an agent that lives inside an app. The user never picks which YouCam 
 1. Checks the photo on the device first (face angle, lighting, resolution) so errors never cost units.
 2. Decides which measurements are worth taking now, and skips the ones the stage model says are unlikely to have changed.
 3. Looks up which tools are still valid at this stage and skips the ones that are not.
-4. Picks a strategy for this stage and the person's next moment: cut, volume, colour, cover or hold.
+4. Picks a strategy for this stage and the person's next moment: cut, volume, colour, brow, part, neckline, frame, comfort, match, cover or hold. Templates 2 to 5 each choose from their own.
 5. Renders two to four options within a unit budget, and renders saved garments again on the new photo.
 6. Writes the companion note in the person's tone and produces a Stage Card they can act on. It stops when the budget is spent, when two strategies in a row fail the eligibility rules, or when the user approves.
 

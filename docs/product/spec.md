@@ -38,6 +38,7 @@ A template is configuration, not code. Each template defines:
 * key, version and display label (neutral wording, see section 13)
 * ordered list of stages with the measurement thresholds that place a person in each one
 * check in cadence, a minimum gap between runs, and how many check ins may pass before measurements are taken again (`remeasure_every`, default 3)
+* the measurements the baseline takes and the ones followed afterwards. A situation reads only what its card uses, because each costs units: after_surgery reads none, skin_colour only skin colour, face_fullness only the face aspect ratio
 * per stage list of allowed tools and the fallback order when one is not allowed
 * a hold or buy rule for garments, where the template uses fit: `buyStages`, the stages in which a fitted piece can be bought. In any other stage the size is still moving, so a fitted piece waits and a relaxed one can be bought at today's size
 * a unit budget per run
@@ -98,7 +99,7 @@ At each check in the person answers "Has anything changed since last time?" with
 
 ## 6. Measurements taken
 
-At baseline, once per profile:
+At baseline, once per profile, the tools the template lists (templates 2 to 5 read fewer, see section 4; the rest take all of these):
 
 * Hair type detection
 * Hair density detection
@@ -149,7 +150,7 @@ Each run follows this loop. The model chooses steps inside it. Code enforces the
 1. **Observe.** Load the profile, template, previous snapshot and the new snapshot. Run capture checks again on the server.
 2. **Measure.** Code decides which measurements are worth taking, from section 6 and the template, and filters them by eligibility. Take them. Add each to the ledger. The planner is not asked, because this decision spends units.
 3. **Place.** Compute the stage from measurements, self report and the template thresholds. If the stage changed since the last snapshot, record the change.
-4. **Decide.** The planner picks a strategy for this stage and moment from the template's allowed list: cut, volume, colour, cover or hold. It must name the measurement or self report that supports the choice.
+4. **Decide.** The planner picks a strategy for this stage and moment from the template's allowed list: cut, volume, colour, brow, part, neckline, frame, comfort, match, cover or hold. The last five besides cover and hold render nothing: their advice is plain code (section 9). Templates 2 to 5 each have their own: hair_patches part, brow and volume; face_fullness neckline and frame; after_surgery comfort; skin_colour match. It must name the measurement or self report that supports the choice.
 5. **Act.** Render two to four options within budget. Render saved garments again on the new photo if the template uses fit.
 6. **Compose.** Build the Stage Card from tool outputs. The model writes the companion note in the profile's tone and the explanations, with placeholders such as `{m:<measurement id>}`. Code fills in every number, date and size. Model text itself contains no digits and no number words.
 7. **Stop.** Stop when the budget is spent, when two strategies in a row fail eligibility, or when the card is complete. Record why it stopped.
@@ -175,6 +176,7 @@ Fields:
 * situation label and current stage
 * what changed, each line with the measurement and tool that produced it, or the word "reported" for self reported size, and the date it was last measured
 * options, each with a render, a short reason and a label saying preview
+* advice only this situation gives, as codes the app writes in the person's language: a parting, brow and volume for hair_patches (and a line saying the stage comes from the person's own report when density did not place it); necklines, a soft collar while the size moves and glasses frames for face_fullness; soft, loose and front opening pieces first for after_surgery, and a line saying body photos are off while they are; colours for clothes and makeup from the skin colour reading for skin_colour. A person who covers their hair is never advised a parting
 * what to hold off buying, with the reason
 * shopping list with sizes. The size comes from the reported size and the catalog size chart. A render is a preview and never a fit guarantee. A piece with no reported size yet, or that the catalog does not make in that size, goes under what to hold off buying instead, with that reason
 * the saved clothes shown on this check in's body photo, for templates that use fit
@@ -351,7 +353,7 @@ This section owns every open question. What the live runs settled is in [integra
 4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Skin colour and Fitzpatrick ordered six synthetic people correctly and need the same check on real selfies.
 5. Whether face aspect ratio and skin colour follow a real change (fullness from medicine, a colour change). Both were steady under changes of light. hair_patches depends on density (item 2). Drop a template from the demo if its tools cannot support it.
 6. Head covering: only a hijab and a head wrap were tried. Check other coverings and wigs, and settle the wording of the setting with people who cover their hair.
-7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Decide how the app shows them without asking anyone's gender, for example every style to everyone with the volume previews labelled by look.
+7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Settled: every style is offered to everyone and each preview is named by its look (for example natural volume), never by who it is for. Still to check with people who would use them.
 8. Whether Camera Kit gives enough angle control for the top photo.
 9. Legal review of the consent wording per language, and a native speaker's read of the crisis wording and safety lists when one is available. Neither blocks a language, since the check flags near matches for model review (section 13). The words for today sets have no public domain translation in these languages yet, so they fall back to English.
 10. YouCam's Camera Kit (`plugins-media.makeupar.com`) runs on the capture screen with camera access. Its documentation does not say what it sends to Perfect Corp's servers, whether frames leave the device, or how it behaves on iOS Safari, and the consent text names Perfect Corp only as the processor of uploaded photos. Settle this and the wording before launch. The file input stays as the way to avoid the kit.

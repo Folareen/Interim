@@ -48,8 +48,9 @@ export function toolEligibility(tool: MeasureTool | RenderTool, cost: number, co
 
 /**
  * The tools a strategy renders with, in the order to try them. Hat and scarf try on are not used
- * (spec section 7, rule 6), so cover has no tool, and hold renders nothing. Clothes follow no
- * strategy: saved pieces are shown at every check in of a fit template.
+ * (spec section 7, rule 6), so cover has no tool, and hold renders nothing. The advice strategies
+ * render nothing either (`adviceStrategies`). Clothes follow no strategy: saved pieces are shown at
+ * every check in of a fit template.
  */
 export function strategyTools(strategy: Strategy, templateKey: TemplateKey): readonly RenderTool[] {
   switch (strategy) {
@@ -59,10 +60,28 @@ export function strategyTools(strategy: Strategy, templateKey: TemplateKey): rea
       return ['hair_volume'];
     case 'colour':
       return ['hair_color', 'makeup_brows'];
+    case 'brow':
+      return ['makeup_brows'];
+    case 'part':
+    case 'neckline':
+    case 'frame':
+    case 'comfort':
+    case 'match':
     case 'cover':
     case 'hold':
       return [];
   }
+}
+
+/** Strategies with no render: the card's advice for them comes from `templateAdvice`, which is plain code. */
+export const adviceStrategies: ReadonlySet<Strategy> = new Set<Strategy>(['part', 'neckline', 'frame', 'comfort', 'match']);
+
+/**
+ * Whether an advice strategy may be offered. A parting is hair advice, so a person who covers their
+ * hair is never offered it (spec section 7, rule 4); the rest need no photo and spend nothing.
+ */
+export function adviceStrategyAllowed(strategy: Strategy, context: Pick<EligibilityContext, 'headCovering'>): boolean {
+  return adviceStrategies.has(strategy) && !(strategy === 'part' && context.headCovering);
 }
 
 /** What to try when hair transfer is blocked or off: brow makeup, then earlier looks (spec section 7, rule 6). */

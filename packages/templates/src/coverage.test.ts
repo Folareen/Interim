@@ -1,5 +1,7 @@
 import {
+  adviceCodes,
   captureProblemCodes,
+  colourHex,
   liveLocales,
   measureTools,
   momentSchema,
@@ -10,7 +12,7 @@ import {
   traceReasonSchema,
 } from '@interim/types';
 import { describe, expect, it } from 'vitest';
-import { messages, templates } from './index';
+import { looksById, messages, templates } from './index';
 
 // Screens look keys up by a code from the API or a template. A code without text would show a
 // missing-key error to the person, so each set of codes must have its text in every language.
@@ -38,6 +40,12 @@ describe.each(liveLocales)('%s text for every code', (locale) => {
   it('describes every strategy and every moment', () => {
     expect(keys(m.card.optionReasons)).toEqual([...strategySchema.options].sort());
     expect(keys(m.capture.moments)).toEqual([...momentSchema.options].sort());
+  });
+
+  it('has a sentence for every advice code, a name for every colour and a name for every look', () => {
+    expect(keys(m.advice)).toEqual([...adviceCodes].sort());
+    expect(keys(m.colours)).toEqual(Object.keys(colourHex).sort());
+    expect(keys(m.looks)).toEqual(Object.keys(looksById).sort());
   });
 
   it('offers every size on the ladder with no gaps, and every situation a label', () => {

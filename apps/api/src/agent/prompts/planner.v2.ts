@@ -2,7 +2,7 @@ import { bannedWords } from '@interim/rules';
 import type { LiveLocale, Moment, Strategy, TemplateKey, Tone } from '@interim/types';
 
 /** Bump when the prompt changes, so recorded plans from an older prompt are not replayed (docs/llm.md). */
-export const PLANNER_PROMPT_VERSION = 'planner-v1';
+export const PLANNER_PROMPT_VERSION = 'planner-v2';
 
 /** One fact the planner may cite. It never carries a number: `term` is English words, `direction` is relative to the person's own baseline. */
 export interface PlannerFact {
@@ -34,6 +34,21 @@ const toneGuide: Record<Tone, string> = {
   light: 'Light: a little playful, never flippant about the change.',
 };
 
+// What each strategy means, so the model chooses among the ones this situation offers and never invents one.
+const strategyGuide: Record<Strategy, string> = {
+  cut: 'a different cut or style, shown as previews',
+  volume: 'a fuller look, shown as previews',
+  colour: 'a touch of colour, shown as previews',
+  brow: 'a softer brow colour, shown as previews',
+  part: 'a parting in a new place',
+  neckline: 'necklines that suit a changing face, with size from what the person reported',
+  frame: 'glasses frames for a changing face',
+  comfort: 'soft, loose and easy to wear clothes first',
+  match: 'colours for clothes and makeup from the skin colour reading',
+  cover: 'a covering',
+  hold: 'change nothing for now',
+};
+
 /** Builds the planner prompt. The banned words come from `@interim/rules`, so the prompt and the scan never drift apart. */
 export function plannerPrompt(input: PlannerInput): string {
   const facts = input.facts
@@ -58,5 +73,6 @@ Stage: ${input.stage}${input.previousStage ? ` (was ${input.previousStage})` : '
 Next moment: ${input.moment ?? 'none given'}
 Facts:
 ${facts}
-Allowed strategies: ${input.strategies.join(', ')}`;
+Allowed strategies:
+${input.strategies.map((s) => `- ${s}: ${strategyGuide[s]}`).join('\n')}`;
 }
