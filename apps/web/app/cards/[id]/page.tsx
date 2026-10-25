@@ -1,12 +1,12 @@
 import { measuredValueText, templates } from '@interim/templates';
-import { liveLocaleSchema } from '@interim/types';
+import { colourHex, liveLocaleSchema } from '@interim/types';
 import type { Metadata } from 'next';
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { secondaryClass } from '@/components/button';
 import { Shell } from '@/components/shell';
-import { isGarmentKey, isStageKey, isToolKey } from '@/lib/labels';
+import { isGarmentKey, isLookKey, isStageKey, isToolKey } from '@/lib/labels';
 import { getCard, getMe } from '@/lib/server-api';
 import { DeleteProfile } from '../../ready/[id]/delete-profile';
 import { ApproveCard } from './approve-card';
@@ -27,7 +27,7 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
   if (!view) notFound();
   const { card } = view;
 
-  const [t, ready, reflect, trace, tools, stages, labels, garments, locale, format] = await Promise.all([
+  const [t, ready, reflect, trace, tools, stages, labels, garments, advice, colours, looks, locale, format] = await Promise.all([
     getTranslations('card'),
     getTranslations('ready'),
     getTranslations('reflect'),
@@ -36,6 +36,9 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
     getTranslations('stages'),
     getTranslations('templateLabels'),
     getTranslations('garments'),
+    getTranslations('advice'),
+    getTranslations('colours'),
+    getTranslations('looks'),
     getLocale(),
     getFormatter(),
   ]);
@@ -86,6 +89,29 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
         </section>
       )}
 
+      {card.advice.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-[1.25rem]">{t('adviceTitle')}</h2>
+          <ul className="mt-3 space-y-3">
+            {card.advice.map((line) => (
+              <li key={line.code} className="rounded-card border border-border bg-surface px-4 py-3">
+                <p>{advice(line.code)}</p>
+                {line.colours.length > 0 && (
+                  <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+                    {line.colours.map((colour) => (
+                      <li key={colour} className="flex items-center gap-2 text-[0.95rem]">
+                        <span aria-hidden="true" className="inline-block size-6 rounded-full border border-border" style={{ backgroundColor: colourHex[colour] }} />
+                        {colours(colour)}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section className="mt-8">
         <h2 className="text-[1.25rem]">{t('optionsTitle')}</h2>
         <p className="mt-2 text-[0.95rem] text-muted">{t('optionsIntro')}</p>
@@ -100,7 +126,15 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
                 ) : (
                   <p className="rounded-card border border-border bg-surface px-4 py-6 text-muted">{t('imageGone')}</p>
                 )}
-                <p className="mt-3 font-semibold">{t(`optionReasons.${option.strategy}`)}</p>
+                {/* A look is named by what it is, so a preview never says who it is for. */}
+                {option.look && isLookKey(option.look) ? (
+                  <>
+                    <p className="mt-3 font-semibold">{looks(option.look)}</p>
+                    <p className="text-[0.95rem] text-muted">{t(`optionReasons.${option.strategy}`)}</p>
+                  </>
+                ) : (
+                  <p className="mt-3 font-semibold">{t(`optionReasons.${option.strategy}`)}</p>
+                )}
               </li>
             );
           })}
