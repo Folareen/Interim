@@ -143,7 +143,7 @@ BullMQ on Redis.
 * GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos, head covering)
 * GET /profiles/:id/words?date=YYYY-MM-DD (today's passage in the profile's language or English, or null while off; the person only)
 * DELETE /profiles/:id
-* GET /profiles/:id/export (includes the reflections)
+* GET /profiles/:id/export (includes the reflections and a short lived download link for each render still stored)
 * GET and POST /profiles/:id/reflections, DELETE /profiles/:id/reflections/:reflectionId, POST /profiles/:id/reflections/contacts/dismiss (the person only; need current consent; the server runs the check itself and allows 20 a day per profile)
 * POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
 * POST /profiles/:id/snapshots (upload ids with kinds, self report and an optional moment; normalises, stores, then deletes the raw uploads)
@@ -154,8 +154,9 @@ BullMQ on Redis.
 * GET /profiles/:id/garments (the sample catalog with the profile's saved pieces marked and a link to each picture), PUT and DELETE /profiles/:id/garments/:sku (save or remove; both repeat safely; only for a template that uses fit)
 * GET /profiles/:id/cards (newest first)
 * POST /cards/:id/approve
-* POST /cards/:id/share (creates an expiring link)
-* DELETE /shares/:id (revokes a link)
+* POST /cards/:id/share (creates a link that expires after 7 days; the token is returned once, only its hash is stored), GET /cards/:id/shares (the links that still work)
+* DELETE /shares/:id (revokes a link; repeats safely)
+* GET /shared/:token (signed out; the share view, answers 404 alike for an unknown, expired or revoked link, with `X-Robots-Tag: noindex` and `Cache-Control: no-store`)
 * GET /profiles/:id/ledger (the profile's ledger rows and held and spent totals)
 * GET /auth/config (which sign in methods are on)
 * POST /auth/register, POST /auth/login, POST /auth/magic, POST /auth/magic/use, POST /auth/verify-email, POST /auth/password/forgot, POST /auth/password/reset, POST /auth/logout
@@ -164,11 +165,11 @@ BullMQ on Redis.
 * GET /templates
 * GET /judge/sample (opens a sample profile, replay only)
 
-All routes check consent version and ownership. Share links expire, can be revoked, are read only and serve renders and card text only.
+All routes check consent version and ownership. Share links expire, can be revoked, are read only and serve renders and card text only. The share view is built from an allow list in `SharesService`, not by trimming the person's card: renders, look names, the advice lines `shareableAdvice` allows, clothes and the shopping list. It leaves out the situation, stage, measurements, companion note, what to say, what to hold off buying, the trace, original photos and anything about the profile.
 
 ## 10. Web app
 
-* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view, judge sample, privacy policy, terms.
+* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view (`/s/[token]`), judge sample, privacy policy, terms.
 * **Capture wizard.** Asks for what `capturePlan` in `packages/rules` says, the same rule the server applies. Uses the YouCam JS Camera Kit for the front, both sides (one hair type capture) and the top photo (its five second countdown is the timer), and a plain file input for the body photo and whenever the kit does not load or the camera is refused. Runs `photoQualityProblem` on each photo on the device and blocks upload on failure. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
 * **Run progress.** Shows the live trace in short lines, so the agent is visible. It listens to the event stream and asks every two seconds if the stream is not available.
 * **Stage Card.** Before and after slider for renders, a clear preview label, saved clothes on the body photo, shopping list, what to hold off buying, share, export and delete actions.

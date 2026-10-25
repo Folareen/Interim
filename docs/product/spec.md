@@ -185,7 +185,7 @@ Fields:
 * one line suggesting a professional for health questions and a link to someone to talk to, shown only on sensitive situations
 * actions: approve list, share link, change tone, delete
 
-Words for today is shown on the home screen, not on the card, so a shared card never reveals the person's faith.
+Words for today is shown on the home screen, not on the card, so a shared card never reveals the person's faith. A share link shows only the looks, the advice a reader can act on, the clothes and the shopping list (architecture.md section 9).
 
 ## 10. Unit ledger and budgets
 
