@@ -40,6 +40,11 @@ const browEffect = z.object({
     .min(1),
 });
 
+const skinConcerns = [
+  'wrinkle', 'droopy_upper_eyelid', 'droopy_lower_eyelid', 'firmness', 'acne', 'moisture', 'eye_bag',
+  'dark_circle_v2', 'age_spot', 'radiance', 'redness', 'oiliness', 'pore', 'texture',
+] as const;
+
 const hairColorPresets = [
   'Jet Black',
   'Chocolate Brown',
@@ -181,6 +186,27 @@ export const tools = {
         .optional(),
       // `[1, ratio]`: the second number is the face's height for a width of one. The one tracked for fullness.
       facialratio: z.object({ face_aspect_ratio: z.tuple([z.number(), z.number()]) }).optional(),
+    }),
+  },
+  // Priced by concern count and tier (`skinAnalysisUnits`), so it has no flat entry in `unitCosts`.
+  // SD and HD concerns cannot be mixed in one request. Not yet seen succeed live; the result shape is from the docs.
+  skin_analysis: {
+    version: 'v2.0',
+    path: 'skin-analysis',
+    request: srcFile.extend({
+      dst_actions: z.array(z.enum(skinConcerns)).min(1).max(16),
+      format: z.literal('json').optional(),
+      miniserver_args: z.object({ enable_mask_overlay: z.boolean().optional() }).optional(),
+    }),
+    result: z.object({
+      output: z.array(
+        z.object({
+          type: z.string(),
+          ui_score: z.number(),
+          raw_score: z.number().optional(),
+          mask_urls: z.array(z.string()).optional(),
+        }),
+      ),
     }),
   },
   // Keeps the person's face, pose and background and changes only the garment.

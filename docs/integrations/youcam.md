@@ -51,6 +51,7 @@ Thrown `YoucamError` kinds: `live_disabled`, `replay_missing`, `auth`, `out_of_u
 | `fitzpatrick` | v2.0 `fitzpatrick-scale-analyzer` | one jpg | `fitzpatrick_scale` I to VI | 10 |
 | `skin_tone` | v2.0 `skin-tone-analysis` | one front photo | `color.skin_color` and eye, brow, lip, hair colours as hex, plus `face_quality` | 20, on success only |
 | `face_shape` | v2.0 `face-attr-analysis` | one front photo, `features` from `faceShape` and `faceAspectRatio` only | `faceshape` (Triangle, Diamond, Heart, InvTriangle, Oblong, Oval, Round, Square, Unknown), `facialratio.face_aspect_ratio` as `[1, ratio]`, and `face_quality` | 10 for 1 to 5 features, on success only |
+| `skin_analysis` | v2.0 `skin-analysis` | one photo, `dst_actions` (SD concerns; SD and HD cannot be mixed) | `output[]` with `type`, `ui_score`, `raw_score`, `mask_urls` | 9 to 22, see `skinAnalysisUnits` |
 | `cloth_v4` | v2.0 `cloth-v4` | person photo, `ref_file_id`, `garment_category` (`full_body`, `lower_body`, `upper_body`, `shoes`, `auto`, `outer`) | `url` | 2 |
 | `makeup_brows` | v2.0 `makeup-vto` | photo, one `eyebrows` effect (colour only, or a named shape) | `url` | 1, on success only |
 
@@ -100,10 +101,11 @@ Found by running the tools against the live API, on professional portraits and o
 - The Redis token bucket shared by all workers (architecture.md section 6). The client only backs off on a 429.
 - A separate poll queue. The gateway polls inside the run job (5 to 20 seconds apart, up to 5 minutes), and a task row left in `created` is polled again on redelivery.
 - Reconciling `unknown` tasks, and switching live calls off by itself on `auth` or `out_of_units`.
-- A tool entry for skin analysis (`skin-analysis`). Its prices are in `youcam.constants.ts`.
+- Skin analysis has a tool entry but nothing calls it, and it has not been seen succeed live. Its price depends on the concerns, so `unitCosts` holds `null` and the gateway refuses it until a flat price is chosen.
 - Wrappers for bg-replace, image-to-video, look-vto and the template lists, which only the spike runner reads.
 - Clothes v4 is called with the body photo and a catalog picture as `ref_file_id`, one call per saved piece, and the fixture key hashes both pictures. The spike ran it on real garment photos; the sample catalog's pictures are drawn placeholders, so none of its calls is recorded yet. Live clothes calls for the sample personas wait on a catalog with licensed pictures and an agreed cap.
-- Not yet seen succeed live: hair type (needs three angle photos), hair color and beard style. The template lists were read once (116 hair transfer templates, 15 beard style ones, all unisex `all_` ids for beards) and the looks in `packages/templates/src/looks.ts` come from them.
+- The `cover` strategy has no tool and no template offers it: hat and scarf try on are unusable (see Observed live), and a covered head keeps brow makeup, advice and its other strategies. A test pins that no template lists it.
+- Not yet seen succeed live: skin analysis, hair type (needs three angle photos), hair color and beard style. The template lists were read once (116 hair transfer templates, 15 beard style ones, all unisex `all_` ids for beards) and the looks in `packages/templates/src/looks.ts` come from them.
 
 ## Spike runner
 Runs the live part of the spike ([product/spec.md](../product/spec.md) section 17) from a JSON manifest of calls. It is a dry run unless `--yes` is given. Live calls cost real money (500 units cost 27.50 dollars), so spending also needs `--max-units <n>`, a cap on the whole batch. The runner refuses if the estimate is over the cap or any run has no confirmed price, and stops before a run that would pass it. It needs `YOUCAM_MODE=record`, `JUDGE_MODE_FORCE_REPLAY=false`, `LIVE_CALLS_ENABLED=true` and `YOUCAM_API_KEY` (copy `.env.example` to `.env` first).

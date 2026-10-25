@@ -11,3 +11,11 @@ describe('face_shape result', () => {
     expect(parsed.facialratio?.face_aspect_ratio[1]).toBe(1.34);
   });
 });
+
+describe('skin_analysis', () => {
+  it('rejects a request with no concern and accepts the result scores', () => {
+    expect(tools.skin_analysis.request.safeParse({ src_file_id: 'f', dst_actions: [] }).success).toBe(false);
+    const parsed = tools.skin_analysis.result.parse({ output: [{ type: 'pore', ui_score: 71, raw_score: 70.5, mask_urls: [] }] });
+    expect(parsed.output[0]?.ui_score).toBe(71);
+  });
+});
