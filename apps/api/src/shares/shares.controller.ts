@@ -6,7 +6,6 @@ import { ZodPipe } from '../guard/zod.pipe';
 import { SharesService } from './shares.service';
 
 const idPipe = new ZodPipe(z.string().uuid());
-const tokenPipe = new ZodPipe(z.string().min(20).max(200));
 
 @Controller()
 export class SharesController {
@@ -35,7 +34,7 @@ export class SharesController {
   @Header('X-Robots-Tag', 'noindex, nofollow')
   @Header('Cache-Control', 'no-store')
   @Get('shared/:token')
-  view(@Param('token', tokenPipe) token: string) {
+  view(@Param('token', new ZodPipe(z.string().min(20).max(200))) token: string) {
     return this.shares.view(token);
   }
 }
