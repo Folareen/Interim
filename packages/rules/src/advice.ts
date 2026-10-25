@@ -122,3 +122,22 @@ export function skinPalette(hex: string): { clothes: ColourCode[]; makeup: Colou
   else if (hue > 28) undertone = 'warm';
   return palettes[undertone][depth];
 }
+
+/**
+ * Advice a stylist, barber or friend can act on. The other lines speak of the person's stage, their
+ * recovery or their body photos, so they would tell a reader about their health.
+ */
+const shareable: ReadonlySet<AdviceCode> = new Set<AdviceCode>([
+  'patches_part',
+  'patches_brow',
+  'patches_volume',
+  'fullness_neckline',
+  'fullness_frame',
+  'skin_match_clothes',
+  'skin_match_makeup',
+]);
+
+/** The lines of a card's advice that a share link may show (docs/product/spec.md section 12). */
+export function shareableAdvice<T extends { code: AdviceCode }>(lines: readonly T[]): T[] {
+  return lines.filter((l) => shareable.has(l.code));
+}

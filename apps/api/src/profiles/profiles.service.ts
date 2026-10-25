@@ -185,7 +185,23 @@ export class ProfilesService {
       .orderBy(consentEvent.createdAt);
     const preferences = await this.preferences(id, owner);
     const garments = await this.db.select({ sku: garment.catalogSku, savedAt: garment.savedAt }).from(garment).where(eq(garment.profileId, id));
-    return { exportedAt: new Date(), profile: current, preferences, consentEvents, garments };
+    const renders = await this.renderLinks(id);
+    return { exportedAt: new Date(), profile: current, preferences, consentEvents, garments, renders };
+  }
+
+  /** Every render still stored for the profile, each with a short lived download link, newest first. */
+  private async renderLinks(profileId: string) {
+    const rows = await this.db
+      .select({ id: render.id, tool: render.tool, strategy: render.strategy, garmentSku: render.garmentSku, label: render.label, key: render.objectKey, takenAt: snapshot.takenAt })
+      .from(render)
+      .innerJoin(snapshot, eq(snapshot.id, render.snapshotId))
+      .where(eq(snapshot.profileId, profileId))
+      .orderBy(desc(snapshot.takenAt));
+    const links = [];
+    for (const { key, takenAt, ...rest } of rows) {
+      if (key) links.push({ ...rest, takenAt, url: await this.storage.presignGet(key) });
+    }
+    return links;
   }
 }
 

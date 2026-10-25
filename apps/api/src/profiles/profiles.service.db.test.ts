@@ -1,4 +1,4 @@
-import { type Db, consentEvent, deletionRequest, photo, profile, snapshot } from '@interim/db';
+import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
 import type { ConsentRequest } from '@interim/types';
 import { NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
@@ -143,6 +143,28 @@ describe('export', () => {
     expect(exported.profile.id).toBe(id);
     expect(exported.preferences).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true, headCovering: false });
     expect(exported.consentEvents).toHaveLength(1);
+    expect(exported.renders).toEqual([]);
+    await expect(profiles.export(id, bob)).rejects.toThrow(NotFoundException);
+  });
+});
+
+describe('export of renders', () => {
+  it('links each render that is still stored, newest check in first, and skips an expired one', async () => {
+    const { id } = await create();
+    const [older] = await db.insert(snapshot).values({ profileId: id, takenAt: new Date('2026-01-01') }).returning({ id: snapshot.id });
+    const [newer] = await db.insert(snapshot).values({ profileId: id, takenAt: new Date('2026-02-01') }).returning({ id: snapshot.id });
+    const row = (snapshotId: string | undefined, inputHash: string, objectKey: string | null) => ({
+      snapshotId: snapshotId ?? '', tool: 'hairstyle', strategy: 'cut' as const, inputHash, objectKey, label: 'preview', expiresAt: new Date(Date.now() + 1e9),
+    });
+    await db.insert(render).values([
+      row(older?.id, 'a', 'renders/old.jpg'),
+      row(newer?.id, 'b', 'renders/new.jpg'),
+      row(newer?.id, 'c', null),
+    ]);
+
+    const { renders } = await profiles.export(id, alice);
+
+    expect(renders.map((r) => r.url)).toEqual(['https://r2.test/renders/new.jpg?signed=1', 'https://r2.test/renders/old.jpg?signed=1']);
     await expect(profiles.export(id, bob)).rejects.toThrow(NotFoundException);
   });
 });

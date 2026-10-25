@@ -552,6 +552,43 @@ export const cardSummarySchema = z.object({ id: z.string().uuid(), takenAt: z.st
 export type CardSummary = z.infer<typeof cardSummarySchema>;
 export const cardSummaryListSchema = z.array(cardSummarySchema);
 
+/**
+ * `POST /cards/:id/share`: the new link. The token is in the address and is shown once, because only
+ * its hash is stored.
+ */
+export const shareCreatedSchema = z.object({
+  id: z.string().uuid(),
+  token: z.string(),
+  expiresAt: z.string(),
+});
+export type ShareCreated = z.infer<typeof shareCreatedSchema>;
+
+/** `GET /cards/:id/shares`: the links that still work, so the person can revoke one. */
+export const shareListSchema = z.array(z.object({ id: z.string().uuid(), expiresAt: z.string() }));
+export type ShareList = z.infer<typeof shareListSchema>;
+
+/**
+ * `GET /shared/:token`: what someone with a share link sees. Renders and card text only, and none of
+ * it identifies the person: no situation or stage, no measurements, no note, no reflections, no
+ * email, no profile and no original photo (docs/product/spec.md section 12).
+ */
+export const sharedCardSchema = z.object({
+  takenAt: z.string(),
+  options: z.array(
+    z.object({
+      url: z.string().url(),
+      strategy: strategySchema,
+      label: optionLabelSchema,
+      look: z.string().optional(),
+    }),
+  ),
+  advice: z.array(z.object({ code: adviceCodeSchema, colours: z.array(colourCodeSchema) })),
+  clothes: z.array(z.object({ url: z.string().url(), sku: z.string() })),
+  shoppingList: z.array(z.object({ sku: z.string(), size: z.string() })),
+  expiresAt: z.string(),
+});
+export type SharedCard = z.infer<typeof sharedCardSchema>;
+
 /** One piece of the sample catalog as `GET /profiles/:id/garments` lists it. Names live in the message catalogs, keyed by sku. */
 export const garmentItemSchema = z.object({
   sku: z.string(),

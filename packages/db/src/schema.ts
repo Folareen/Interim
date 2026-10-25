@@ -279,14 +279,19 @@ export const garment = pgTable(
   (t) => [uniqueIndex('garment_profile_sku').on(t.profileId, t.catalogSku)],
 );
 
-export const shareLink = pgTable('share_link', {
-  id: id(),
-  cardId: uuid('card_id').notNull().references(() => stageCard.id, { onDelete: 'cascade' }),
-  tokenHash: text('token_hash').notNull(),
-  expiresAt: timestamp('expires_at').notNull(),
-  revokedAt: timestamp('revoked_at'),
-  createdAt: createdAt(),
-});
+export const shareLink = pgTable(
+  'share_link',
+  {
+    id: id(),
+    cardId: uuid('card_id').notNull().references(() => stageCard.id, { onDelete: 'cascade' }),
+    tokenHash: text('token_hash').notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    revokedAt: timestamp('revoked_at'),
+    createdAt: createdAt(),
+  },
+  // The public view finds a link by the hash of the token in its address.
+  (t) => [uniqueIndex('share_link_token').on(t.tokenHash)],
+);
 
 // Holds no profile reference.
 export const deletionRequest = pgTable('deletion_request', {

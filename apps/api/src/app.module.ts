@@ -10,6 +10,7 @@ import { LedgerModule } from './ledger/ledger.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ReflectionsModule } from './reflections/reflections.module';
 import { RunsModule } from './runs/runs.module';
+import { SharesModule } from './shares/shares.module';
 import { SnapshotsModule } from './snapshots/snapshots.module';
 import { TemplatesModule } from './templates/templates.module';
 import { YoucamModule } from './youcam/youcam.module';
@@ -24,6 +25,7 @@ import { YoucamModule } from './youcam/youcam.module';
     ReflectionsModule,
     SnapshotsModule,
     RunsModule,
+    SharesModule,
     TemplatesModule,
     LedgerModule,
     YoucamModule,
