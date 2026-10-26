@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
 import { getMe, getPreferences } from '@/lib/server-api';
+import { NotificationsSection } from './notifications-section';
 import { SettingsForm } from './settings-form';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,6 +20,7 @@ export default async function Settings({ params }: { params: Promise<{ id: strin
   return (
     <Shell backHref={`/ready/${id}`}>
       <PageHeading title={t('title')} intro={t('intro')} />
+      <NotificationsSection profileId={id} hasWordsSet={preferences.wordsSet !== null} />
       <SettingsForm profileId={id} preferences={preferences} />
     </Shell>
   );

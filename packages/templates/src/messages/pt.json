@@ -242,6 +242,19 @@
     },
     "englishNote": "Este conjunto ainda não tem uma tradução de domínio público no seu idioma, por isso a passagem de hoje está em inglês."
   },
+  "notifications": {
+    "title": "Notificações",
+    "intro": "Avisos discretos neste dispositivo. Cada um fica desligado até você ligar, e você pode desligar quando quiser.",
+    "iosInstall": "No iPhone, as notificações só funcionam depois que o Interim está na tela de início (iOS 16.4 ou posterior). Toque em Compartilhar, depois em Adicionar à Tela de Início, e abra o Interim por lá.",
+    "unsupported": "Este navegador não pode mostrar notificações.",
+    "blocked": "As notificações estão bloqueadas para este site. Permita-as nas configurações do navegador e tente de novo.",
+    "notSetUp": "As notificações não estão disponíveis agora.",
+    "needWords": "Escolha primeiro um conjunto de palavras de hoje e salve.",
+    "words": { "label": "Palavras de hoje", "description": "Um aviso quando a passagem de hoje está pronta.", "time": "Horário" },
+    "checkIn": { "label": "Lembrete de verificação", "description": "Um aviso quando chega a hora de uma verificação." },
+    "showPassage": { "label": "Mostrar a passagem na tela bloqueada", "description": "Desligado por padrão. Qualquer pessoa que veja sua tela poderia ler." },
+    "push": { "words": "Suas palavras de hoje estão prontas", "checkIn": "É hora de uma verificação, quando você quiser" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Queda de cabelo a caminho",
     "hair_patches": "Cabelo caindo em falhas",

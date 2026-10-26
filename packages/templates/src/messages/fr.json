@@ -242,6 +242,19 @@
     },
     "englishNote": "Cet ensemble n’a pas encore de traduction du domaine public dans votre langue, donc le passage du jour est en anglais."
   },
+  "notifications": {
+    "title": "Notifications",
+    "intro": "Des rappels discrets sur cet appareil. Chacun est désactivé tant que vous ne l’activez pas, et vous pouvez le désactiver à tout moment.",
+    "iosInstall": "Sur iPhone, les notifications ne fonctionnent qu’une fois Interim ajouté à l’écran d’accueil (iOS 16.4 ou version ultérieure). Touchez Partager, puis Sur l’écran d’accueil, puis ouvrez Interim depuis là.",
+    "unsupported": "Ce navigateur ne peut pas afficher de notifications.",
+    "blocked": "Les notifications sont bloquées pour ce site. Autorisez-les dans les réglages de votre navigateur, puis réessayez.",
+    "notSetUp": "Les notifications ne sont pas disponibles pour le moment.",
+    "needWords": "Choisissez d’abord un ensemble pour les mots du jour et enregistrez-le.",
+    "words": { "label": "Mots du jour", "description": "Un rappel lorsque le passage du jour est prêt.", "time": "Heure" },
+    "checkIn": { "label": "Rappel de suivi", "description": "Un rappel lorsqu’un suivi est dû." },
+    "showPassage": { "label": "Afficher le passage sur l’écran verrouillé", "description": "Désactivé par défaut. Toute personne qui voit votre écran pourrait le lire." },
+    "push": { "words": "Vos mots du jour sont prêts", "checkIn": "C’est le moment d’un suivi, quand vous voulez" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Chute de cheveux à venir",
     "hair_patches": "Cheveux qui tombent par zones",

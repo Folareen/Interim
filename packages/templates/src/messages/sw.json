@@ -242,6 +242,19 @@
     },
     "englishNote": "Seti hii bado haina tafsiri ya umma katika lugha yako, kwa hiyo kifungu cha leo kiko kwa Kiingereza."
   },
+  "notifications": {
+    "title": "Arifa",
+    "intro": "Vikumbusho vya utulivu kwenye kifaa hiki. Kila kimoja kimezimwa hadi uwashe, na unaweza kukizima wakati wowote.",
+    "iosInstall": "Kwenye iPhone, arifa hufanya kazi tu Interim ikiwa kwenye skrini yako ya mwanzo (iOS 16.4 au mpya zaidi). Gusa Shiriki, kisha Ongeza kwenye Skrini ya Mwanzo, kisha fungua Interim kutoka hapo.",
+    "unsupported": "Kivinjari hiki hakiwezi kuonyesha arifa.",
+    "blocked": "Arifa zimezuiwa kwa tovuti hii. Ziruhusu kwenye mipangilio ya kivinjari chako, kisha jaribu tena.",
+    "notSetUp": "Arifa hazipatikani kwa sasa.",
+    "needWords": "Chagua kwanza seti ya maneno ya leo na uihifadhi.",
+    "words": { "label": "Maneno ya leo", "description": "Kikumbusho kifungu cha leo kikiwa tayari.", "time": "Saa" },
+    "checkIn": { "label": "Kikumbusho cha ukaguzi", "description": "Kikumbusho wakati ukaguzi unapofika." },
+    "showPassage": { "label": "Onyesha kifungu kwenye skrini iliyofungwa", "description": "Imezimwa kwa chaguo-msingi. Yeyote anayeona skrini yako anaweza kukisoma." },
+    "push": { "words": "Maneno yako ya leo yako tayari", "checkIn": "Ni wakati wa ukaguzi, ukiwa tayari" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Kupotea kwa nywele kunakuja",
     "hair_patches": "Nywele zinakatika kwa vipande",

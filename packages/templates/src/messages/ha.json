@@ -242,6 +242,19 @@
     },
     "englishNote": "Wannan tsari ba shi da fassarar jama’a a harshenku tukuna, don haka nassin yau yana cikin Turanci."
   },
+  "notifications": {
+    "title": "Sanarwa",
+    "intro": "Ƙananan tunatarwa a wannan na’ura. Kowanne a kashe yake har sai kun kunna shi, kuma kuna iya kashe shi a kowane lokaci.",
+    "iosInstall": "A iPhone, sanarwa na aiki ne kawai bayan an ƙara Interim a allon gida (iOS 16.4 ko sama da haka). Danna Share, sannan Add to Home Screen, sannan ku buɗe Interim daga can.",
+    "unsupported": "Wannan browser ba zai iya nuna sanarwa ba.",
+    "blocked": "An toshe sanarwa a wannan shafi. Ku ba da izini a saitunan browser ɗinku, sannan ku sake gwadawa.",
+    "notSetUp": "Sanarwa ba su samuwa a yanzu.",
+    "needWords": "Da farko ku zaɓi rukunin kalmomin yau, ku ajiye shi.",
+    "words": { "label": "Kalmomin yau", "description": "Tunatarwa lokacin da nassin yau ya shirya.", "time": "Lokaci" },
+    "checkIn": { "label": "Tunatarwar dubawa", "description": "Tunatarwa lokacin da dubawa ya zo." },
+    "showPassage": { "label": "Nuna nassin a allon kulle", "description": "A kashe yake ta asali. Duk wanda ya ga allonku zai iya karanta shi." },
+    "push": { "words": "Kalmomin yau naku sun shirya", "checkIn": "Lokacin dubawa ne, idan kun shirya" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Zubewar gashi na tafe",
     "hair_patches": "Gashi na zubewa a wurare",

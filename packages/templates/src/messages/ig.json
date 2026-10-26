@@ -242,6 +242,19 @@
     },
     "englishNote": "Nke a enweghị ntụgharị ọha n’asụsụ gị ugbu a, ya mere ngọngọ taa dị n’Bekee."
   },
+  "notifications": {
+    "title": "Ọkwa",
+    "intro": "Ihe ncheta dị nwayọọ na ngwaọrụ a. Nke ọ bụla gbanyụrụ ruo mgbe ị gbanyere ya, ị nwekwara ike ịgbanyụ ya n’oge ọ bụla.",
+    "iosInstall": "Na iPhone, ọkwa na-arụ ọrụ naanị mgbe Interim nọ na ihuenyo ụlọ gị (iOS 16.4 ma ọ bụ nke dị elu). Pịa Share, mgbe ahụ Add to Home Screen, ma meghee Interim site ebe ahụ.",
+    "unsupported": "Ihe nchọgharị a enweghị ike igosi ọkwa.",
+    "blocked": "Egbochiri ọkwa maka saịtị a. Kwere ha na ntọala ihe nchọgharị gị, wee nwaa ọzọ.",
+    "notSetUp": "Ọkwa adịghị ugbu a.",
+    "needWords": "Buru ụzọ họrọ otu okwu taa ma chekwaa ya.",
+    "words": { "label": "Okwu taa", "description": "Ncheta mgbe akụkụ taa dị njikere.", "time": "Oge" },
+    "checkIn": { "label": "Ncheta nlele", "description": "Ncheta mgbe oge nlele ruru." },
+    "showPassage": { "label": "Gosi akụkụ ahụ na ihuenyo mkpọchi", "description": "Gbanyụọ site na mbụ. Onye ọ bụla hụrụ ihuenyo gị nwere ike ịgụ ya." },
+    "push": { "words": "Okwu taa gị dị njikere", "checkIn": "Oge nlele eruola, mgbe ị dị njikere" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Ntutu na-ada na-abịa",
     "hair_patches": "Ntutu na-ada n’ebe ụfọdụ",

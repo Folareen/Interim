@@ -2,6 +2,7 @@
 
 import { type Preferences, type Tone, type WordsSet, wordsSetSchema } from '@interim/types';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import { Actions } from '@/components/actions';
 import { Button } from '@/components/button';
@@ -18,6 +19,7 @@ export function SettingsForm({ profileId, preferences }: { profileId: string; pr
   const setup = useTranslations('setup');
   const words = useTranslations('words');
   const common = useTranslations('common');
+  const router = useRouter();
   const [tone, setTone] = useState<Tone>(preferences.tone);
   const [wordsSet, setWordsSet] = useState<WordsSet | null>(preferences.wordsSet);
   const [headCovering, setHeadCovering] = useState(preferences.headCovering);
@@ -37,6 +39,8 @@ export function SettingsForm({ profileId, preferences }: { profileId: string; pr
     try {
       await savePreferences(profileId, { ...preferences, tone, wordsSet, headCovering });
       setSaved(true);
+      // So the notifications below learn whether a words for today set is chosen.
+      router.refresh();
     } catch (cause) {
       setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
     }

@@ -242,6 +242,19 @@
     },
     "englishNote": "Dis set neva get public translation for your language, so today passage dey for English."
   },
+  "notifications": {
+    "title": "Notifications",
+    "intro": "Small reminders for dis device. Each one dey off until you turn am on, and you fit turn am off anytime.",
+    "iosInstall": "For iPhone, notifications dey work only when Interim dey your home screen (iOS 16.4 or newer). Tap Share, then Add to Home Screen, then open Interim from there.",
+    "unsupported": "Dis browser no fit show notifications.",
+    "blocked": "Dem don block notifications for dis site. Allow dem for your browser settings, then try again.",
+    "notSetUp": "Notifications no dey available now.",
+    "needWords": "First choose one set for words for today and save am.",
+    "words": { "label": "Words for today", "description": "Reminder when today passage don ready.", "time": "Time" },
+    "checkIn": { "label": "Check in reminder", "description": "Reminder when e don reach time for check in." },
+    "showPassage": { "label": "Show di passage for lock screen", "description": "E dey off by default. Anybody wey see your screen fit read am." },
+    "push": { "words": "Your words for today don ready", "checkIn": "Na time for check in, when you ready" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Hair loss dey come",
     "hair_patches": "Hair dey comot for some places",

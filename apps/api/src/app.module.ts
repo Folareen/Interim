@@ -7,6 +7,7 @@ import { DbModule } from './db/db.module';
 import { GuardModule } from './guard/guard.module';
 import { HealthController } from './health/health.controller';
 import { LedgerModule } from './ledger/ledger.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { ReflectionsModule } from './reflections/reflections.module';
 import { RunsModule } from './runs/runs.module';
@@ -21,6 +22,7 @@ import { YoucamModule } from './youcam/youcam.module';
     AuthModule,
     CatalogModule,
     CleanupModule,
+    NotificationsModule,
     ProfilesModule,
     ReflectionsModule,
     SnapshotsModule,

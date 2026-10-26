@@ -35,6 +35,9 @@ const envSchema = z
     BREVO_API_KEY: z.string().default(''),
     MAIL_FROM_EMAIL: z.union([z.email(), z.literal('')]).default(''),
     MAIL_FROM_NAME: z.string().min(1).default('Interim'),
+    VAPID_PUBLIC_KEY: z.string().default(''), // web push identity; notifications are off without it. Make a pair with: npx web-push generate-vapid-keys
+    VAPID_PRIVATE_KEY: z.string().default(''),
+    VAPID_SUBJECT: z.string().default(''), // a mailto: or https address push services can reach; defaults to WEB_ORIGIN
     GOOGLE_CLIENT_ID: z.string().default(''),
     GOOGLE_CLIENT_SECRET: z.string().default(''),
   })
@@ -45,6 +48,9 @@ const envSchema = z
     }
     if (value.NODE_ENV === 'production' && value.MAIL_MODE === 'log') {
       issue('MAIL_MODE', 'Production must send mail through Brevo; log mode would write sign-in links to the logs');
+    }
+    if (Boolean(value.VAPID_PUBLIC_KEY) !== Boolean(value.VAPID_PRIVATE_KEY)) {
+      issue('VAPID_PRIVATE_KEY', 'Web push needs VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY together');
     }
     if (value.GOOGLE_CLIENT_ID && !value.GOOGLE_CLIENT_SECRET) {
       issue('GOOGLE_CLIENT_SECRET', 'Google sign in needs the client secret with the client id');
