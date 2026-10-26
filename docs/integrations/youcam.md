@@ -9,6 +9,8 @@ Design: [architecture.md](../architecture.md) section 6. Eligibility rules, erro
 | `youcam.errors.ts` | `YoucamError` kinds and the task error to action table |
 | `youcam.constants.ts` | Cost table, rate limit, base URL |
 | `youcam.gateway.ts` | `YoucamGateway`: the one path every call takes (recorded result, reserve, task row, upload, create, poll, settle, cache), and `youcamFixtureKey` |
+| `youcam.redis.ts` | `YoucamRedis`: the token bucket and the live switch every process shares |
+| `task-reconciler.ts` | `TaskReconciler`: settles tasks left open for a day |
 | `youcam.module.ts` | Builds the client and the gateway from env |
 | `spike/` | The spike runner and its manifest schema. Not part of the build |
 
@@ -29,6 +31,10 @@ The client does only the YouCam steps; the gateway owns the ledger, task rows an
 5. `getFeatureCosts()` and `getSpendableUnits()` read prices and the balance. Both are free and live only. Spendable units are the credit batches whose type starts with `Api`.
 
 Thrown `YoucamError` kinds: `live_disabled`, `replay_missing`, `auth`, `out_of_units`, `rate_limited`, `invalid_request`, `unknown_outcome` (create timed out or got a 5xx: mark the task `unknown`, do not re-send) and `transient` (poll or upload: retry later). Only a 429 is retried inside the client, up to 5 times with a doubling wait and jitter.
+
+Every request to YouCam's API first takes a slot from a Redis token bucket shared by all workers (a burst of 5, then one every 1.225 seconds, so no 300 second window passes 250). A caller that would queue for over a minute gets `rate_limited` before anything is sent. A 401 or 403, or `CreditInsufficiency`, sets `youcam:live-off` in Redis: uploads and creates then throw `live_disabled` in every process, while polls and downloads stay open so existing tasks can finish. After fixing the cause, run `redis-cli del youcam:live-off`.
+
+A task left in `intent`, `created` or `unknown` for 24 hours is settled at its full price by the cleanup sweep. YouCam has no way to list tasks, so whether the create happened cannot be learned; counting it keeps the caps on the safe side. The row stays `unknown`, so it is never sent again.
 
 ## API facts (from docs.perfectcorp.com)
 - Base URL `https://yce-api-01.makeupar.com`. Auth: `Authorization: Bearer <key>`, no separate auth call.
@@ -102,9 +108,8 @@ Found by running the tools against the live API, on professional portraits and o
 - **Skin analysis** is `v2.1` on the price list. A full portrait and one crop failed (`error_src_face_too_small`, `error_large_face_angle`) and a tight crop worked. It returns a zip link, not JSON.
 
 ## Not built yet
-- The Redis token bucket shared by all workers (architecture.md section 6). The client only backs off on a 429.
-- A separate poll queue. The gateway polls inside the run job (5 to 20 seconds apart, up to 5 minutes), and a task row left in `created` is polled again on redelivery.
-- Reconciling `unknown` tasks, and switching live calls off by itself on `auth` or `out_of_units`.
+- A separate poll queue. The gateway polls inside the run job (5 to 20 seconds apart, up to 5 minutes), and a task row left in `created` is polled again on redelivery. Build it if jobs outlive their lock, or runs wait on slow tasks.
+- A per profile share of the rate limit bucket. Callers queue in order.
 - Nothing calls skin analysis yet, and the zip it returns is not read. Larger concern counts and HD cost more (`skinAnalysisUnits`) and are refused by the request schema.
 - Wrappers for bg-replace, image-to-video, look-vto and the template lists, which only the spike runner reads.
 - Clothes v4 is called with the body photo and a catalog picture as `ref_file_id`, one call per saved piece, and the fixture key hashes both pictures. The spike ran it on real garment photos; the sample catalog's pictures are drawn placeholders, so none of its calls is recorded yet. Live clothes calls for the sample personas wait on a catalog with licensed pictures and an agreed cap.

@@ -35,7 +35,7 @@ Variables are listed in `.env.example`. The API validates them once at startup (
 With the default `YOUCAM_MODE=replay` there are no recorded YouCam responses for your own photos, so a run you start from the app ends in "no recorded answer for these photos". That is the safe default, not a fault. Tests write synthetic fixtures into a temporary directory (`apps/api/src/test/youcam-fixtures.ts`) and run the whole loop in replay. Recording fixtures for the sample personas is a live batch: state its cost, agree a cap and run it with `--max-units` first.
 
 ## Testing
-Vitest. Unit tests sit next to the code (`*.test.ts`). YouCam-facing tests run against recorded fixtures, never live. Required tests are listed in spec section 16 and architecture section 16.
+Vitest. Unit tests sit next to the code (`*.test.ts`). Tests for the lock, rate limit and live switch need Redis (`pnpm db:up`, or `REDIS_TEST_URL`); without one they skip locally and fail in CI. YouCam-facing tests run against recorded fixtures, never live. Required tests are listed in spec section 16 and architecture section 16.
 
 ## CI
 `.github/workflows/ci.yml` runs `pnpm lint`, `pnpm typecheck` and `pnpm test` on every pull request. Branch protection on `master` requires it to pass and requires a pull request. Enable this in the repository settings; the workflow alone does not enforce it.

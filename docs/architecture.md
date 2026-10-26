@@ -110,10 +110,10 @@ Single module, single entry point. Nothing else imports an HTTP client for YouCa
 * **Upload.** The documented V2 flow: register the file, upload to the returned location, then create the task with the file id.
 * **Polling.** BullMQ job with growing delay. Stop on success, error or timeout.
 * **Failures.** HTTP errors and task level errors are both parsed. Error mapping, unknown tasks, 429 handling and duplicate calls follow spec sections 10 and 11.
-* **Rate limit.** A token bucket in Redis, sized to the documented limit of 250 requests per 300 seconds, shared by every worker. No profile may take more than its configured share. Random jitter on a 429 because there is no Retry After header.
+* **Rate limit.** A token bucket in Redis, sized to the documented limit of 250 requests per 300 seconds, shared by every worker. Random jitter on a 429 because there is no Retry After header.
 * **Cache key.** The normalised photo hash, tool, API version and parameter hash.
 * **Cost.** A cost function calls Get_Feature_Cost where available and falls back to the config table in the spec.
-* **Live switch.** `LIVE_CALLS_ENABLED` must be true for any live call. It is turned off automatically when YouCam reports no units or rejects the key.
+* **Live switch.** `LIVE_CALLS_ENABLED` must be true for any live call. It is turned off automatically, for every process, when YouCam reports no units or rejects the key (`youcam:live-off` in Redis).
 * **Record and replay.** Recording saves YouCam responses and planner output as fixtures with secrets removed. Replay serves them with no network call, and a missing fixture is an error, never a live call. Judge mode forces replay. Modes are in [integrations/youcam.md](integrations/youcam.md#modes-youcam_mode).
 
 ## 7. Agent module
@@ -131,11 +131,11 @@ The model never sees raw photos, only measurement records and render references.
 
 BullMQ on Redis.
 
-* **run queue.** One job per run. Concurrency of one per profile.
+* **run queue.** One job per run. A worker takes one at a time, and a Redis lock per profile (60 seconds, renewed while it runs) keeps two workers off one profile; a run that finds it held is delayed 15 seconds without using its attempt.
 * **poll queue.** Not a separate queue yet: the gateway polls inside the run job with a growing delay, and a task row left in `created` is polled again if the job is delivered twice.
 * **safety queue.** One job per flagged reflection, keyed by the review id, with three tries. It runs the model review and stores the verdict, and a worker start queues any review still pending. Jobs carry the id only.
 * **notifications queue.** One hourly job that sends the notifications due in each subscription's own time zone (spec section 12a). A kind is due in the hour that starts at its time, so half hour zones are caught, and is sent once. Check in reminders go at 10:00 local time once the template's cadence has passed since the last check in. Nothing is sent without VAPID keys.
-* **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `object_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
+* **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and settling tasks left open for 24 hours (`TaskReconciler`). Expiry deletes the file, then the row (a render keeps its row and loses `object_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
 ## 9. HTTP API
