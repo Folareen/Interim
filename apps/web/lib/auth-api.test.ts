@@ -99,7 +99,6 @@ describe('authErrorKey', () => {
     [new ApiError(401, ''), 'invalid'],
     [new ApiError(403, ''), 'unverified'],
     [new ApiError(429, ''), 'tooMany'],
-    [new ApiError(422, ''), 'leaked'],
     [new ApiError(400, ''), 'linkInvalid'],
     [new ApiError(500, ''), 'generic'],
     [new ApiError('network', ''), 'network'],

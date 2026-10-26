@@ -6,17 +6,15 @@ import {
   ForbiddenException,
   HttpException,
   UnauthorizedException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { SESSION_COOKIE, SessionService } from '../guard/session.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { FakeMail, fakeRes, reqWith } from '../test/http-fakes';
 import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
 import { AuthService } from './auth.service';
-import type { LeakedPasswordService } from './leaked-password.service';
 import { PasswordService } from './password.service';
 import { RateLimitService } from './rate-limit.service';
 
@@ -24,15 +22,6 @@ const secrets = { secret: 's'.repeat(32), secureCookie: false };
 const config = { webOrigin: 'https://web.test' };
 const ip = '203.0.113.7';
 const password = 'a long enough password';
-const leakedPassword = 'password1234567';
-
-/** Stands in for the Pwned Passwords list, which tests never call. */
-const leaked = {
-  isLeaked: vi.fn((candidate: string) => Promise.resolve(candidate === leakedPassword)),
-  asService() {
-    return this as unknown as LeakedPasswordService;
-  },
-};
 
 let db: Db;
 let mail: FakeMail;
@@ -60,7 +49,6 @@ beforeEach(async () => {
     mail.asService(),
     new RateLimitService(db, secrets),
     profiles,
-    leaked.asService(),
   );
 });
 
@@ -323,26 +311,6 @@ describe('profile ownership', () => {
     expect(await profiles.list(await ownerOf(second.session))).toEqual([]);
     await expect(profiles.get(mine.id, await ownerOf(second.session))).rejects.toThrow();
     expect((await profiles.get(mine.id, await ownerOf(first.session))).id).toBe(mine.id);
-  });
-});
-
-describe('leaked passwords', () => {
-  it('refuses a leaked password at sign up, before anything is stored or sent', async () => {
-    await expect(auth.register({ email: 'a@b.co', password: leakedPassword, locale: 'en' }, ip)).rejects.toThrow(
-      UnprocessableEntityException,
-    );
-    expect(await find()).toBeUndefined();
-    expect(mail.sent).toHaveLength(0);
-  });
-
-  it('refuses a leaked password on reset without spending the link', async () => {
-    await signedUp();
-    await auth.requestPasswordReset({ email: 'a@b.co', locale: 'en' }, ip);
-    const token = mail.lastToken();
-    await expect(auth.resetPassword({ token, password: leakedPassword }, ip, fakeRes().res)).rejects.toThrow(
-      UnprocessableEntityException,
-    );
-    await expect(auth.resetPassword({ token, password: 'a different long password' }, ip, fakeRes().res)).resolves.toBeDefined();
   });
 });
 

@@ -22,7 +22,6 @@ import {
   Injectable,
   Logger,
   UnauthorizedException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { and, count, eq, gt, isNull, or } from 'drizzle-orm';
 import type { Response } from 'express';
@@ -34,7 +33,6 @@ import { hashToken, randomToken } from '../guard/token';
 import { MailService } from '../mail/mail.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { type EmailKind, buildEmail, buildEmailChangedNotice } from './auth-mail';
-import { LeakedPasswordService } from './leaked-password.service';
 import { PasswordService } from './password.service';
 import { formatRecoveryCode, newRecoveryCode } from './recovery-code';
 import { RateLimitService } from './rate-limit.service';
@@ -74,7 +72,6 @@ export class AuthService {
     @Inject(MailService) private readonly mail: MailService,
     @Inject(RateLimitService) private readonly limits: RateLimitService,
     @Inject(ProfilesService) private readonly profiles: ProfilesService,
-    @Inject(LeakedPasswordService) private readonly leaked: LeakedPasswordService,
   ) {}
 
   /**
@@ -84,7 +81,6 @@ export class AuthService {
   async register(input: RegisterInput, ip: string): Promise<void> {
     await this.limits.hit('register-ip', ip, 10, HOUR_MS);
     await this.limits.hit('register-email', input.email, 5, HOUR_MS);
-    await this.rejectLeaked(input.password);
     const passwordHash = await this.passwords.hash(input.password);
     const existing = await this.find(input.email);
     if (existing?.emailVerifiedAt) {
@@ -151,7 +147,6 @@ export class AuthService {
   /** Sets a new password from a reset link, signs every other browser out, and signs this one in. */
   async resetPassword(input: ResetPasswordInput, ip: string, res: Response): Promise<Me> {
     await this.limits.hit('consume-ip', ip, 30, 15 * MINUTE_MS);
-    await this.rejectLeaked(input.password);
     const email = await this.consume(input.token, 'reset_password');
     const found = await this.find(email);
     if (!found) throw new BadRequestException('invalid_link');
@@ -288,10 +283,6 @@ export class AuthService {
     await this.db.delete(authToken).where(eq(authToken.email, found.email));
     await this.db.delete(account).where(eq(account.id, found.id));
     res.clearCookie('interim_session', { path: '/' });
-  }
-
-  private async rejectLeaked(password: string): Promise<void> {
-    if (await this.leaked.isLeaked(password)) throw new UnprocessableEntityException('password_leaked');
   }
 
   private hashCode(code: string): string {
