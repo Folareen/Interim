@@ -242,6 +242,19 @@
     },
     "englishNote": "Àkójọ yìí kò tíì ní ìtumọ̀ ìgbàlódé gbogbo ènìyàn ní èdè rẹ, nítorí náà ìpín òní wà ní Gẹ̀ẹ́sì."
   },
+  "notifications": {
+    "title": "Àwọn ìfitónilétí",
+    "intro": "Àwọn ìrántí díẹ̀ lórí ẹ̀rọ yìí. Gbogbo wọn wà ní pípa títí o fi tan wọ́n, o sì lè pa wọ́n nígbàkigbà.",
+    "iosInstall": "Lórí iPhone, àwọn ìfitónilétí máa ń ṣiṣẹ́ nìkan nígbà tí Interim bá wà lórí ojú-ìwé ilé rẹ (iOS 16.4 tàbí tuntun jù). Tẹ Share, lẹ́yìn náà Add to Home Screen, kí o sì ṣí Interim láti ibẹ̀.",
+    "unsupported": "Aṣàwárí yìí kò lè fi àwọn ìfitónilétí hàn.",
+    "blocked": "A ti dí àwọn ìfitónilétí fún ojú-òpó yìí. Gbà wọ́n láàyè nínú ètò aṣàwárí rẹ, lẹ́yìn náà gbìyànjú lẹ́ẹ̀kan sí i.",
+    "notSetUp": "Àwọn ìfitónilétí kò sí lọ́wọ́lọ́wọ́.",
+    "needWords": "Kọ́kọ́ yan àwùjọ ọ̀rọ̀ òní kí o sì tọ́jú rẹ̀.",
+    "words": { "label": "Ọ̀rọ̀ òní", "description": "Ìrántí nígbà tí àyọkà òní bá ti ṣetán.", "time": "Àkókò" },
+    "checkIn": { "label": "Ìrántí àyẹ̀wò", "description": "Ìrántí nígbà tí àyẹ̀wò bá tó àkókò." },
+    "showPassage": { "label": "Fi àyọkà hàn lórí ojú-ìwé ìdádúró", "description": "Ó wà ní pípa lọ́nà àìyípadà. Ẹnikẹ́ni tó bá rí ojú-ìwé rẹ lè kà á." },
+    "push": { "words": "Ọ̀rọ̀ òní rẹ ti ṣetán", "checkIn": "Ó tó àkókò àyẹ̀wò, nígbà tí o bá ṣetán" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Irun fẹ́rẹ̀ẹ́ máa wálẹ̀",
     "hair_patches": "Irun ń wálẹ̀ ní ibi kan kan",

@@ -7,20 +7,25 @@ import {
   type LinkToken,
   type LoginInput,
   type Me,
+  type NotificationSettings,
   type Preferences,
   type Profile,
+  type PushKey,
   type RegisterInput,
   type ResetPasswordInput,
   type EmailLinkRequest,
   type ReflectionCreated,
+  type SaveNotificationsInput,
   type ShareCreated,
   type RunView,
   type UploadsResponse,
   type WordsView,
   captureProblemBodySchema,
   meSchema,
+  notificationSettingsSchema,
   preferencesSchema,
   profileSchema,
+  pushKeySchema,
   reflectionCreatedSchema,
   shareCreatedSchema,
   runViewSchema,
@@ -86,6 +91,23 @@ export async function getWords(id: string, date: string): Promise<WordsView> {
 /** Replaces the profile's companion settings. */
 export async function savePreferences(id: string, preferences: Preferences): Promise<void> {
   await send(`/profiles/${id}/preferences`, 'PUT', preferences);
+}
+
+/** The key this browser subscribes to push with, or null while the server has none. */
+export async function getPushKey(): Promise<PushKey> {
+  return pushKeySchema.parse(await (await send('/notifications/key', 'GET')).json());
+}
+
+/** The notification choices saved for one device. */
+export async function getNotifications(id: string, endpoint: string): Promise<NotificationSettings> {
+  return notificationSettingsSchema.parse(
+    await (await send(`/profiles/${id}/notifications?endpoint=${encodeURIComponent(endpoint)}`, 'GET')).json(),
+  );
+}
+
+/** Saves one device's notification choices. With both kinds off the server forgets the device. */
+export async function saveNotifications(id: string, input: SaveNotificationsInput): Promise<NotificationSettings> {
+  return notificationSettingsSchema.parse(await (await send(`/profiles/${id}/notifications`, 'PUT', input)).json());
 }
 
 /** Records the person's consent. */

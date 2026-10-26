@@ -60,7 +60,7 @@ describe('translations', () => {
   });
 
   it('leaves no translation identical to English except names and shared words', () => {
-    const allowed = new Set(['common.appName', 'ready.situationLabel']);
+    const allowed = new Set(['common.appName', 'ready.situationLabel', 'notifications.title']);
     for (const locale of liveLocales.filter((l) => l !== 'en' && l !== 'pcm')) {
       for (const [path, text] of entries(messages[locale])) {
         if (allowed.has(path) || path.startsWith('common.appName')) continue;

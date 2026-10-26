@@ -242,6 +242,19 @@
     },
     "englishNote": "Questo gruppo non ha ancora una traduzione di pubblico dominio nella tua lingua, quindi il brano di oggi è in inglese."
   },
+  "notifications": {
+    "title": "Notifiche",
+    "intro": "Promemoria discreti su questo dispositivo. Ognuno resta disattivato finché non lo attivi, e puoi disattivarlo quando vuoi.",
+    "iosInstall": "Su iPhone le notifiche funzionano solo dopo aver aggiunto Interim alla schermata Home (iOS 16.4 o successivo). Tocca Condividi, poi Aggiungi alla schermata Home, e apri Interim da lì.",
+    "unsupported": "Questo browser non può mostrare notifiche.",
+    "blocked": "Le notifiche sono bloccate per questo sito. Consentile nelle impostazioni del browser, poi riprova.",
+    "notSetUp": "Le notifiche non sono disponibili al momento.",
+    "needWords": "Scegli prima un gruppo per le parole di oggi e salvalo.",
+    "words": { "label": "Parole di oggi", "description": "Un promemoria quando il passo di oggi è pronto.", "time": "Ora" },
+    "checkIn": { "label": "Promemoria del controllo", "description": "Un promemoria quando è il momento di un controllo." },
+    "showPassage": { "label": "Mostra il passo nella schermata di blocco", "description": "Disattivato per impostazione predefinita. Chiunque veda il tuo schermo potrebbe leggerlo." },
+    "push": { "words": "Le tue parole di oggi sono pronte", "checkIn": "È il momento di un controllo, quando vuoi" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Caduta dei capelli in arrivo",
     "hair_patches": "Capelli che cadono a zone",

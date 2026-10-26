@@ -293,6 +293,23 @@ export const shareLink = pgTable(
   (t) => [uniqueIndex('share_link_token').on(t.tokenHash)],
 );
 
+// One browser or device that gets notifications (docs/product/spec.md section 12a). A row exists only
+// while at least one kind is on, and is deleted with the profile or when the push service says it expired.
+export const pushSubscription = pgTable('push_subscription', {
+  id: id(),
+  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+  endpoint: text('endpoint').notNull().unique(),
+  p256dh: text('p256dh').notNull(),
+  auth: text('auth').notNull(),
+  timeZone: text('time_zone').notNull(), // IANA name, from the device
+  wordsAt: text('words_at'), // HH:MM local time, null while words for today is off
+  checkIn: boolean('check_in').notNull().default(false),
+  showPassage: boolean('show_passage').notNull().default(false),
+  lastWordsAt: timestamp('last_words_at'),
+  lastCheckInAt: timestamp('last_check_in_at'),
+  createdAt: createdAt(),
+});
+
 // Holds no profile reference.
 export const deletionRequest = pgTable('deletion_request', {
   id: id(),

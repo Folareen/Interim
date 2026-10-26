@@ -259,7 +259,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * Web push from the PWA, through a service worker. On iPhone it works only once the app is added to the home screen (iOS 16.4 or later), so the setup screen explains that step.
 * Two opt-in kinds per profile: words for today at a local time the person picks (default 08:00), and a check in reminder when the template's cadence is due. Each has its own switch. Neither is on by default.
 * Default text is neutral: "Your words for today are ready" and "Time for a check in when you're ready". Showing the passage itself on the lock screen is a separate opt-in. No notification names the situation, a stage or a count of days.
-* A push subscription is stored per profile with the person's time zone. It is deleted with the profile, when the person turns notifications off, and when the push service reports it expired.
+* A push subscription is stored per device with the person's time zone, and only the push services' own addresses are accepted. It is deleted with the profile, when the person turns notifications off, and when the push service reports it expired. Check in reminders go at 10:00 local time, once for each time the cadence comes due.
 * A worker job runs every hour and sends to subscriptions whose local time matches. The passage comes from the same fixed library as the app.
 * Notification text passes both language scans in every language it is sent in.
 

@@ -45,4 +45,4 @@ Every control is keyboard reachable and labelled; contrast meets WCAG AA; do not
 The screen reader pass (VoiceOver and TalkBack testing) comes after the core flow works end to end. Until then the basics above still apply to every component.
 
 ## PWA
-`app/manifest.ts` defines the manifest. Icons and service worker are still to add.
+`app/manifest.ts` defines the manifest. `public/sw.js` is the service worker; it only shows pushes, which the server writes in the person's language (spec section 12a). Icons are still to add.

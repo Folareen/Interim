@@ -242,6 +242,19 @@
     },
     "englishNote": "This set has no public domain translation in your language yet, so today’s passage is in English."
   },
+  "notifications": {
+    "title": "Notifications",
+    "intro": "Quiet nudges on this device. Each one is off until you turn it on, and you can turn it off any time.",
+    "iosInstall": "On iPhone, notifications only work once Interim is on your home screen (iOS 16.4 or later). Tap Share, then Add to Home Screen, then open Interim from there.",
+    "unsupported": "This browser can’t show notifications.",
+    "blocked": "Notifications are blocked for this site. Allow them in your browser settings, then try again.",
+    "notSetUp": "Notifications aren’t available right now.",
+    "needWords": "Choose a set for words for today and save it first.",
+    "words": { "label": "Words for today", "description": "A nudge when today’s passage is ready.", "time": "Time" },
+    "checkIn": { "label": "Check in reminder", "description": "A nudge when a check in is due." },
+    "showPassage": { "label": "Show the passage on the lock screen", "description": "Off by default. Anyone who sees your screen could read it." },
+    "push": { "words": "Your words for today are ready", "checkIn": "Time for a check in when you’re ready" }
+  },
   "templateLabels": {
     "hair_loss_ahead": "Hair loss ahead",
     "hair_patches": "Hair coming out in patches",

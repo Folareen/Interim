@@ -94,6 +94,7 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **garment.** id, profile_id (cascade), catalog_sku, saved_at. One per profile and sku.
 * **reflection.** id, profile_id (cascade), text (encrypted), locale, safety (none, match or flagged), created_at.
 * **safety_review.** id, reflection_id (cascade), reason, verdict (pending, concern, clear or unsure), reviewed_at, dismissed_at. No email or profile data.
+* **push_subscription.** id, profile_id (cascade), endpoint (unique), p256dh, auth, time_zone, words_at (HH:MM local time, null while words for today is off), check_in, show_passage, last_words_at, last_check_in_at. One per device, and only while at least one kind is on. Deleted with the profile, when both kinds are switched off, and when the push service answers 404 or 410.
 * **share_link.** id, card_id, token_hash, expires_at, revoked_at.
 * **deletion_request.** id, requested_at, completed_at. Holds no profile reference.
 
@@ -132,6 +133,7 @@ BullMQ on Redis.
 * **run queue.** One job per run. Concurrency of one per profile.
 * **poll queue.** Not a separate queue yet: the gateway polls inside the run job with a growing delay, and a task row left in `created` is polled again if the job is delivered twice.
 * **safety queue.** One job per flagged reflection, keyed by the review id, with three tries. It runs the model review and stores the verdict, and a worker start queues any review still pending. Jobs carry the id only.
+* **notifications queue.** One hourly job that sends the notifications due in each subscription's own time zone (spec section 12a). A kind is due in the hour that starts at its time, so half hour zones are caught, and is sent once. Check in reminders go at 10:00 local time once the template's cadence has passed since the last check in. Nothing is sent without VAPID keys.
 * **cleanup queue.** One hourly job: photo and render expiry, storage reconcile, completing deletion requests and, later, unknown task reconcile. Expiry deletes the file, then the row (a render keeps its row and loses `object_key`). The reconcile walks `raw/` and `photos/` once. Files of a deleted profile go at once, and unreferenced files of a live profile go after a grace period (24 hours for `raw/`, 1 hour for `photos/`). Photo rows whose file is missing are logged by id.
 * All jobs are idempotent at the run and task level. Jobs read the ledger, the task row and call_cache before they act. BullMQ delivers at least once, so no job may send a create call without first finding the task row in a safe state.
 
@@ -151,6 +153,7 @@ BullMQ on Redis.
 * GET /runs/:id (status, stop reason, trace)
 * GET /runs/:id/events (server sent events: the same view once a second until the run finishes)
 * GET /cards/:id (the card with short lived links to its renders, the front photo and the body photo)
+* GET /notifications/key (the public key a browser subscribes with, or null while push is off), GET, PUT and DELETE /profiles/:id/notifications (one device's choices, found by its subscription address; the person only; PUT with both kinds off deletes the subscription)
 * GET /profiles/:id/garments (the sample catalog with the profile's saved pieces marked and a link to each picture), PUT and DELETE /profiles/:id/garments/:sku (save or remove; both repeat safely; only for a template that uses fit)
 * GET /profiles/:id/cards (newest first)
 * POST /cards/:id/approve
@@ -209,6 +212,7 @@ Server environment variables, by name:
 * SESSION_SECRET, DATA_KEY (64 hex characters that encrypt reflections; back it up), MAX_UPLOAD_BYTES, TURNSTILE_SECRET_KEY
 * WEB_ORIGIN (where the browser reaches the web app; emailed links and Google's return address start here) and TRUST_PROXY_HOPS
 * MAIL_MODE (`log` or `brevo`; production must be `brevo`), BREVO_API_KEY, MAIL_FROM_EMAIL and MAIL_FROM_NAME
+* VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY and VAPID_SUBJECT (optional; notifications are off without the keys)
 * GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (optional; Google sign in is off without them)
 
 ## 14. Deployment

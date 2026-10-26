@@ -229,6 +229,64 @@ export const wordsViewSchema = z.object({
 });
 export type WordsView = z.infer<typeof wordsViewSchema>;
 
+/** Hosts of the browser push services. The API posts to a subscription's address, so it accepts only these. */
+const pushHosts = ['fcm.googleapis.com', 'updates.push.services.mozilla.com', 'push.apple.com', 'notify.windows.com'];
+
+/** Whether a subscription address belongs to a known push service. */
+export function isPushServiceUrl(value: string): boolean {
+  // Parsed by hand because this package targets no runtime with a URL class. Userinfo and ports other than 443 are refused.
+  const match = /^https:\/\/([a-z0-9.-]+)(?::443)?(?:[/?#]|$)/i.exec(value);
+  const host = match?.[1]?.toLowerCase();
+  return host !== undefined && pushHosts.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
+}
+
+/** What the browser's `PushSubscription.toJSON()` gives. The keys encrypt what the push service relays. */
+export const pushSubscriptionSchema = z.object({
+  endpoint: z.string().max(2048).refine(isPushServiceUrl, 'Not a push service address'),
+  keys: z.object({ p256dh: z.string().min(1).max(256), auth: z.string().min(1).max(256) }),
+});
+export type PushSubscriptionInput = z.infer<typeof pushSubscriptionSchema>;
+
+/** The choices for one device (docs/product/spec.md section 12a). Each kind is its own opt in, and all start off. */
+export const notificationSettingsSchema = z.object({
+  /** Local time for words for today as HH:MM, or null while that kind is off. */
+  wordsAt: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+    .nullable(),
+  /** A reminder when the template's check in cadence is due. */
+  checkIn: z.boolean(),
+  /** Puts the passage itself in the words notification, so it shows on a lock screen. */
+  showPassage: z.boolean(),
+});
+export type NotificationSettings = z.infer<typeof notificationSettingsSchema>;
+
+/** Body of PUT /profiles/:id/notifications. Both kinds off removes the subscription. */
+export const saveNotificationsSchema = notificationSettingsSchema.extend({
+  subscription: pushSubscriptionSchema,
+  /** The device's IANA time zone, so "local time" follows the person when they travel. */
+  timeZone: z
+    .string()
+    .max(64)
+    .refine((zone) => {
+      try {
+        new Intl.DateTimeFormat('en', { timeZone: zone });
+        return true;
+      } catch {
+        return false;
+      }
+    }, 'Not a time zone'),
+});
+export type SaveNotificationsInput = z.infer<typeof saveNotificationsSchema>;
+
+/** Query of GET and DELETE /profiles/:id/notifications: which device. */
+export const notificationsQuerySchema = z.object({ endpoint: pushSubscriptionSchema.shape.endpoint });
+export type NotificationsQuery = z.infer<typeof notificationsQuerySchema>;
+
+/** Answer of GET /notifications/key: the public key the browser subscribes with, or null while push is not set up. */
+export const pushKeySchema = z.object({ publicKey: z.string().nullable() });
+export type PushKey = z.infer<typeof pushKeySchema>;
+
 /** The part of `POST /profiles/:id/snapshots`'s answer the app reads. */
 export const snapshotCreatedSchema = z.object({ id: z.string().uuid() });
 export type SnapshotCreated = z.infer<typeof snapshotCreatedSchema>;

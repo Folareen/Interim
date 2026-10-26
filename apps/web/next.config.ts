@@ -8,6 +8,10 @@ const apiOrigin = process.env.API_ORIGIN ?? 'http://localhost:4000';
 const nextConfig: NextConfig = {
   // The repo's own AGENTS.md is the one set of agent rules.
   agentRules: false,
+  async headers() {
+    // A stale worker would keep showing old behaviour, so browsers must check for a new one each time.
+    return [{ source: '/sw.js', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }];
+  },
   async rewrites() {
     return [{ source: '/api/:path*', destination: `${apiOrigin}/:path*` }];
   },
