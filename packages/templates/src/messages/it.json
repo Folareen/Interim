@@ -192,7 +192,20 @@
     "confirmAction": "Continua",
     "confirmWorking": "Un momento…",
     "linkInvalid": "Questo link è scaduto o è già stato usato. Chiedine uno nuovo.",
-    "askNewLink": "Chiedi un nuovo link"
+    "askNewLink": "Chiedi un nuovo link",
+    "lostInbox": "Hai perso l’accesso alla tua email? Usa un codice di recupero",
+    "signUpRecoveryNote": "Quando sei dentro, puoi creare codici di recupero per rientrare se un giorno perdi la tua casella di posta.",
+    "recoverTitle": "Recupera il tuo account",
+    "recoverIntro": "Hai perso l’accesso alla tua casella di posta? Usa uno dei tuoi codici di recupero e indicaci una nuova email. Lì invieremo un link per finire.",
+    "recoverEmailLabel": "La tua vecchia email",
+    "recoverCodeLabel": "Codice di recupero",
+    "recoverCodeHelp": "Sedici lettere e numeri, come ABCD-EFGH-IJKL-MNOP. Ogni codice funziona una sola volta.",
+    "recoverNewEmailLabel": "La tua nuova email",
+    "recoverSubmit": "Invia il link",
+    "recoverWorking": "Invio…",
+    "checkRecover": "Se questi dati corrispondono a un account, abbiamo inviato un link a {email}. Aprilo per finire. Funziona una sola volta e scade tra 24 ore.",
+    "confirmChangeTitle": "Conferma la tua nuova email",
+    "confirmRecoverTitle": "Completa il recupero del tuo account"
   },
   "account": {
     "title": "Il tuo account",
@@ -214,14 +227,33 @@
     "deleteConfirm": "Sì, elimina tutto",
     "deleteCancel": "Tieni il mio account",
     "deleting": "Eliminazione…",
-    "deleteWrongPassword": "Questa password non è corretta."
+    "deleteWrongPassword": "Questa password non è corretta.",
+    "emailChangeAction": "Cambia la mia email",
+    "emailChangeIntro": "Inserisci il nuovo indirizzo. Lì invieremo un link, e la tua email cambia solo quando lo apri.",
+    "newEmailLabel": "Nuova email",
+    "emailChangeSubmit": "Invia il link",
+    "emailChangeWorking": "Invio…",
+    "emailChangeSent": "Se {email} può essere usato, vi abbiamo inviato un link. La tua email resta la stessa finché non lo apri. Funziona una sola volta e scade tra 24 ore.",
+    "cancel": "Annulla",
+    "recoveryTitle": "Codici di recupero",
+    "recoveryBody": "Se un giorno perdi la tua casella di posta, uno di questi codici ti riporta nel tuo account. Ogni codice funziona una sola volta.",
+    "recoveryLeft": "Codici non usati: {count}",
+    "recoveryCreate": "Crea codici di recupero",
+    "recoveryReplace": "Crea nuovi codici",
+    "recoveryShownTitle": "Salva i tuoi codici di recupero",
+    "recoveryShownBody": "Scrivili o tienili in un posto privato. Vengono mostrati solo questa volta, e dei nuovi codici sostituiscono questi.",
+    "recoveryDone": "Li ho salvati",
+    "recoveryWorking": "Creazione dei codici…"
   },
   "email": {
     "verify": { "subject": "Conferma la tua email per Interim", "intro": "Conferma la tua email per finire di creare il tuo account Interim.", "action": "Conferma la mia email" },
     "magic": { "subject": "Il tuo link di accesso a Interim", "intro": "Usa questo link per accedere a Interim. Funziona una sola volta e scade tra 15 minuti.", "action": "Accedi" },
     "reset": { "subject": "Scegli una nuova password per Interim", "intro": "Usa questo link per scegliere una nuova password. Funziona una sola volta e scade tra 30 minuti.", "action": "Scegli una nuova password" },
     "exists": { "subject": "Hai già un account Interim", "intro": "Qualcuno ha usato questa email per creare un account Interim, ma ne hai già uno. Puoi accedere qui sotto.", "action": "Accedi" },
-    "ignore": "Se non l’hai chiesto tu, puoi ignorare questa email."
+    "ignore": "Se non l’hai chiesto tu, puoi ignorare questa email.",
+    "changeEmail": { "subject": "Conferma la tua nuova email per Interim", "intro": "Usa questo link per rendere questo indirizzo l’email del tuo account Interim. Funziona una sola volta e scade tra 24 ore.", "action": "Conferma la mia nuova email" },
+    "recover": { "subject": "Completa il recupero del tuo account Interim", "intro": "È stato usato un codice di recupero per spostare un account Interim su questo indirizzo. Usa questo link per finire. Funziona una sola volta e scade tra 24 ore.", "action": "Completa il recupero" },
+    "emailChanged": { "subject": "La tua email di Interim è cambiata", "intro": "L’email del tuo account Interim è stata cambiata e tutti i browser sono stati disconnessi.", "ignoreIfYou": "Se sei stato tu, puoi ignorare questa email." }
   },
   "settings": {
     "title": "Le tue scelte",

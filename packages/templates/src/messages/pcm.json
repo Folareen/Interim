@@ -192,7 +192,20 @@
     "confirmAction": "Continue",
     "confirmWorking": "Wait small…",
     "linkInvalid": "Dis link don expire or dem don use am. Ask for new one.",
-    "askNewLink": "Ask for new link"
+    "askNewLink": "Ask for new link",
+    "lostInbox": "You don lose access to your email? Use recovery code",
+    "signUpRecoveryNote": "Once you don enter, you fit make recovery codes, so you fit enter again if you ever lose your inbox.",
+    "recoverTitle": "Recover your account",
+    "recoverIntro": "You don lose access to your inbox? Use one of your recovery codes and tell us new email. We go send link go there make you finish.",
+    "recoverEmailLabel": "Your old email",
+    "recoverCodeLabel": "Recovery code",
+    "recoverCodeHelp": "Sixteen letters and numbers, like ABCD-EFGH-IJKL-MNOP. Each code dey work one time.",
+    "recoverNewEmailLabel": "Your new email",
+    "recoverSubmit": "Send the link",
+    "recoverWorking": "Dem dey send…",
+    "checkRecover": "If those details match one account, we don send link to {email}. Open am to finish. E dey work one time and e go expire after 24 hours.",
+    "confirmChangeTitle": "Confirm your new email",
+    "confirmRecoverTitle": "Finish to recover your account"
   },
   "account": {
     "title": "Your account",
@@ -214,14 +227,33 @@
     "deleteConfirm": "Yes, delete everything",
     "deleteCancel": "Keep my account",
     "deleting": "Dey delete…",
-    "deleteWrongPassword": "Dat password no correct."
+    "deleteWrongPassword": "Dat password no correct.",
+    "emailChangeAction": "Change my email",
+    "emailChangeIntro": "Enter the new address. We go send link go there, and your email go change only when you open am.",
+    "newEmailLabel": "New email",
+    "emailChangeSubmit": "Send the link",
+    "emailChangeWorking": "Dem dey send…",
+    "emailChangeSent": "If dem fit use {email}, we don send link go there. Your email go stay the same until you open am. E dey work one time and e go expire after 24 hours.",
+    "cancel": "Cancel",
+    "recoveryTitle": "Recovery codes",
+    "recoveryBody": "If you ever lose your inbox, one of dis codes go put you back inside your account. Each code dey work one time.",
+    "recoveryLeft": "Codes wey dem never use: {count}",
+    "recoveryCreate": "Make recovery codes",
+    "recoveryReplace": "Make new codes",
+    "recoveryShownTitle": "Save your recovery codes",
+    "recoveryShownBody": "Write dem down or keep dem for private place. Dem show only dis one time, and new codes go replace dem.",
+    "recoveryDone": "I don save dem",
+    "recoveryWorking": "Dem dey make your codes…"
   },
   "email": {
     "verify": { "subject": "Confirm your Interim email", "intro": "Confirm your email to finish create your Interim account.", "action": "Confirm my email" },
     "magic": { "subject": "Your Interim sign-in link", "intro": "Use dis link to sign in to Interim. E dey work one time and e go expire after 15 minutes.", "action": "Sign in" },
     "reset": { "subject": "Choose new Interim password", "intro": "Use dis link to choose new password. E dey work one time and e go expire after 30 minutes.", "action": "Choose new password" },
     "exists": { "subject": "You don get Interim account already", "intro": "Somebody use dis email create Interim account, but you don get one already. You fit sign in below.", "action": "Sign in" },
-    "ignore": "If na no you ask for dis, you fit ignore dis email."
+    "ignore": "If na no you ask for dis, you fit ignore dis email.",
+    "changeEmail": { "subject": "Confirm your new email for Interim", "intro": "Use dis link make dis address be the email for your Interim account. E dey work one time and e go expire after 24 hours.", "action": "Confirm my new email" },
+    "recover": { "subject": "Finish to recover your Interim account", "intro": "Dem use recovery code move one Interim account go dis address. Use dis link to finish. E dey work one time and e go expire after 24 hours.", "action": "Finish recovery" },
+    "emailChanged": { "subject": "Dem don change your Interim email", "intro": "Dem don change the email for your Interim account, and every browser don sign out.", "ignoreIfYou": "If na you do am, you fit ignore dis email." }
   },
   "settings": {
     "title": "Your choices",

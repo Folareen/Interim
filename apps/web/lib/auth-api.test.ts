@@ -1,12 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { confirmEmail, deleteAccount, login, logout, register, requestMagicLink, resetPassword, signInWithLink } from './api';
+import {
+  confirmEmail,
+  confirmEmailChange,
+  confirmRecovery,
+  createRecoveryCodes,
+  deleteAccount,
+  login,
+  logout,
+  recoverAccount,
+  register,
+  requestEmailChange,
+  requestMagicLink,
+  resetPassword,
+  signInWithLink,
+} from './api';
 import { authErrorKey } from './auth-error';
 import { ApiError } from './api';
 
 const fetchMock = vi.fn<typeof fetch>();
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
-const me = { email: 'a@b.co', hasPassword: true };
+const me = { email: 'a@b.co', hasPassword: true, recoveryCodes: 0 };
 
 beforeEach(() => {
   fetchMock.mockReset();
@@ -34,11 +48,34 @@ describe('auth api client', () => {
     ['login', () => login({ email: 'a@b.co', password: 'x' }), '/api/auth/login'],
     ['signInWithLink', () => signInWithLink({ token: 'a'.repeat(30) }), '/api/auth/magic/use'],
     ['confirmEmail', () => confirmEmail({ token: 'a'.repeat(30) }), '/api/auth/verify-email'],
+    ['confirmEmailChange', () => confirmEmailChange({ token: 'a'.repeat(30), locale: 'en' }), '/api/auth/email/confirm'],
+    ['confirmRecovery', () => confirmRecovery({ token: 'a'.repeat(30), locale: 'en' }), '/api/auth/recover/confirm'],
     ['resetPassword', () => resetPassword({ token: 'a'.repeat(30), password: 'a long enough password' }), '/api/auth/password/reset'],
   ])('%s parses the account it gets back', async (_name, call, url) => {
     fetchMock.mockResolvedValueOnce(json(me));
     expect(await call()).toEqual(me);
     expect(lastCall().url).toBe(url);
+  });
+
+  it('sends the email change and the recovery request to their routes', async () => {
+    fetchMock.mockImplementation(() => Promise.resolve(new Response(null, { status: 202 })));
+    await requestEmailChange({ email: 'new@b.co', locale: 'en', password: 'secret password' });
+    expect(lastCall()).toEqual({
+      url: '/api/auth/email/change',
+      method: 'POST',
+      body: { email: 'new@b.co', locale: 'en', password: 'secret password' },
+    });
+    const input = { email: 'a@b.co', code: 'ABCDEFGHIJKLMNOP', newEmail: 'new@b.co', locale: 'en' } as const;
+    await recoverAccount(input);
+    expect(lastCall()).toEqual({ url: '/api/auth/recover', method: 'POST', body: input });
+  });
+
+  it('parses the recovery codes it gets back', async () => {
+    fetchMock.mockResolvedValueOnce(json({ codes: ['ABCD-EFGH-IJKL-MNOP'] }));
+    expect(await createRecoveryCodes({ password: 'secret password' })).toEqual({ codes: ['ABCD-EFGH-IJKL-MNOP'] });
+    expect(lastCall().url).toBe('/api/auth/recovery-codes');
+    fetchMock.mockResolvedValueOnce(json({ codes: 'nope' }));
+    await expect(createRecoveryCodes({})).rejects.toThrow();
   });
 
   it('rejects an answer that is not an account', async () => {

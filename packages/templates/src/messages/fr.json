@@ -192,7 +192,20 @@
     "confirmAction": "Continuer",
     "confirmWorking": "Un instant…",
     "linkInvalid": "Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
-    "askNewLink": "Demander un nouveau lien"
+    "askNewLink": "Demander un nouveau lien",
+    "lostInbox": "Vous n’avez plus accès à votre e-mail ? Utilisez un code de récupération",
+    "signUpRecoveryNote": "Une fois connecté, vous pourrez créer des codes de récupération pour revenir si vous perdez un jour votre boîte de réception.",
+    "recoverTitle": "Récupérez votre compte",
+    "recoverIntro": "Vous n’avez plus accès à votre boîte de réception ? Utilisez un de vos codes de récupération et indiquez-nous un nouvel e-mail. Nous y enverrons un lien pour terminer.",
+    "recoverEmailLabel": "Votre ancien e-mail",
+    "recoverCodeLabel": "Code de récupération",
+    "recoverCodeHelp": "Seize lettres et chiffres, comme ABCD-EFGH-IJKL-MNOP. Chaque code ne fonctionne qu’une fois.",
+    "recoverNewEmailLabel": "Votre nouvel e-mail",
+    "recoverSubmit": "Envoyer le lien",
+    "recoverWorking": "Envoi…",
+    "checkRecover": "Si ces informations correspondent à un compte, nous avons envoyé un lien à {email}. Ouvrez-le pour terminer. Il ne fonctionne qu’une fois et expire dans 24 heures.",
+    "confirmChangeTitle": "Confirmez votre nouvel e-mail",
+    "confirmRecoverTitle": "Terminez la récupération de votre compte"
   },
   "account": {
     "title": "Votre compte",
@@ -214,14 +227,33 @@
     "deleteConfirm": "Oui, tout supprimer",
     "deleteCancel": "Garder mon compte",
     "deleting": "Suppression…",
-    "deleteWrongPassword": "Ce mot de passe n’est pas le bon."
+    "deleteWrongPassword": "Ce mot de passe n’est pas le bon.",
+    "emailChangeAction": "Changer mon e-mail",
+    "emailChangeIntro": "Saisissez la nouvelle adresse. Nous y enverrons un lien, et votre e-mail ne change que lorsque vous l’ouvrez.",
+    "newEmailLabel": "Nouvel e-mail",
+    "emailChangeSubmit": "Envoyer le lien",
+    "emailChangeWorking": "Envoi…",
+    "emailChangeSent": "Si {email} peut être utilisé, nous y avons envoyé un lien. Votre e-mail reste le même tant que vous ne l’ouvrez pas. Il ne fonctionne qu’une fois et expire dans 24 heures.",
+    "cancel": "Annuler",
+    "recoveryTitle": "Codes de récupération",
+    "recoveryBody": "Si vous perdez un jour votre boîte de réception, l’un de ces codes vous redonne accès à votre compte. Chaque code ne fonctionne qu’une fois.",
+    "recoveryLeft": "Codes non utilisés : {count}",
+    "recoveryCreate": "Créer des codes de récupération",
+    "recoveryReplace": "Créer de nouveaux codes",
+    "recoveryShownTitle": "Conservez vos codes de récupération",
+    "recoveryShownBody": "Notez-les ou gardez-les en lieu privé. Ils ne s’affichent qu’une seule fois, et de nouveaux codes remplacent ceux-ci.",
+    "recoveryDone": "Je les ai conservés",
+    "recoveryWorking": "Création de vos codes…"
   },
   "email": {
     "verify": { "subject": "Confirmez votre e-mail pour Interim", "intro": "Confirmez votre e-mail pour terminer la création de votre compte Interim.", "action": "Confirmer mon e-mail" },
     "magic": { "subject": "Votre lien de connexion Interim", "intro": "Utilisez ce lien pour vous connecter à Interim. Il ne fonctionne qu’une fois et expire dans 15 minutes.", "action": "Se connecter" },
     "reset": { "subject": "Choisissez un nouveau mot de passe Interim", "intro": "Utilisez ce lien pour choisir un nouveau mot de passe. Il ne fonctionne qu’une fois et expire dans 30 minutes.", "action": "Choisir un nouveau mot de passe" },
     "exists": { "subject": "Vous avez déjà un compte Interim", "intro": "Quelqu’un a utilisé cet e-mail pour créer un compte Interim, mais vous en avez déjà un. Vous pouvez vous connecter ci-dessous.", "action": "Se connecter" },
-    "ignore": "Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail."
+    "ignore": "Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail.",
+    "changeEmail": { "subject": "Confirmez votre nouvel e-mail pour Interim", "intro": "Utilisez ce lien pour faire de cette adresse l’e-mail de votre compte Interim. Il ne fonctionne qu’une fois et expire dans 24 heures.", "action": "Confirmer mon nouvel e-mail" },
+    "recover": { "subject": "Terminez la récupération de votre compte Interim", "intro": "Un code de récupération a servi à déplacer un compte Interim vers cette adresse. Utilisez ce lien pour terminer. Il ne fonctionne qu’une fois et expire dans 24 heures.", "action": "Terminer la récupération" },
+    "emailChanged": { "subject": "Votre e-mail Interim a changé", "intro": "L’e-mail de votre compte Interim a été changé, et tous les navigateurs ont été déconnectés.", "ignoreIfYou": "Si c’est vous, vous pouvez ignorer cet e-mail." }
   },
   "settings": {
     "title": "Vos choix",

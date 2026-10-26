@@ -1,11 +1,16 @@
-import { type Db, account, authToken, profile } from '@interim/db';
+import { type Db, account, authToken, profile, recoveryCode } from '@interim/db';
 import type {
+  ChangeEmailInput,
+  ConfirmEmailChangeInput,
   DeleteAccountInput,
   EmailLinkRequest,
   LinkToken,
   LiveLocale,
   LoginInput,
   Me,
+  NewRecoveryCodesInput,
+  RecoverAccountInput,
+  RecoveryCodes,
   RegisterInput,
   ResetPasswordInput,
 } from '@interim/types';
@@ -18,7 +23,7 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, eq, gt, isNull } from 'drizzle-orm';
+import { and, count, eq, gt, isNull, or } from 'drizzle-orm';
 import type { Response } from 'express';
 import { DB } from '../db/db.token';
 import type { AccountSession } from '../guard/session.service';
@@ -27,8 +32,9 @@ import { accountRef } from '../guard/owner.service';
 import { hashToken, randomToken } from '../guard/token';
 import { MailService } from '../mail/mail.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { type EmailKind, buildEmail } from './auth-mail';
+import { type EmailKind, buildEmail, buildEmailChangedNotice } from './auth-mail';
 import { PasswordService } from './password.service';
+import { formatRecoveryCode, newRecoveryCode } from './recovery-code';
 import { RateLimitService } from './rate-limit.service';
 import { OWNER_CONFIG, type OwnerConfig } from '../guard/config';
 
@@ -47,7 +53,10 @@ const LINK_TTL_MS: Record<TokenPurpose, number> = {
   verify_email: 24 * HOUR_MS,
   magic_link: 15 * MINUTE_MS,
   reset_password: 30 * MINUTE_MS,
+  change_email: 24 * HOUR_MS,
+  recover_account: 24 * HOUR_MS,
 };
+const RECOVERY_CODES = 8;
 
 /** Accounts, sign in, emailed links and bringing device profiles into an account (docs/product/spec.md section 12b). */
 @Injectable()
@@ -174,7 +183,84 @@ export class AuthService {
       .from(account)
       .where(eq(account.id, signedIn.accountId));
     if (!row) throw new UnauthorizedException();
-    return { email: signedIn.email, hasPassword: row.passwordHash !== null };
+    const [codes] = await this.db
+      .select({ left: count() })
+      .from(recoveryCode)
+      .where(and(eq(recoveryCode.accountId, signedIn.accountId), isNull(recoveryCode.usedAt)));
+    return { email: signedIn.email, hasPassword: row.passwordHash !== null, recoveryCodes: codes?.left ?? 0 };
+  }
+
+  /**
+   * Starts moving the account to a new address by emailing a link there. Nothing changes until the link is
+   * used, so a typo cannot lock the person out. An address that already has an account is told so instead.
+   * @throws ForbiddenException when the account has a password and it was not given or is wrong.
+   */
+  async requestEmailChange(signedIn: AccountSession, input: ChangeEmailInput, ip: string): Promise<void> {
+    await this.limits.hit('change-ip', ip, 20, HOUR_MS);
+    await this.limits.hit('change-account', signedIn.accountId, 5, HOUR_MS);
+    const found = await this.find(signedIn.email);
+    if (!found) throw new UnauthorizedException();
+    await this.requirePassword(found, input.password);
+    if (input.email === found.email) return;
+    if (await this.find(input.email)) {
+      this.sendLater('exists', input.locale, input.email, `${this.config.webOrigin}/signin`);
+      return;
+    }
+    await this.sendLink('changeEmail', 'change_email', input.locale, input.email, '/auth/confirm?kind=change', found.id);
+  }
+
+  /** Moves the account to the address the link was sent to, and signs in on this browser. */
+  async confirmEmailChange(input: ConfirmEmailChangeInput, ip: string, res: Response): Promise<Me> {
+    await this.limits.hit('consume-ip', ip, 30, 15 * MINUTE_MS);
+    return this.moveEmail(await this.consumeFor(input.token, 'change_email'), input.locale, res);
+  }
+
+  /**
+   * Replaces the account's recovery codes with a new set and returns them. This is the only time they are
+   * readable, because only keyed hashes are kept.
+   * @throws ForbiddenException when the account has a password and it was not given or is wrong.
+   */
+  async createRecoveryCodes(signedIn: AccountSession, input: NewRecoveryCodesInput, ip: string): Promise<RecoveryCodes> {
+    await this.limits.hit('login-ip', ip, 60, 15 * MINUTE_MS);
+    const found = await this.find(signedIn.email);
+    if (!found) throw new UnauthorizedException();
+    await this.requirePassword(found, input.password);
+    const codes = Array.from({ length: RECOVERY_CODES }, newRecoveryCode);
+    await this.db.transaction(async (tx) => {
+      await tx.delete(recoveryCode).where(eq(recoveryCode.accountId, found.id));
+      await tx.insert(recoveryCode).values(codes.map((code) => ({ accountId: found.id, codeHash: this.hashCode(code) })));
+    });
+    return { codes: codes.map(formatRecoveryCode) };
+  }
+
+  /**
+   * For someone who lost the inbox: a recovery code proves the account, and a link to the new address proves
+   * that inbox. Looks the same whether or not the address, the code or the new address was right.
+   */
+  async requestRecovery(input: RecoverAccountInput, ip: string): Promise<void> {
+    await this.limits.hit('recover-ip', ip, 10, HOUR_MS);
+    await this.limits.hit('recover-email', input.email, 5, HOUR_MS);
+    const found = await this.find(input.email);
+    if (!found || (await this.find(input.newEmail))) return;
+    const [spent] = await this.db
+      .update(recoveryCode)
+      .set({ usedAt: new Date() })
+      .where(
+        and(
+          eq(recoveryCode.accountId, found.id),
+          eq(recoveryCode.codeHash, this.hashCode(input.code)),
+          isNull(recoveryCode.usedAt),
+        ),
+      )
+      .returning({ id: recoveryCode.id });
+    if (!spent) return;
+    await this.sendLink('recover', 'recover_account', input.locale, input.newEmail, '/auth/confirm?kind=recover', found.id);
+  }
+
+  /** Finishes recovery from the link sent to the new address: the account moves there and everyone else is signed out. */
+  async confirmRecovery(input: ConfirmEmailChangeInput, ip: string, res: Response): Promise<Me> {
+    await this.limits.hit('consume-ip', ip, 30, 15 * MINUTE_MS);
+    return this.moveEmail(await this.consumeFor(input.token, 'recover_account'), input.locale, res);
   }
 
   /**
@@ -197,6 +283,36 @@ export class AuthService {
     await this.db.delete(authToken).where(eq(authToken.email, found.email));
     await this.db.delete(account).where(eq(account.id, found.id));
     res.clearCookie('interim_session', { path: '/' });
+  }
+
+  private hashCode(code: string): string {
+    return hashToken(this.secrets.secret, `recovery:${code}`);
+  }
+
+  // A password is the proof for a signed in account that has one. Accounts with none rely on the session.
+  private async requirePassword(found: typeof account.$inferSelect, password: string | undefined): Promise<void> {
+    if (found.passwordHash === null) return;
+    await this.limits.hit('login-email', found.email, 8, 15 * MINUTE_MS);
+    if (!password || !(await this.passwords.verify(password, found.passwordHash))) throw new ForbiddenException();
+  }
+
+  // Shared by changing the address and recovering the account: both end at a link proven to reach the new inbox.
+  private async moveEmail(link: { email: string; accountId: string }, locale: LiveLocale, res: Response): Promise<Me> {
+    const [current] = await this.db.select().from(account).where(eq(account.id, link.accountId));
+    if (!current) throw new BadRequestException('invalid_link');
+    if (await this.find(link.email)) throw new ConflictException();
+    await this.db
+      .update(account)
+      .set({ email: link.email, emailVerifiedAt: new Date() })
+      .where(eq(account.id, current.id));
+    // Links still out for the old address, such as a sign-in link, must not work for whoever holds that inbox now.
+    await this.db.delete(authToken).where(eq(authToken.email, current.email));
+    await this.sessions.endAll(current.id);
+    await this.sessions.start(res, current.id);
+    this.mail.send(buildEmailChangedNotice(locale, current.email)).catch((cause: unknown) => {
+      this.log.error(`Email could not be sent: ${cause instanceof Error ? cause.message : 'unknown error'}`);
+    });
+    return this.me({ accountId: current.id, email: link.email });
   }
 
   private async find(email: string) {
@@ -222,12 +338,21 @@ export class AuthService {
     return found.id;
   }
 
-  private async sendLink(kind: EmailKind, purpose: TokenPurpose, locale: LiveLocale, email: string, path: string) {
+  private async sendLink(
+    kind: EmailKind,
+    purpose: TokenPurpose,
+    locale: LiveLocale,
+    email: string,
+    path: string,
+    accountId?: string,
+  ) {
     const token = randomToken();
     // An older unused link for the same purpose stops working once a new one is asked for.
-    await this.db.delete(authToken).where(and(eq(authToken.email, email), eq(authToken.purpose, purpose), isNull(authToken.usedAt)));
+    const same = accountId ? or(eq(authToken.email, email), eq(authToken.accountId, accountId)) : eq(authToken.email, email);
+    await this.db.delete(authToken).where(and(same, eq(authToken.purpose, purpose), isNull(authToken.usedAt)));
     await this.db.insert(authToken).values({
       email,
+      accountId,
       purpose,
       tokenHash: hashToken(this.secrets.secret, token),
       expiresAt: new Date(Date.now() + LINK_TTL_MS[purpose]),
@@ -244,6 +369,17 @@ export class AuthService {
   }
 
   private async consume(token: string, purpose: TokenPurpose): Promise<string> {
+    return (await this.consumeRow(token, purpose)).email;
+  }
+
+  // Links that move an account always name it, so one without an account is as good as an expired one.
+  private async consumeFor(token: string, purpose: TokenPurpose): Promise<{ email: string; accountId: string }> {
+    const { email, accountId } = await this.consumeRow(token, purpose);
+    if (!accountId) throw new BadRequestException('invalid_link');
+    return { email, accountId };
+  }
+
+  private async consumeRow(token: string, purpose: TokenPurpose) {
     const [row] = await this.db
       .update(authToken)
       .set({ usedAt: new Date() })
@@ -255,8 +391,8 @@ export class AuthService {
           gt(authToken.expiresAt, new Date()),
         ),
       )
-      .returning({ email: authToken.email });
+      .returning({ email: authToken.email, accountId: authToken.accountId });
     if (!row) throw new BadRequestException('invalid_link');
-    return row.email;
+    return row;
   }
 }

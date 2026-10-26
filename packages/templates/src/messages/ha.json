@@ -192,7 +192,20 @@
     "confirmAction": "Ci gaba",
     "confirmWorking": "Ɗan jira kaɗan…",
     "linkInvalid": "Wannan hanyar ta ƙare ko an riga an yi amfani da ita. Ku nemi sabuwa.",
-    "askNewLink": "Nemi sabuwar hanya"
+    "askNewLink": "Nemi sabuwar hanya",
+    "lostInbox": "Kun rasa damar shiga imel ɗinku? Ku yi amfani da lambar dawo da asusu",
+    "signUpRecoveryNote": "Bayan kun shiga, kuna iya ƙirƙirar lambobin dawo da asusu, don ku koma idan kun taɓa rasa akwatin imel ɗinku.",
+    "recoverTitle": "Ku dawo da asusunku",
+    "recoverIntro": "Kun rasa damar shiga akwatin imel ɗinku? Ku yi amfani da ɗaya daga lambobinku na dawo da asusu, ku gaya mana sabon imel. Za mu aika hanya a can don ku kammala.",
+    "recoverEmailLabel": "Tsohon imel ɗinku",
+    "recoverCodeLabel": "Lambar dawo da asusu",
+    "recoverCodeHelp": "Haruffa da lambobi goma sha shida, kamar ABCD-EFGH-IJKL-MNOP. Kowace lamba tana aiki sau ɗaya.",
+    "recoverNewEmailLabel": "Sabon imel ɗinku",
+    "recoverSubmit": "Aika hanyar",
+    "recoverWorking": "Ana aikawa…",
+    "checkRecover": "Idan waɗannan bayanai sun yi daidai da wani asusu, mun aika hanya zuwa {email}. Ku buɗe ta don kammalawa. Tana aiki sau ɗaya kuma tana ƙarewa cikin awa 24.",
+    "confirmChangeTitle": "Ku tabbatar da sabon imel ɗinku",
+    "confirmRecoverTitle": "Ku kammala dawo da asusunku"
   },
   "account": {
     "title": "Asusunku",
@@ -214,14 +227,33 @@
     "deleteConfirm": "Eh, share komai",
     "deleteCancel": "Riƙe asusuna",
     "deleting": "Ana sharewa…",
-    "deleteWrongPassword": "Wannan kalmar sirri ba daidai ba ce."
+    "deleteWrongPassword": "Wannan kalmar sirri ba daidai ba ce.",
+    "emailChangeAction": "Canja imel ɗina",
+    "emailChangeIntro": "Ku shigar da sabon adireshi. Za mu aika hanya a can, kuma imel ɗinku yana canjawa ne kawai idan kun buɗe ta.",
+    "newEmailLabel": "Sabon imel",
+    "emailChangeSubmit": "Aika hanyar",
+    "emailChangeWorking": "Ana aikawa…",
+    "emailChangeSent": "Idan ana iya amfani da {email}, mun aika hanya a can. Imel ɗinku yana nan yadda yake har sai kun buɗe ta. Tana aiki sau ɗaya kuma tana ƙarewa cikin awa 24.",
+    "cancel": "Soke",
+    "recoveryTitle": "Lambobin dawo da asusu",
+    "recoveryBody": "Idan kun taɓa rasa akwatin imel ɗinku, ɗaya daga cikin waɗannan lambobi zai mayar da ku asusunku. Kowace lamba tana aiki sau ɗaya.",
+    "recoveryLeft": "Lambobin da ba a yi amfani da su ba: {count}",
+    "recoveryCreate": "Ƙirƙiri lambobin dawo da asusu",
+    "recoveryReplace": "Ƙirƙiri sababbin lambobi",
+    "recoveryShownTitle": "Ku adana lambobinku na dawo da asusu",
+    "recoveryShownBody": "Ku rubuta su ko ku ajiye su a wuri na sirri. Ana nuna su a wannan karon kawai, kuma sababbin lambobi suna maye gurbin waɗannan.",
+    "recoveryDone": "Na adana su",
+    "recoveryWorking": "Ana ƙirƙirar lambobinku…"
   },
   "email": {
     "verify": { "subject": "Tabbatar da imel ɗinku na Interim", "intro": "Ku tabbatar da imel ɗinku don kammala ƙirƙirar asusunku na Interim.", "action": "Tabbatar da imel ɗina" },
     "magic": { "subject": "Hanyar shigarku zuwa Interim", "intro": "Ku yi amfani da wannan hanyar don shiga Interim. Tana aiki sau ɗaya kuma tana ƙarewa cikin mintuna 15.", "action": "Shiga" },
     "reset": { "subject": "Zaɓi sabuwar kalmar sirri ta Interim", "intro": "Ku yi amfani da wannan hanyar don zaɓar sabuwar kalmar sirri. Tana aiki sau ɗaya kuma tana ƙarewa cikin mintuna 30.", "action": "Zaɓi sabuwar kalmar sirri" },
     "exists": { "subject": "Kuna da asusun Interim tuni", "intro": "Wani ya yi amfani da wannan imel don ƙirƙirar asusun Interim, amma kuna da shi tuni. Kuna iya shiga a ƙasa.", "action": "Shiga" },
-    "ignore": "Idan ba ku ne kuka nema ba, kuna iya yin watsi da wannan imel."
+    "ignore": "Idan ba ku ne kuka nema ba, kuna iya yin watsi da wannan imel.",
+    "changeEmail": { "subject": "Ku tabbatar da sabon imel ɗinku na Interim", "intro": "Ku yi amfani da wannan hanyar don mai da wannan adireshi imel ɗin asusunku na Interim. Tana aiki sau ɗaya kuma tana ƙarewa cikin awa 24.", "action": "Tabbatar da sabon imel ɗina" },
+    "recover": { "subject": "Ku kammala dawo da asusunku na Interim", "intro": "An yi amfani da lambar dawo da asusu don komar da wani asusun Interim zuwa wannan adireshi. Ku yi amfani da wannan hanyar don kammalawa. Tana aiki sau ɗaya kuma tana ƙarewa cikin awa 24.", "action": "Kammala dawo da asusu" },
+    "emailChanged": { "subject": "An canja imel ɗinku na Interim", "intro": "An canja imel ɗin asusunku na Interim, kuma an fitar da kowane mashigar bincike.", "ignoreIfYou": "Idan ku ne kuka yi haka, kuna iya yin watsi da wannan imel." }
   },
   "settings": {
     "title": "Zaɓuɓɓanku",

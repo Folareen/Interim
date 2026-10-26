@@ -192,7 +192,20 @@
     "confirmAction": "Continue",
     "confirmWorking": "One moment…",
     "linkInvalid": "This link has expired or was already used. Please ask for a new one.",
-    "askNewLink": "Ask for a new link"
+    "askNewLink": "Ask for a new link",
+    "lostInbox": "Lost access to your email? Use a recovery code",
+    "signUpRecoveryNote": "Once you are in, you can make recovery codes, so you can get back in if you ever lose your inbox.",
+    "recoverTitle": "Recover your account",
+    "recoverIntro": "Lost access to your inbox? Use one of your recovery codes and tell us a new email. We will send a link there to finish.",
+    "recoverEmailLabel": "Your old email",
+    "recoverCodeLabel": "Recovery code",
+    "recoverCodeHelp": "Sixteen letters and numbers, like ABCD-EFGH-IJKL-MNOP. Each code works once.",
+    "recoverNewEmailLabel": "Your new email",
+    "recoverSubmit": "Send the link",
+    "recoverWorking": "Sending…",
+    "checkRecover": "If those details match an account, we sent a link to {email}. Open it to finish. It works once and expires in 24 hours.",
+    "confirmChangeTitle": "Confirm your new email",
+    "confirmRecoverTitle": "Finish recovering your account"
   },
   "account": {
     "title": "Your account",
@@ -214,14 +227,33 @@
     "deleteConfirm": "Yes, delete everything",
     "deleteCancel": "Keep my account",
     "deleting": "Deleting…",
-    "deleteWrongPassword": "That password is not right."
+    "deleteWrongPassword": "That password is not right.",
+    "emailChangeAction": "Change my email",
+    "emailChangeIntro": "Enter the new address. We will send a link there, and your email changes only when you open it.",
+    "newEmailLabel": "New email",
+    "emailChangeSubmit": "Send the link",
+    "emailChangeWorking": "Sending…",
+    "emailChangeSent": "If {email} can be used, we sent a link there. Your email stays the same until you open it. It works once and expires in 24 hours.",
+    "cancel": "Cancel",
+    "recoveryTitle": "Recovery codes",
+    "recoveryBody": "If you ever lose your inbox, one of these codes gets you back into your account. Each code works once.",
+    "recoveryLeft": "Unused codes: {count}",
+    "recoveryCreate": "Make recovery codes",
+    "recoveryReplace": "Make new codes",
+    "recoveryShownTitle": "Save your recovery codes",
+    "recoveryShownBody": "Write them down or keep them somewhere private. They are shown only this once, and new codes replace these.",
+    "recoveryDone": "I have saved them",
+    "recoveryWorking": "Making your codes…"
   },
   "email": {
     "verify": { "subject": "Confirm your email for Interim", "intro": "Confirm your email to finish creating your Interim account.", "action": "Confirm my email" },
     "magic": { "subject": "Your Interim sign-in link", "intro": "Use this link to sign in to Interim. It works once and expires in 15 minutes.", "action": "Sign in" },
     "reset": { "subject": "Choose a new Interim password", "intro": "Use this link to choose a new password. It works once and expires in 30 minutes.", "action": "Choose a new password" },
     "exists": { "subject": "You already have an Interim account", "intro": "Someone used this email to create an Interim account, but you already have one. You can sign in below.", "action": "Sign in" },
-    "ignore": "If you did not ask for this, you can ignore this email."
+    "ignore": "If you did not ask for this, you can ignore this email.",
+    "changeEmail": { "subject": "Confirm your new email for Interim", "intro": "Use this link to make this address the email for your Interim account. It works once and expires in 24 hours.", "action": "Confirm my new email" },
+    "recover": { "subject": "Finish recovering your Interim account", "intro": "A recovery code was used to move an Interim account to this address. Use this link to finish. It works once and expires in 24 hours.", "action": "Finish recovery" },
+    "emailChanged": { "subject": "Your Interim email was changed", "intro": "The email on your Interim account was changed, and every browser was signed out.", "ignoreIfYou": "If you did this, you can ignore this email." }
   },
   "settings": {
     "title": "Your choices",

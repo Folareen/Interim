@@ -13,7 +13,7 @@ export const consentAction = pgEnum('consent_action', ['grant', 'withdraw']);
 export const changeReport = pgEnum('change_report', ['none', 'some', 'lot']);
 // Every planned language, so turning one on needs no migration; the API accepts only live ones.
 export const locale = pgEnum('locale', ['en', 'fr', 'es', 'it', 'pt', 'sw', 'ha', 'yo', 'ig', 'pcm']);
-export const authTokenPurpose = pgEnum('auth_token_purpose', ['verify_email', 'magic_link', 'reset_password']);
+export const authTokenPurpose = pgEnum('auth_token_purpose', ['verify_email', 'magic_link', 'reset_password', 'change_email', 'recover_account']);
 export const tone = pgEnum('tone', ['practical', 'warm', 'light']);
 export const wordsSet = pgEnum('words_set', ['gentle', 'christian', 'muslim', 'jewish']);
 export const moment = pgEnum('moment', [
@@ -339,12 +339,23 @@ export const session = pgTable('session', {
 });
 
 // One use links sent by email. Keyed by email, not account, because a sign-in link can create the account.
+// `change_email` and `recover_account` links go to the new address, so they also name the account they change.
 export const authToken = pgTable('auth_token', {
   id: id(),
   email: text('email').notNull(),
+  accountId: uuid('account_id').references(() => account.id, { onDelete: 'cascade' }),
   purpose: authTokenPurpose('purpose').notNull(),
   tokenHash: text('token_hash').notNull().unique(),
   expiresAt: timestamp('expires_at').notNull(),
+  usedAt: timestamp('used_at'),
+  createdAt: createdAt(),
+});
+
+// Single use codes for getting back into an account whose inbox is lost. Only keyed hashes are stored.
+export const recoveryCode = pgTable('recovery_code', {
+  id: id(),
+  accountId: uuid('account_id').notNull().references(() => account.id, { onDelete: 'cascade' }),
+  codeHash: text('code_hash').notNull().unique(),
   usedAt: timestamp('used_at'),
   createdAt: createdAt(),
 });

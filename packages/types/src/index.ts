@@ -710,10 +710,52 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export const deleteAccountSchema = z.object({ password: z.string().max(128).optional() });
 export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
 
+/** Body of POST /auth/email/change: the address to move to. The password is required when the account has one. */
+export const changeEmailSchema = z.object({
+  email: emailSchema,
+  locale: liveLocaleSchema,
+  password: z.string().max(128).optional(),
+});
+export type ChangeEmailInput = z.infer<typeof changeEmailSchema>;
+
+/**
+ * A recovery code as typed: four groups of four letters and digits. Case, spaces and dashes are ignored, so a
+ * code copied by hand still works. A code of the wrong shape is not refused, it just never matches, so the
+ * answer does not tell a typo from a wrong code.
+ */
+export const recoveryCodeSchema = z
+  .string()
+  .min(1)
+  .max(40)
+  .transform((value) => value.replace(/[\s-]/g, '').toUpperCase());
+
+/** Body of POST /auth/email/confirm and /auth/recover/confirm: the link's token, and the language of the notice sent to the old address. */
+export const confirmEmailChangeSchema = linkTokenSchema.extend({ locale: liveLocaleSchema });
+export type ConfirmEmailChangeInput = z.infer<typeof confirmEmailChangeSchema>;
+
+/** Body of POST /auth/recover: the old address, one recovery code, and the new address that gets the link. */
+export const recoverAccountSchema = z.object({
+  email: emailSchema,
+  code: recoveryCodeSchema,
+  newEmail: emailSchema,
+  locale: liveLocaleSchema,
+});
+export type RecoverAccountInput = z.infer<typeof recoverAccountSchema>;
+
+/** Body of POST /auth/recovery-codes. The password is required when the account has one. */
+export const newRecoveryCodesSchema = z.object({ password: z.string().max(128).optional() });
+export type NewRecoveryCodesInput = z.infer<typeof newRecoveryCodesSchema>;
+
+/** The fresh recovery codes, in the form to show. They are not stored and cannot be shown again. */
+export const recoveryCodesSchema = z.object({ codes: z.array(z.string()) });
+export type RecoveryCodes = z.infer<typeof recoveryCodesSchema>;
+
 /** The signed in account as `GET /auth/me` returns it. */
 export const meSchema = z.object({
   email: z.string(),
   hasPassword: z.boolean(),
+  /** How many recovery codes are still unused. */
+  recoveryCodes: z.number().int().min(0),
 });
 export type Me = z.infer<typeof meSchema>;
 

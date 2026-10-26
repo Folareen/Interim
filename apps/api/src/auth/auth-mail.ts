@@ -3,7 +3,7 @@ import type { LiveLocale } from '@interim/types';
 import type { MailMessage } from '../mail/mail.service';
 
 /** The emails Interim sends. */
-export type EmailKind = 'verify' | 'magic' | 'reset' | 'exists';
+export type EmailKind = 'verify' | 'magic' | 'reset' | 'exists' | 'changeEmail' | 'recover';
 
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -19,4 +19,10 @@ export function buildEmail(kind: EmailKind, locale: LiveLocale, to: string, link
     text: `${intro}\n\n${action}: ${link}\n\n${copy.ignore}`,
     html: `<p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(copy.ignore)}</p>`,
   };
+}
+
+/** Tells the old address that the account has moved. It has no link, so nothing in it can be used against the person. */
+export function buildEmailChangedNotice(locale: LiveLocale, to: string): MailMessage {
+  const { subject, intro, ignoreIfYou } = messages[locale].email.emailChanged;
+  return { to, subject, text: `${intro}\n\n${ignoreIfYou}`, html: `<p>${escapeHtml(intro)}</p><p>${escapeHtml(ignoreIfYou)}</p>` };
 }

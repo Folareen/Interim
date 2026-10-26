@@ -192,7 +192,20 @@
     "confirmAction": "Endelea",
     "confirmWorking": "Subiri kidogo…",
     "linkInvalid": "Kiungo hiki kimeisha muda au kimeshatumiwa. Omba kipya.",
-    "askNewLink": "Omba kiungo kipya"
+    "askNewLink": "Omba kiungo kipya",
+    "lostInbox": "Umepoteza ufikiaji wa barua pepe yako? Tumia msimbo wa kurejesha",
+    "signUpRecoveryNote": "Ukishaingia, unaweza kutengeneza misimbo ya kurejesha ili uweze kuingia tena ukipoteza kikasha chako.",
+    "recoverTitle": "Rejesha akaunti yako",
+    "recoverIntro": "Umepoteza ufikiaji wa kikasha chako? Tumia mojawapo ya misimbo yako ya kurejesha na utuambie barua pepe mpya. Tutatuma kiungo huko ili ukamilishe.",
+    "recoverEmailLabel": "Barua pepe yako ya zamani",
+    "recoverCodeLabel": "Msimbo wa kurejesha",
+    "recoverCodeHelp": "Herufi na nambari kumi na sita, kama ABCD-EFGH-IJKL-MNOP. Kila msimbo hufanya kazi mara moja.",
+    "recoverNewEmailLabel": "Barua pepe yako mpya",
+    "recoverSubmit": "Tuma kiungo",
+    "recoverWorking": "Inatuma…",
+    "checkRecover": "Kama maelezo hayo yanalingana na akaunti, tumetuma kiungo kwa {email}. Kifungue ili ukamilishe. Hufanya kazi mara moja na huisha muda baada ya saa 24.",
+    "confirmChangeTitle": "Thibitisha barua pepe yako mpya",
+    "confirmRecoverTitle": "Kamilisha kurejesha akaunti yako"
   },
   "account": {
     "title": "Akaunti yako",
@@ -214,14 +227,33 @@
     "deleteConfirm": "Ndiyo, futa kila kitu",
     "deleteCancel": "Weka akaunti yangu",
     "deleting": "Inafuta…",
-    "deleteWrongPassword": "Nenosiri hilo si sahihi."
+    "deleteWrongPassword": "Nenosiri hilo si sahihi.",
+    "emailChangeAction": "Badilisha barua pepe yangu",
+    "emailChangeIntro": "Weka anwani mpya. Tutatuma kiungo huko, na barua pepe yako hubadilika tu ukikifungua.",
+    "newEmailLabel": "Barua pepe mpya",
+    "emailChangeSubmit": "Tuma kiungo",
+    "emailChangeWorking": "Inatuma…",
+    "emailChangeSent": "Kama {email} inaweza kutumika, tumetuma kiungo huko. Barua pepe yako inabaki ileile hadi ukifungue. Hufanya kazi mara moja na huisha muda baada ya saa 24.",
+    "cancel": "Ghairi",
+    "recoveryTitle": "Misimbo ya kurejesha",
+    "recoveryBody": "Ukipoteza kikasha chako, mojawapo ya misimbo hii inakurudisha kwenye akaunti yako. Kila msimbo hufanya kazi mara moja.",
+    "recoveryLeft": "Misimbo isiyotumika: {count}",
+    "recoveryCreate": "Tengeneza misimbo ya kurejesha",
+    "recoveryReplace": "Tengeneza misimbo mipya",
+    "recoveryShownTitle": "Hifadhi misimbo yako ya kurejesha",
+    "recoveryShownBody": "Iandike au iweke mahali pa faragha. Inaonyeshwa mara hii tu, na misimbo mipya hubadilisha hii.",
+    "recoveryDone": "Nimeihifadhi",
+    "recoveryWorking": "Inatengeneza misimbo yako…"
   },
   "email": {
     "verify": { "subject": "Thibitisha barua pepe yako ya Interim", "intro": "Thibitisha barua pepe yako ili ukamilishe kufungua akaunti yako ya Interim.", "action": "Thibitisha barua pepe yangu" },
     "magic": { "subject": "Kiungo chako cha kuingia Interim", "intro": "Tumia kiungo hiki kuingia kwenye Interim. Hufanya kazi mara moja na huisha muda baada ya dakika 15.", "action": "Ingia" },
     "reset": { "subject": "Chagua nenosiri jipya la Interim", "intro": "Tumia kiungo hiki kuchagua nenosiri jipya. Hufanya kazi mara moja na huisha muda baada ya dakika 30.", "action": "Chagua nenosiri jipya" },
     "exists": { "subject": "Tayari una akaunti ya Interim", "intro": "Mtu alitumia barua pepe hii kufungua akaunti ya Interim, lakini tayari unayo. Unaweza kuingia hapa chini.", "action": "Ingia" },
-    "ignore": "Kama hukuomba hili, unaweza kupuuza barua pepe hii."
+    "ignore": "Kama hukuomba hili, unaweza kupuuza barua pepe hii.",
+    "changeEmail": { "subject": "Thibitisha barua pepe yako mpya ya Interim", "intro": "Tumia kiungo hiki kufanya anwani hii kuwa barua pepe ya akaunti yako ya Interim. Hufanya kazi mara moja na huisha muda baada ya saa 24.", "action": "Thibitisha barua pepe yangu mpya" },
+    "recover": { "subject": "Kamilisha kurejesha akaunti yako ya Interim", "intro": "Msimbo wa kurejesha umetumika kuhamishia akaunti ya Interim kwenye anwani hii. Tumia kiungo hiki kukamilisha. Hufanya kazi mara moja na huisha muda baada ya saa 24.", "action": "Kamilisha kurejesha" },
+    "emailChanged": { "subject": "Barua pepe yako ya Interim imebadilishwa", "intro": "Barua pepe ya akaunti yako ya Interim imebadilishwa, na vivinjari vyote vimetolewa.", "ignoreIfYou": "Kama ni wewe uliyefanya hivyo, unaweza kupuuza barua pepe hii." }
   },
   "settings": {
     "title": "Chaguo zako",
