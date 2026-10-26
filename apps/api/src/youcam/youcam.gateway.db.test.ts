@@ -222,3 +222,41 @@ describe('render', () => {
     expect(storage.objects.has(imageKey)).toBe(false);
   });
 });
+
+describe('a run killed while polling', () => {
+  const density200 = { data: { task_status: 'success', error: null, results: density } };
+  const liveClient = () =>
+    new YoucamClient({ apiKey: 'key', baseUrl: 'https://youcam.test', mode: 'live', liveCallsEnabled: true, fixturesDir: dir, retryBaseMs: 0 });
+  const gatewayFor = (c: YoucamClient) => new YoucamGateway(db, c, storage.asService(), ledger, { firstPollMs: 0, maxPollMs: 0, timeoutMs: 1000 });
+
+  it('is picked up by the next worker, which polls the same task and pays once', async () => {
+    const creates: string[] = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url: string, init?: RequestInit) => {
+        const json = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body), { status: 200 }));
+        if (url.endsWith('/s2s/v2.0/file')) {
+          return json({ data: { files: [{ file_id: 'f1', requests: [{ method: 'PUT', url: 'https://upload.test/x', headers: {} }] }] } });
+        }
+        if (url.startsWith('https://upload.test')) return Promise.resolve(new Response(null, { status: 200 }));
+        if (init?.method === 'POST') {
+          creates.push(url);
+          return json({ data: { task_id: 'yc-1' } });
+        }
+        return json(density200);
+      }),
+    );
+    const first = liveClient();
+    vi.spyOn(first, 'getTask').mockRejectedValueOnce(new Error('worker killed'));
+
+    await expect(gatewayFor(first).measure(context(), 'hair_density', {}, bodyFor)).rejects.toThrow('worker killed');
+    expect((await db.select().from(youcamTask))[0]).toMatchObject({ state: 'created', youcamTaskId: 'yc-1' });
+
+    const second = await gatewayFor(liveClient()).measure(context(), 'hair_density', {}, bodyFor);
+
+    expect(second).toMatchObject({ kind: 'result', result: density, units: 1 });
+    expect(creates).toHaveLength(1);
+    expect((await db.select().from(ledgerEntry)).map((e) => [e.kind, e.units])).toEqual([['reserve', 1], ['settle', 1]]);
+    expect((await db.select().from(youcamTask))[0]?.state).toBe('done');
+  });
+});

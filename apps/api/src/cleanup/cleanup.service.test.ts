@@ -1,8 +1,11 @@
 import { type Db, account, authToken, deletionRequest, photo, profile, rateLimit, render, session, snapshot } from '@interim/db';
 import { eq, sql } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { LedgerService } from '../ledger/ledger.service';
+import type { ProfilesService } from '../profiles/profiles.service';
 import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
+import { TaskReconciler } from '../youcam/task-reconciler';
 import { CleanupService } from './cleanup.service';
 
 const HOUR = 60 * 60 * 1000;
@@ -24,7 +27,8 @@ beforeAll(async () => {
 beforeEach(async () => {
   await db.execute(sql`truncate profile, deletion_request cascade`);
   storage = new MemoryStorage();
-  cleanup = new CleanupService(db, storage.asService());
+  const ledger = new LedgerService(db, { perProfile: 500, perDay: 2000, perSourcePerDay: 100 }, {} as ProfilesService);
+  cleanup = new CleanupService(db, storage.asService(), new TaskReconciler(db, ledger));
   await db.insert(profile).values({ id: alive, templateKey: 'going_grey', ownerRef: 'o', consentVersion: '1' });
   await db.insert(snapshot).values({ id: snapshotId, profileId: alive });
 });
@@ -173,6 +177,7 @@ describe('repeat runs', () => {
       missingPhotoIds: [],
       completedDeletions: 0,
       purgedSignInRows: 0,
+      reconciledTasks: 0,
     });
   });
 });

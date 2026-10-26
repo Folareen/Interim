@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { and, asc, gt, inArray, isNotNull, isNull, lte } from 'drizzle-orm';
 import { DB } from '../db/db.token';
 import { type StoredObject, StorageService } from '../storage/storage.service';
+import { TaskReconciler } from '../youcam/task-reconciler';
 
 const BATCH = 500;
 const HOUR_MS = 60 * 60 * 1000;
@@ -21,6 +22,8 @@ export interface CleanupReport {
   completedDeletions: number;
   /** Expired sessions and emailed links, and rate limit windows more than a day old. */
   purgedSignInRows: number;
+  /** YouCam tasks left open for a day whose held units were settled. */
+  reconciledTasks: number;
 }
 
 /**
@@ -34,6 +37,7 @@ export class CleanupService {
   constructor(
     @Inject(DB) private readonly db: Db,
     @Inject(StorageService) private readonly storage: StorageService,
+    @Inject(TaskReconciler) private readonly tasks: TaskReconciler,
   ) {}
 
   async run(now = new Date()): Promise<CleanupReport> {
@@ -44,9 +48,10 @@ export class CleanupService {
     // made before this run started has had its objects swept by now.
     const completedDeletions = await this.completeDeletions(now);
     const purgedSignInRows = await this.purgeSignIn(now);
+    const reconciledTasks = await this.tasks.reconcile(now);
 
     if (missingPhotoIds.length > 0) this.log.warn(`Photos with missing files: ${missingPhotoIds.join(', ')}`);
-    return { expiredPhotos, expiredRenders, orphansDeleted, missingPhotoIds, completedDeletions, purgedSignInRows };
+    return { expiredPhotos, expiredRenders, orphansDeleted, missingPhotoIds, completedDeletions, purgedSignInRows, reconciledTasks };
   }
 
   /** Deletes the file first, then the row, so a failed delete is retried on the next run. */
