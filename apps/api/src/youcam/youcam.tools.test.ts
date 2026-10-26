@@ -13,9 +13,17 @@ describe('face_shape result', () => {
 });
 
 describe('skin_analysis', () => {
-  it('rejects a request with no concern and accepts the result scores', () => {
-    expect(tools.skin_analysis.request.safeParse({ src_file_id: 'f', dst_actions: [] }).success).toBe(false);
-    const parsed = tools.skin_analysis.result.parse({ output: [{ type: 'pore', ui_score: 71, raw_score: 70.5, mask_urls: [] }] });
-    expect(parsed.output[0]?.ui_score).toBe(71);
+  it('rejects a request with no concern or more than the four the price covers', () => {
+    const request = (dst_actions: string[]) => tools.skin_analysis.request.safeParse({ src_file_id: 'f', dst_actions }).success;
+    expect(request([])).toBe(false);
+    expect(request(['wrinkle', 'pore', 'texture', 'acne', 'redness'])).toBe(false);
+    expect(request(['wrinkle', 'pore'])).toBe(true);
+  });
+});
+
+describe('hair_type result', () => {
+  it('accepts the upper case grades the live API returned', () => {
+    const parsed = tools.hair_type.result.parse({ hair_type: { mapping: '4B to 4C', term: 'Coily to Extremely Coily' } });
+    expect(parsed.hair_type.mapping).toBe('4b to 4c');
   });
 });

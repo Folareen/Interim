@@ -71,17 +71,23 @@ export const tools = {
     request: z.object({ src_file_ids: z.tuple([z.string(), z.string(), z.string()]) }),
     result: z.object({
       hair_type: z.object({
-        mapping: z.enum([
-          '1 to 2a',
-          '2a to 2b',
-          '2b to 2c',
-          '2c to 3a',
-          '3a to 3b',
-          '3b to 3c',
-          '3c to 4a',
-          '4a to 4b',
-          '4b to 4c',
-        ]),
+        // The docs write the grades in lower case; the live API returned "4B to 4C".
+        mapping: z
+          .string()
+          .transform((value) => value.toLowerCase())
+          .pipe(
+            z.enum([
+              '1 to 2a',
+              '2a to 2b',
+              '2b to 2c',
+              '2c to 3a',
+              '3a to 3b',
+              '3b to 3c',
+              '3c to 4a',
+              '4a to 4b',
+              '4b to 4c',
+            ]),
+          ),
         term: z.string(),
       }),
     }),
@@ -188,26 +194,16 @@ export const tools = {
       facialratio: z.object({ face_aspect_ratio: z.tuple([z.number(), z.number()]) }).optional(),
     }),
   },
-  // Priced by concern count and tier (`skinAnalysisUnits`), so it has no flat entry in `unitCosts`.
-  // SD and HD concerns cannot be mixed in one request. Not yet seen succeed live; the result shape is from the docs.
+  // Priced by concern count and tier (`skinAnalysisUnits`). Capped at four SD concerns, the 9 unit tier,
+  // so `unitCosts` can hold one price. The price list gives v2.1 for the path; the docs page says v2.0.
+  // The face must be tight and near frontal (docs/integrations/youcam.md, Observed live).
   skin_analysis: {
-    version: 'v2.0',
+    version: 'v2.1',
     path: 'skin-analysis',
     request: srcFile.extend({
-      dst_actions: z.array(z.enum(skinConcerns)).min(1).max(16),
-      format: z.literal('json').optional(),
-      miniserver_args: z.object({ enable_mask_overlay: z.boolean().optional() }).optional(),
+      dst_actions: z.array(z.enum(skinConcerns)).min(1).max(4),
     }),
-    result: z.object({
-      output: z.array(
-        z.object({
-          type: z.string(),
-          ui_score: z.number(),
-          raw_score: z.number().optional(),
-          mask_urls: z.array(z.string()).optional(),
-        }),
-      ),
-    }),
+    result: singleUrl, // a zip of per concern masks and a score_info.json; reading it is not built
   },
   // Keeps the person's face, pose and background and changes only the garment.
   cloth_v4: {
