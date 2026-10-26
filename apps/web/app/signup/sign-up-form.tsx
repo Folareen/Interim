@@ -56,6 +56,7 @@ export function SignUpForm({ google }: { google: boolean }) {
         />
         {error && <Notice>{error}</Notice>}
         <p className="text-[0.9rem] text-muted">{t('privacy')}</p>
+        <p className="text-[0.9rem] text-muted">{t('signUpRecoveryNote')}</p>
 
         <div className="space-y-3 border-t border-border pt-6">
           <p className="text-center text-muted">{t('or')}</p>

@@ -1,14 +1,22 @@
-import { type Db, account, authToken, photo, profile, rateLimit, session, snapshot } from '@interim/db';
-import { registerSchema } from '@interim/types';
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, UnauthorizedException } from '@nestjs/common';
+import { type Db, account, authToken, photo, profile, rateLimit, recoveryCode, session, snapshot } from '@interim/db';
+import { recoverAccountSchema, registerSchema } from '@interim/types';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  HttpException,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SESSION_COOKIE, SessionService } from '../guard/session.service';
 import { ProfilesService } from '../profiles/profiles.service';
 import { FakeMail, fakeRes, reqWith } from '../test/http-fakes';
 import { MemoryStorage } from '../test/memory-storage';
 import { createTestDb } from '../test/test-db';
 import { AuthService } from './auth.service';
+import type { LeakedPasswordService } from './leaked-password.service';
 import { PasswordService } from './password.service';
 import { RateLimitService } from './rate-limit.service';
 
@@ -16,6 +24,15 @@ const secrets = { secret: 's'.repeat(32), secureCookie: false };
 const config = { webOrigin: 'https://web.test' };
 const ip = '203.0.113.7';
 const password = 'a long enough password';
+const leakedPassword = 'password1234567';
+
+/** Stands in for the Pwned Passwords list, which tests never call. */
+const leaked = {
+  isLeaked: vi.fn((candidate: string) => Promise.resolve(candidate === leakedPassword)),
+  asService() {
+    return this as unknown as LeakedPasswordService;
+  },
+};
 
 let db: Db;
 let mail: FakeMail;
@@ -43,6 +60,7 @@ beforeEach(async () => {
     mail.asService(),
     new RateLimitService(db, secrets),
     profiles,
+    leaked.asService(),
   );
 });
 
@@ -134,7 +152,7 @@ describe('login', () => {
     const { res, cookies } = fakeRes();
     const me = await auth.login({ email: 'a@b.co', password }, ip, res);
     expect(cookies.has(SESSION_COOKIE)).toBe(true);
-    expect(me).toEqual({ email: 'a@b.co', hasPassword: true });
+    expect(me).toEqual({ email: 'a@b.co', hasPassword: true, recoveryCodes: 0 });
   });
 
   it('slows down repeated wrong passwords for one email with a 429', async () => {
@@ -305,5 +323,215 @@ describe('profile ownership', () => {
     expect(await profiles.list(await ownerOf(second.session))).toEqual([]);
     await expect(profiles.get(mine.id, await ownerOf(second.session))).rejects.toThrow();
     expect((await profiles.get(mine.id, await ownerOf(first.session))).id).toBe(mine.id);
+  });
+});
+
+describe('leaked passwords', () => {
+  it('refuses a leaked password at sign up, before anything is stored or sent', async () => {
+    await expect(auth.register({ email: 'a@b.co', password: leakedPassword, locale: 'en' }, ip)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+    expect(await find()).toBeUndefined();
+    expect(mail.sent).toHaveLength(0);
+  });
+
+  it('refuses a leaked password on reset without spending the link', async () => {
+    await signedUp();
+    await auth.requestPasswordReset({ email: 'a@b.co', locale: 'en' }, ip);
+    const token = mail.lastToken();
+    await expect(auth.resetPassword({ token, password: leakedPassword }, ip, fakeRes().res)).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+    await expect(auth.resetPassword({ token, password: 'a different long password' }, ip, fakeRes().res)).resolves.toBeDefined();
+  });
+});
+
+const meOf = async (email = 'a@b.co') => {
+  const found = await find(email);
+  return { accountId: found?.id ?? '', email };
+};
+
+describe('change email', () => {
+  // `null` means no password is sent, which a default value could not say.
+  const change = (email: string, given: string | null = password) =>
+    meOf().then((me) => auth.requestEmailChange(me, { email, locale: 'en', password: given ?? undefined }, ip));
+
+  it('emails the new address and changes nothing until its link is used', async () => {
+    await signedUp();
+    await change('new@b.co');
+    expect(mail.sent.at(-1)?.to).toBe('new@b.co');
+    expect(mail.sent.at(-1)?.text).toContain('https://web.test/auth/confirm?kind=change&token=');
+    expect((await find())?.email).toBe('a@b.co');
+  });
+
+  it('moves the account on the link, signs in, signs others out and tells the old address', async () => {
+    const { session: old } = await signedUp();
+    await change('new@b.co');
+    const { res, cookies } = fakeRes();
+    await expect(auth.confirmEmailChange({ token: mail.lastToken(), locale: 'en' }, ip, res)).resolves.toMatchObject({
+      email: 'new@b.co',
+    });
+    expect(await find('a@b.co')).toBeUndefined();
+    expect(await find('new@b.co')).toMatchObject({ emailVerifiedAt: expect.any(Date) });
+    expect(await sessions.resolve(reqWith({ [SESSION_COOKIE]: old }))).toBeUndefined();
+    expect(await sessions.resolve(reqWith({ [SESSION_COOKIE]: cookies.get(SESSION_COOKIE) ?? '' }))).toMatchObject({
+      email: 'new@b.co',
+    });
+    expect(mail.sent.at(-1)).toMatchObject({ to: 'a@b.co' });
+    expect(mail.sent.at(-1)?.text).not.toContain('http');
+    await expect(auth.login({ email: 'new@b.co', password }, ip, fakeRes().res)).resolves.toBeDefined();
+  });
+
+  it('needs the password of an account that has one', async () => {
+    await signedUp();
+    await expect(change('new@b.co', null)).rejects.toThrow(ForbiddenException);
+    await expect(change('new@b.co', 'not the password')).rejects.toThrow(ForbiddenException);
+    expect(mail.sent).toHaveLength(1);
+  });
+
+  it('lets an account without a password change address on its session alone', async () => {
+    await auth.requestMagicLink({ email: 'a@b.co', locale: 'en' }, ip);
+    await auth.useMagicLink({ token: mail.lastToken() }, ip, fakeRes().res);
+    await change('new@b.co', null);
+    expect(mail.sent.at(-1)?.to).toBe('new@b.co');
+  });
+
+  it('does not say an address is taken: it emails that person instead', async () => {
+    await signedUp();
+    await signedUp('other@b.co');
+    const before = mail.sent.length;
+    await change('other@b.co');
+    expect(mail.sent).toHaveLength(before + 1);
+    expect(mail.sent.at(-1)?.to).toBe('other@b.co');
+    expect(mail.sent.at(-1)?.text).toContain('https://web.test/signin');
+    expect(await db.select().from(authToken).where(eq(authToken.purpose, 'change_email'))).toHaveLength(0);
+  });
+
+  it('refuses a link whose address was taken in the meantime', async () => {
+    await signedUp();
+    await change('new@b.co');
+    const token = mail.lastToken();
+    await signedUp('new@b.co');
+    await expect(auth.confirmEmailChange({ token, locale: 'en' }, ip, fakeRes().res)).rejects.toThrow(ConflictException);
+    expect((await find())?.email).toBe('a@b.co');
+  });
+
+  it('accepts a link once only, and not one meant for something else', async () => {
+    await signedUp();
+    await change('new@b.co');
+    const token = mail.lastToken();
+    await expect(auth.useMagicLink({ token }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
+    await auth.confirmEmailChange({ token, locale: 'en' }, ip, fakeRes().res);
+    await expect(auth.confirmEmailChange({ token, locale: 'en' }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
+  });
+
+  it('kills links still out for the old address', async () => {
+    await signedUp();
+    await auth.requestMagicLink({ email: 'a@b.co', locale: 'en' }, ip);
+    const stale = mail.lastToken();
+    await change('new@b.co');
+    await auth.confirmEmailChange({ token: mail.lastToken(), locale: 'en' }, ip, fakeRes().res);
+    await expect(auth.useMagicLink({ token: stale }, ip, fakeRes().res)).rejects.toThrow(BadRequestException);
+  });
+});
+
+describe('recovery codes and recovering an account', () => {
+  // Through the schema, as the controller does, so a code typed with dashes and lower case is normalised first.
+  const recover = (input: { email: string; code: string; newEmail: string; locale: 'en' }) =>
+    auth.requestRecovery(recoverAccountSchema.parse(input), ip);
+
+  const makeCodes = async (given: string | null = password) =>
+    (await auth.createRecoveryCodes(await meOf(), { password: given ?? undefined }, ip)).codes;
+
+  it('shows eight codes once, stores only hashes and counts the unused', async () => {
+    await signedUp();
+    const codes = await makeCodes();
+    expect(codes).toHaveLength(8);
+    expect(new Set(codes).size).toBe(8);
+    expect(codes[0]).toMatch(/^[A-Z2-7]{4}(-[A-Z2-7]{4}){3}$/);
+    const stored = await db.select().from(recoveryCode);
+    expect(stored).toHaveLength(8);
+    for (const row of stored) expect(codes.join('')).not.toContain(row.codeHash);
+    expect(await auth.me(await meOf())).toMatchObject({ recoveryCodes: 8 });
+  });
+
+  it('needs the password, and a new set replaces the old one', async () => {
+    await signedUp();
+    await expect(makeCodes(null)).rejects.toThrow(ForbiddenException);
+    const first = await makeCodes();
+    await makeCodes();
+    await recover({ email: 'a@b.co', code: first[0] ?? '', newEmail: 'new@b.co', locale: 'en' });
+    expect(mail.sent.at(-1)?.to).not.toBe('new@b.co');
+    expect(await auth.me(await meOf())).toMatchObject({ recoveryCodes: 8 });
+  });
+
+  it('with a code and a new address, emails that address and moves the account when the link is used', async () => {
+    const { session: old } = await signedUp();
+    const [code] = await makeCodes();
+    await recover({ email: 'a@b.co', code: code ?? '', newEmail: 'new@b.co', locale: 'en' });
+    expect(mail.sent.at(-1)?.to).toBe('new@b.co');
+    expect(mail.sent.at(-1)?.text).toContain('https://web.test/auth/confirm?kind=recover&token=');
+    expect((await find())?.email).toBe('a@b.co');
+
+    const { res, cookies } = fakeRes();
+    await expect(auth.confirmRecovery({ token: mail.lastToken(), locale: 'en' }, ip, res)).resolves.toMatchObject({
+      email: 'new@b.co',
+      recoveryCodes: 7,
+    });
+    expect(await sessions.resolve(reqWith({ [SESSION_COOKIE]: old }))).toBeUndefined();
+    expect(cookies.has(SESSION_COOKIE)).toBe(true);
+    expect(mail.sent.at(-1)?.to).toBe('a@b.co');
+  });
+
+  it('spends a code once', async () => {
+    await signedUp();
+    const [code] = await makeCodes();
+    const ask = (newEmail: string) =>
+      recover({ email: 'a@b.co', code: code ?? '', newEmail, locale: 'en' });
+    await ask('new@b.co');
+    const sent = mail.sent.length;
+    await ask('again@b.co');
+    expect(mail.sent).toHaveLength(sent);
+  });
+
+  it('answers the same, and sends nothing, for a wrong code, an unknown address or a taken new address', async () => {
+    await signedUp();
+    await signedUp('other@b.co');
+    const [code] = await makeCodes();
+    const sent = mail.sent.length;
+    await expect(
+      recover({ email: 'a@b.co', code: 'aaaa-aaaa-aaaa-aaaa', newEmail: 'new@b.co', locale: 'en' }),
+    ).resolves.toBeUndefined();
+    await expect(
+      recover({ email: 'nobody@b.co', code: code ?? '', newEmail: 'new@b.co', locale: 'en' }),
+    ).resolves.toBeUndefined();
+    await expect(
+      recover({ email: 'a@b.co', code: code ?? '', newEmail: 'other@b.co', locale: 'en' }),
+    ).resolves.toBeUndefined();
+    expect(mail.sent).toHaveLength(sent);
+    expect(await auth.me(await meOf())).toMatchObject({ recoveryCodes: 8 });
+  });
+
+  it('does not take a code of another account', async () => {
+    await signedUp();
+    await signedUp('other@b.co');
+    const [code] = (await auth.createRecoveryCodes(await meOf('other@b.co'), { password }, ip)).codes;
+    const sent = mail.sent.length;
+    await recover({ email: 'a@b.co', code: code ?? '', newEmail: 'new@b.co', locale: 'en' });
+    expect(mail.sent).toHaveLength(sent);
+  });
+
+  it('limits guesses per address with a 429', async () => {
+    await signedUp();
+    const guess = () => recover({ email: 'a@b.co', code: 'AAAAAAAAAAAAAAAA', newEmail: 'new@b.co', locale: 'en' });
+    for (let i = 0; i < 5; i++) await guess();
+    await expect(guess()).rejects.toThrow(HttpException);
+  });
+
+  it('deletes with the account', async () => {
+    await signedUp();
+    await makeCodes();
+    await auth.deleteAccount(await meOf(), { password }, ip, fakeRes().res);
+    expect(await db.select().from(recoveryCode)).toHaveLength(0);
   });
 });

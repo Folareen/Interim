@@ -6,13 +6,20 @@ import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
 import { ConfirmLink } from './confirm-link';
 
+const titles = {
+  verify: 'confirmVerifyTitle',
+  magic: 'confirmMagicTitle',
+  change: 'confirmChangeTitle',
+  recover: 'confirmRecoverTitle',
+} as const;
+
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('auth'))('confirmMagicTitle') };
 }
 
 export default async function Confirm({ searchParams }: { searchParams: Promise<{ kind?: string; token?: string }> }) {
   const [t, { kind, token }] = await Promise.all([getTranslations('auth'), searchParams]);
-  if ((kind !== 'verify' && kind !== 'magic') || !token) {
+  if ((kind !== 'verify' && kind !== 'magic' && kind !== 'change' && kind !== 'recover') || !token) {
     return (
       <Shell>
         <PageHeading title={t('linkInvalid')} />
@@ -26,7 +33,7 @@ export default async function Confirm({ searchParams }: { searchParams: Promise<
   }
   return (
     <Shell>
-      <PageHeading title={kind === 'verify' ? t('confirmVerifyTitle') : t('confirmMagicTitle')} intro={t('confirmBody')} />
+      <PageHeading title={t(titles[kind])} intro={t('confirmBody')} />
       <ConfirmLink kind={kind} token={token} />
     </Shell>
   );

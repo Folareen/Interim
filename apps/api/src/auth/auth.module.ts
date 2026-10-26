@@ -6,6 +6,7 @@ import { ProfilesModule } from '../profiles/profiles.module';
 import { AuthController } from './auth.controller';
 import { AUTH_CONFIG, AuthService } from './auth.service';
 import { GOOGLE_CONFIG, GoogleService } from './google.service';
+import { LeakedPasswordService } from './leaked-password.service';
 import { PasswordService } from './password.service';
 import { RateLimitService } from './rate-limit.service';
 
@@ -24,6 +25,7 @@ import { RateLimitService } from './rate-limit.service';
     },
     AuthService,
     GoogleService,
+    LeakedPasswordService,
     PasswordService,
     RateLimitService,
   ],

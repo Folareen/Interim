@@ -55,6 +55,11 @@ export function SignInForm({ google, next, googleFailed }: { google: boolean; ne
             {t('forgot')}
           </Link>
         </p>
+        <p>
+          <Link href="/recover" className="font-semibold text-accent underline underline-offset-4">
+            {t('lostInbox')}
+          </Link>
+        </p>
 
         <div className="space-y-3 border-t border-border pt-6">
           <p className="text-center text-muted">{t('or')}</p>

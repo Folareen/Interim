@@ -1,5 +1,7 @@
 import {
   type CaptureProblemBody,
+  type ChangeEmailInput,
+  type ConfirmEmailChangeInput,
   type ConsentRequest,
   type CreateProfileInput,
   type CreateSnapshotInput,
@@ -7,10 +9,13 @@ import {
   type LinkToken,
   type LoginInput,
   type Me,
+  type NewRecoveryCodesInput,
   type NotificationSettings,
   type Preferences,
   type Profile,
   type PushKey,
+  type RecoverAccountInput,
+  type RecoveryCodes,
   type RegisterInput,
   type ResetPasswordInput,
   type EmailLinkRequest,
@@ -26,6 +31,7 @@ import {
   preferencesSchema,
   profileSchema,
   pushKeySchema,
+  recoveryCodesSchema,
   reflectionCreatedSchema,
   shareCreatedSchema,
   runViewSchema,
@@ -153,6 +159,31 @@ export async function requestPasswordReset(input: EmailLinkRequest): Promise<voi
 /** Sets a new password from an emailed link, and signs in. */
 export async function resetPassword(input: ResetPasswordInput): Promise<Me> {
   return meSchema.parse(await (await send('/auth/password/reset', 'POST', input)).json());
+}
+
+/** Emails a link to the new address. The email changes only when that link is used. The password is needed when the account has one. */
+export async function requestEmailChange(input: ChangeEmailInput): Promise<void> {
+  await send('/auth/email/change', 'POST', input);
+}
+
+/** Moves the account to the new address with the token from the emailed link, and signs in. */
+export async function confirmEmailChange(input: ConfirmEmailChangeInput): Promise<Me> {
+  return meSchema.parse(await (await send('/auth/email/confirm', 'POST', input)).json());
+}
+
+/** Starts recovery with a recovery code and a new address. The answer is the same whether or not the details were right. */
+export async function recoverAccount(input: RecoverAccountInput): Promise<void> {
+  await send('/auth/recover', 'POST', input);
+}
+
+/** Finishes recovery with the token from the link sent to the new address, and signs in. */
+export async function confirmRecovery(input: ConfirmEmailChangeInput): Promise<Me> {
+  return meSchema.parse(await (await send('/auth/recover/confirm', 'POST', input)).json());
+}
+
+/** Makes a new set of recovery codes, replacing the old. They are returned once and cannot be read again. */
+export async function createRecoveryCodes(input: NewRecoveryCodesInput): Promise<RecoveryCodes> {
+  return recoveryCodesSchema.parse(await (await send('/auth/recovery-codes', 'POST', input)).json());
 }
 
 /** Signs this browser out. */

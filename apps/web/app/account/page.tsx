@@ -6,7 +6,7 @@ import { primaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
 import { getMe, getProfiles } from '@/lib/server-api';
-import { DeleteAccount, SignOut } from './account-actions';
+import { ChangeEmail, DeleteAccount, RecoveryCodes, SignOut } from './account-actions';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('account'))('title') };
@@ -23,6 +23,7 @@ export default async function Account() {
         <dt className="text-[0.9rem] text-muted">{t('emailLabel')}</dt>
         <dd className="break-all font-semibold">{me.email}</dd>
       </dl>
+      <ChangeEmail hasPassword={me.hasPassword} />
 
       <section className="mt-8">
         <h2 className="text-[1.25rem]">{t('profilesTitle')}</h2>
@@ -58,6 +59,13 @@ export default async function Account() {
             {t('passwordAction')}
           </Link>
         </p>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-[1.25rem]">{t('recoveryTitle')}</h2>
+        <p className="mt-2 text-muted">{t('recoveryBody')}</p>
+        <p className="mt-2 font-semibold">{t('recoveryLeft', { count: me.recoveryCodes })}</p>
+        <RecoveryCodes hasPassword={me.hasPassword} left={me.recoveryCodes} />
       </section>
 
       <div className="mt-8">

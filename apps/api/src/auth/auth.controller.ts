@@ -1,18 +1,27 @@
 import {
+  changeEmailSchema,
+  confirmEmailChangeSchema,
   deleteAccountSchema,
   emailLinkRequestSchema,
   linkTokenSchema,
   loginSchema,
+  newRecoveryCodesSchema,
+  recoverAccountSchema,
   registerSchema,
   resetPasswordSchema,
 } from '@interim/types';
 import type {
   AuthConfig as AuthConfigResponse,
+  ChangeEmailInput,
+  ConfirmEmailChangeInput,
   DeleteAccountInput,
   EmailLinkRequest,
   LinkToken,
   LoginInput,
   Me,
+  NewRecoveryCodesInput,
+  RecoverAccountInput,
+  RecoveryCodes,
   RegisterInput,
   ResetPasswordInput,
 } from '@interim/types';
@@ -122,6 +131,54 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<Me> {
     return this.auth.resetPassword(body, addressOf(req), res);
+  }
+
+  @UseGuards(AccountGuard)
+  @HttpCode(202)
+  @Post('email/change')
+  async changeEmail(
+    @CurrentAccount() account: AccountSession,
+    @Body(new ZodPipe(changeEmailSchema)) body: ChangeEmailInput,
+    @Req() req: Request,
+  ): Promise<void> {
+    await this.auth.requestEmailChange(account, body, addressOf(req));
+  }
+
+  @HttpCode(200)
+  @Post('email/confirm')
+  confirmEmailChange(
+    @Body(new ZodPipe(confirmEmailChangeSchema)) body: ConfirmEmailChangeInput,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Me> {
+    return this.auth.confirmEmailChange(body, addressOf(req), res);
+  }
+
+  @HttpCode(202)
+  @Post('recover')
+  async recover(@Body(new ZodPipe(recoverAccountSchema)) body: RecoverAccountInput, @Req() req: Request): Promise<void> {
+    await this.auth.requestRecovery(body, addressOf(req));
+  }
+
+  @HttpCode(200)
+  @Post('recover/confirm')
+  confirmRecovery(
+    @Body(new ZodPipe(confirmEmailChangeSchema)) body: ConfirmEmailChangeInput,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Me> {
+    return this.auth.confirmRecovery(body, addressOf(req), res);
+  }
+
+  @UseGuards(AccountGuard)
+  @HttpCode(200)
+  @Post('recovery-codes')
+  recoveryCodes(
+    @CurrentAccount() account: AccountSession,
+    @Body(new ZodPipe(newRecoveryCodesSchema)) body: NewRecoveryCodesInput,
+    @Req() req: Request,
+  ): Promise<RecoveryCodes> {
+    return this.auth.createRecoveryCodes(account, body, addressOf(req));
   }
 
   @HttpCode(204)

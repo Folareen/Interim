@@ -1,12 +1,14 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { liveLocaleSchema } from '@interim/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import { Button } from '@/components/button';
 import { Field } from '@/components/field';
 import { Notice } from '@/components/notice';
-import { ApiError, deleteAccount, logout } from '@/lib/api';
+import { ApiError, createRecoveryCodes, deleteAccount, logout, requestEmailChange } from '@/lib/api';
+import { useAuthError } from '@/lib/use-auth-error';
 
 /** Signs this browser out. */
 export function SignOut() {
@@ -39,6 +41,157 @@ export function SignOut() {
         {working ? t('signingOut') : t('signOut')}
       </Button>
     </div>
+  );
+}
+
+/** Asks for a link at a new address. The email changes only when that link is opened, so a typo costs nothing. */
+export function ChangeEmail({ hasPassword }: { hasPassword: boolean }) {
+  const t = useTranslations('account');
+  const locale = liveLocaleSchema.parse(useLocale());
+  const describe = useAuthError();
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [sentTo, setSentTo] = useState<string>();
+  const [working, setWorking] = useState(false);
+  const [error, setError] = useState<string>();
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setWorking(true);
+    setError(undefined);
+    try {
+      await requestEmailChange({ email, locale, password: hasPassword ? password : undefined });
+      setSentTo(email);
+      setPassword('');
+    } catch (cause) {
+      setError(cause instanceof ApiError && cause.status === 403 ? t('deleteWrongPassword') : describe(cause));
+    }
+    setWorking(false);
+  }
+
+  if (sentTo) {
+    return (
+      <p role="status" className="mt-3 text-[0.95rem]">
+        {t('emailChangeSent', { email: sentTo })}
+      </p>
+    );
+  }
+  if (!open) {
+    return (
+      <div className="mt-3">
+        <Button variant="secondary" onClick={() => setOpen(true)}>
+          {t('emailChangeAction')}
+        </Button>
+      </div>
+    );
+  }
+  return (
+    <form onSubmit={submit} className="mt-3 space-y-4">
+      <p className="text-[0.95rem] text-muted">{t('emailChangeIntro')}</p>
+      <Field label={t('newEmailLabel')} type="email" name="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+      {hasPassword && (
+        <Field
+          label={t('deletePasswordLabel')}
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      )}
+      {error && <Notice>{error}</Notice>}
+      <p role="status" className="sr-only">
+        {working ? t('emailChangeWorking') : ''}
+      </p>
+      <Button type="submit" disabled={working}>
+        {working ? t('emailChangeWorking') : t('emailChangeSubmit')}
+      </Button>
+      <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={working}>
+        {t('cancel')}
+      </Button>
+    </form>
+  );
+}
+
+/** Makes recovery codes and shows them once. A new set replaces the old, so the password is asked for when there is one. */
+export function RecoveryCodes({ hasPassword, left }: { hasPassword: boolean; left: number }) {
+  const t = useTranslations('account');
+  const common = useTranslations('common');
+  const router = useRouter();
+  const [asking, setAsking] = useState(false);
+  const [password, setPassword] = useState('');
+  const [codes, setCodes] = useState<string[]>();
+  const [working, setWorking] = useState(false);
+  const [error, setError] = useState<string>();
+
+  async function make(event: FormEvent) {
+    event.preventDefault();
+    setWorking(true);
+    setError(undefined);
+    try {
+      setCodes((await createRecoveryCodes({ password: hasPassword ? password : undefined })).codes);
+      setPassword('');
+    } catch (cause) {
+      if (cause instanceof ApiError && cause.status === 403) setError(t('deleteWrongPassword'));
+      else setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
+    }
+    setWorking(false);
+  }
+
+  if (codes) {
+    return (
+      <div className="mt-3 space-y-4">
+        <h3 className="font-semibold">{t('recoveryShownTitle')}</h3>
+        <p className="text-[0.95rem] text-muted">{t('recoveryShownBody')}</p>
+        <ul className="grid grid-cols-1 gap-2 rounded-card border border-border bg-surface px-4 py-3 font-mono text-[1.05rem]">
+          {codes.map((code) => (
+            <li key={code}>{code}</li>
+          ))}
+        </ul>
+        <Button
+          onClick={() => {
+            setCodes(undefined);
+            setAsking(false);
+            router.refresh();
+          }}
+        >
+          {t('recoveryDone')}
+        </Button>
+      </div>
+    );
+  }
+
+  const ask = !hasPassword || asking;
+  const label = left > 0 ? t('recoveryReplace') : t('recoveryCreate');
+  return (
+    <form onSubmit={make} className="mt-3 space-y-4">
+      {hasPassword && asking && (
+        <Field
+          label={t('deletePasswordLabel')}
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      )}
+      {error && <Notice>{error}</Notice>}
+      <p role="status" className="sr-only">
+        {working ? t('recoveryWorking') : ''}
+      </p>
+      {ask ? (
+        <Button type="submit" variant="secondary" disabled={working}>
+          {working ? t('recoveryWorking') : label}
+        </Button>
+      ) : (
+        <Button type="button" variant="secondary" onClick={() => setAsking(true)}>
+          {label}
+        </Button>
+      )}
+    </form>
   );
 }
 

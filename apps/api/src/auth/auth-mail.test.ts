@@ -1,8 +1,8 @@
 import { liveLocales } from '@interim/types';
 import { describe, expect, it } from 'vitest';
-import { type EmailKind, buildEmail } from './auth-mail';
+import { type EmailKind, buildEmail, buildEmailChangedNotice } from './auth-mail';
 
-const kinds: EmailKind[] = ['verify', 'magic', 'reset', 'exists'];
+const kinds: EmailKind[] = ['verify', 'magic', 'reset', 'exists', 'changeEmail', 'recover'];
 
 describe('buildEmail', () => {
   it.each(liveLocales)('builds every email in %s with the link in both bodies', (locale) => {
@@ -13,6 +13,14 @@ describe('buildEmail', () => {
       expect(mail.text).toContain('https://web.test/x?token=abc');
       expect(mail.html).toContain('href="https://web.test/x?token=abc"');
     }
+  });
+
+  it.each(liveLocales)('builds the notice to the old address in %s with no link', (locale) => {
+    const mail = buildEmailChangedNotice(locale, 'old@b.co');
+    expect(mail.to).toBe('old@b.co');
+    expect(mail.subject.trim()).not.toBe('');
+    expect(mail.text).not.toContain('http');
+    expect(mail.html).not.toContain('href');
   });
 
   it('escapes the link in the HTML body', () => {

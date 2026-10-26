@@ -75,7 +75,8 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **profile.** id, template_key, owner_ref (`account:<account id>`, or `sample` for judge mode), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
 * **account.** id, email (lower case, unique), email_verified_at, password_hash (scrypt, null without a password), google_sub (unique), created. Deleting a person's account deletes their profiles through `ProfilesService.remove`, which also removes the files.
 * **session.** id, account_id (cascade), token_hash (unique), expires_at.
-* **auth_token.** id, email, purpose (verify_email, magic_link or reset_password), token_hash (unique), expires_at, used_at. Keyed by email because a sign in link can create the account.
+* **auth_token.** id, email, purpose (verify_email, magic_link, reset_password, change_email or recover_account), account_id (set for the last two, which move an existing account), token_hash (unique), expires_at, used_at. Keyed by email because a sign in link can create the account.
+* **recovery_code.** id, account_id (cascade), code_hash (unique, keyed), used_at. Eight per account, replaced as a set.
 * **rate_limit.** key (a keyed hash of scope and subject), window_start, hits. Holds no email or address.
 * **consent_event.** id, profile_id, version, action (grant or withdraw), created.
 * **snapshot.** id, profile_id, taken_at, is_baseline, stage_key, moment (nullable), capture_check_json.
@@ -163,7 +164,8 @@ BullMQ on Redis.
 * GET /profiles/:id/ledger (the profile's ledger rows and held and spent totals)
 * GET /auth/config (which sign in methods are on)
 * POST /auth/register, POST /auth/login, POST /auth/magic, POST /auth/magic/use, POST /auth/verify-email, POST /auth/password/forgot, POST /auth/password/reset, POST /auth/logout
-* GET /auth/me, DELETE /auth/account (signed in)
+* POST /auth/recover, POST /auth/recover/confirm, POST /auth/email/confirm
+* GET /auth/me, DELETE /auth/account, POST /auth/email/change, POST /auth/recovery-codes (signed in)
 * GET /auth/google/start and GET /auth/google/callback (redirects; the callback is reached at `/api/auth/google/callback` on the web origin)
 * GET /templates
 * GET /judge/sample (opens a sample profile, replay only)
