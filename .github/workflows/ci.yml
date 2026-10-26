@@ -8,6 +8,11 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # The lock, rate limit and live switch tests run against a real Redis.
+    services:
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

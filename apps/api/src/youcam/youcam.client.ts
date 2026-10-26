@@ -6,7 +6,33 @@ import { z } from 'zod';
 import { YoucamError, taskErrorAction, type TaskErrorAction } from './youcam.errors';
 import { tools, type ToolName, type ToolRequest, type ToolResult } from './youcam.tools';
 
-/** What the client is built from. `retryBaseMs` is the first wait after a 429 and doubles each time. */
+/** Paces requests to YouCam's API across every process that holds the key. */
+export interface RateLimiter {
+  /**
+   * Resolves when the caller may send one request.
+   * @throws YoucamError of kind `rate_limited` when the wait would be too long, or `transient` when the limiter cannot be reached. Nothing has been sent in either case.
+   */
+  acquire(): Promise<void>;
+}
+
+/** Why live calls were switched off for every process. Only a person turns them back on. */
+export type LiveOffReason = 'auth' | 'out_of_units';
+
+/** A flag shared by every process that holds the key, tripped when YouCam rejects the key or reports no units. */
+export interface LiveSwitch {
+  /**
+   * Why live calls are off, or null while they are on.
+   * @throws YoucamError of kind `live_disabled` when the flag cannot be read, so an outage fails closed.
+   */
+  offReason(): Promise<LiveOffReason | null>;
+  /** Switches live calls off. */
+  trip(reason: LiveOffReason): Promise<void>;
+}
+
+/**
+ * What the client is built from. `retryBaseMs` is the first wait after a 429 and doubles each time.
+ * `limiter` and `liveSwitch` are shared state in Redis; the spike runner is a single process and runs without them.
+ */
 export type YoucamConfig = {
   apiKey: string;
   baseUrl: string;
@@ -14,6 +40,8 @@ export type YoucamConfig = {
   liveCallsEnabled: boolean;
   fixturesDir: string;
   retryBaseMs: number; // first wait after a 429; doubles each time, with jitter
+  limiter?: RateLimiter;
+  liveSwitch?: LiveSwitch;
 };
 
 /** A normalised photo to upload. */
@@ -107,7 +135,7 @@ export class YoucamClient {
   /** Uploads a photo and returns its YouCam file id, which expires after 24 hours. */
   async uploadPhoto(photo: Photo): Promise<string> {
     if (this.mode === 'replay') return 'replay-file';
-    this.assertLive();
+    await this.assertMaySpend();
 
     const init = fileInitSchema.parse(
       await this.request('POST', '/s2s/v2.0/file', 'read', {
@@ -147,7 +175,7 @@ export class YoucamClient {
       await this.readFixture(tool, fixtureKey); // fail closed now rather than at the first poll
       return { tool, fixtureKey, taskId: `replay:${fixtureKey}` };
     }
-    this.assertLive();
+    await this.assertMaySpend();
 
     const definition = tools[tool];
     const payload = definition.request.parse(body);
@@ -238,6 +266,14 @@ export class YoucamClient {
     return costs;
   }
 
+  // Only a create spends units and an upload leads to one, so the shared switch gates those two. Reads
+  // stay open when it trips: polling is free and is how a task that already exists gets settled.
+  private async assertMaySpend(): Promise<void> {
+    this.assertLive();
+    const reason = await this.config.liveSwitch?.offReason();
+    if (reason) throw new YoucamError('live_disabled', `Live calls were switched off: ${reason}`);
+  }
+
   // Record spends units like live, so both need the switch.
   private assertLive(): void {
     if (!this.config.liveCallsEnabled) {
@@ -270,21 +306,27 @@ export class YoucamClient {
       headers,
       body === undefined ? undefined : JSON.stringify(body),
       intent,
+      true,
     );
     const text = await response.text();
     if (response.ok) return text;
-    throw this.httpError(response.status, text, intent);
+    const error = this.httpError(response.status, text, intent);
+    if (error.kind === 'auth' || error.kind === 'out_of_units') await this.config.liveSwitch?.trip(error.kind);
+    throw error;
   }
 
   // Retries only a 429, which means no task was created. YouCam sends no Retry-After, so the wait doubles with jitter.
+  // `paced` is for calls to YouCam's API; the upload target and result links are other hosts with their own limits.
   private async send(
     method: string,
     url: string,
     headers: Record<string, string>,
     body: string | Uint8Array | undefined,
     intent: 'create' | 'read',
+    paced = false,
   ): Promise<Response> {
     for (let attempt = 0; ; attempt++) {
+      if (paced) await this.config.limiter?.acquire();
       let response: Response;
       try {
         response = await fetch(url, {

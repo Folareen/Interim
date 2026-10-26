@@ -31,6 +31,17 @@ export const skinAnalysisUnits = [
 /** YouCam's limit: 250 requests per 300 seconds per IP address and per access token, about 5 a second advised. */
 export const rateLimit = { requests: 250, windowSeconds: 300, perSecond: 5 } as const;
 
+/**
+ * The shared token bucket's shape: a burst of the advised per second rate, then one request per
+ * interval. The burst plus the requests the interval allows in a window never pass the limit.
+ */
+export const bucket = {
+  burst: rateLimit.perSecond,
+  intervalMs: Math.ceil((rateLimit.windowSeconds * 1000) / (rateLimit.requests - rateLimit.perSecond)),
+  /** Longest a caller waits for a slot before giving up, so a backlog fails the call instead of stalling a run. */
+  maxWaitMs: 60_000,
+} as const;
+
 /** YouCam's API host. */
 export const defaultBaseUrl = 'https://yce-api-01.makeupar.com';
 

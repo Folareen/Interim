@@ -2,7 +2,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { YoucamClient, type YoucamConfig } from './youcam.client';
+import { type LiveOffReason, type LiveSwitch, type RateLimiter, YoucamClient, type YoucamConfig } from './youcam.client';
 import { YoucamError, taskErrorAction } from './youcam.errors';
 
 const json = (body: unknown, status = 200) =>
@@ -58,6 +58,98 @@ describe('live switch', () => {
       kind: 'auth',
     });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+const uploadInit = json({
+  data: { files: [{ file_id: 'file-1', requests: [{ method: 'PUT', url: 'https://upload.example.test/x', headers: {} }] }] },
+});
+
+/** Stands in for the Redis switch: remembers a trip, and can be told it already tripped. */
+function fakeSwitch(initial: LiveOffReason | null = null) {
+  const state = { reason: initial };
+  const live: LiveSwitch = {
+    offReason: () => Promise.resolve(state.reason),
+    trip: (reason) => {
+      state.reason = reason;
+      return Promise.resolve();
+    },
+  };
+  return { live, state };
+}
+
+describe('shared rate limit', () => {
+  it('waits for a slot before every request to YouCam, including each retry of a 429', async () => {
+    const order: string[] = [];
+    const limiter: RateLimiter = { acquire: () => Promise.resolve(void order.push('acquire')) };
+    fetchMock.mockImplementation(() => {
+      order.push('fetch');
+      return Promise.resolve(order.filter((o) => o === 'fetch').length === 1 ? json({}, 429) : json({ data: { task_id: 't1' } }));
+    });
+
+    await client({ limiter }).createTask('hair_density', densityBody, 'k1');
+
+    expect(order).toEqual(['acquire', 'fetch', 'acquire', 'fetch']);
+  });
+
+  it('does not count the upload to storage or the result download, which are other hosts', async () => {
+    const acquire = vi.fn(() => Promise.resolve());
+    fetchMock.mockResolvedValueOnce(uploadInit).mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+    await client({ limiter: { acquire } }).uploadPhoto({ bytes: new Uint8Array([1]), contentType: 'image/jpg', fileName: 'a.jpg' });
+
+    expect(acquire).toHaveBeenCalledTimes(1); // the registration only
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('sends nothing when the limiter refuses, so a create is not left unknown', async () => {
+    const limiter: RateLimiter = { acquire: () => Promise.reject(new YoucamError('rate_limited', 'queue too long')) };
+
+    await expect(client({ limiter }).createTask('hair_density', densityBody, 'k1')).rejects.toMatchObject({ kind: 'rate_limited' });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('automatic live switch', () => {
+  it.each([
+    ['a rejected key', json({ error_code: 'InvalidAccessToken' }, 401), 'auth'],
+    ['no units left', json({ error_code: 'CreditInsufficiency' }, 400), 'out_of_units'],
+  ] as const)('switches live calls off after %s', async (_name, response, reason) => {
+    const { live, state } = fakeSwitch();
+    fetchMock.mockResolvedValueOnce(response);
+
+    await expect(client({ liveSwitch: live }).createTask('hair_density', densityBody, 'k1')).rejects.toMatchObject({ kind: reason });
+
+    expect(state.reason).toBe(reason);
+  });
+
+  it('does not switch off for an error that is the request’s own fault', async () => {
+    const { live, state } = fakeSwitch();
+    fetchMock.mockResolvedValueOnce(json({ error_code: 'InvalidParameters' }, 400));
+
+    await expect(client({ liveSwitch: live }).createTask('hair_density', densityBody, 'k1')).rejects.toMatchObject({ kind: 'invalid_request' });
+
+    expect(state.reason).toBeNull();
+  });
+
+  it('refuses to upload or create once it is off, without a request', async () => {
+    const { live } = fakeSwitch('out_of_units');
+    const c = client({ liveSwitch: live });
+
+    await expect(c.uploadPhoto({ bytes: new Uint8Array([1]), contentType: 'image/jpg', fileName: 'a.jpg' })).rejects.toMatchObject({ kind: 'live_disabled' });
+    await expect(c.createTask('hair_density', densityBody, 'k1')).rejects.toMatchObject({ kind: 'live_disabled' });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('still polls a task that already exists, because that is free and settles its units', async () => {
+    const { live } = fakeSwitch('out_of_units');
+    fetchMock.mockResolvedValueOnce(json(densitySuccess));
+
+    const status = await client({ liveSwitch: live }).getTask({ tool: 'hair_density', fixtureKey: 'k1', taskId: 't1' });
+
+    expect(status.state).toBe('success');
   });
 });
 
