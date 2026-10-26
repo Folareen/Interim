@@ -6,9 +6,10 @@ import { notFound, redirect } from 'next/navigation';
 import { primaryClass, secondaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
-import { getCards, getMe, getProfile, getReflections } from '@/lib/server-api';
+import { getCards, getMe, getPreferences, getProfile, getReflections } from '@/lib/server-api';
 import { FlaggedContacts } from '../../reflect/[id]/flagged-contacts';
 import { DeleteProfile } from './delete-profile';
+import { TodaysWords } from './todays-words';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('ready'))('title') };
@@ -20,9 +21,10 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
   const profile = await getProfile(id);
   if (!profile) notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
-  const [cards, reflections, t, labels, setup, consent, reflect] = await Promise.all([
+  const [cards, reflections, preferences, t, labels, setup, consent, reflect] = await Promise.all([
     getCards(id),
     getReflections(id),
+    getPreferences(id),
     getTranslations('ready'),
     getTranslations('templateLabels'),
     getTranslations('setup'),
@@ -42,6 +44,7 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
           <FlaggedContacts profileId={id} />
         </div>
       )}
+      {preferences?.wordsSet && <TodaysWords profileId={id} />}
       <section className="mt-8">
         <h2 className="text-[1.25rem]">{t('summaryTitle')}</h2>
         <dl className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">

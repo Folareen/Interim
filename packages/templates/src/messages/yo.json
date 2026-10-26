@@ -230,6 +230,18 @@
     "saving": "Ń tọ́jú…",
     "saved": "A ti tọ́jú rẹ̀."
   },
+  "words": {
+    "title": "Ọ̀rọ̀ òní",
+    "help": "Ó wà ní pípa títí o fi tan án. Ìpín kan ni o máa gbà lójoojúmọ́, kan náà fún gbogbo ẹni tó yan àkójọ yìí. Interim kì í kọ ọ́ tàbí yàn án rárá.",
+    "off": { "label": "Pípa", "description": "A kò fi ìpín kankan hàn." },
+    "sets": {
+      "gentle": { "label": "Ọ̀rọ̀ jẹ́jẹ́", "description": "Àwọn ọ̀rọ̀ ìgbàlódé gbogbo ènìyàn àti àwọn ọ̀rọ̀ tí a kọ fún Interim." },
+      "christian": { "label": "Àwọn ẹsẹ Bíbélì", "description": "Ìtumọ̀ King James, ní Gẹ̀ẹ́sì." },
+      "muslim": { "label": "Àwọn ẹsẹ Kùránì", "description": "Ìtumọ̀ Pickthall, ní Gẹ̀ẹ́sì." },
+      "jewish": { "label": "Àwọn ẹsẹ Tanakh", "description": "Ìtumọ̀ JPS 1917, ní Gẹ̀ẹ́sì." }
+    },
+    "englishNote": "Àkójọ yìí kò tíì ní ìtumọ̀ ìgbàlódé gbogbo ènìyàn ní èdè rẹ, nítorí náà ìpín òní wà ní Gẹ̀ẹ́sì."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Irun fẹ́rẹ̀ẹ́ máa wálẹ̀",
     "hair_patches": "Irun ń wálẹ̀ ní ibi kan kan",

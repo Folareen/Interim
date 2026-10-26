@@ -230,6 +230,18 @@
     "saving": "Ana ajiyewa…",
     "saved": "An ajiye."
   },
+  "words": {
+    "title": "Kalmomin yau",
+    "help": "A kashe sai kun kunna. Kuna samun nassi guda a rana, iri ɗaya ga duk wanda ya zaɓi wannan tsari. Interim ba ta rubuta shi ko zaɓar shi ba.",
+    "off": { "label": "A kashe", "description": "Ba a nuna wani nassi ba." },
+    "sets": {
+      "gentle": { "label": "Kalmomi masu laushi", "description": "Zantuka na jama’a da kalmomin da aka rubuta wa Interim." },
+      "christian": { "label": "Ayoyin Littafi Mai Tsarki", "description": "Fassarar King James, da Turanci." },
+      "muslim": { "label": "Ayoyin Alƙur’ani", "description": "Fassarar Pickthall, da Turanci." },
+      "jewish": { "label": "Ayoyin Tanakh", "description": "Fassarar JPS 1917, da Turanci." }
+    },
+    "englishNote": "Wannan tsari ba shi da fassarar jama’a a harshenku tukuna, don haka nassin yau yana cikin Turanci."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Zubewar gashi na tafe",
     "hair_patches": "Gashi na zubewa a wurare",

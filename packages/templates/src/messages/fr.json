@@ -230,6 +230,18 @@
     "saving": "Enregistrement…",
     "saved": "Enregistré."
   },
+  "words": {
+    "title": "Mots du jour",
+    "help": "Désactivé tant que vous ne l’activez pas. Un passage par jour, le même pour tous ceux qui ont choisi cet ensemble. Interim ne l’écrit ni ne le choisit jamais.",
+    "off": { "label": "Désactivé", "description": "Aucun passage n’est affiché." },
+    "sets": {
+      "gentle": { "label": "Mots doux", "description": "Citations du domaine public et textes écrits pour Interim." },
+      "christian": { "label": "Versets de la Bible", "description": "Version du roi Jacques (King James), en anglais." },
+      "muslim": { "label": "Versets du Coran", "description": "Traduction de Pickthall, en anglais." },
+      "jewish": { "label": "Versets du Tanakh", "description": "Traduction JPS 1917, en anglais." }
+    },
+    "englishNote": "Cet ensemble n’a pas encore de traduction du domaine public dans votre langue, donc le passage du jour est en anglais."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Chute de cheveux à venir",
     "hair_patches": "Cheveux qui tombent par zones",

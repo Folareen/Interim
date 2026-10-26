@@ -230,6 +230,18 @@
     "saving": "Salvando…",
     "saved": "Salvo."
   },
+  "words": {
+    "title": "Palavras de hoje",
+    "help": "Desligado até você ligar. Você recebe uma passagem por dia, a mesma para todos que escolhem este conjunto. O Interim nunca a escreve nem a escolhe.",
+    "off": { "label": "Desligado", "description": "Nenhuma passagem é mostrada." },
+    "sets": {
+      "gentle": { "label": "Palavras gentis", "description": "Citações de domínio público e textos escritos para o Interim." },
+      "christian": { "label": "Versículos da Bíblia", "description": "Versão do rei Tiago (King James), em inglês." },
+      "muslim": { "label": "Versículos do Alcorão", "description": "Tradução de Pickthall, em inglês." },
+      "jewish": { "label": "Versículos do Tanakh", "description": "Tradução JPS 1917, em inglês." }
+    },
+    "englishNote": "Este conjunto ainda não tem uma tradução de domínio público no seu idioma, por isso a passagem de hoje está em inglês."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Queda de cabelo a caminho",
     "hair_patches": "Cabelo caindo em falhas",

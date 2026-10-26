@@ -214,6 +214,21 @@ export const wordsQuerySchema = z.object({
 });
 export type WordsQuery = z.infer<typeof wordsQuerySchema>;
 
+/** Answer of GET /profiles/:id/words: today's passage, or null while words for today is off. */
+export const wordsViewSchema = z.object({
+  words: z
+    .object({
+      text: z.string(),
+      source: z.string(),
+      set: wordsSetSchema,
+      translation: z.string().nullable(),
+      /** The language the passage is in, which is English when the set has no translation in the person's language. */
+      locale: liveLocaleSchema,
+    })
+    .nullable(),
+});
+export type WordsView = z.infer<typeof wordsViewSchema>;
+
 /** The part of `POST /profiles/:id/snapshots`'s answer the app reads. */
 export const snapshotCreatedSchema = z.object({ id: z.string().uuid() });
 export type SnapshotCreated = z.infer<typeof snapshotCreatedSchema>;
