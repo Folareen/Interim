@@ -13,8 +13,8 @@ export type Look =
   | { id: string; tool: 'makeup_brows'; color: string };
 
 // Ids come from YouCam's own template lists (hair transfer v2.1 and beard style v2.0, read once, which
-// costs nothing). Only `male_short_curly` and `female_blunt_bob` have been rendered live so far
-// (docs/integrations/youcam.md, Observed live); the rest are valid ids that still need a recorded run.
+// costs nothing). Every hairstyle and beard id here has rendered live; the colour presets
+// share one tool and were tried with Honey Blonde (docs/integrations/youcam.md, Observed live).
 // The first three of a strategy are the ones a run renders, so they are kept varied. The `all_` ids
 // are YouCam's own unisex ones; the older male and female ids are offered to everyone too.
 const looks: readonly Look[] = [

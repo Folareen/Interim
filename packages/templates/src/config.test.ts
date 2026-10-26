@@ -68,6 +68,14 @@ describe('template config', () => {
   });
 });
 
+describe('cover strategy', () => {
+  it('is offered by no template, because hat and scarf try on are unusable (spec section 7, rule 6)', () => {
+    for (const key of templateKeys) {
+      for (const list of Object.values(templates[key].strategies)) expect(list, key).not.toContain('cover');
+    }
+  });
+});
+
 describe('situation strategies', () => {
   it('gives each of templates 2 to 5 a strategy only that situation offers', () => {
     const offered = (key: (typeof templateKeys)[number]) => new Set(Object.values(templates[key].strategies).flat());

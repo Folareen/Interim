@@ -11,6 +11,7 @@ export const unitCosts: Record<string, number | null> = {
   skin_tone: 20, // facial colour tones, charged only when the task succeeds
   face_shape: 10, // one feature; 6 to 14 features cost 20, 15 to 28 cost 30
   makeup_brows: 1, // charged only when the task succeeds
+  skin_analysis: 9, // SD, 1 to 4 concerns, which the request schema enforces; larger tiers are in `skinAnalysisUnits`
   cloth_v4: 2,
   text_to_image: 1, // spike only
   image_to_image: 1, // spike only
