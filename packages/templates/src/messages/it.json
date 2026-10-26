@@ -230,6 +230,18 @@
     "saving": "Salvataggio…",
     "saved": "Salvato."
   },
+  "words": {
+    "title": "Parole di oggi",
+    "help": "Disattivato finché non lo attivi. Un brano al giorno, lo stesso per tutti quelli che scelgono questo gruppo. Interim non lo scrive né lo sceglie mai.",
+    "off": { "label": "Disattivato", "description": "Non viene mostrato nessun brano." },
+    "sets": {
+      "gentle": { "label": "Parole gentili", "description": "Citazioni di pubblico dominio e testi scritti per Interim." },
+      "christian": { "label": "Versetti della Bibbia", "description": "Versione di re Giacomo (King James), in inglese." },
+      "muslim": { "label": "Versetti del Corano", "description": "Traduzione di Pickthall, in inglese." },
+      "jewish": { "label": "Versetti del Tanakh", "description": "Traduzione JPS 1917, in inglese." }
+    },
+    "englishNote": "Questo gruppo non ha ancora una traduzione di pubblico dominio nella tua lingua, quindi il brano di oggi è in inglese."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Caduta dei capelli in arrivo",
     "hair_patches": "Capelli che cadono a zone",

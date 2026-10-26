@@ -230,6 +230,18 @@
     "saving": "Na-echekwa…",
     "saved": "Echekwara."
   },
+  "words": {
+    "title": "Okwu taa",
+    "help": "A gbanyụrụ ya ruo mgbe ị gbanyere ya. Ị na-enweta ngọngọ otu kwa ụbọchị, otu ihe ahụ maka onye ọ bụla họọrọ nke a. Interim anaghị ede ya ma ọ bụ họrọ ya.",
+    "off": { "label": "Gbanyụọ", "description": "A naghị egosi ngọngọ ọ bụla." },
+    "sets": {
+      "gentle": { "label": "Okwu dị nwayọọ", "description": "Okwu sitere n’ọha na okwu e dere maka Interim." },
+      "christian": { "label": "Amaokwu Baịbụl", "description": "Ntụgharị King James, n’Bekee." },
+      "muslim": { "label": "Amaokwu Qur’an", "description": "Ntụgharị Pickthall, n’Bekee." },
+      "jewish": { "label": "Amaokwu Tanakh", "description": "Ntụgharị JPS 1917, n’Bekee." }
+    },
+    "englishNote": "Nke a enweghị ntụgharị ọha n’asụsụ gị ugbu a, ya mere ngọngọ taa dị n’Bekee."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Ntutu na-ada na-abịa",
     "hair_patches": "Ntutu na-ada n’ebe ụfọdụ",

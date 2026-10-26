@@ -21,6 +21,8 @@ The ready screen has a plain link to `/api/profiles/[id]/export.zip`, which down
 
 From the ready screen, "Reflection" opens `/reflect/[id]`: one prompt, a text box, the saved reflections with a delete on each, and a permanent "Need to talk to someone?" link. The device runs the exact crisis check before it sends, so the contacts card (`CrisisContacts`, region from the browser, changeable) shows at once; the server checks again. A flagged profile also shows the card on the ready screen until the person closes it. The Stage Card offers the screen after a check in that reports a lot of change.
 
+Words for today is chosen on the settings screen (off, or one of four sets). While it is on, the ready screen shows today's passage with its source and translation, fetched with the person's local date so it turns over at their midnight. When the set has no translation in their language the passage is English and a note says why.
+
 The Stage Card makes share links (`ShareCard`): a new link is shown once with a copy button, because the API keeps only a hash, and later visits list the links that still work with a stop button each. `/s/[token]` is the share view for someone signed out. It calls the API without the person's cookie, answers 404 for a link that is unknown, expired or revoked, and sets `noindex` and `no-referrer`.
 
 Before a screen is done, check it in both themes at 320px and 390px wide, with the keyboard only, and with an axe audit that reports no violations.

@@ -230,6 +230,18 @@
     "saving": "Dey save…",
     "saved": "E don save."
   },
+  "words": {
+    "title": "Words for today",
+    "help": "E dey off until you turn am on. You go get one passage every day, the same one for everybody wey pick this set. Interim no dey write am or choose am at all.",
+    "off": { "label": "Off", "description": "No passage go show." },
+    "sets": {
+      "gentle": { "label": "Soft words", "description": "Quotes wey dey public and words wey dem write for Interim." },
+      "christian": { "label": "Bible verses", "description": "King James Version, for English." },
+      "muslim": { "label": "Qur’an verses", "description": "Pickthall translation, for English." },
+      "jewish": { "label": "Tanakh verses", "description": "JPS 1917 translation, for English." }
+    },
+    "englishNote": "Dis set neva get public translation for your language, so today passage dey for English."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Hair loss dey come",
     "hair_patches": "Hair dey comot for some places",

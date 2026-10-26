@@ -230,6 +230,18 @@
     "saving": "Inahifadhi…",
     "saved": "Imehifadhiwa."
   },
+  "words": {
+    "title": "Maneno ya leo",
+    "help": "Imezimwa hadi uiwashe. Unapata kifungu kimoja kwa siku, kilekile kwa wote waliochagua seti hii. Interim haiandiki wala kukichagua kamwe.",
+    "off": { "label": "Imezimwa", "description": "Hakuna kifungu kinachoonyeshwa." },
+    "sets": {
+      "gentle": { "label": "Maneno ya upole", "description": "Nukuu za umma na maneno yaliyoandikwa kwa ajili ya Interim." },
+      "christian": { "label": "Aya za Biblia", "description": "Tafsiri ya King James, kwa Kiingereza." },
+      "muslim": { "label": "Aya za Qur’an", "description": "Tafsiri ya Pickthall, kwa Kiingereza." },
+      "jewish": { "label": "Aya za Tanakh", "description": "Tafsiri ya JPS 1917, kwa Kiingereza." }
+    },
+    "englishNote": "Seti hii bado haina tafsiri ya umma katika lugha yako, kwa hiyo kifungu cha leo kiko kwa Kiingereza."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Kupotea kwa nywele kunakuja",
     "hair_patches": "Nywele zinakatika kwa vipande",

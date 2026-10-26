@@ -230,6 +230,18 @@
     "saving": "Saving…",
     "saved": "Saved."
   },
+  "words": {
+    "title": "Words for today",
+    "help": "Off unless you turn it on. You get one passage a day, the same for everyone on the set you pick. Interim never writes or chooses it.",
+    "off": { "label": "Off", "description": "No passage is shown." },
+    "sets": {
+      "gentle": { "label": "Gentle words", "description": "Quotes from the public domain and lines written for Interim." },
+      "christian": { "label": "Bible verses", "description": "King James Version." },
+      "muslim": { "label": "Qur’an verses", "description": "Pickthall’s translation." },
+      "jewish": { "label": "Tanakh verses", "description": "JPS 1917 translation." }
+    },
+    "englishNote": "This set has no public domain translation in your language yet, so today’s passage is in English."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Hair loss ahead",
     "hair_patches": "Hair coming out in patches",

@@ -16,6 +16,7 @@ import {
   type ShareCreated,
   type RunView,
   type UploadsResponse,
+  type WordsView,
   captureProblemBodySchema,
   meSchema,
   preferencesSchema,
@@ -25,6 +26,7 @@ import {
   runViewSchema,
   snapshotCreatedSchema,
   uploadsResponseSchema,
+  wordsViewSchema,
 } from '@interim/types';
 
 /**
@@ -71,6 +73,14 @@ export async function createProfile(input: CreateProfileInput): Promise<Profile>
 /** The profile's companion settings. */
 export async function getPreferences(id: string): Promise<Preferences> {
   return preferencesSchema.parse(await (await send(`/profiles/${id}/preferences`, 'GET')).json());
+}
+
+/**
+ * Today's words for the profile.
+ * @param date The person's local date as YYYY-MM-DD.
+ */
+export async function getWords(id: string, date: string): Promise<WordsView> {
+  return wordsViewSchema.parse(await (await send(`/profiles/${id}/words?date=${date}`, 'GET')).json());
 }
 
 /** Replaces the profile's companion settings. */

@@ -230,6 +230,18 @@
     "saving": "Guardando…",
     "saved": "Guardado."
   },
+  "words": {
+    "title": "Palabras de hoy",
+    "help": "Desactivado hasta que lo actives. Recibes un pasaje al día, el mismo para todos los que eligen este conjunto. Interim nunca lo escribe ni lo elige.",
+    "off": { "label": "Desactivado", "description": "No se muestra ningún pasaje." },
+    "sets": {
+      "gentle": { "label": "Palabras amables", "description": "Citas de dominio público y textos escritos para Interim." },
+      "christian": { "label": "Versículos de la Biblia", "description": "Versión del rey Jacobo (King James), en inglés." },
+      "muslim": { "label": "Versículos del Corán", "description": "Traducción de Pickthall, en inglés." },
+      "jewish": { "label": "Versículos del Tanaj", "description": "Traducción JPS 1917, en inglés." }
+    },
+    "englishNote": "Este conjunto aún no tiene una traducción de dominio público en tu idioma, así que el pasaje de hoy está en inglés."
+  },
   "templateLabels": {
     "hair_loss_ahead": "Caída del cabello por venir",
     "hair_patches": "Cabello que se cae por zonas",
