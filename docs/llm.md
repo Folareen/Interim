@@ -1,6 +1,6 @@
 # LLM
 
-Google Gemini through the Vercel AI SDK (`ai` + `@ai-sdk/google`). Env: `GOOGLE_GENERATIVE_AI_API_KEY`, `LLM_MODEL` (default `gemini-2.5-flash`). Call the model only through the agent module so the provider stays swappable.
+Google Gemini through the Vercel AI SDK (`ai` + `@ai-sdk/google`). Env: `GOOGLE_GENERATIVE_AI_API_KEY`, `LLM_MODEL` (default `gemini-3.8-flash`; `gemini-2.5-flash` is closed to new keys). Call the model only through the agent module so the provider stays swappable.
 
 Guardrails (no raw photos, restricted tools, banned-word scan, placeholder validator): [architecture.md](architecture.md) section 7. Parse model output with zod like any external input ([typescript.md](typescript.md)).
 

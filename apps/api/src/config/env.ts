@@ -19,7 +19,7 @@ const envSchema = z
     PLANNER_FIXTURES_DIR: z.string().default('../../packages/fixtures/planner'), // recorded planner output, relative to apps/api
     JUDGE_MODE_FORCE_REPLAY: z.enum(['true', 'false']).default('true'),
     GOOGLE_GENERATIVE_AI_API_KEY: z.string().default(''),
-    LLM_MODEL: z.string().default('gemini-2.5-flash'),
+    LLM_MODEL: z.string().default('gemini-3.8-flash'),
     UNIT_BUDGET_PER_RUN: z.coerce.number().default(50),
     UNIT_BUDGET_PER_PROFILE: z.coerce.number().default(500),
     UNIT_BUDGET_PER_DAY: z.coerce.number().default(2000),
