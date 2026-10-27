@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "spike": "tsx --env-file=../../.env src/youcam/spike/spike.ts",
-    "record-samples": "tsx --env-file=../../.env src/youcam/spike/record-samples.ts"
+    "record-samples": "tsx --env-file=../../.env src/youcam/spike/record-samples.ts",
+    "seed-demo": "tsx --env-file=../../.env src/demo/seed-demo.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",

@@ -21,6 +21,6 @@ import { RunsController } from './runs.controller';
     RunsService,
     RunWorker,
   ],
-  exports: [RunWorker],
+  exports: [RunWorker, RunsService],
 })
 export class RunsModule {}

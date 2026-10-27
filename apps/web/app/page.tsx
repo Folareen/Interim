@@ -33,6 +33,9 @@ export default async function Home() {
         <Link href="/signin" className={secondaryClass}>
           {t('haveAccount')}
         </Link>
+        <Link href="/demo" className={secondaryClass}>
+          {t('demoLink')}
+        </Link>
       </Actions>
     </Shell>
   );

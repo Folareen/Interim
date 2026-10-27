@@ -100,6 +100,13 @@ describe('live', () => {
     expect((await planner.plan(input)).source).toBe('fallback');
   });
 
+  it('uses the fixed text when the model call itself fails, without retrying', async () => {
+    const { planner, generate } = build({});
+    generate.mockRejectedValue(new Error('model is retired'));
+    expect((await planner.plan(input)).source).toBe('fallback');
+    expect(generate).toHaveBeenCalledTimes(1);
+  });
+
   it('does not call the model when live calls are not allowed', async () => {
     const { planner, generate } = build({ canCallModel: false });
     expect((await planner.plan(input)).source).toBe('fallback');

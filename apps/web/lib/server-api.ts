@@ -2,6 +2,7 @@ import {
   type AuthConfig,
   type CardSummary,
   type CardView,
+  type Demo,
   type GarmentItem,
   type Me,
   type Preferences,
@@ -13,6 +14,7 @@ import {
   authConfigSchema,
   cardSummaryListSchema,
   cardViewSchema,
+  demoSchema,
   garmentListSchema,
   meSchema,
   preferencesSchema,
@@ -150,4 +152,19 @@ export async function getSharedCard(token: string): Promise<SharedCard | undefin
   if (response.status === 404 || response.status === 400) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return sharedCardSchema.parse(await response.json());
+}
+
+/** The sample people anyone can open. Sends no cookie: the demo is public and read only. */
+export async function getDemo(): Promise<Demo> {
+  const response = await fetch(`${apiOrigin}/demo`, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return demoSchema.parse(await response.json());
+}
+
+/** One sample card, or undefined when it is not a sample. Sends no cookie. */
+export async function getDemoCard(id: string): Promise<CardView | undefined> {
+  const response = await fetch(`${apiOrigin}/demo/cards/${encodeURIComponent(id)}`, { cache: 'no-store' });
+  if (response.status === 404 || response.status === 400) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return cardViewSchema.parse(await response.json());
 }

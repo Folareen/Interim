@@ -26,7 +26,8 @@
     "reassurance": "Ị na-ahọrọ ihe ị ga-ekekọrịta, ị nwekwara ike ihichapụ ihe niile n’oge ọ bụla.",
     "start": "Malite",
     "footnote": "Interim bụ maka ka i si adị na ihe ị ga-eyi. Ọ naghị enye ndụmọdụ dọkịta.",
-    "haveAccount": "Enweelarị m akaụntụ"
+    "haveAccount": "Enweelarị m akaụntụ",
+    "demoLink": "Nwaa ngosi ahụ"
   },
   "language": {
     "title": "Họrọ asụsụ gị",
@@ -667,5 +668,16 @@
     "viewIntro": "Nlele nke ụdị na ndepụta ịzụ ahịa, onye ha bụ nke ya kekọrịtara. Nlele anaghị ekwe nkwa nsonaazụ.",
     "viewExpires": "Njikọ a na-arụ ọrụ ruo {date}.",
     "viewEmpty": "Enweghị ihe a ga-egosi na njikọ a."
+  },
+  "demo": {
+    "title": "Nwaa ngosi ahụ",
+    "intro": "Ndị a bụ ndị e ṅomiri. E dekọrọ kaadị ọ bụla site n’ojiji Interim n’ezie, ya mere ọ dịghị ihe na-eme ugbu a ebe a, e nweghị ihe e ji.",
+    "simulated": "Onye e ṅomiri",
+    "recordedOn": "E dekọrọ ya na {date}",
+    "checkInsTitle": "Nlele",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Onye e ṅomiri, e dekọrọ ya na {date}. Ọ dịghị ihe na-eme ugbu a na peeji a.",
+    "backAction": "Laghachi na ngosi ahụ",
+    "startAction": "Malite nke gị"
   }
 }

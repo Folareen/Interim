@@ -63,7 +63,15 @@ export class Planner {
     if (!this.config.canCallModel) return this.fixedPlan(input);
 
     for (let attempt = 1; attempt <= MODEL_ATTEMPTS; attempt++) {
-      const output = this.accept(parseJson(await this.generate(plannerPrompt(input))), input);
+      let raw: unknown;
+      try {
+        raw = parseJson(await this.generate(plannerPrompt(input)));
+      } catch (error) {
+        // A retired model, a quota or a network fault must not cost the person their card.
+        this.log.warn(`Planner model failed: ${error instanceof Error ? error.message : 'unknown'}`);
+        return this.fixedPlan(input);
+      }
+      const output = this.accept(raw, input);
       if (!output) continue;
       if (this.config.mode === 'record') await this.writeFixture(key, output);
       return { ...output, source: 'model' };

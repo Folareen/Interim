@@ -26,7 +26,8 @@
     "reassurance": "Wewe unachagua cha kushiriki, na unaweza kufuta kila kitu wakati wowote.",
     "start": "Anza",
     "footnote": "Interim inahusu unavyoonekana na cha kuvaa. Haitoi ushauri wa kimatibabu.",
-    "haveAccount": "Tayari nina akaunti"
+    "haveAccount": "Tayari nina akaunti",
+    "demoLink": "Jaribu onyesho"
   },
   "language": {
     "title": "Chagua lugha yako",
@@ -667,5 +668,16 @@
     "viewIntro": "Maonyesho ya awali ya mitindo na orodha ya ununuzi, vilivyoshirikishwa na mhusika. Onyesho la awali halihakikishi matokeo.",
     "viewExpires": "Kiungo hiki kinafanya kazi hadi {date}.",
     "viewEmpty": "Hakuna cha kuonyesha kwenye kiungo hiki."
+  },
+  "demo": {
+    "title": "Jaribu onyesho",
+    "intro": "Hawa ni watu wa kuigizwa. Kila kadi ilirekodiwa kutoka matumizi halisi ya Interim, kwa hiyo hakuna kinachofanyika moja kwa moja na hakuna kinachotumika.",
+    "simulated": "Mtu wa kuigizwa",
+    "recordedOn": "Imerekodiwa tarehe {date}",
+    "checkInsTitle": "Ukaguzi",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Mtu wa kuigizwa, imerekodiwa tarehe {date}. Hakuna kitu kwenye ukurasa huu kinachofanyika moja kwa moja.",
+    "backAction": "Rudi kwenye onyesho",
+    "startAction": "Anza yako"
   }
 }

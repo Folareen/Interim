@@ -16,7 +16,7 @@ const sameLabels = (sizes: readonly Size[]): Partial<Record<Size, string>> => Ob
 /**
  * The sample catalog (docs/product/spec.md section 17): a few upper body and outer pieces, the two
  * categories YouCam's clothes tool has been seen to handle on chest up photos. The pictures are
- * drawn placeholders, to be replaced before live use. Real retailer sync is out of scope.
+ * generated with YouCam's image generator (they stand in for licensed retailer pictures). Real retailer sync is out of scope.
  */
 export const sampleCatalog: readonly SampleItem[] = [
   { sku: 'tee-crew', name: 'Crew neck tee', category: 'upper_body', fit: 'relaxed', sizeChart: sameLabels(['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL']) },
