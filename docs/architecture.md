@@ -6,7 +6,7 @@ Companion documents: product/overview.md, product/spec.md
 
 * Eligibility, budgets and consent are plain code. The language model plans and explains.
 * Every YouCam call goes through one client, one ledger and one dedupe layer.
-* Everything a judge sees can run from recorded fixtures at zero cost.
+* Everything a visitor sees in demo mode runs from recorded data at zero cost.
 * One engine and one code path for every template. Templates are configuration.
 * API keys never reach the browser.
 * Anyone can reach the public endpoints, so every endpoint that can spend units is limited and capped.
@@ -15,7 +15,7 @@ Companion documents: product/overview.md, product/spec.md
 
 Components, from the user inward:
 
-* **Web app (Next.js PWA, on Vercel).** Capture wizard, Stage Cards, unit ledger view, judge mode. It proxies `/api/*` to the API so cookies are first party (section 12).
+* **Web app (Next.js PWA, on Vercel).** Capture wizard, Stage Cards, unit ledger view, demo mode. It proxies `/api/*` to the API so cookies are first party (section 12).
 * **API (NestJS, on a VPS or AWS ECS).** Profiles, snapshots, runs, ledger, templates. Long running, not serverless, because YouCam tasks are asynchronous.
 * **Worker (NestJS process with BullMQ).** Uploads, task creation, polling, backoff, retries.
 * **Agent module.** Planner, eligibility rules, composer, trace writer.
@@ -72,7 +72,7 @@ interim/
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (`account:<account id>`, or `sample` for judge mode), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
+* **profile.** id, template_key, owner_ref (`account:<account id>`, or `sample` for demo mode), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
 * **account.** id, email (lower case, unique), email_verified_at, password_hash (scrypt, null without a password), google_sub (unique), created. Deleting a person's account deletes their profiles through `ProfilesService.remove`, which also removes the files.
 * **session.** id, account_id (cascade), token_hash (unique), expires_at.
 * **auth_token.** id, email, purpose (verify_email, magic_link, reset_password, change_email or recover_account), account_id (set for the last two, which move an existing account), token_hash (unique), expires_at, used_at. Keyed by email because a sign in link can create the account.
@@ -114,7 +114,7 @@ Single module, single entry point. Nothing else imports an HTTP client for YouCa
 * **Cache key.** The normalised photo hash, tool, API version and parameter hash.
 * **Cost.** A cost function calls Get_Feature_Cost where available and falls back to the config table in the spec.
 * **Live switch.** `LIVE_CALLS_ENABLED` must be true for any live call. It is turned off automatically, for every process, when YouCam reports no units or rejects the key (`youcam:live-off` in Redis).
-* **Record and replay.** Recording saves YouCam responses and planner output as fixtures with secrets removed. Replay serves them with no network call, and a missing fixture is an error, never a live call. Judge mode forces replay. Modes are in [integrations/youcam.md](integrations/youcam.md#modes-youcam_mode).
+* **Record and replay.** Recording saves YouCam responses and planner output as fixtures with secrets removed. Replay serves them with no network call, and a missing fixture is an error, never a live call. The `JUDGE_MODE_FORCE_REPLAY` setting (named before demo mode) forces replay. Modes are in [integrations/youcam.md](integrations/youcam.md#modes-youcam_mode).
 
 ## 7. Agent module
 
@@ -168,13 +168,13 @@ BullMQ on Redis.
 * GET /auth/me, DELETE /auth/account, POST /auth/email/change, POST /auth/recovery-codes (signed in)
 * GET /auth/google/start and GET /auth/google/callback (redirects; the callback is reached at `/api/auth/google/callback` on the web origin)
 * GET /templates
-* GET /judge/sample (opens a sample profile, replay only)
+* GET /demo (the sample people with their cards) and GET /demo/cards/:id, both signed out and read only
 
 All routes check consent version and ownership. Share links expire, can be revoked, are read only and serve renders and card text only. The share view is built from an allow list in `SharesService`, not by trimming the person's card: renders, look names, the advice lines `shareableAdvice` allows, clothes and the shopping list. It leaves out the situation, stage, measurements, companion note, what to say, what to hold off buying, the trace, original photos and anything about the profile.
 
 ## 10. Web app
 
-* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view (`/s/[token]`), judge sample, privacy policy, terms.
+* **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view (`/s/[token]`), demo (`/demo`, `/demo/cards/[id]`), privacy policy, terms.
 * **Capture wizard.** Asks for what `capturePlan` in `packages/rules` says, the same rule the server applies. Uses the YouCam JS Camera Kit for the front, both sides (one hair type capture) and the top photo (its five second countdown is the timer), and a plain file input for the body photo and whenever the kit does not load or the camera is refused. Runs `photoQualityProblem` on each photo on the device and blocks upload on failure. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
 * **Run progress.** Shows the live trace in short lines, so the agent is visible. It listens to the event stream and asks every two seconds if the stream is not available.
 * **Stage Card.** Before and after slider for renders, a clear preview label, saved clothes on the body photo, shopping list, what to hold off buying, share, export and delete actions.
@@ -195,7 +195,7 @@ Interim exposes no MCP server or partner API: every caller is the person, throug
 * Signed, short lived URLs for photo and render access.
 * Consent version stored with every profile, plus a consent event history.
 * Retention, deletion, export and logging follow spec section 12. In keep history mode each new check in pushes `expires_at` forward on the profile's photos and renders.
-* Judge mode has no write access to real accounts.
+* Demo mode has no write access to real accounts.
 
 ## 13. Configuration
 
@@ -224,7 +224,7 @@ Server environment variables, by name:
 * **Database.** Managed PostgreSQL.
 * **Redis.** Managed or on the same host for the hackathon.
 * **Object storage.** Cloudflare R2, one bucket. Expiry is enforced by the cleanup queue from each row's `expires_at`, because retention can slide and a bucket lifecycle rule cannot. Accessed through the S3 API, so the provider can change with env vars only.
-* **Environments.** Local, and one production like environment. Judge mode is the default on the public link.
+* **Environments.** Local, and one production like environment. Demo mode is the way in on the public link.
 
 ## 15. Observability
 

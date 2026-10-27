@@ -279,7 +279,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * **Limits.** Tries are counted per address and per email in the database, as hashes, and answer 429 past the limit: 8 sign in tries per email and 60 per address in 15 minutes; 5 sign ups or links per email and 10 or 20 per address in an hour.
 * **Delete account.** Deletes every profile with its photos, measurements and cards, then the account, sessions and links. It asks for the password when the account has one.
 * **Emails.** Fixed copy in the language on screen, scanned like every other string. They say nothing about the situation or what the app is for.
-* **Judge mode** needs no account and sample profiles are never owned by one.
+* **Demo mode** needs no account and sample profiles are never owned by one.
 
 ## 13. Language and safety rules
 
@@ -300,13 +300,13 @@ The rules themselves (banned words, labels, previews, professional line, body im
 * Body Reshape is not called. Renders only use real photos from check ins.
 * Fit templates never show or ask for weight, BMI or a target. Cards show no goal, streak or progress score. A person can turn off body photos at any time and still use the hair features.
 
-## 14. Judge mode
+## 14. Demo mode
 
-* One tap opens a sample profile. No signup.
-* Judge mode runs only on recorded fixtures, including recorded planner output (architecture section 6). A visible stamp reads "Recorded on" with the date.
-* Recorded responses are saved from real runs during the build. Fixtures hold only synthetic data or data from people who gave written consent for this use. Anything else stays out of the repository.
-* There is no switch for live mode in judge mode. Judges cannot spend units.
-* Sample profiles are labelled as demo profiles, with simulated stages marked as such.
+* `/demo` opens without an account and lists the sample people, each with their check ins as a timeline of Stage Cards.
+* Demo mode only reads cards that were recorded from real runs of the app (architecture section 6). A visible line on each card says "Recorded on" with the date and that the person is simulated.
+* The sample people are copied from profiles recorded through the app with `pnpm --filter @interim/api seed-demo` (docs/development.md). The copy has its own rows and stored images, with check in dates a fortnight apart ending on the day it was made.
+* Fixtures hold only synthetic data or data from people who gave written consent for this use. Anything else stays out of the repository.
+* Demo mode has no route that writes or starts a run, so a visitor cannot spend units, and it reads only profiles owned by `sample`, so no real person's card can be reached through it.
 
 ## 15. Other agents
 
@@ -319,7 +319,7 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 3. When hair transfer returns error_hair_too_short, the agent switches to the fallback order and the card says why.
 4. Every number on a Stage Card matches a measurement record.
 5. The banned word scan passes on the whole app, fails on a test string, and does not flag "health" or the stage keys.
-6. Judge mode makes no live YouCam calls and has no switch to enable them. A replay fixture miss fails without a network call.
+6. Demo mode makes no live YouCam calls and has no switch to enable them. A replay fixture miss fails without a network call.
 7. Deleting a profile removes photos, measurements, renders and cards. Ledger rows remain with no personal data.
 8. A 429 response leads to a delayed retry, not a failure.
 9. A task that returns an error inside HTTP 200 is not charged.

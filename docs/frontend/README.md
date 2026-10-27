@@ -25,6 +25,8 @@ Words for today is chosen on the settings screen (off, or one of four sets). Whi
 
 The Stage Card makes share links (`ShareCard`): a new link is shown once with a copy button, because the API keeps only a hash, and later visits list the links that still work with a stop button each. `/s/[token]` is the share view for someone signed out. It calls the API without the person's cookie, answers 404 for a link that is unknown, expired or revoked, and sets `noindex` and `no-referrer`.
 
+`/demo` is open to anyone and lists the sample people with their check ins; `/demo/cards/[id]` shows one recorded card. Both are server components that call the API without the person's cookie, and the card page renders the same `StageCardBody` as `/cards/[id]` with nothing that changes data. The welcome screen links to it.
+
 Before a screen is done, check it in both themes at 320px and 390px wide, with the keyboard only, and with an axe audit that reports no violations.
 
 ## Copy

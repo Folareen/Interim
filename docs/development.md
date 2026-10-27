@@ -34,6 +34,9 @@ Variables are listed in `.env.example`. The API validates them once at startup (
 ## Replay and the capture flow
 With the default `YOUCAM_MODE=replay` there are no recorded YouCam responses for your own photos, so a run you start from the app ends in "no recorded answer for these photos". That is the safe default, not a fault. Tests write synthetic fixtures into a temporary directory (`apps/api/src/test/youcam-fixtures.ts`) and run the whole loop in replay. Recording fixtures for the sample personas is a live batch: state its cost, agree a cap and run it with `--max-units` first.
 
+## Demo data
+The demo copies profiles that were recorded through the app: `pnpm --filter @interim/api seed-demo <profile id>...` replaces every sample with a fresh copy of those profiles, their photos and renders. Run it in replay mode, so it never calls YouCam. Recording a profile is a live batch, so it follows the cost rules in [integrations/youcam.md](integrations/youcam.md).
+
 ## Testing
 Vitest. Unit tests sit next to the code (`*.test.ts`). Tests for the lock, rate limit and live switch need Redis (`pnpm db:up`, or `REDIS_TEST_URL`); without one they skip locally and fail in CI. YouCam-facing tests run against recorded fixtures, never live. Required tests are listed in spec section 16 and architecture section 16.
 

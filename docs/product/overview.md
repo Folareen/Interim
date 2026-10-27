@@ -153,7 +153,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * Lead with Hair loss ahead across its whole timeline: hair thinning, a bald stage where the person previews hairstyles or a wig on their own photo, growing back in, and a fit change at the end. Show the companion note changing with each stage and a moment such as a first day back at work.
 * Then weight change, to show the same engine working for a different situation, with its hard numbers.
 * Real people only with clear consent. The sample profiles are two synthetic people in five hair stages (`packages/fixtures/sample`), labelled on screen as simulated.
-* A recorded fixture replay so the video and the judges cost no units.
+* A recorded fixture replay so the video and anyone using the demo cost no units.
 * Show the agent trace and the unit ledger on screen so the technical depth is visible.
 
 ## Risks and open questions
