@@ -164,7 +164,7 @@ export const templates: Record<TemplateKey, Template> = {
     buyStages: ['usual_size', 'settled'],
     bodyPhotosByDefault: true,
     unitBudgetPerRun: 50,
-    version: 2,
+    version: 3,
     remeasureEvery: 3,
     baseline: allMeasures,
     tracks: [],
@@ -173,11 +173,13 @@ export const templates: Record<TemplateKey, Template> = {
       steps: ['usual_size', 'one_size_away', 'two_sizes_away'],
       settled: 'settled',
     },
+    // Size is what changes, so the card is about clothes, which every fit situation shows from the
+    // saved pieces. A hair preview here would say nothing about the person's change.
     strategies: {
-      usual_size: ['cut', 'colour', 'hold'],
-      one_size_away: ['cut', 'colour', 'hold'],
-      two_sizes_away: ['cut', 'colour', 'hold'],
-      settled: ['cut', 'colour', 'hold'],
+      usual_size: ['hold'],
+      one_size_away: ['hold'],
+      two_sizes_away: ['hold'],
+      settled: ['hold'],
     },
   },
   midlife_change: {

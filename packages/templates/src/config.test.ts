@@ -76,6 +76,12 @@ describe('cover strategy', () => {
   });
 });
 
+describe('weight change', () => {
+  it('renders no hair previews, because its card is about clothes and size', () => {
+    for (const list of Object.values(templates.weight_change.strategies)) expect(list).toEqual(['hold']);
+  });
+});
+
 describe('situation strategies', () => {
   it('gives each of templates 2 to 5 a strategy only that situation offers', () => {
     const offered = (key: (typeof templateKeys)[number]) => new Set(Object.values(templates[key].strategies).flat());
