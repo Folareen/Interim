@@ -26,7 +26,8 @@
     "reassurance": "Na you dey choose wetin to share, and you fit delete everything anytime.",
     "start": "Start",
     "footnote": "Interim na about how you dey look and wetin to wear. E no dey give medical advice.",
-    "haveAccount": "I don get account already"
+    "haveAccount": "I don get account already",
+    "demoLink": "Try di demo"
   },
   "language": {
     "title": "Choose your language",
@@ -667,5 +668,16 @@
     "viewIntro": "Previews of looks and shopping list wey di person wey get dem share. Preview no promise any result.",
     "viewExpires": "Dis link dey work till {date}.",
     "viewEmpty": "Nothing dey to show for dis link."
+  },
+  "demo": {
+    "title": "Try di demo",
+    "intro": "Dem be simulated pipo. Dem record each card from real use of Interim, so nothing here dey live and nothing dey spend.",
+    "simulated": "Simulated pesin",
+    "recordedOn": "Dem record am for {date}",
+    "checkInsTitle": "Check ins",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Simulated pesin, dem record am for {date}. Nothing for dis page dey live.",
+    "backAction": "Go back to di demo",
+    "startAction": "Start your own"
   }
 }

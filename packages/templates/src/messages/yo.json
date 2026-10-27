@@ -26,7 +26,8 @@
     "reassurance": "Ìwọ ni o yan ohun tí o fẹ́ pín, o sì lè pa gbogbo rẹ̀ rẹ́ nígbàkúgbà.",
     "start": "Bẹ̀rẹ̀",
     "footnote": "Interim jẹ́ nípa bí o ṣe rí àti ohun tí o lè wọ̀. Kì í fúnni ní ìmọ̀ràn dókítà.",
-    "haveAccount": "Mo ti ní àkáǹtì"
+    "haveAccount": "Mo ti ní àkáǹtì",
+    "demoLink": "Gbìyànjú àfihàn"
   },
   "language": {
     "title": "Yan èdè rẹ",
@@ -667,5 +668,16 @@
     "viewIntro": "Àwọn àkọ́wò ìrísí àti àtòjọ ríra nǹkan, tí ẹni tí wọ́n jẹ́ tirẹ̀ pín. Àkọ́wò kì í ṣe ìlérí abájáde.",
     "viewExpires": "Ìjápọ̀ yìí ń ṣiṣẹ́ títí di {date}.",
     "viewEmpty": "Kò sí ohun tí a lè fi hàn lórí ìjápọ̀ yìí."
+  },
+  "demo": {
+    "title": "Gbìyànjú àfihàn",
+    "intro": "Àwọn ènìyàn àfarawé ni wọ̀nyí. A gba káàdì kọ̀ọ̀kan sílẹ̀ látinú lílò Interim gidi, nítorí náà kò sí ohun tó ń ṣẹlẹ̀ lọ́wọ́lọ́wọ́ níbí, a kò sì ná nǹkan kan.",
+    "simulated": "Ènìyàn àfarawé",
+    "recordedOn": "A gbà á sílẹ̀ ní {date}",
+    "checkInsTitle": "Àyẹ̀wò",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Ènìyàn àfarawé, a gbà á sílẹ̀ ní {date}. Kò sí ohun tó ń ṣẹlẹ̀ lọ́wọ́lọ́wọ́ lórí ojú-ìwé yìí.",
+    "backAction": "Padà sí àfihàn",
+    "startAction": "Bẹ̀rẹ̀ ti ìwọ"
   }
 }

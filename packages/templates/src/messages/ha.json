@@ -26,7 +26,8 @@
     "reassurance": "Ku ne ke zaɓar abin da za ku bayar, kuma kuna iya share komai a kowane lokaci.",
     "start": "Fara",
     "footnote": "Interim yana magana ne kan yadda kuke da abin da za ku sa. Ba ya ba da shawarar likita.",
-    "haveAccount": "Ina da asusu tuni"
+    "haveAccount": "Ina da asusu tuni",
+    "demoLink": "Gwada demo"
   },
   "language": {
     "title": "Ku zaɓi harshenku",
@@ -667,5 +668,16 @@
     "viewIntro": "Samfotin kamanni da jerin siyayya, wanda mai su ya raba. Samfoti ba ya yi alkawarin sakamako.",
     "viewExpires": "Wannan hanyar haɗi tana aiki har zuwa {date}.",
     "viewEmpty": "Babu abin da za a nuna a wannan hanyar haɗi."
+  },
+  "demo": {
+    "title": "Gwada demo",
+    "intro": "Waɗannan mutane ne na kwaikwayo. An naɗi kowane kati daga ainihin amfani da Interim, don haka babu abin da ke faruwa kai tsaye kuma ba a kashe komai ba.",
+    "simulated": "Mutum na kwaikwayo",
+    "recordedOn": "An naɗa a {date}",
+    "checkInsTitle": "Dubawa",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Mutum na kwaikwayo, an naɗa a {date}. Babu wani abu a wannan shafin da ke kai tsaye.",
+    "backAction": "Koma zuwa demo",
+    "startAction": "Fara naka"
   }
 }

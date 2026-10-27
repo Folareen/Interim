@@ -26,7 +26,8 @@
     "reassurance": "Você escolhe o que compartilhar e pode apagar tudo a qualquer momento.",
     "start": "Começar",
     "footnote": "O Interim trata da sua aparência e do que vestir. Não dá conselhos médicos.",
-    "haveAccount": "Já tenho uma conta"
+    "haveAccount": "Já tenho uma conta",
+    "demoLink": "Experimente a demonstração"
   },
   "language": {
     "title": "Escolha seu idioma",
@@ -667,5 +668,16 @@
     "viewIntro": "Prévias de visuais e uma lista de compras, compartilhadas pela pessoa a quem pertencem. Uma prévia não promete um resultado.",
     "viewExpires": "Este link é válido até {date}.",
     "viewEmpty": "Não há nada para mostrar neste link."
+  },
+  "demo": {
+    "title": "Experimente a demonstração",
+    "intro": "São pessoas simuladas. Cada cartão foi gravado num uso real do Interim, por isso nada aqui é ao vivo e nada é gasto.",
+    "simulated": "Pessoa simulada",
+    "recordedOn": "Gravado em {date}",
+    "checkInsTitle": "Verificações",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Pessoa simulada, gravada em {date}. Nada nesta página é ao vivo.",
+    "backAction": "Voltar à demonstração",
+    "startAction": "Comece o seu"
   }
 }

@@ -26,7 +26,8 @@
     "reassurance": "You choose what to share, and you can delete everything at any time.",
     "start": "Get started",
     "footnote": "Interim is about how you look and what to wear. It does not give medical advice.",
-    "haveAccount": "I already have an account"
+    "haveAccount": "I already have an account",
+    "demoLink": "Try the demo"
   },
   "language": {
     "title": "Choose your language",
@@ -667,5 +668,16 @@
     "viewIntro": "Previews of looks and a shopping list, shared by the person they are for. A preview does not promise a result.",
     "viewExpires": "This link works until {date}.",
     "viewEmpty": "There is nothing to show on this link."
+  },
+  "demo": {
+    "title": "Try the demo",
+    "intro": "These are simulated people. Each card was recorded from a real run of Interim, so nothing here is live and nothing is spent.",
+    "simulated": "Simulated person",
+    "recordedOn": "Recorded on {date}",
+    "checkInsTitle": "Check ins",
+    "checkInLine": "{stage}, {date}",
+    "cardBanner": "Simulated person, recorded on {date}. Nothing on this page is live.",
+    "backAction": "Back to the demo",
+    "startAction": "Start your own"
   }
 }
