@@ -626,6 +626,22 @@ export type CardSummary = z.infer<typeof cardSummarySchema>;
 export const cardSummaryListSchema = z.array(cardSummarySchema);
 
 /**
+ * `GET /demo`: the sample people anyone can open without an account. They are simulated, their
+ * cards were recorded from real runs, and nothing here can start a new one.
+ */
+export const demoPersonSchema = z.object({
+  id: z.string().uuid(),
+  templateKey: templateKeySchema,
+  /** When the newest card was recorded. */
+  recordedOn: z.string(),
+  /** Oldest first, so the list reads as a timeline. */
+  cards: cardSummaryListSchema,
+});
+export type DemoPerson = z.infer<typeof demoPersonSchema>;
+export const demoSchema = z.array(demoPersonSchema);
+export type Demo = z.infer<typeof demoSchema>;
+
+/**
  * `POST /cards/:id/share`: the new link. The token is in the address and is shown once, because only
  * its hash is stored.
  */

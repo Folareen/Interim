@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { CleanupModule } from './cleanup/cleanup.module';
 import { DbModule } from './db/db.module';
+import { DemoModule } from './demo/demo.module';
 import { GuardModule } from './guard/guard.module';
 import { HealthController } from './health/health.controller';
 import { LedgerModule } from './ledger/ledger.module';
@@ -19,6 +20,7 @@ import { YoucamModule } from './youcam/youcam.module';
 @Module({
   imports: [
     DbModule,
+    DemoModule,
     AuthModule,
     CatalogModule,
     CleanupModule,
