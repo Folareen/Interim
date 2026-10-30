@@ -10,7 +10,6 @@ import {
   type Size,
   momentSchema,
   sizeLadder,
-  sizeSchema,
 } from '@interim/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -19,6 +18,7 @@ import { Actions } from '@/components/actions';
 import { Button, secondaryClass } from '@/components/button';
 import { ChoiceRow } from '@/components/choice-row';
 import { Notice } from '@/components/notice';
+import { Select } from '@/components/select';
 import { ApiError, createSnapshot, createUploads, putPhoto, startRun } from '@/lib/api';
 import { type KitMode, openCameraKit } from '@/lib/camera-kit';
 import { checkPhoto } from '@/lib/photo-check';
@@ -358,52 +358,38 @@ export function CaptureWizard({
               <legend className="mb-1 text-[1.25rem] font-medium font-serif">
                 {t('sizeTitle')}
               </legend>
-              <p className="mb-3 text-[0.95rem] text-muted">{t('sizeHelp')}</p>
-              <label htmlFor="current-size" className="sr-only">
-                {t('sizeTitle')}
-              </label>
-              <select
+              <p id="size-help" className="mb-3 text-[0.95rem] text-muted">
+                {t('sizeHelp')}
+              </p>
+              <Select
                 id="current-size"
-                value={size ?? ''}
-                onChange={(event) => setSize(sizeSchema.parse(event.target.value))}
-                className="min-h-14 w-full rounded-xl border border-outline bg-surface px-4 py-3"
-              >
-                <option value="" disabled>
-                  {t('sizeHelp')}
-                </option>
-                {sizeLadder.map((key) => (
-                  <option key={key} value={key}>
-                    {key}
-                  </option>
-                ))}
-              </select>
+                label={t('sizeTitle')}
+                value={size}
+                placeholder={t('sizeHelp')}
+                describedBy="size-help"
+                options={sizeLadder.map((value) => ({ value, label: value }))}
+                onValueChange={setSize}
+              />
             </fieldset>
           )}
           <fieldset className="space-y-3">
             <legend className="mb-1 text-[1.25rem] font-medium font-serif">
               {t('momentTitle')}
             </legend>
-            <p className="mb-3 text-[0.95rem] text-muted">{t('momentHelp')}</p>
-            <label htmlFor="next-moment" className="sr-only">
-              {t('momentTitle')}
-            </label>
-            <select
+            <p id="moment-help" className="mb-3 text-[0.95rem] text-muted">
+              {t('momentHelp')}
+            </p>
+            <Select<Moment | 'none'>
               id="next-moment"
+              label={t('momentTitle')}
               value={moment}
-              onChange={(event) =>
-                setMoment(
-                  event.target.value === 'none' ? 'none' : momentSchema.parse(event.target.value),
-                )
-              }
-              className="min-h-14 w-full rounded-xl border border-outline bg-surface px-4 py-3"
-            >
-              <option value="none">{t('momentNone')}</option>
-              {momentSchema.options.map((key) => (
-                <option key={key} value={key}>
-                  {t(`moments.${key}`)}
-                </option>
-              ))}
-            </select>
+              describedBy="moment-help"
+              options={[
+                { value: 'none', label: t('momentNone') },
+                ...momentSchema.options.map((value) => ({ value, label: t(`moments.${value}`) })),
+              ]}
+              onValueChange={setMoment}
+            />
           </fieldset>
         </div>
         <Actions>

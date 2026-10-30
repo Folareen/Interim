@@ -48,6 +48,8 @@ The app uses [next-intl](https://next-intl.dev). The server reads the person's l
 - The `Messages` type in `packages/templates` is what the API reads for fixed notes, situation names and the lines for what to say, so the API and the web app never keep separate copies.
 
 ## Accessibility
+Data dropdowns use the shared `Select`: a native modal dialog keeps focus inside the choices, then restores it to the trigger. It opens as a bottom sheet below 640px and an anchored menu above. Browsing with arrows or typing does not change the value until a choice is confirmed; Escape, close and backdrop dismissal preserve it.
+
 Every control is keyboard reachable and labelled; contrast meets WCAG AA; do not rely on color alone; respect reduced motion. The page's `lang` is the person's language, a language's own name carries its own `lang` on the language screen, a button that is off says why through `aria-describedby`, and a status line announces when a form is working. The theme and language buttons are labelled by what they do.
 
 The screen reader pass (VoiceOver and TalkBack testing) comes after the core flow works end to end. Until then the basics above still apply to every component.

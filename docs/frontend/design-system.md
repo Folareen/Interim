@@ -39,6 +39,7 @@ The welcome pair uses resized synthetic fixtures from `packages/fixtures/sample/
 | `WorkspaceNav`, `ProfileSwitcher` | Three destinations and owned-situation switching |
 | `Actions` | Sticky task bar, offset above mobile navigation |
 | `Button` | Primary (one per screen), secondary and danger |
+| `Select` | Controlled single choice: anchored dialog on desktop, bottom sheet on phones; arrow keys, typeahead, explicit confirmation and Escape to cancel |
 | `ChoiceRow` | A large radio or checkbox row. The input stays real, so it works with a keyboard, a screen reader and without JavaScript |
 | `PageHeading`, `Notice`, `ThemeToggle`, `StageDots` | Title, error message, theme switch, and the decorative line of five dots |
 
