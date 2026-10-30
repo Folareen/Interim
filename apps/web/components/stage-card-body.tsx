@@ -72,11 +72,11 @@ export async function StageCardBody({
 
   return (
     <>
-      <h1 className="text-[2.25rem] leading-[1.12] sm:text-[2.75rem]">{t('title')}</h1>
+      <h1 className="text-[1.75rem] leading-[1.2] sm:text-[2rem]">{t('title')}</h1>
       <p className="mt-2 text-muted">{date(card.takenAt)}</p>
 
-      <section className="mt-8 border-l-2 border-accent pl-4">
-        <p lang={card.locale} className="text-[1.15rem]">
+      <section className="mt-5 border-l-2 border-accent pl-4">
+        <p lang={card.locale} className="font-serif text-[1.15rem] leading-relaxed">
           {card.companionNote.text}
         </p>
         {card.locale !== locale && (
@@ -90,7 +90,7 @@ export async function StageCardBody({
         <h2 className="text-[1.25rem]">{t('optionsTitle')}</h2>
         <p className="mt-2 text-[0.95rem] text-muted">{t('optionsIntro')}</p>
         {card.options.length === 0 && <p className="mt-4">{t('noOptions')}</p>}
-        <ul className="mt-5 grid min-w-0 items-start gap-6 sm:grid-cols-2">
+        <ul className="mt-4 grid min-w-0 items-start gap-5 sm:grid-cols-2">
           {card.options.map((option) => {
             const url = view.renderUrls[option.renderId];
             return (
@@ -110,9 +110,6 @@ export async function StageCardBody({
                 {option.look && isLookKey(option.look) ? (
                   <>
                     <p className="mt-3 font-semibold">{looks(option.look)}</p>
-                    <p className="text-[0.95rem] text-muted">
-                      {t(`optionReasons.${option.strategy}`)}
-                    </p>
                   </>
                 ) : (
                   <p className="mt-3 font-semibold">{t(`optionReasons.${option.strategy}`)}</p>
@@ -127,7 +124,7 @@ export async function StageCardBody({
         <section className="mt-8">
           <h2 className="text-[1.25rem]">{t('clothesTitle')}</h2>
           <p className="mt-2 text-[0.95rem] text-muted">{t('clothesIntro')}</p>
-          <ul className="mt-5 grid min-w-0 items-start gap-6 sm:grid-cols-2">
+          <ul className="mt-4 grid min-w-0 items-start gap-5 sm:grid-cols-2">
             {card.clothes.map((piece) => {
               const url = view.renderUrls[piece.renderId];
               return (

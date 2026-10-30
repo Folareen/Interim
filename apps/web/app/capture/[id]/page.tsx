@@ -35,7 +35,7 @@ export default async function Capture({ params }: { params: Promise<{ id: string
           : `/ready/${id}`
       }
     >
-      <PageHeading title={t('title')} intro={t('intro')} />
+      <PageHeading title={t('title')} />
       <CaptureWizard profileId={id} plan={plan} locale={locale} />
     </Shell>
   );

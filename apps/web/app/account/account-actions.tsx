@@ -11,7 +11,7 @@ import { ApiError, createRecoveryCodes, deleteAccount, logout, requestEmailChang
 import { useAuthError } from '@/lib/use-auth-error';
 
 /** Signs this browser out. */
-export function SignOut() {
+export function SignOut({ compact = false }: { compact?: boolean }) {
   const t = useTranslations('account');
   const common = useTranslations('common');
   const router = useRouter();
@@ -26,7 +26,11 @@ export function SignOut() {
       router.push('/');
       router.refresh();
     } catch (cause) {
-      setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
+      setError(
+        common(
+          cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError',
+        ),
+      );
       setWorking(false);
     }
   }
@@ -37,10 +41,17 @@ export function SignOut() {
       <p role="status" className="sr-only">
         {working ? t('signingOut') : ''}
       </p>
-      <Button variant="secondary" onClick={signOut} disabled={working}>
+      <Button
+        variant="secondary"
+        className={
+          compact ? 'min-h-11! w-auto shrink-0 border-border px-4! py-2! text-[0.9rem]!' : undefined
+        }
+        onClick={signOut}
+        disabled={working}
+      >
         {working ? t('signingOut') : t('signOut')}
       </Button>
-      <p className="text-[0.9rem] text-muted">{t('signOutHint')}</p>
+      {!compact && <p className="text-[0.9rem] text-muted">{t('signOutHint')}</p>}
     </div>
   );
 }

@@ -19,7 +19,7 @@ export default async function Settings({ params }: { params: Promise<{ id: strin
   const t = await getTranslations('settings');
   return (
     <Shell profileId={id} active="you" backHref={`/you/${id}`}>
-      <PageHeading title={t('title')} intro={t('intro')} />
+      <PageHeading title={t('title')} />
       <NotificationsSection profileId={id} hasWordsSet={preferences.wordsSet !== null} />
       <SettingsForm profileId={id} preferences={preferences} />
     </Shell>

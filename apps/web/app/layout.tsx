@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Newsreader, Source_Sans_3 } from 'next/font/google';
+import { Manrope, Newsreader } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
@@ -8,9 +8,9 @@ import './globals.css';
 
 // Both families cover the extended Latin and Vietnamese letters that Yoruba, Igbo and Hausa need.
 // next/font reads its options at build time, so they are written out rather than shared.
-const sans = Source_Sans_3({
+const sans = Manrope({
   subsets: ['latin', 'latin-ext', 'vietnamese'],
-  variable: '--font-source-sans',
+  variable: '--font-manrope',
   display: 'swap',
 });
 const serif = Newsreader({

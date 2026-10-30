@@ -26,24 +26,24 @@ export async function Shell({
   active?: WorkspaceSection;
   wide?: boolean;
 }) {
-  const [t, workspace, me] = await Promise.all([
-    getTranslations('common'),
-    getTranslations('workspace'),
-    getMe(),
-  ]);
+  const [t, me] = await Promise.all([getTranslations('common'), getMe()]);
   const navigation = me && profileId !== undefined;
   const stepText = step === undefined ? '' : t('stepOf', { current: step, total: TOTAL_STEPS });
   return (
     <div className={navigation ? 'workspace' : ''}>
       <div className="mx-auto flex min-h-dvh w-full max-w-[76rem] flex-col px-5 pt-[env(safe-area-inset-top)] sm:px-8 lg:px-10">
-        <header className="flex min-h-20 items-center justify-between gap-3 border-b border-border py-3 lg:min-h-24">
-          <Link href="/" className="shrink-0 font-serif text-[1.65rem] font-medium tracking-tight">
+        <header
+          className={`flex items-center justify-between gap-3 border-b border-border ${navigation ? 'min-h-16 py-2' : 'min-h-20 py-3'}`}
+        >
+          <Link href="/" className="shrink-0 font-serif text-[1.5rem] font-medium tracking-tight">
             {t('appName')}
             <span aria-hidden="true" className="ml-1 text-accent">
               .
             </span>
           </Link>
-          <p className="hidden max-w-sm text-[0.95rem] text-muted md:block">{t('tagline')}</p>
+          {!me && (
+            <p className="hidden max-w-sm text-[0.9rem] text-muted md:block">{t('tagline')}</p>
+          )}
           <div className="flex shrink-0 items-center gap-1">
             <LanguageLink />
             <ThemeToggle />
@@ -60,18 +60,14 @@ export async function Shell({
         <div
           className={
             navigation
-              ? 'grid flex-1 gap-10 lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-12'
+              ? 'grid flex-1 gap-10 lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-10'
               : 'flex flex-1 flex-col'
           }
         >
           {navigation && (
-            <aside className="hidden border-r border-border pr-7 pt-10 lg:block">
-              <div className="sticky top-8 space-y-8">
-                <p className="px-4 text-[0.9rem] text-muted">{workspace('yourSpace')}</p>
+            <aside className="hidden border-r border-border pr-5 pt-7 lg:block">
+              <div className="sticky top-7">
                 <WorkspaceNav profileId={profileId} active={active} />
-                <p className="border-t border-border pt-6 text-[0.95rem] leading-relaxed text-muted">
-                  {workspace('sidebarNote')}
-                </p>
               </div>
             </aside>
           )}
@@ -81,19 +77,19 @@ export async function Shell({
             <main
               id="main"
               tabIndex={-1}
-              className="flex min-w-0 flex-1 flex-col pt-6 outline-none sm:pt-8 lg:pt-10"
+              className="flex min-w-0 flex-1 flex-col pt-4 outline-none sm:pt-6 lg:pt-7"
             >
               {backHref && (
                 <Link
                   href={backHref}
-                  className="mb-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-lg pr-3 text-[0.95rem] text-muted hover:text-text"
+                  className="mb-2 inline-flex min-h-11 w-fit items-center gap-2 rounded-lg pr-3 text-[0.95rem] text-muted hover:text-text"
                 >
                   <span aria-hidden="true">←</span>
                   {t('back')}
                 </Link>
               )}
               {navigation && (
-                <div className="mb-5">
+                <div className="mb-4">
                   <ProfileSwitcher profileId={profileId} />
                 </div>
               )}
@@ -117,7 +113,7 @@ export async function Shell({
               )}
               {children}
             </main>
-            <footer className="mt-12 border-t border-border py-5">
+            <footer className="mt-8 border-t border-border py-5">
               <nav
                 aria-label={t('information')}
                 className="flex flex-wrap gap-x-6 text-[0.9rem] text-muted"
@@ -134,7 +130,7 @@ export async function Shell({
         </div>
       </div>
       {navigation && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface px-4 pt-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
+        <div className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-lg rounded-[1.5rem] border border-outline bg-surface p-1 lg:hidden">
           <div className="mx-auto max-w-lg">
             <WorkspaceNav profileId={profileId} active={active} mobile />
           </div>

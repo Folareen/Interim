@@ -23,7 +23,7 @@ export default async function Update({ params }: { params: Promise<{ id: string 
   if (!items) notFound();
   return (
     <Shell profileId={id} backHref={`/ready/${id}`} wide>
-      <PageHeading title={t('prepareTitle')} intro={t('prepareIntro')} />
+      <PageHeading title={t('prepareTitle')} />
       <GarmentList
         profileId={id}
         items={items.filter((item) => isGarmentKey(item.sku))}

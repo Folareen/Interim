@@ -58,25 +58,29 @@ export function GarmentList({
       <p role="status" className="text-[0.95rem] text-muted">
         {workspace('selectedCount', { count: saved.size })}
       </p>
-      <ul className="mb-6 grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className="mb-6 grid grid-cols-2 items-stretch gap-3 sm:gap-4 xl:grid-cols-3">
         {items.map((item) => {
           if (!isGarmentKey(item.sku)) return null;
           const name = names(item.sku);
           const isSaved = saved.has(item.sku);
           return (
-            <li key={item.sku} className="workspace-card flex min-w-0 flex-col overflow-hidden">
+            <li
+              key={item.sku}
+              data-selected={isSaved}
+              className="workspace-card flex min-w-0 flex-col overflow-hidden"
+            >
               <img
                 src={item.imageUrl}
                 alt=""
                 className="aspect-[4/3] w-full border-b border-border object-cover"
               />
-              <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 p-4">
+              <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-3 sm:p-4">
                 <div>
-                  <p className="font-semibold">{name}</p>
-                  {isSaved && <p className="text-[0.9rem] text-muted">{t('saved')}</p>}
+                  <p className="text-[0.95rem] font-semibold">{name}</p>
                 </div>
                 <Button
                   variant="secondary"
+                  className="min-w-0 px-2! text-[0.9rem]!"
                   aria-pressed={isSaved}
                   onClick={() => void toggle(item.sku)}
                   disabled={working !== undefined}

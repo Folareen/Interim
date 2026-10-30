@@ -43,7 +43,7 @@ export default async function Looks({
   const views = await Promise.all(selected.map((card) => getCard(card.id)));
   return (
     <Shell profileId={id} active="looks" wide>
-      <PageHeading title={t('looks')} intro={t('looksIntro')} />
+      <PageHeading title={t('looks')} />
       {cards.length === 0 ? (
         <section className="workspace-card mt-8 p-6 sm:p-10">
           <h2 className="text-[1.5rem]">{t('emptyTitle')}</h2>
@@ -53,7 +53,7 @@ export default async function Looks({
           </Link>
         </section>
       ) : (
-        <ul className="mt-8 grid items-start gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <ul className="mt-8 grid grid-cols-2 items-start gap-3 sm:gap-5 xl:grid-cols-3">
           {views.map((view) => {
             if (!view) return null;
             const preview = view.card.options.find((option) => view.renderUrls[option.renderId]);
@@ -71,14 +71,14 @@ export default async function Looks({
                       {cardText('imageGone')}
                     </div>
                   )}
-                  <div className="space-y-2 p-5">
+                  <div className="space-y-1 p-3 sm:p-4">
                     <p className="text-[0.9rem] text-muted">
                       {format.dateTime(new Date(view.card.takenAt), { dateStyle: 'medium' })}
                     </p>
-                    <h2 className="text-[1.35rem]">
+                    <h2 className="text-[1rem]">
                       {isStageKey(view.card.stageKey) ? stages(view.card.stageKey) : t('openCard')}
                     </h2>
-                    <p className="text-[0.95rem] font-semibold text-accent">
+                    <p className="inline-flex min-h-11 items-center text-[0.9rem] font-semibold text-accent">
                       {t('openCard')} <span aria-hidden="true">↗</span>
                     </p>
                   </div>

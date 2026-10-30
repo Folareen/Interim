@@ -28,51 +28,58 @@ export default async function You({ params }: { params: Promise<{ id: string }> 
   ]);
   return (
     <Shell profileId={id} active="you" wide>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-        <PageHeading title={t('you')} intro={t('youIntro')} />
-        <div className="w-full sm:w-60 sm:shrink-0">
-          <SignOut />
-        </div>
+      <div className="flex items-start justify-between gap-4">
+        <PageHeading title={t('you')} />
+        <SignOut compact />
       </div>
-      <div className="mt-8 grid items-start gap-6 xl:grid-cols-2">
-        <section className="workspace-card space-y-5 p-6">
-          <h2 className="text-[1.5rem]">{settings('title')}</h2>
-          <dl className="space-y-4">
-            <div>
+      <div className="mt-6 grid items-start gap-5 xl:grid-cols-2">
+        <section className="workspace-card overflow-hidden">
+          <h2 className="px-5 pt-5 text-[1.1rem]">{settings('title')}</h2>
+          <dl className="divide-y divide-border px-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 py-4">
               <dt className="text-[0.95rem] text-muted">{ready('toneLabel')}</dt>
-              <dd>{setup(`tones.${profile.tone}.label`)}</dd>
+              <dd className="text-[0.95rem] font-medium">{setup(`tones.${profile.tone}.label`)}</dd>
             </div>
-            <div>
+            <div className="flex flex-wrap items-baseline justify-between gap-2 py-4">
               <dt className="text-[0.95rem] text-muted">{ready('photosLabel')}</dt>
-              <dd>{consent(`retention.${profile.retention}.label`)}</dd>
+              <dd className="text-[0.95rem] font-medium">
+                {consent(`retention.${profile.retention}.label`)}
+              </dd>
             </div>
           </dl>
-          <Link href={`/settings/${id}`} className={secondaryClass}>
+          <Link
+            href={`/settings/${id}`}
+            className="flex min-h-14 items-center justify-between gap-4 border-t border-border px-5 py-3 text-[0.95rem] font-semibold text-accent hover:bg-tint"
+          >
             {ready('editAction')}
+            <span aria-hidden="true">↗</span>
           </Link>
           <Link
             href={`/account?profile=${id}`}
-            className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4"
+            className="flex min-h-14 items-center justify-between gap-4 border-t border-border px-5 py-3 text-[0.95rem] font-semibold text-accent hover:bg-tint"
           >
             {account('title')}
+            <span aria-hidden="true">↗</span>
           </Link>
         </section>
-        <section className="workspace-card space-y-4 p-6">
-          <h2 className="text-[1.5rem]">{t('dataTitle')}</h2>
-          <p className="text-[0.95rem] text-muted">{ready('exportBody')}</p>
-          <a href={`/api/profiles/${id}/export.zip`} download className={secondaryClass}>
-            {ready('exportAction')}
-          </a>
-          <Link
-            href={`/ledger/${id}`}
-            className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4"
-          >
-            {ready('ledgerAction')}
-          </Link>
-          <div className="border-t border-border pt-2">
-            <DeleteProfile profileId={id} />
+        <details className="workspace-card p-5">
+          <summary className="min-h-11 cursor-pointer">{t('dataTitle')}</summary>
+          <div className="space-y-4 border-t border-border pt-4">
+            <p className="text-[0.95rem] text-muted">{ready('exportBody')}</p>
+            <a href={`/api/profiles/${id}/export.zip`} download className={secondaryClass}>
+              {ready('exportAction')}
+            </a>
+            <Link
+              href={`/ledger/${id}`}
+              className="inline-flex min-h-11 items-center text-[0.95rem] font-semibold text-accent underline underline-offset-4"
+            >
+              {ready('ledgerAction')}
+            </Link>
+            <div className="border-t border-border pt-4">
+              <DeleteProfile profileId={id} />
+            </div>
           </div>
-        </section>
+        </details>
       </div>
     </Shell>
   );

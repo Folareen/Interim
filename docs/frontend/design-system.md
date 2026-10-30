@@ -22,14 +22,14 @@ Contrast against the page, measured: body text 11.06:1 light and 14.18:1 dark; s
 The device's setting applies until the person uses the toggle, which stores `interim_theme` (`light` or `dark`) in a cookie. The server reads it and renders `data-theme` on `<html>`, so there is no flash. A `prefers-color-scheme` rule covers the default.
 
 ## Type
-Newsreader (a soft serif) for headings and Source Sans 3 for text, both loaded with `next/font`. Both cover the extended Latin and Vietnamese letters that Yoruba, Igbo and Hausa need, so a language added later does not fall back to another font. Arabic will need its own font and right to left layout.
+Manrope for interface text and internal headings; Newsreader for the public story and short personal notes, both loaded with `next/font`. Both load Latin, extended Latin and Vietnamese subsets for the letters used by Yoruba, Igbo and Hausa. Arabic will need its own font and right to left layout.
 
-The root size is 18px and everything is in rem. Headings balance their lines. Do not set text smaller than 0.9rem.
+The root size is 18px and everything is in rem. Headings balance their lines. Do not set text smaller than 0.9rem. Internal headings are smaller and use a consistent semibold sans face. Keep one useful title; omit introductions that repeat a button or the current context. Keep photo instructions, preview limits, consent and safety wording visible where needed.
 
 ## Layout
-Mobile first, with 20px gutters and one task column. Forms stay within `max-w-xl`; the workspace extends to 76rem, with a desktop sidebar and two-column dashboard or result where useful. Mobile navigation stays at the bottom, and a capture action bar sits above it with safe-area padding. Desktop navigation occupies its own column. Tap targets are at least 44px (main buttons at least 56px); buttons can grow for long translations. Cards use a 0.875rem radius.
+Mobile first, with 20px gutters and one task column. Forms stay within `max-w-xl`; the workspace extends to 76rem, with a desktop sidebar and two-column dashboard or result where useful. Mobile navigation is a labelled, floating three-item bar with safe-area padding; a capture action bar sits above it. A compact header and short situation switcher keep the main action near the top. Desktop navigation occupies its own column. Tap targets are at least 44px (main buttons at least 56px); buttons can grow for long translations. Cards use a 1.25rem radius.
 
-The welcome pair uses resized synthetic fixtures from `packages/fixtures/sample/persona-f-stage-0.jpg` and `persona-f-stage-3.jpg` in `apps/web/public/demo`. Labels identify two simulated moments; this is not a claimed generated outcome. No personal photos are bundled.
+The welcome pair uses resized synthetic fixtures from `packages/fixtures/sample/persona-f-stage-0.jpg` and `persona-f-stage-3.jpg` in `apps/web/public/demo`. Labels identify two simulated moments; this is not a claimed generated outcome. No personal photos are bundled. Large decorative line drawings in `LandingIllustration` introduce the record and the two audience groups without implying an appearance outcome. The landing page uses staggered panels, an ordered explanation, factual product differences and native expandable questions; internal screens use a compact photo gallery and plain account rows.
 
 ## Components
 | Component | Use |
