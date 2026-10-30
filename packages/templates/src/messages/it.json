@@ -226,6 +226,7 @@
     "passwordAction": "Scegli una password via email",
     "signOut": "Esci",
     "signingOut": "Uscita…",
+    "signOutHint": "Puoi accedere di nuovo quando vuoi. I tuoi profili restano salvati.",
     "deleteTitle": "Elimina il mio account",
     "deleteBody": "Questo elimina il tuo account e tutti i profili che contiene, con foto, misure e schede. Non si può annullare.",
     "deletePasswordLabel": "La tua password",

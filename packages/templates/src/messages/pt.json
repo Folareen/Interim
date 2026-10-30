@@ -226,6 +226,7 @@
     "passwordAction": "Escolher uma senha por e-mail",
     "signOut": "Sair",
     "signingOut": "Saindo…",
+    "signOutHint": "Pode voltar a entrar a qualquer momento. Os seus perfis continuam guardados.",
     "deleteTitle": "Excluir minha conta",
     "deleteBody": "Isso exclui sua conta e todos os perfis nela, com fotos, medidas e fichas. Não dá para desfazer.",
     "deletePasswordLabel": "Sua senha",

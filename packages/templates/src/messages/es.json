@@ -226,6 +226,7 @@
     "passwordAction": "Elegir una contraseña por correo",
     "signOut": "Cerrar sesión",
     "signingOut": "Cerrando sesión…",
+    "signOutHint": "Puedes volver a iniciar sesión cuando quieras. Tus perfiles se conservan.",
     "deleteTitle": "Eliminar mi cuenta",
     "deleteBody": "Esto elimina su cuenta y todos los perfiles que contiene, con sus fotos, mediciones y fichas. No se puede deshacer.",
     "deletePasswordLabel": "Su contraseña",

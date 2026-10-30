@@ -37,6 +37,9 @@ export default async function Account({
         <dt className="text-[0.9rem] text-muted">{t('emailLabel')}</dt>
         <dd className="break-all font-semibold">{me.email}</dd>
       </dl>
+      <div className="mt-5">
+        <SignOut />
+      </div>
       <ChangeEmail hasPassword={me.hasPassword} />
 
       <section className="mt-8">
@@ -82,9 +85,6 @@ export default async function Account({
         <RecoveryCodes hasPassword={me.hasPassword} left={me.recoveryCodes} />
       </section>
 
-      <div className="mt-8">
-        <SignOut />
-      </div>
       <DeleteAccount hasPassword={me.hasPassword} />
     </Shell>
   );

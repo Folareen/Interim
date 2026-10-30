@@ -226,6 +226,7 @@
     "passwordAction": "Zaɓi kalmar sirri ta imel",
     "signOut": "Fita",
     "signingOut": "Ana fita…",
+    "signOutHint": "Za ka iya sake shiga a kowane lokaci. Bayanan martabarka za su ci gaba da kasancewa ajiye.",
     "deleteTitle": "Share asusuna",
     "deleteBody": "Wannan yana share asusunku da duk bayanan da ke cikinsa, tare da hotuna, ma’auni da katunan. Ba za a iya mayar da shi ba.",
     "deletePasswordLabel": "Kalmar sirrinku",

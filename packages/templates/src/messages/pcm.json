@@ -226,6 +226,7 @@
     "passwordAction": "Choose password by email",
     "signOut": "Sign out",
     "signingOut": "Dey sign out…",
+    "signOutHint": "You fit sign in again anytime. Your profiles go still dey saved.",
     "deleteTitle": "Delete my account",
     "deleteBody": "Dis one go delete your account and every profile inside am, with photos, measurements and cards. You no fit undo am.",
     "deletePasswordLabel": "Your password",

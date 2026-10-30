@@ -226,6 +226,7 @@
     "passwordAction": "Choisir un mot de passe par e-mail",
     "signOut": "Se déconnecter",
     "signingOut": "Déconnexion…",
+    "signOutHint": "Vous pouvez vous reconnecter à tout moment. Vos profils restent enregistrés.",
     "deleteTitle": "Supprimer mon compte",
     "deleteBody": "Cela supprime votre compte et tous les profils qu’il contient, avec leurs photos, mesures et fiches. Cette action est irréversible.",
     "deletePasswordLabel": "Votre mot de passe",

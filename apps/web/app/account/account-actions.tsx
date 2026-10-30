@@ -40,6 +40,7 @@ export function SignOut() {
       <Button variant="secondary" onClick={signOut} disabled={working}>
         {working ? t('signingOut') : t('signOut')}
       </Button>
+      <p className="text-[0.9rem] text-muted">{t('signOutHint')}</p>
     </div>
   );
 }

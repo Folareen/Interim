@@ -226,6 +226,7 @@
     "passwordAction": "Choose a password by email",
     "signOut": "Sign out",
     "signingOut": "Signing out…",
+    "signOutHint": "You can sign back in any time. Your profiles stay saved.",
     "deleteTitle": "Delete my account",
     "deleteBody": "This deletes your account and every profile in it, with all photos, measurements and cards. It cannot be undone.",
     "deletePasswordLabel": "Your password",

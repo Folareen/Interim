@@ -226,6 +226,7 @@
     "passwordAction": "Chagua nenosiri kwa barua pepe",
     "signOut": "Toka",
     "signingOut": "Inatoka…",
+    "signOutHint": "Unaweza kuingia tena wakati wowote. Wasifu wako utaendelea kuhifadhiwa.",
     "deleteTitle": "Futa akaunti yangu",
     "deleteBody": "Hii inafuta akaunti yako na kila wasifu ndani yake, pamoja na picha, vipimo na kadi. Haiwezi kutenduliwa.",
     "deletePasswordLabel": "Nenosiri lako",
