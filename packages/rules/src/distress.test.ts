@@ -10,6 +10,7 @@ describe('soundsLikeCrisis', () => {
       'Some days I want to die',
       "I don't want to be here anymore",
       'i dont want to wake up',
+      'i dont wanna be here',
       'thinking about suicide',
       'I keep hurting myself',
       'I can’t go on like this',

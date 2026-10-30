@@ -8,9 +8,12 @@ import { BullRunQueue, RUNS_REDIS_URL, RUN_QUEUE } from './run.queue';
 import { RunWorker } from './run.worker';
 import { RUNS_CONFIG, RunsService } from './runs.service';
 import { RunsController } from './runs.controller';
+import { AssistantService } from '../agent/assistant.service';
+import { ModelModule } from '../agent/model.module';
+import { RateLimitService } from '../auth/rate-limit.service';
 
 @Module({
-  imports: [GuardModule, StorageModule, AgentModule],
+  imports: [GuardModule, StorageModule, AgentModule, ModelModule],
   controllers: [RunsController],
   providers: [
     { provide: RUNS_REDIS_URL, useValue: env.REDIS_URL },
@@ -20,6 +23,8 @@ import { RunsController } from './runs.controller';
     { provide: RUN_QUEUE, useClass: BullRunQueue },
     RunsService,
     RunWorker,
+    AssistantService,
+    RateLimitService,
   ],
   exports: [RunWorker, RunsService],
 })

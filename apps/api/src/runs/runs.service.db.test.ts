@@ -38,7 +38,9 @@ async function seed(opts: { consented?: boolean; owner?: string } = {}) {
     consentVersion: '4',
     consentedAt: opts.consented === false ? null : new Date(),
   });
-  await db.insert(snapshot).values({ id: snapshotId, profileId, isBaseline: true, stageKey: 'full' });
+  await db
+    .insert(snapshot)
+    .values({ id: snapshotId, profileId, isBaseline: true, stageKey: 'full' });
   return { profileId, snapshotId };
 }
 
@@ -65,20 +67,62 @@ async function finished(opts: { owner?: string } = {}) {
   const { profileId, snapshotId } = await seed(opts);
   const runId = randomUUID();
   const renderId = randomUUID();
-  await db.insert(run).values({ id: runId, snapshotId, templateKey: 'hair_loss_ahead', templateVersion: 1, budgetUnits: 40, status: 'done', stopReason: 'stopped_complete' });
+  await db
+    .insert(run)
+    .values({
+      id: runId,
+      snapshotId,
+      templateKey: 'hair_loss_ahead',
+      templateVersion: 1,
+      budgetUnits: 40,
+      status: 'done',
+      stopReason: 'stopped_complete',
+    });
   await db.insert(traceEntry).values([
     { runId, seq: 0, step: 'observe', inputs: {}, reason: 'observed' },
     { runId, seq: 1, step: 'stop', inputs: {}, reason: 'stopped_complete' },
   ]);
   const key = `renders/${profileId}/${snapshotId}/${renderId}.jpg`;
   await storage.put(key, Buffer.from('x'));
-  await db.insert(render).values({ id: renderId, snapshotId, tool: 'hairstyle', strategy: 'cut', inputHash: 'h', objectKey: key, label: 'preview', expiresAt: new Date(Date.now() + 1e9) });
-  await db.insert(photo).values({ snapshotId, kind: 'front', objectKey: `photos/${profileId}/${snapshotId}/front.jpg`, sha256: 'a', expiresAt: new Date(Date.now() + 1e9) });
-  const [saved] = await db.insert(stageCard).values({ runId, profileId, card: card(renderId) }).returning({ id: stageCard.id });
+  await db
+    .insert(render)
+    .values({
+      id: renderId,
+      snapshotId,
+      tool: 'hairstyle',
+      strategy: 'cut',
+      inputHash: 'h',
+      objectKey: key,
+      label: 'preview',
+      expiresAt: new Date(Date.now() + 1e9),
+    });
+  await db
+    .insert(photo)
+    .values({
+      snapshotId,
+      kind: 'front',
+      objectKey: `photos/${profileId}/${snapshotId}/front.jpg`,
+      sha256: 'a',
+      expiresAt: new Date(Date.now() + 1e9),
+    });
+  const [saved] = await db
+    .insert(stageCard)
+    .values({ runId, profileId, card: card(renderId) })
+    .returning({ id: stageCard.id });
   return { profileId, snapshotId, runId, renderId, cardId: saved?.id ?? '', key };
 }
 
 describe('start', () => {
+  it('resumes only the owner’s newest run and distinguishes a profile with no run', async () => {
+    const { profileId, snapshotId } = await seed();
+    expect(await service.latest(profileId, alice)).toEqual({ run: null });
+    const started = await service.start(snapshotId, alice, 'source');
+    expect(await service.latest(profileId, alice)).toMatchObject({
+      run: { id: started.id, status: 'queued' },
+    });
+    await expect(service.latest(profileId, bob)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.latest(randomUUID(), alice)).rejects.toBeInstanceOf(NotFoundException);
+  });
   it('creates one queued run, caps its budget and queues it', async () => {
     const { snapshotId } = await seed();
 
@@ -107,7 +151,9 @@ describe('start', () => {
     const { snapshotId } = await seed();
     enqueue.mockRejectedValueOnce(new Error('redis down'));
     await expect(service.start(snapshotId, alice, 's')).rejects.toThrow('redis down');
-    await expect(service.start(snapshotId, alice, 's')).resolves.toMatchObject({ status: 'queued' });
+    await expect(service.start(snapshotId, alice, 's')).resolves.toMatchObject({
+      status: 'queued',
+    });
     expect(await db.select().from(run)).toHaveLength(1);
   });
 
@@ -142,7 +188,11 @@ describe('reading a run', () => {
   it('returns its trace in order, with the card id once there is a card', async () => {
     const f = await finished();
     const view = await service.get(f.runId, alice);
-    expect(view).toMatchObject({ status: 'done', stopReason: 'stopped_complete', cardId: f.cardId });
+    expect(view).toMatchObject({
+      status: 'done',
+      stopReason: 'stopped_complete',
+      cardId: f.cardId,
+    });
     expect(view.trace.map((t) => t.reason)).toEqual(['observed', 'stopped_complete']);
   });
 

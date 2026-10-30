@@ -3,48 +3,48 @@
 /* Colour tokens per theme. Documented in docs/frontend/design-system.md, with their contrast ratios. */
 :root {
   color-scheme: light;
-  --bg: #f1f5f6;
-  --surface: #fafcfc;
-  --tint: #dcebed;
-  --text: #13232b;
-  --muted: #47595f;
-  --border: #c9d5da;
-  --outline: #71868e;
-  --accent: #1b6872;
-  --accent-hover: #14535b;
-  --on-accent: #ffffff;
-  --danger: #a02d3b;
+  --bg: #f4f0e8;
+  --surface: #fffcf6;
+  --tint: #e4e9df;
+  --text: #26372f;
+  --muted: #526057;
+  --border: #cbd0c3;
+  --outline: #758275;
+  --accent: #405b49;
+  --accent-hover: #314b3a;
+  --on-accent: #fffcf6;
+  --danger: #a23e35;
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0d161b;
-  --surface: #141f25;
-  --tint: #173840;
-  --text: #e3edf0;
-  --muted: #9fb2ba;
-  --border: #2a3b43;
-  --outline: #5f7884;
-  --accent: #7fc6ce;
-  --accent-hover: #9cd5db;
-  --on-accent: #07161a;
-  --danger: #f2a0a8;
+  --bg: #19221e;
+  --surface: #202e26;
+  --tint: #2d4034;
+  --text: #f3efe4;
+  --muted: #b9c4b8;
+  --border: #435348;
+  --outline: #819482;
+  --accent: #c0d0b4;
+  --accent-hover: #d4e0ca;
+  --on-accent: #1b2c20;
+  --danger: #ffb4a7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #0d161b;
-    --surface: #141f25;
-    --tint: #173840;
-    --text: #e3edf0;
-    --muted: #9fb2ba;
-    --border: #2a3b43;
-    --outline: #5f7884;
-    --accent: #7fc6ce;
-    --accent-hover: #9cd5db;
-    --on-accent: #07161a;
-    --danger: #f2a0a8;
+    --bg: #19221e;
+    --surface: #202e26;
+    --tint: #2d4034;
+    --text: #f3efe4;
+    --muted: #b9c4b8;
+    --border: #435348;
+    --outline: #819482;
+    --accent: #c0d0b4;
+    --accent-hover: #d4e0ca;
+    --on-accent: #1b2c20;
+    --danger: #ffb4a7;
   }
 }
 
@@ -123,5 +123,29 @@
   *::after {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+/* Workspace navigation leaves room for safe-area controls on small screens. */
+.workspace {
+  --action-bottom: 5rem;
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+.action-bar {
+  bottom: var(--action-bottom, 0px);
+}
+.workspace-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.workspace-nav a[aria-current='page'] {
+  background: var(--tint);
+  color: var(--text);
+}
+@media (min-width: 1024px) {
+  .workspace {
+    --action-bottom: 0px;
+    padding-bottom: 0;
   }
 }

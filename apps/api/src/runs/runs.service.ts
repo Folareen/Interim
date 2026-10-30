@@ -1,13 +1,4 @@
-import {
-  type Db,
-  photo,
-  profile,
-  render,
-  run,
-  snapshot,
-  stageCard,
-  traceEntry,
-} from '@interim/db';
+import { type Db, photo, profile, render, run, snapshot, stageCard, traceEntry } from '@interim/db';
 import { hasCurrentConsent } from '@interim/rules';
 import { templates } from '@interim/templates';
 import {
@@ -21,7 +12,16 @@ import {
 } from '@interim/types';
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, asc, desc, eq, inArray } from 'drizzle-orm';
-import { type Observable, concatMap, interval, map, startWith, takeUntil, takeWhile, timer } from 'rxjs';
+import {
+  type Observable,
+  concatMap,
+  interval,
+  map,
+  startWith,
+  takeUntil,
+  takeWhile,
+  timer,
+} from 'rxjs';
 import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
 import { StorageService } from '../storage/storage.service';
@@ -60,7 +60,8 @@ export class RunsService {
       .innerJoin(profile, eq(profile.id, snapshot.profileId))
       .where(and(eq(snapshot.id, snapshotId), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();
-    if (!hasCurrentConsent(row.profile)) throw new ForbiddenException('Please accept the current consent text first.');
+    if (!hasCurrentConsent(row.profile))
+      throw new ForbiddenException('Please accept the current consent text first.');
 
     const template = templates[templateKeySchema.parse(row.profile.templateKey)];
     await this.db
@@ -119,7 +120,12 @@ export class RunsService {
     const renders = await this.db
       .select({ id: render.id, key: render.objectKey })
       .from(render)
-      .where(inArray(render.id, [...card.options, ...card.clothes].map((o) => o.renderId)));
+      .where(
+        inArray(
+          render.id,
+          [...card.options, ...card.clothes].map((o) => o.renderId),
+        ),
+      );
     const renderUrls: Record<string, string> = {};
     for (const r of renders) if (r.key) renderUrls[r.id] = await this.storage.presignGet(r.key);
 
@@ -151,7 +157,8 @@ export class RunsService {
       .where(and(eq(stageCard.id, cardId), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();
     const approvedAt = row.approvedAt ?? new Date();
-    if (!row.approvedAt) await this.db.update(stageCard).set({ approvedAt }).where(eq(stageCard.id, cardId));
+    if (!row.approvedAt)
+      await this.db.update(stageCard).set({ approvedAt }).where(eq(stageCard.id, cardId));
     return { approvedAt: approvedAt.toISOString() };
   }
 
@@ -165,7 +172,28 @@ export class RunsService {
       .innerJoin(snapshot, eq(snapshot.id, run.snapshotId))
       .where(and(eq(stageCard.profileId, profileId), eq(profile.ownerRef, owner.ref)))
       .orderBy(desc(snapshot.takenAt));
-    return rows.map((r) => ({ id: r.id, takenAt: r.takenAt.toISOString(), stageKey: r.stageKey ?? '' }));
+    return rows.map((r) => ({
+      id: r.id,
+      takenAt: r.takenAt.toISOString(),
+      stageKey: r.stageKey ?? '',
+    }));
+  }
+
+  /** The newest run, so returning to Today can resume work instead of starting a second run. */
+  async latest(profileId: string, owner: Owner) {
+    const [owned] = await this.db
+      .select({ id: profile.id })
+      .from(profile)
+      .where(and(eq(profile.id, profileId), eq(profile.ownerRef, owner.ref)));
+    if (!owned) throw new NotFoundException();
+    const [latest] = await this.db
+      .select({ id: run.id })
+      .from(run)
+      .innerJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .where(eq(snapshot.profileId, profileId))
+      .orderBy(desc(run.createdAt))
+      .limit(1);
+    return { run: latest ? await this.view(latest.id) : null };
   }
 
   private async owned(runId: string, owner: Owner) {
@@ -187,8 +215,15 @@ export class RunsService {
       .where(eq(run.id, runId));
     if (!found) throw new NotFoundException();
     const { run: row, profileId } = found;
-    const trace = await this.db.select().from(traceEntry).where(eq(traceEntry.runId, runId)).orderBy(asc(traceEntry.seq));
-    const [card] = await this.db.select({ id: stageCard.id }).from(stageCard).where(eq(stageCard.runId, runId));
+    const trace = await this.db
+      .select()
+      .from(traceEntry)
+      .where(eq(traceEntry.runId, runId))
+      .orderBy(asc(traceEntry.seq));
+    const [card] = await this.db
+      .select({ id: stageCard.id })
+      .from(stageCard)
+      .where(eq(stageCard.runId, runId));
     return {
       id: row.id,
       profileId,
@@ -206,4 +241,3 @@ export class RunsService {
     };
   }
 }
-

@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react';
 
 const base =
-  'inline-flex h-14 w-full items-center justify-center rounded-xl px-6 text-base font-semibold transition-colors';
+  'inline-flex min-h-14 w-full items-center justify-center rounded-xl px-6 py-3 text-base text-center font-semibold transition-colors';
 
 /** Class names for a link that should look like the primary button. */
 export const primaryClass = `${base} bg-accent text-on-accent hover:bg-accent-hover disabled:cursor-not-allowed disabled:bg-border disabled:text-muted`;

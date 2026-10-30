@@ -19,12 +19,16 @@ export default async function Reflect({ params }: { params: Promise<{ id: string
   const [view, t] = await Promise.all([getReflections(id), getTranslations('reflect')]);
   if (!view) notFound();
   return (
-    <Shell backHref={`/ready/${id}`}>
+    <Shell profileId={id} backHref={`/ready/${id}`}>
       <PageHeading title={t('title')} intro={t('intro')} />
       <ReflectForm
         profileId={id}
         contactsShowing={view.contacts}
-        initial={view.reflections.map((r) => ({ id: r.id, text: r.text, createdAt: r.createdAt.toISOString() }))}
+        initial={view.reflections.map((r) => ({
+          id: r.id,
+          text: r.text,
+          createdAt: r.createdAt.toISOString(),
+        }))}
       />
     </Shell>
   );

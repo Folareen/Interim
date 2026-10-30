@@ -5,6 +5,7 @@ import { generateText } from 'ai';
 import { env } from '../config/env';
 import { PLANNER_CONFIG, PLANNER_MODEL } from './planner';
 import { SafetyReviewer } from './safety-reviewer';
+import { ASSISTANT_MODEL } from './assistant.service';
 
 /**
  * The model connection and the parts that use it without the rest of the agent. It imports nothing,
@@ -24,10 +25,23 @@ import { SafetyReviewer } from './safety-reviewer';
     },
     {
       provide: PLANNER_MODEL,
-      useValue: async (prompt: string) => (await generateText({ model: google(env.LLM_MODEL), prompt })).text,
+      useValue: async (prompt: string) =>
+        (await generateText({ model: google(env.LLM_MODEL), prompt })).text,
     },
     SafetyReviewer,
+    {
+      provide: ASSISTANT_MODEL,
+      useValue: async (prompt: string) =>
+        (
+          await generateText({
+            model: google(env.LLM_MODEL),
+            prompt,
+            maxOutputTokens: 512,
+            abortSignal: AbortSignal.timeout(10_000),
+          })
+        ).text,
+    },
   ],
-  exports: [PLANNER_CONFIG, PLANNER_MODEL, SafetyReviewer],
+  exports: [PLANNER_CONFIG, PLANNER_MODEL, ASSISTANT_MODEL, SafetyReviewer],
 })
 export class ModelModule {}

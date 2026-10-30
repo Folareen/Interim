@@ -27,7 +27,7 @@ export default async function Ledger({ params }: { params: Promise<{ id: string 
   ] as const;
 
   return (
-    <Shell backHref={`/ready/${id}`}>
+    <Shell profileId={id} active="you" backHref={`/you/${id}`}>
       <PageHeading title={t('title')} intro={t('intro')} />
       <dl className="mt-8 divide-y divide-border rounded-card border border-border bg-surface">
         {totals.map(([label, units]) => (

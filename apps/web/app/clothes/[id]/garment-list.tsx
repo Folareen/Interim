@@ -3,14 +3,26 @@
 import type { GarmentItem } from '@interim/types';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Actions } from '@/components/actions';
 import { Button } from '@/components/button';
 import { Notice } from '@/components/notice';
 import { ApiError, removeGarment, saveGarment } from '@/lib/api';
 import { isGarmentKey } from '@/lib/labels';
 
 /** The catalog, each piece with a button that saves or removes it. Saved pieces are shown on the person's photo at each check in. */
-export function GarmentList({ profileId, items }: { profileId: string; items: GarmentItem[] }) {
+export function GarmentList({
+  profileId,
+  items,
+  nextHref,
+}: {
+  profileId: string;
+  items: GarmentItem[];
+  nextHref?: string;
+}) {
   const t = useTranslations('clothes');
+  const workspace = useTranslations('workspace');
+  const router = useRouter();
   const names = useTranslations('garments');
   const common = useTranslations('common');
   const [saved, setSaved] = useState(new Set(items.filter((i) => i.saved).map((i) => i.sku)));
@@ -30,29 +42,45 @@ export function GarmentList({ profileId, items }: { profileId: string; items: Ga
         return next;
       });
     } catch (cause) {
-      setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
+      setError(
+        common(
+          cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError',
+        ),
+      );
     } finally {
       setWorking(undefined);
     }
   }
 
   return (
-    <div className="mt-8 mb-12 space-y-4">
+    <div className="mt-8 flex flex-1 flex-col gap-5">
       {error && <Notice>{error}</Notice>}
-      <ul className="space-y-4">
+      <p role="status" className="text-[0.95rem] text-muted">
+        {workspace('selectedCount', { count: saved.size })}
+      </p>
+      <ul className="mb-6 grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((item) => {
           if (!isGarmentKey(item.sku)) return null;
           const name = names(item.sku);
           const isSaved = saved.has(item.sku);
           return (
-            <li key={item.sku} className="flex gap-4 rounded-card border border-border bg-surface p-4">
-              <img src={item.imageUrl} alt="" className="h-28 w-20 shrink-0 rounded-lg border border-border object-cover" />
-              <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
+            <li key={item.sku} className="workspace-card flex min-w-0 flex-col overflow-hidden">
+              <img
+                src={item.imageUrl}
+                alt=""
+                className="aspect-[4/3] w-full border-b border-border object-cover"
+              />
+              <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 p-4">
                 <div>
                   <p className="font-semibold">{name}</p>
                   {isSaved && <p className="text-[0.9rem] text-muted">{t('saved')}</p>}
                 </div>
-                <Button variant={isSaved ? 'secondary' : 'primary'} onClick={() => void toggle(item.sku)} disabled={working === item.sku}>
+                <Button
+                  variant="secondary"
+                  aria-pressed={isSaved}
+                  onClick={() => void toggle(item.sku)}
+                  disabled={working !== undefined}
+                >
                   {t(isSaved ? 'removeAction' : 'saveAction', { item: name })}
                 </Button>
               </div>
@@ -60,6 +88,14 @@ export function GarmentList({ profileId, items }: { profileId: string; items: Ga
           );
         })}
       </ul>
+      {nextHref && (
+        <Actions>
+          <Button onClick={() => router.push(nextHref)} disabled={working !== undefined}>
+            {workspace('continuePhotos')}
+          </Button>
+          <p className="text-[0.9rem] text-muted">{workspace('clothesOptional')}</p>
+        </Actions>
+      )}
     </div>
   );
 }

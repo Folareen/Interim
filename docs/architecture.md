@@ -151,6 +151,8 @@ BullMQ on Redis.
 * POST /profiles/:id/uploads (kind and size per photo; returns one presigned PUT link each; needs current consent)
 * POST /profiles/:id/snapshots (upload ids with kinds, self report and an optional moment; normalises, stores, then deletes the raw uploads)
 * POST /snapshots/:id/runs (starts the agent; starting twice returns the same run)
+* GET /profiles/:id/latest-run (newest owned run, or null)
+* GET /assistant/config (signed in; whether written help is available), POST /cards/:id/assistant (owned card, current consent and per-message Google acceptance; bounded topic, clarify, unavailable or support response)
 * GET /runs/:id (status, stop reason, trace)
 * GET /runs/:id/events (server sent events: the same view once a second until the run finishes)
 * GET /cards/:id (the card with short lived links to its renders, the front photo and the body photo)
@@ -174,10 +176,11 @@ All routes check consent version and ownership. Share links expire, can be revok
 
 ## 10. Web app
 
+* **Workspace.** Today (`/ready/[id]`), My looks (`/looks/[id]`) and You (`/you/[id]`), with shared profile navigation and situation switching. `/update/[id]` combines optional fit-clothes selection with capture; settings and data controls live under You.
 * **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view (`/s/[token]`), demo (`/demo`, `/demo/cards/[id]`), privacy policy, terms.
 * **Capture wizard.** Asks for what `capturePlan` in `packages/rules` says, the same rule the server applies. Uses the YouCam JS Camera Kit for the front, both sides (one hair type capture) and the top photo (its five second countdown is the timer), and a plain file input for the body photo and whenever the kit does not load or the camera is refused. Runs `photoQualityProblem` on each photo on the device and blocks upload on failure. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.
 * **Run progress.** Shows the live trace in short lines, so the agent is visible. It listens to the event stream and asks every two seconds if the stream is not available.
-* **Stage Card.** Before and after slider for renders, a clear preview label, saved clothes on the body photo, shopping list, what to hold off buying, share, export and delete actions.
+* **Stage Card.** Preview-first layout, buttons to swap each preview with the original photo, saved clothes on the body photo, expandable changes, advice, shopping and trace, confirmation and sharing. Optional result help returns a validated topic, never model prose or tools ([llm.md](llm.md#optional-result-help)).
 * **Ledger view.** Every call, its cost and the reason it was made.
 * **Mobile first.** Designed and filmed on a phone. Installable as a PWA.
 

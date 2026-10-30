@@ -22,7 +22,7 @@ export default async function Clothes({ params }: { params: Promise<{ id: string
   const [items, t] = await Promise.all([getGarments(id), getTranslations('clothes')]);
   if (!items) notFound();
   return (
-    <Shell backHref={`/ready/${id}`}>
+    <Shell profileId={id} backHref={`/ready/${id}`} wide>
       <PageHeading title={t('title')} intro={t('intro')} />
       <GarmentList profileId={id} items={items.filter((item) => isGarmentKey(item.sku))} />
     </Shell>

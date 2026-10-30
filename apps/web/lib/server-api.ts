@@ -6,6 +6,7 @@ import {
   type GarmentItem,
   type Me,
   type LedgerView,
+  type LatestRun,
   type Preferences,
   type Profile,
   type ReflectionsView,
@@ -19,6 +20,8 @@ import {
   garmentListSchema,
   meSchema,
   ledgerViewSchema,
+  latestRunSchema,
+  assistantConfigSchema,
   preferencesSchema,
   profileListSchema,
   profileSchema,
@@ -40,7 +43,8 @@ export async function getProfile(id: string): Promise<Profile | undefined> {
     headers: { cookie },
     cache: 'no-store',
   });
-  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (response.status === 404 || response.status === 400 || response.status === 401)
+    return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return profileSchema.parse(await response.json());
 }
@@ -52,7 +56,10 @@ const SESSION_COOKIE = 'interim_session';
 export async function getMe(): Promise<Me | undefined> {
   const jar = await cookies();
   if (!jar.has(SESSION_COOKIE)) return undefined;
-  const response = await fetch(`${apiOrigin}/auth/me`, { headers: { cookie: jar.toString() }, cache: 'no-store' });
+  const response = await fetch(`${apiOrigin}/auth/me`, {
+    headers: { cookie: jar.toString() },
+    cache: 'no-store',
+  });
   if (response.status === 401) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return meSchema.parse(await response.json());
@@ -60,7 +67,10 @@ export async function getMe(): Promise<Me | undefined> {
 
 /** The profiles of the signed in account. */
 export async function getProfiles(): Promise<Profile[]> {
-  const response = await fetch(`${apiOrigin}/profiles`, { headers: { cookie: (await cookies()).toString() }, cache: 'no-store' });
+  const response = await fetch(`${apiOrigin}/profiles`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return profileListSchema.parse(await response.json());
 }
@@ -78,7 +88,8 @@ export async function getPreferences(id: string): Promise<Preferences | undefine
     headers: { cookie: (await cookies()).toString() },
     cache: 'no-store',
   });
-  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (response.status === 404 || response.status === 400 || response.status === 401)
+    return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return preferencesSchema.parse(await response.json());
 }
@@ -89,7 +100,8 @@ export async function getRun(id: string): Promise<RunView | undefined> {
     headers: { cookie: (await cookies()).toString() },
     cache: 'no-store',
   });
-  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (response.status === 404 || response.status === 400 || response.status === 401)
+    return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return runViewSchema.parse(await response.json());
 }
@@ -100,7 +112,8 @@ export async function getCard(id: string): Promise<CardView | undefined> {
     headers: { cookie: (await cookies()).toString() },
     cache: 'no-store',
   });
-  if (response.status === 404 || response.status === 400 || response.status === 401) return undefined;
+  if (response.status === 404 || response.status === 400 || response.status === 401)
+    return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return cardViewSchema.parse(await response.json());
 }
@@ -126,13 +139,49 @@ export async function getLedger(profileId: string): Promise<LedgerView | undefin
   return ledgerViewSchema.parse(await response.json());
 }
 
+/** The profile's newest run; null means no work has been started yet. */
+export async function getLatestRun(profileId: string): Promise<LatestRun> {
+  const response = await fetch(
+    `${apiOrigin}/profiles/${encodeURIComponent(profileId)}/latest-run`,
+    {
+      headers: { cookie: (await cookies()).toString() },
+      cache: 'no-store',
+    },
+  );
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return latestRunSchema.parse(await response.json());
+}
+
+/** Written questions are optional: a failed availability check leaves the reviewed topic buttons usable. */
+export async function getAssistantAvailable(): Promise<boolean> {
+  try {
+    const response = await fetch(`${apiOrigin}/assistant/config`, {
+      headers: { cookie: (await cookies()).toString() },
+      cache: 'no-store',
+    });
+    if (!response.ok) return false;
+    return assistantConfigSchema.parse(await response.json()).available;
+  } catch {
+    return false;
+  }
+}
+
 /** The profile's saved reflections and whether the contacts card is showing. Undefined when the profile is not theirs. */
 export async function getReflections(profileId: string): Promise<ReflectionsView | undefined> {
-  const response = await fetch(`${apiOrigin}/profiles/${encodeURIComponent(profileId)}/reflections`, {
-    headers: { cookie: (await cookies()).toString() },
-    cache: 'no-store',
-  });
-  if (response.status === 404 || response.status === 400 || response.status === 401 || response.status === 403) return undefined;
+  const response = await fetch(
+    `${apiOrigin}/profiles/${encodeURIComponent(profileId)}/reflections`,
+    {
+      headers: { cookie: (await cookies()).toString() },
+      cache: 'no-store',
+    },
+  );
+  if (
+    response.status === 404 ||
+    response.status === 400 ||
+    response.status === 401 ||
+    response.status === 403
+  )
+    return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return reflectionsViewSchema.parse(await response.json());
 }
@@ -161,7 +210,9 @@ export async function getShares(cardId: string): Promise<ShareList> {
 
 /** What a share link shows, or undefined when the link is unknown, expired or revoked. Sends no cookie: the link is the only credential. */
 export async function getSharedCard(token: string): Promise<SharedCard | undefined> {
-  const response = await fetch(`${apiOrigin}/shared/${encodeURIComponent(token)}`, { cache: 'no-store' });
+  const response = await fetch(`${apiOrigin}/shared/${encodeURIComponent(token)}`, {
+    cache: 'no-store',
+  });
   if (response.status === 404 || response.status === 400) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return sharedCardSchema.parse(await response.json());
@@ -176,7 +227,9 @@ export async function getDemo(): Promise<Demo> {
 
 /** One sample card, or undefined when it is not a sample. Sends no cookie. */
 export async function getDemoCard(id: string): Promise<CardView | undefined> {
-  const response = await fetch(`${apiOrigin}/demo/cards/${encodeURIComponent(id)}`, { cache: 'no-store' });
+  const response = await fetch(`${apiOrigin}/demo/cards/${encodeURIComponent(id)}`, {
+    cache: 'no-store',
+  });
   if (response.status === 404 || response.status === 400) return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return cardViewSchema.parse(await response.json());

@@ -8,7 +8,11 @@ import './globals.css';
 
 // Both families cover the extended Latin and Vietnamese letters that Yoruba, Igbo and Hausa need.
 // next/font reads its options at build time, so they are written out rather than shared.
-const sans = Source_Sans_3({ subsets: ['latin', 'latin-ext', 'vietnamese'], variable: '--font-source-sans', display: 'swap' });
+const sans = Source_Sans_3({
+  subsets: ['latin', 'latin-ext', 'vietnamese'],
+  variable: '--font-source-sans',
+  display: 'swap',
+});
 const serif = Newsreader({
   subsets: ['latin', 'latin-ext', 'vietnamese'],
   variable: '--font-newsreader',
@@ -18,7 +22,10 @@ const serif = Newsreader({
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('common');
-  return { title: { default: t('appName'), template: `%s · ${t('appName')}` }, description: t('tagline') };
+  return {
+    title: { default: t('appName'), template: `%s · ${t('appName')}` },
+    description: t('tagline'),
+  };
 }
 
 export const viewport: Viewport = {
@@ -26,19 +33,39 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f1f5f6' },
-    { media: '(prefers-color-scheme: dark)', color: '#0d161b' },
+    { media: '(prefers-color-scheme: light)', color: '#f4f0e8' },
+    { media: '(prefers-color-scheme: dark)', color: '#19221e' },
   ],
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const [locale, theme, t, { common, setup, consent, ready, auth, account, settings, capture, photoProblems, run, trace, tools, card, reflect, clothes, garments, share, notifications }] =
-    await Promise.all([
-      getLocale(),
-      getTheme(),
-      getTranslations('common'),
-      getMessages(),
-    ]);
+  const [
+    locale,
+    theme,
+    t,
+    {
+      common,
+      setup,
+      consent,
+      ready,
+      auth,
+      account,
+      settings,
+      capture,
+      photoProblems,
+      run,
+      trace,
+      tools,
+      card,
+      reflect,
+      clothes,
+      garments,
+      share,
+      notifications,
+      workspace,
+      assistant,
+    },
+  ] = await Promise.all([getLocale(), getTheme(), getTranslations('common'), getMessages()]);
   return (
     <html lang={locale} data-theme={theme} className={`${sans.variable} ${serif.variable}`}>
       <body>
@@ -49,7 +76,31 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           {t('skipToContent')}
         </a>
         {/* Only the screens with client islands get their text sent to the browser. */}
-        <NextIntlClientProvider locale={locale} messages={{ common, setup, consent, ready, auth, account, settings, capture, photoProblems, run, trace, tools, card, reflect, clothes, garments, share, notifications }}>
+        <NextIntlClientProvider
+          locale={locale}
+          messages={{
+            common,
+            setup,
+            consent,
+            ready,
+            auth,
+            account,
+            settings,
+            capture,
+            photoProblems,
+            run,
+            trace,
+            tools,
+            card,
+            reflect,
+            clothes,
+            garments,
+            share,
+            notifications,
+            workspace,
+            assistant,
+          }}
+        >
           {children}
         </NextIntlClientProvider>
       </body>
