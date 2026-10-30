@@ -12,7 +12,7 @@ pnpm build                  # builds shared packages once
 pnpm db:migrate
 pnpm dev                    # web :3000, api :4000 and the worker
 ```
-The worker is its own process that takes runs and safety reviews off the queue. `pnpm dev` starts it with the others, restarting it when the API rebuilds, so only one compiler runs. `pnpm dev:worker` runs it alone, with its own compiler, and must not run beside `pnpm dev`: both write the same `dist`.
+The worker is its own process that takes runs and safety reviews off the queue. `pnpm dev` starts it with the others using `tsx watch` on its TypeScript source, so API builds can clear `dist` without interrupting it. The worker restarts when its source or imported code changes. `pnpm dev:worker` runs the same watcher alone; do not run it beside `pnpm dev`, which already starts a worker.
 
 ## Signing in locally
 `MAIL_MODE=log` (the default) prints every email, with its link, in the API's console, so nothing is sent. To send real mail set `MAIL_MODE=brevo`, `BREVO_API_KEY` and `MAIL_FROM_EMAIL` (a sender verified in Brevo). Google sign in is off until `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set; create an OAuth web client in Google Cloud and register `<WEB_ORIGIN>/api/auth/google/callback` as its redirect address.

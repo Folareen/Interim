@@ -6,7 +6,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "turbo run dev dev:worker:follow",
+    "dev": "turbo run dev dev:worker",
     "dev:api": "pnpm --filter @interim/api dev",
     "dev:worker": "pnpm --filter @interim/api dev:worker",
     "dev:web": "pnpm --filter @interim/web dev",

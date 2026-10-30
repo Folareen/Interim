@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nest start --watch --env-file ../../.env",
-    "dev:worker": "nest start --watch --entryFile worker --env-file ../../.env",
-    "dev:worker:follow": "sh -c 'until [ -f dist/worker.js ]; do sleep 1; done; exec node --watch --enable-source-maps --env-file=../../.env dist/worker.js'",
+    "dev:worker": "tsx watch --clear-screen=false --env-file=../../.env src/worker.ts",
     "build": "nest build",
     "start": "node dist/main",
     "start:worker": "node dist/worker",
