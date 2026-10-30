@@ -5,6 +5,7 @@ import {
   type Demo,
   type GarmentItem,
   type Me,
+  type LedgerView,
   type Preferences,
   type Profile,
   type ReflectionsView,
@@ -17,6 +18,7 @@ import {
   demoSchema,
   garmentListSchema,
   meSchema,
+  ledgerViewSchema,
   preferencesSchema,
   profileListSchema,
   profileSchema,
@@ -111,6 +113,17 @@ export async function getCards(profileId: string): Promise<CardSummary[]> {
   });
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return cardSummaryListSchema.parse(await response.json());
+}
+
+/** The person's ledger and totals, or undefined when the profile is missing or belongs to someone else. */
+export async function getLedger(profileId: string): Promise<LedgerView | undefined> {
+  const response = await fetch(`${apiOrigin}/profiles/${encodeURIComponent(profileId)}/ledger`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if ([400, 401, 404].includes(response.status)) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return ledgerViewSchema.parse(await response.json());
 }
 
 /** The profile's saved reflections and whether the contacts card is showing. Undefined when the profile is not theirs. */

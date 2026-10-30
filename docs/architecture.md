@@ -161,7 +161,7 @@ BullMQ on Redis.
 * POST /cards/:id/share (creates a link that expires after 7 days; the token is returned once, only its hash is stored), GET /cards/:id/shares (the links that still work)
 * DELETE /shares/:id (revokes a link; repeats safely)
 * GET /shared/:token (signed out; the share view, answers 404 alike for an unknown, expired or revoked link, with `X-Robots-Tag: noindex` and `Cache-Control: no-store`)
-* GET /profiles/:id/ledger (the profile's ledger rows and held and spent totals)
+* GET /profiles/:id/ledger (the profile's ledger events with timestamps and separate held and spent totals; `ledgerViewSchema`)
 * GET /auth/config (which sign in methods are on)
 * POST /auth/register, POST /auth/login, POST /auth/magic, POST /auth/magic/use, POST /auth/verify-email, POST /auth/password/forgot, POST /auth/password/reset, POST /auth/logout
 * POST /auth/recover, POST /auth/recover/confirm, POST /auth/email/confirm

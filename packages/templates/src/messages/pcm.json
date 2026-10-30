@@ -1,5 +1,8 @@
 {
   "common": {
+    "information": "Information wey you need",
+    "privacy": "Privacy matter",
+    "serviceTerms": "Rules to use am",
     "appName": "Interim",
     "tagline": "E dey help you feel like yourself as your body dey change.",
     "back": "Go back",
@@ -104,6 +107,7 @@
     "outdated": "Di consent text don change. Reload dis page and read am again."
   },
   "ready": {
+    "ledgerAction": "See units wey we use",
     "title": "Everything don set",
     "intro": "Interim don get wetin e need to start.",
     "summaryTitle": "Your choices",
@@ -526,6 +530,7 @@
     "stubble": "Small beard"
   },
   "card": {
+    "traceUnits": "Units wey we use: {units}",
     "title": "Your Stage Card",
     "situationLabel": "Situation",
     "stageLabel": "Where you dey now",
@@ -679,5 +684,75 @@
     "cardBanner": "Simulated pesin, dem record am for {date}. Nothing for dis page dey live.",
     "backAction": "Go back to di demo",
     "startAction": "Start your own"
+  },
+  "ledger": {
+    "title": "Units wey we use",
+    "intro": "See the units wey we use for measurements and preview pictures for this profile.",
+    "spent": "Wey we don use",
+    "held": "Wey we keep for work wey still dey go",
+    "units": "{units} units",
+    "totalsHelp": "Units wey we keep never spend yet. Na service units, no be bill wey you go pay.",
+    "eventsTitle": "Work history",
+    "eventsHelp": "One work fit show when we keep units and again when e finish. Na only the spent total count work wey don finish.",
+    "empty": "We never record any work for this profile.",
+    "measurePurpose": "To measure wetin change.",
+    "previewPurpose": "To make preview picture.",
+    "otherPurpose": "To work on photo.",
+    "otherTool": "Photo tool",
+    "events": {
+      "reserve": "Wey we keep: {units} units",
+      "settle": "Wey we use: {units} units",
+      "release": "Wey we return: {units} units"
+    }
+  },
+  "privacy": {
+    "title": "Your privacy for Interim",
+    "intro": "Interim dey use your information to keep your account, compare check ins and make your cards.",
+    "data": {
+      "title": "Wetin we keep",
+      "body": "We still keep your email, sign-in details, choices and consent record. We store password as hash, no be the password itself. Reflection wey you save dey encrypted."
+    },
+    "processors": {
+      "title": "Who dey use am",
+      "body": "Cloudflare R2 dey store photos and previews. Brevo dey send account emails. If you choose Google sign-in, na Google dey handle that sign-in. Your choices fit show private information, so share only wetin you comfortable to share."
+    },
+    "retention": {
+      "title": "How long we keep am",
+      "body": "New check in dey start the history period again. Your answers and card text go stay until you delete the profile. Account details go stay until you delete your account."
+    },
+    "choices": {
+      "title": "Wetin you fit choose",
+      "body": "From your profile you fit download your data, change how long photos go stay or delete the profile. You fit delete account for account settings. Share links dey show previews and some card text, never original photos or reflections. You fit stop a link. Unit records wey no get personal content go remain after you delete."
+    },
+    "cookies": {
+      "title": "Cookies and notifications",
+      "body": "Cookies dey keep you signed in and remember your language and theme. Notifications dey off until you choose am. You fit turn am off for settings."
+    },
+    "contact": "For questions about your data, contact Interim:"
+  },
+  "serviceTerms": {
+    "title": "Rules to use Interim",
+    "intro": "Interim dey give practical ideas for your appearance and clothes. These rules explain how to use am.",
+    "adults": {
+      "title": "Na adults only",
+      "body": "Use Interim only if you don reach {age} years. Read the privacy information and consent choices before you add photos."
+    },
+    "photos": {
+      "title": "Your own photos",
+      "body": "Upload only photos of yourself wey you get permission to use. No put other people inside the photo. You allow Interim and the processors wey consent screen name to use am for the features wey you request."
+    },
+    "previews": {
+      "title": "Previews and suggestions",
+      "body": "Preview no promise result or how cloth go fit. Sizes dey use wetin you tell us and the catalog size charts. Check details before you buy. For health questions, talk to doctor or nurse."
+    },
+    "account": {
+      "title": "Your account and sharing",
+      "body": "Keep your sign-in details private. Anybody wey get share link fit see wetin dey inside until e expire or you stop am. You fit download or delete your profile and delete your account."
+    },
+    "availability": {
+      "title": "When service dey available",
+      "body": "Interim na prototype. Features fit change or no dey available, and results fit wrong. Demo people na simulated people. Interim no dey place orders or collect payments."
+    },
+    "contact": "For questions about how to use Interim, contact:"
   }
 }

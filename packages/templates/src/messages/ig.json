@@ -1,5 +1,8 @@
 {
   "common": {
+    "information": "Ozi",
+    "privacy": "Nzuzo",
+    "serviceTerms": "Usoro ojiji",
     "appName": "Interim",
     "tagline": "Ọ na-enyere gị aka inwe mmetụta dị ka onwe gị ka ahụ gị na-agbanwe.",
     "back": "Laghachi",
@@ -104,6 +107,7 @@
     "outdated": "Ederede nkwenye agbanweela. Bugharịa ibe a ma gụọ ya ọzọ."
   },
   "ready": {
+    "ledgerAction": "Lee nkeji e jiri rụọ ọrụ",
     "title": "Ahaziri gị",
     "intro": "Interim nwere ihe ọ chọrọ ịmalite.",
     "summaryTitle": "Nhọrọ gị",
@@ -526,6 +530,7 @@
     "stubble": "Afụ pere mpe"
   },
   "card": {
+    "traceUnits": "E jiri nkeji {units}",
     "title": "Kaadị ọkwa gị",
     "situationLabel": "Ọnọdụ",
     "stageLabel": "Ebe ị nọ ugbu a",
@@ -679,5 +684,75 @@
     "cardBanner": "Onye e ṅomiri, e dekọrọ ya na {date}. Ọ dịghị ihe na-eme ugbu a na peeji a.",
     "backAction": "Laghachi na ngosi ahụ",
     "startAction": "Malite nke gị"
+  },
+  "ledger": {
+    "title": "Nkeji ọrụ",
+    "intro": "Lee nkeji e jiri tụọ mgbanwe na mepụta onyonyo nnwale maka profaịlụ a.",
+    "spent": "E jiri mee ọrụ",
+    "held": "E debere maka ọrụ na-aga n’ihu",
+    "units": "Nkeji {units}",
+    "totalsHelp": "Nkeji e debere ka dị iche; e jibeghị ha mee ọrụ. Ha bụ nkeji ọrụ, ọ bụghị ụgwọ ị ga-akwụ.",
+    "eventsTitle": "Akụkọ ọrụ",
+    "eventsHelp": "Ọrụ nwere ike ịpụta mgbe e debere nkeji na mgbe ọ gwụchara. Naanị ngụkọta e jiri mee ọrụ na-agụ ụgwọ ọrụ gwụchara.",
+    "empty": "E dekọbeghị ọrụ ọ bụla maka profaịlụ a.",
+    "measurePurpose": "Iji tụọ mgbanwe.",
+    "previewPurpose": "Iji mepụta onyonyo nnwale.",
+    "otherPurpose": "Iji rụọ ọrụ na foto.",
+    "otherTool": "Ngwa foto",
+    "events": {
+      "reserve": "E debere nkeji {units}",
+      "settle": "E jiri nkeji {units}",
+      "release": "E weghachiri nkeji {units}"
+    }
+  },
+  "privacy": {
+    "title": "Nzuzo na Interim",
+    "intro": "Interim na-eji ozi gị debe akaụntụ, tụnyere nlele ma mepụta kaadị gị.",
+    "data": {
+      "title": "Ihe anyị na-edebe",
+      "body": "Anyị na-edebekwa ozi ịntanetị gị, nkọwa nbanye, nhọrọ na nkwenye gị. A na-edebe paswọọdụ dị ka akara hashi. A na-echekwa ederede ntụgharị uche n’ụdị ezoro ezo."
+    },
+    "processors": {
+      "title": "Ndị na-eji ozi ahụ",
+      "body": "Cloudflare R2 na-edebe foto na onyonyo nnwale. Brevo na-eziga ozi akaụntụ. Ọ bụrụ na ị họrọ nbanye Google, Google na-ahụ maka ya. Nhọrọ gị nwere ike igosi ozi nzuzo, ya mere kesaa naanị ihe obi dị gị mma ịkekọrịta."
+    },
+    "retention": {
+      "title": "Ogologo oge nchekwa",
+      "body": "Nlele ọhụrụ na-amalite oge akụkọ ahụ ọzọ. Azịza gị na ederede kaadị na-anọ ruo mgbe ihichapụrụ profaịlụ. Nkọwa akaụntụ na-anọ ruo mgbe ihichapụrụ akaụntụ."
+    },
+    "choices": {
+      "title": "Nhọrọ gị",
+      "body": "Na profaịlụ gị ị nwere ike ibudata data, gbanwee nchekwa foto ma ọ bụ hichapụ profaịlụ. Ị nwere ike ihichapụ akaụntụ na ntọala ya. Njikọ nkekọrịta na-egosi onyonyo nnwale na ederede ahọpụtara, ọ bụghị foto izizi ma ọ bụ ntụgharị uche. Ị nwere ike ịkwụsị njikọ. Ndekọ nkeji ọrụ na-enweghị ọdịnaya nzuzo na-anọ mgbe ihichapụchara."
+    },
+    "cookies": {
+      "title": "Kuki na ọkwa",
+      "body": "Kuki na-edebe gị ka ị banye ma cheta asụsụ na isiokwu gị. A na-agbanyụ ọkwa ruo mgbe ị họrọ ya. Ị nwere ike ịgbanyụ ya na ntọala."
+    },
+    "contact": "Maka ajụjụ gbasara data gị, kpọtụrụ Interim:"
+  },
+  "serviceTerms": {
+    "title": "Usoro ojiji",
+    "intro": "Interim na-enye echiche bara uru maka ọdịdị na uwe gị. Usoro ndị a na-akọwa ojiji ya.",
+    "adults": {
+      "title": "Maka ndị okenye",
+      "body": "Jiri Interim naanị ma ọ bụrụ na ị dịkarịa ala afọ {age}. Gụọ ozi nzuzo na nhọrọ nkwenye tupu ịtinye foto."
+    },
+    "photos": {
+      "title": "Foto gị",
+      "body": "Tinye naanị foto onwe gị nke ị nwere ikike iji. Ekwela ka ndị ọzọ nọ na foto. Ị na-enye Interim na ndị ọrụ a kpọrọ aha na ihuenyo nkwenye ikike iji ha nye ọrụ ị rịọrọ."
+    },
+    "previews": {
+      "title": "Onyonyo nnwale na aro",
+      "body": "Onyonyo nnwale anaghị ekwe nkwa ihe ga-esi na ya pụta ma ọ bụ etu uwe ga-adabara. Nha na-eji ihe ị kwuru na tebụl nha nke katalọgụ. Lelee tupu ịzụta. Maka ajụjụ ahụike, gwa dọkịta ma ọ bụ nọọsụ."
+    },
+    "account": {
+      "title": "Akaụntụ na nkekọrịta",
+      "body": "Debe nkọwa nbanye gị na nzuzo. Onye ọ bụla nwere njikọ nkekọrịta nwere ike ịhụ ihe dị na ya ruo mgbe oge ya gafere ma ọ bụ ịkwụsị ya. Ị nwere ike ibudata ma ọ bụ hichapụ profaịlụ ma hichapụ akaụntụ."
+    },
+    "availability": {
+      "title": "Ịnweta ọrụ",
+      "body": "Interim bụ ihe nnwale. Ọrụ nwere ike ịgbanwe ma ọ bụ ghara ịdị, ihe si na ya pụta nwekwara ike ịdị njọ. Ndị nọ na ngosipụta bụ ndị e kere maka nnwale. Interim anaghị atụ ahịa ma ọ bụ nata ịkwụ ụgwọ."
+    },
+    "contact": "Maka ajụjụ gbasara iji Interim, kpọtụrụ:"
   }
 }

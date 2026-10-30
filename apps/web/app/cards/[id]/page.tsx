@@ -59,6 +59,9 @@ export default async function Card({ params }: { params: Promise<{ id: string }>
 
       <div className="mt-10 space-y-3">
         <ApproveCard cardId={view.id} approvedAt={view.approvedAt} />
+        <Link href={`/ledger/${view.profileId}`} className={secondaryClass}>
+          {ready('ledgerAction')}
+        </Link>
         <Link href={`/settings/${view.profileId}`} className={secondaryClass}>
           {t('toneAction')}
         </Link>

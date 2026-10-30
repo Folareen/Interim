@@ -1,5 +1,8 @@
 {
   "common": {
+    "information": "Bayani",
+    "privacy": "Sirri",
+    "serviceTerms": "Sharuɗɗan amfani",
     "appName": "Interim",
     "tagline": "Yana taimaka muku ku ji kamar kanku yayin da jikinku ke canzawa.",
     "back": "Koma baya",
@@ -104,6 +107,7 @@
     "outdated": "Rubutun yarda ya canza. Ku sake buɗe wannan shafin ku karanta shi."
   },
   "ready": {
+    "ledgerAction": "Duba raka’o’in da aka yi amfani da su",
     "title": "An shirya",
     "intro": "Interim yana da abin da yake buƙata don farawa.",
     "summaryTitle": "Zaɓinku",
@@ -526,6 +530,7 @@
     "stubble": "Gemu ɗan kaɗan"
   },
   "card": {
+    "traceUnits": "An kashe raka’a {units}",
     "title": "Katin matakinka",
     "situationLabel": "Yanayi",
     "stageLabel": "Inda kake yanzu",
@@ -679,5 +684,75 @@
     "cardBanner": "Mutum na kwaikwayo, an naɗa a {date}. Babu wani abu a wannan shafin da ke kai tsaye.",
     "backAction": "Koma zuwa demo",
     "startAction": "Fara naka"
+  },
+  "ledger": {
+    "title": "Raka’o’in sabis",
+    "intro": "Duba raka’o’in da aka yi amfani da su don aunawa da hotunan gwaji na wannan bayanin.",
+    "spent": "An kashe",
+    "held": "An keɓe don ayyukan da ake yi",
+    "units": "Raka’a {units}",
+    "totalsHelp": "Raka’o’in da aka keɓe ba a kashe su ba tukuna. Raka’o’in sabis ne, ba kuɗin da za ka biya ba.",
+    "eventsTitle": "Tarihin ayyuka",
+    "eventsHelp": "Aiki na iya bayyana lokacin da aka keɓe raka’o’i da kuma lokacin da ya ƙare. Jimillar da aka kashe kawai ce ke ƙirga kuɗin ayyukan da aka gama.",
+    "empty": "Ba a rubuta wani aiki don wannan bayanin ba tukuna.",
+    "measurePurpose": "Don auna canji.",
+    "previewPurpose": "Don yin hoton gwaji.",
+    "otherPurpose": "Don sarrafa hoto.",
+    "otherTool": "Kayan aikin hoto",
+    "events": {
+      "reserve": "An keɓe raka’a {units}",
+      "settle": "An kashe raka’a {units}",
+      "release": "An saki raka’a {units}"
+    }
+  },
+  "privacy": {
+    "title": "Sirri a Interim",
+    "intro": "Interim yana amfani da bayananka don kula da asusu, kwatanta dubawa da yin katunanka.",
+    "data": {
+      "title": "Abin da muke adanawa",
+      "body": "Muna kuma adana imel, bayanan shiga, zaɓuka da yardarka. Ana adana kalmomin sirri a matsayin alamomin hashi. Rubutun tunanin da aka ajiye yana cikin ɓoyayyen tsari."
+    },
+    "processors": {
+      "title": "Masu amfani da bayanan",
+      "body": "Cloudflare R2 yana adana hotuna da hotunan gwaji. Brevo yana aika imel na asusu. Idan ka zaɓi shiga ta Google, Google ne yake kula da shiga. Zaɓukanka na iya bayyana bayanai masu muhimmanci, don haka ka raba abin da ka ji daɗin rabawa kawai."
+    },
+    "retention": {
+      "title": "Tsawon lokacin adanawa",
+      "body": "Sabon dubawa yana sake fara lokacin tarihin. Amsoshinka da rubutun kati suna nan har sai ka goge bayanin. Bayanan asusu suna nan har sai ka goge asusun."
+    },
+    "choices": {
+      "title": "Zaɓukanka",
+      "body": "Daga bayaninka za ka iya sauke bayanai, sauya adana hotuna ko goge bayanin. Za ka iya goge asusu a saitunansa. Hanyoyin rabawa suna nuna hotunan gwaji da zaɓaɓɓen rubutu, ba hotunan asali ko rubutun tunani ba. Za ka iya dakatar da hanyar. Bayanan raka’o’in sabis marasa rubutun sirri suna nan bayan gogewa."
+    },
+    "cookies": {
+      "title": "Kukis da sanarwa",
+      "body": "Kukis suna riƙe shigarka da tuna harshe da jigonka. Sanarwa a kashe take sai ka zaɓa. Za ka iya kashe ta a saituna."
+    },
+    "contact": "Don tambaya game da bayananka, tuntuɓi Interim:"
+  },
+  "serviceTerms": {
+    "title": "Sharuɗɗan amfani",
+    "intro": "Interim yana ba da shawarwari masu amfani game da kamanni da tufafi. Waɗannan sharuɗɗa suna bayyana yadda ake amfani da shi.",
+    "adults": {
+      "title": "Ga manya kawai",
+      "body": "Ka yi amfani da Interim ne kawai idan kana da aƙalla shekaru {age}. Karanta bayanin sirri da zaɓin yarda kafin ƙara hotuna."
+    },
+    "photos": {
+      "title": "Hotunanka",
+      "body": "Ka ɗora hotunanka kawai waɗanda kake da izinin amfani da su. Kada wani ya kasance cikin hoton. Kana ba Interim da masu sabis da aka ambata a shafin yarda izinin amfani da su don ayyukan da ka nema."
+    },
+    "previews": {
+      "title": "Hotunan gwaji da shawarwari",
+      "body": "Hotunan gwaji ba sa tabbatar da sakamako ko dacewar tufa. Girma yana amfani da abin da ka faɗa da jadawalin kundin tufafi. Ka duba kafin saye. Don tambayoyin lafiya, yi magana da likita ko ma’aikacin jinya."
+    },
+    "account": {
+      "title": "Asusunka da rabawa",
+      "body": "Ka riƙe bayanan shigarka a sirrance. Duk mai hanyar rabawa zai iya ganin abin da ke ciki har sai ta ƙare ko ka dakatar da ita. Za ka iya sauke ko goge bayaninka da goge asusunka."
+    },
+    "availability": {
+      "title": "Samun sabis",
+      "body": "Interim samfurin gwaji ne. Ayyuka na iya sauyawa ko su daina samuwa, kuma sakamako na iya zama ba daidai ba. Mutanen nunin gwaji na kwaikwayo ne. Interim ba ya yin odar kaya ko karɓar kuɗi."
+    },
+    "contact": "Don tambayoyin amfani da Interim, tuntuɓi:"
   }
 }

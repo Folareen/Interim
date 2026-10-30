@@ -38,7 +38,7 @@ Mobile first: a single column, `max-w-md` (28rem), 20px side gutters, centred on
 | `ChoiceRow` | A large radio or checkbox row. The input stays real, so it works with a keyboard, a screen reader and without JavaScript |
 | `PageHeading`, `Notice`, `ThemeToggle`, `StageDots` | Title, error message, theme switch, and the decorative line of five dots |
 
-The capture wizard, the run progress list and the Stage Card (with `OptionImage`, whose button swaps a preview and the person's own photo) are built as screen components under `app/capture`, `app/runs` and `app/cards`. Still to build: the ledger row. It should be small, take typed props from `@interim/types` and need no extra dependency.
+The capture wizard, the run progress list and the Stage Card (with `OptionImage`, whose button swaps a preview and the person's own photo) are built as screen components under `app/capture`, `app/runs` and `app/cards`. The ledger screen uses the same bordered rows with the tool, purpose, units and date, and a separate definition list for held and spent totals. It reads typed data from `@interim/types` and needs no extra dependency.
 
 ## Keep it plain
 No gradients, glow, blur, heavy shadows, emoji, or icon-in-a-circle cards. Colour is not the only signal: a selected row also changes its marker and border. Motion is limited to colour changes and is off for people who ask for reduced motion. Errors use `role="alert"` and say what to do.

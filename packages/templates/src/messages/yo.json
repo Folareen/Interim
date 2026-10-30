@@ -1,5 +1,8 @@
 {
   "common": {
+    "information": "Àlàyé",
+    "privacy": "Àṣírí",
+    "serviceTerms": "Àwọn òfin ìlò",
     "appName": "Interim",
     "tagline": "Ó ń ràn ọ́ lọ́wọ́ láti ní ìmọ̀lára bí ara rẹ nígbà tí ara rẹ ń yípadà.",
     "back": "Padà",
@@ -104,6 +107,7 @@
     "outdated": "Ọ̀rọ̀ ìfọwọ́sí ti yípadà. Tún ojú-ìwé yìí gbé wá kí o sì tún kà á."
   },
   "ready": {
+    "ledgerAction": "Wo àwọn ẹyọ tí a lò",
     "title": "A ti ṣètò rẹ",
     "intro": "Interim ní ohun tó nílò láti bẹ̀rẹ̀.",
     "summaryTitle": "Àwọn yíyàn rẹ",
@@ -526,6 +530,7 @@
     "stubble": "Irùngbọ̀n kékeré"
   },
   "card": {
+    "traceUnits": "A ti ná ẹyọ {units}",
     "title": "Káàdì ipele rẹ",
     "situationLabel": "Ipò",
     "stageLabel": "Ibi tí o wà báyìí",
@@ -679,5 +684,75 @@
     "cardBanner": "Ènìyàn àfarawé, a gbà á sílẹ̀ ní {date}. Kò sí ohun tó ń ṣẹlẹ̀ lọ́wọ́lọ́wọ́ lórí ojú-ìwé yìí.",
     "backAction": "Padà sí àfihàn",
     "startAction": "Bẹ̀rẹ̀ ti ìwọ"
+  },
+  "ledger": {
+    "title": "Àwọn ẹyọ iṣẹ́",
+    "intro": "Wo àwọn ẹyọ tí a lò fún ìwọ̀n àti àwòrán àdánwò nínú àkọsílẹ̀ yìí.",
+    "spent": "A ti ná",
+    "held": "A yà sọ́tọ̀ fún iṣẹ́ tí ó ń lọ lọ́wọ́",
+    "units": "Ẹyọ {units}",
+    "totalsHelp": "Àwọn ẹyọ tí a yà sọ́tọ̀ kò tíì ná. Ẹyọ iṣẹ́ ni wọ́n, kì í ṣe owó tí o ní láti san.",
+    "eventsTitle": "Ìtàn iṣẹ́",
+    "eventsHelp": "Iṣẹ́ kan lè hàn nígbà tí a ya ẹyọ sọ́tọ̀ àti nígbà tí ó parí. Àpapọ̀ tí a ti ná nìkan ló ka iye iṣẹ́ tí ó ti parí.",
+    "empty": "Kò sí iṣẹ́ tí a ti ṣe àkọsílẹ̀ rẹ̀ fún àkọsílẹ̀ yìí.",
+    "measurePurpose": "Láti wọn ìyípadà.",
+    "previewPurpose": "Láti ṣe àwòrán àdánwò.",
+    "otherPurpose": "Láti ṣiṣẹ́ lórí fọ́tò.",
+    "otherTool": "Ohun èlò fọ́tò",
+    "events": {
+      "reserve": "A yà ẹyọ {units} sọ́tọ̀",
+      "settle": "A ti ná ẹyọ {units}",
+      "release": "A dá ẹyọ {units} padà"
+    }
+  },
+  "privacy": {
+    "title": "Àṣírí ní Interim",
+    "intro": "Interim ń lo àlàyé rẹ láti tọ́jú àkọọ́lẹ̀ rẹ, fi àyẹ̀wò wéra àti ṣe káàdì rẹ.",
+    "data": {
+      "title": "Ohun tí a ń pa mọ́",
+      "body": "A tún ń pa ímeèlì, àlàyé ìwọlé, àwọn àṣàyàn àti ìfọwọ́sí rẹ mọ́. A ń pa ọ̀rọ̀ ìpamọ́ mọ́ gẹ́gẹ́ bí àmì hash. A fi àkọsílẹ̀ ìrònú tí a pa mọ́ sínú kóòdù ààbò."
+    },
+    "processors": {
+      "title": "Àwọn tí ń lo àlàyé",
+      "body": "Cloudflare R2 ń pa fọ́tò àti àwòrán àdánwò mọ́. Brevo ń fi ímeèlì àkọọ́lẹ̀ ránṣẹ́. Bí o bá yan ìwọlé Google, Google ló ń bójú tó ìwọlé náà. Àwọn àṣàyàn rẹ lè fi àlàyé àṣírí hàn, nítorí náà pín ohun tí ó bá rọrùn fún ọ nìkan."
+    },
+    "retention": {
+      "title": "Bí a ṣe ń pa á mọ́ tó",
+      "body": "Àyẹ̀wò tuntun ń bẹ̀rẹ̀ àkókò ìtàn rẹ padà. Ìdáhùn rẹ àti ọ̀rọ̀ káàdì wà títí tí o fi pa àkọsílẹ̀ rẹ rẹ́. Àlàyé àkọọ́lẹ̀ wà títí tí o fi pa àkọọ́lẹ̀ rẹ rẹ́."
+    },
+    "choices": {
+      "title": "Àwọn àṣàyàn rẹ",
+      "body": "Láti inú àkọsílẹ̀ rẹ o lè gba àlàyé rẹ jáde, yí ìpamọ́ fọ́tò padà tàbí pa àkọsílẹ̀ rẹ rẹ́. O lè pa àkọọ́lẹ̀ rẹ rẹ́ nínú ètò rẹ̀. Àwọn ìjápọ̀ pínpín ń fi àwòrán àdánwò àti ọ̀rọ̀ tí a yàn hàn, kì í ṣe fọ́tò àkọ́kọ́ tàbí ìrònú. O lè dá ìjápọ̀ dúró. Àkọsílẹ̀ ẹyọ iṣẹ́ tí kò ní ọ̀rọ̀ àṣírí máa ń wà lẹ́yìn píparẹ́."
+    },
+    "cookies": {
+      "title": "Kúkì àti ìfitónilétí",
+      "body": "Kúkì ń jẹ́ kí o dúró ní ìwọlé, wọ́n sì ń rántí èdè àti àwọ̀ ojú ìwé rẹ. Ìfitónilétí wà ní pípa títí tí o fi yàn án. O lè pa á nínú ètò."
+    },
+    "contact": "Fún ìbéèrè nípa àlàyé rẹ, kàn sí Interim:"
+  },
+  "serviceTerms": {
+    "title": "Àwọn òfin ìlò",
+    "intro": "Interim ń fún ọ ní èrò tó wúlò fún ìrísí àti aṣọ rẹ. Àwọn òfin yìí ṣàlàyé bí a ṣe ń lò ó.",
+    "adults": {
+      "title": "Fún àgbàlagbà nìkan",
+      "body": "Lo Interim bí o bá ti pé ọdún {age} ó kéré tán. Ka àlàyé àṣírí àti àṣàyàn ìfọwọ́sí kí o tó fi fọ́tò kún un."
+    },
+    "photos": {
+      "title": "Àwọn fọ́tò rẹ",
+      "body": "Fi fọ́tò ara rẹ nìkan tí o ní àṣẹ láti lò ránṣẹ́. Má jẹ́ kí ẹlòmíràn wà nínú fọ́tò. O fún Interim àti àwọn olùpèsè tí a dárúkọ nínú ìfọwọ́sí ní àṣẹ láti lò wọ́n fún iṣẹ́ tí o béèrè."
+    },
+    "previews": {
+      "title": "Àwòrán àdánwò àti àbá",
+      "body": "Àwòrán àdánwò kò ṣe ìlérí àbájáde tàbí bí aṣọ ṣe máa rí lára. Ìwọ̀n aṣọ wá láti ohun tí o sọ àti tábìlì ìwọ̀n aṣọ. Ṣàyẹ̀wò kí o tó rà. Fún ìbéèrè ìlera, bá dókítà tàbí nọ́ọ̀sì sọ̀rọ̀."
+    },
+    "account": {
+      "title": "Àkọọ́lẹ̀ àti pínpín",
+      "body": "Pa àlàyé ìwọlé rẹ mọ́ ní àṣírí. Ẹnikẹ́ni tó ní ìjápọ̀ pínpín lè rí ohun tí ó wà nínú rẹ̀ títí tí ó fi parí tàbí tí o dá a dúró. O lè gba àkọsílẹ̀ rẹ jáde tàbí pa á rẹ́, kí o sì pa àkọọ́lẹ̀ rẹ rẹ́."
+    },
+    "availability": {
+      "title": "Wíwà iṣẹ́",
+      "body": "Interim jẹ́ àdánwò. Àwọn iṣẹ́ lè yí padà tàbí má wà, àbájáde sì lè ṣàṣìṣe. Àwọn ènìyàn inú àfihàn jẹ́ àwòṣe. Interim kì í paṣẹ ohun tàbí gba owó."
+    },
+    "contact": "Fún ìbéèrè nípa lílo Interim, kàn sí:"
   }
 }

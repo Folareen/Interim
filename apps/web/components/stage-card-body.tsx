@@ -212,7 +212,10 @@ export async function StageCardBody({
         <summary className="cursor-pointer font-semibold">{t('traceTitle')}</summary>
         <ol className="mt-3 space-y-2 text-[0.95rem]">
           {card.trace.map((line) => (
-            <li key={line.seq}>{trace(line.reason, { tool: line.tool && isToolKey(line.tool) ? tools(line.tool) : '' })}</li>
+            <li key={line.seq}>
+              <p>{trace(line.reason, { tool: line.tool && isToolKey(line.tool) ? tools(line.tool) : '' })}</p>
+              {line.tool && <p className="text-muted">{t('traceUnits', { units: format.number(line.costUnits) })}</p>}
+            </li>
           ))}
         </ol>
       </details>

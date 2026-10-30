@@ -1,5 +1,8 @@
 {
   "common": {
+    "information": "Taarifa",
+    "privacy": "Faragha",
+    "serviceTerms": "Masharti ya matumizi",
     "appName": "Interim",
     "tagline": "Inakusaidia kujisikia kama wewe mwili wako unapobadilika.",
     "back": "Rudi",
@@ -104,6 +107,7 @@
     "outdated": "Maandishi ya idhini yamebadilika. Pakia upya ukurasa huu na uyasome tena."
   },
   "ready": {
+    "ledgerAction": "Angalia vipimo vilivyotumika",
     "title": "Umeandaliwa",
     "intro": "Interim ina inachohitaji kuanza.",
     "summaryTitle": "Chaguo zako",
@@ -526,6 +530,7 @@
     "stubble": "Ndevu fupi sana"
   },
   "card": {
+    "traceUnits": "Vilivyotumika: vipimo {units}",
     "title": "Kadi yako ya hatua",
     "situationLabel": "Hali",
     "stageLabel": "Ulipo sasa",
@@ -679,5 +684,75 @@
     "cardBanner": "Mtu wa kuigizwa, imerekodiwa tarehe {date}. Hakuna kitu kwenye ukurasa huu kinachofanyika moja kwa moja.",
     "backAction": "Rudi kwenye onyesho",
     "startAction": "Anza yako"
+  },
+  "ledger": {
+    "title": "Vipimo vya huduma",
+    "intro": "Angalia vipimo vya huduma vilivyotumika kwa upimaji na picha za majaribio za wasifu huu.",
+    "spent": "Vilivyotumika",
+    "held": "Vilivyotengwa kwa kazi zinazoendelea",
+    "units": "Vipimo {units}",
+    "totalsHelp": "Vipimo vilivyotengwa bado havijatumika. Hivi ni vipimo vya huduma, si bili yako.",
+    "eventsTitle": "Historia ya kazi",
+    "eventsHelp": "Kazi inaweza kuonekana vipimo vinapotengwa na tena inapokamilika. Jumla iliyotumika pekee ndiyo inahesabu gharama zilizokamilika.",
+    "empty": "Hakuna kazi zilizorekodiwa kwa wasifu huu.",
+    "measurePurpose": "Kupima mabadiliko.",
+    "previewPurpose": "Kutengeneza picha ya majaribio.",
+    "otherPurpose": "Kuchakata picha.",
+    "otherTool": "Zana ya picha",
+    "events": {
+      "reserve": "Vilivyotengwa: vipimo {units}",
+      "settle": "Vilivyotumika: vipimo {units}",
+      "release": "Vilivyorudishwa: vipimo {units}"
+    }
+  },
+  "privacy": {
+    "title": "Faragha katika Interim",
+    "intro": "Interim hutumia taarifa zako kutunza akaunti, kulinganisha ukaguzi na kutengeneza kadi zako.",
+    "data": {
+      "title": "Tunachohifadhi",
+      "body": "Tunahifadhi pia barua pepe, taarifa za kuingia, chaguo zako na ridhaa yako. Nywila huhifadhiwa kama alama za hashi. Tafakari zilizohifadhiwa zimesimbwa."
+    },
+    "processors": {
+      "title": "Wanaozitumia",
+      "body": "Cloudflare R2 huhifadhi picha na picha za majaribio. Brevo hutuma barua pepe za akaunti. Ukichagua kuingia kupitia Google, Google husimamia kuingia huko. Chaguo zako zinaweza kuonyesha taarifa nyeti, hivyo shiriki tu unachojisikia vizuri kushiriki."
+    },
+    "retention": {
+      "title": "Muda wa kuhifadhi",
+      "body": "Ukaguzi mpya huanza upya muda wa historia. Majibu yako na maandishi ya kadi hubaki hadi ufute wasifu. Taarifa za akaunti hubaki hadi ufute akaunti."
+    },
+    "choices": {
+      "title": "Chaguo zako",
+      "body": "Kwenye wasifu unaweza kupakua data, kubadili uhifadhi wa picha au kufuta wasifu. Unaweza kufuta akaunti kwenye mipangilio yake. Viungo vya kushiriki huonyesha picha za majaribio na maandishi yaliyochaguliwa, si picha asili au tafakari. Unaweza kusimamisha kiungo. Rekodi za vipimo vya huduma zisizo na maudhui binafsi hubaki baada ya kufuta."
+    },
+    "cookies": {
+      "title": "Vidakuzi na arifa",
+      "body": "Vidakuzi hukuweka umeingia na kukumbuka lugha na mandhari yako. Arifa zimezimwa hadi uzichague. Unaweza kuzizima kwenye mipangilio."
+    },
+    "contact": "Kwa maswali kuhusu data zako, wasiliana na Interim:"
+  },
+  "serviceTerms": {
+    "title": "Masharti ya matumizi",
+    "intro": "Interim hutoa mawazo ya vitendo kuhusu mwonekano na mavazi yako. Masharti haya yanaeleza matumizi yake.",
+    "adults": {
+      "title": "Kwa watu wazima",
+      "body": "Tumia Interim tu ikiwa una umri wa angalau miaka {age}. Soma taarifa za faragha na chaguo za ridhaa kabla ya kuongeza picha."
+    },
+    "photos": {
+      "title": "Picha zako",
+      "body": "Pakia picha zako mwenyewe tu ambazo una ruhusa ya kutumia. Watu wengine wasiwe kwenye picha. Unaruhusu Interim na watoa huduma waliotajwa kwenye ukurasa wa ridhaa kutumia picha hizo kwa vipengele unavyoomba."
+    },
+    "previews": {
+      "title": "Picha za majaribio na mapendekezo",
+      "body": "Picha za majaribio haziahidi matokeo au ukubwa unaofaa. Ukubwa hutegemea majibu yako na jedwali la ukubwa la katalogi. Angalia maelezo kabla ya kununua. Kwa maswali ya afya, zungumza na daktari au muuguzi."
+    },
+    "account": {
+      "title": "Akaunti na kushiriki",
+      "body": "Weka taarifa za kuingia kwa siri. Yeyote mwenye kiungo anaweza kuona yaliyomo hadi muda wake uishe au ukisimamishe. Unaweza kupakua au kufuta wasifu na kufuta akaunti."
+    },
+    "availability": {
+      "title": "Upatikanaji",
+      "body": "Interim ni mfano wa majaribio. Vipengele vinaweza kubadilika au kutopatikana, na matokeo yanaweza kukosea. Watu wa onyesho wameundwa kwa majaribio. Interim haiagizi bidhaa wala kupokea malipo."
+    },
+    "contact": "Kwa maswali ya matumizi ya Interim, wasiliana na:"
   }
 }
