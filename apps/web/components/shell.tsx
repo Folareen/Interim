@@ -63,6 +63,12 @@ export async function Shell({ step, backHref, children }: { step?: number; backH
         )}
         {children}
       </main>
+      <footer className="mt-8 border-t border-border py-4">
+        <nav aria-label={t('information')} className="flex flex-wrap gap-x-6 text-[0.95rem] text-muted">
+          <Link href="/privacy" className="inline-flex min-h-11 items-center underline underline-offset-4">{t('privacy')}</Link>
+          <Link href="/terms" className="inline-flex min-h-11 items-center underline underline-offset-4">{t('serviceTerms')}</Link>
+        </nav>
+      </footer>
     </div>
   );
 }

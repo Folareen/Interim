@@ -1,5 +1,6 @@
 import { type Db, budgetCounter, ledgerEntry } from '@interim/db';
 import { eq, sql } from 'drizzle-orm';
+import { ledgerViewSchema } from '@interim/types';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { ProfilesService } from '../profiles/profiles.service';
 import { createTestDb } from '../test/test-db';
@@ -137,6 +138,10 @@ describe('list', () => {
     const result = await ledger.list(profileId, owner);
     expect(result.entries.map((e) => e.kind).sort()).toEqual(['reserve', 'reserve', 'settle']);
     expect(result.totals).toEqual({ reservedUnits: 2, settledUnits: 9 });
+    const response = ledgerViewSchema.parse(JSON.parse(JSON.stringify(result)));
+    expect(response.entries).toHaveLength(3);
+    expect(response.entries[0]).toHaveProperty('createdAt');
+    expect(response.entries[0]).not.toHaveProperty('profileRef');
   });
 
   it('shows zero totals before any call', async () => {

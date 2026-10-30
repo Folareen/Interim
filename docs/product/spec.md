@@ -349,7 +349,7 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 
 This section owns every open question. What the live runs settled is in [integrations/youcam.md](../integrations/youcam.md#observed-live). Those runs used professional portraits and synthetic images, so they show what the tools can do, not how people will photograph themselves.
 
-1. Compute units and money per baseline and per check in from the cost table, using the price per unit of the real plan.
+1. Sample baseline and check-in costs are measured in section 18. Costs across the other templates and a real-user workload remain to be measured.
 2. Hair density on at least six real top of head photos. On synthetic heads it follows fullness within one person but not across people, and drops in dim light, so stage placement compares `mapping` with the person's own baseline (section 6). Hair length is coarse and supports a stage but does not place one.
 3. What is billed on moderation rejections and on timed out tasks.
 4. The panel: run the capture checks and the tools on at least twelve consenting people covering a range of skin tones, hair textures, short and shaved hair, locs, head coverings and facial hair, on phone selfies. Record failure rates per group and tune the thresholds until they are close. Skin colour and Fitzpatrick ordered six synthetic people correctly and need the same check on real selfies.
@@ -357,7 +357,7 @@ This section owns every open question. What the live runs settled is in [integra
 6. Head covering: only a hijab and a head wrap were tried. Check other coverings and wigs, and settle the wording of the setting with people who cover their hair.
 7. YouCam groups its hairstyle templates as Male and Female and offers hair volume only as Female templates. Settled: every style is offered to everyone and each preview is named by its look (for example natural volume), never by who it is for. Still to check with people who would use them.
 8. Whether Camera Kit gives enough angle control for the top photo.
-9. Legal review of the consent wording per language, and a native speaker's read of the crisis wording and safety lists when one is available. Neither blocks a language, since the check flags near matches for model review (section 13). The words for today sets have no public domain translation in these languages yet, so they fall back to English.
+9. Legal review of the consent, privacy and terms wording per language, and a native speaker's read of the crisis wording and safety lists when one is available. Review the public contact address before publishing the policy pages. A native-speaker review does not block a language, since the check flags near matches for model review (section 13). The words for today sets have no public domain translation in these languages yet, so they fall back to English.
 10. YouCam's Camera Kit (`plugins-media.makeupar.com`) runs on the capture screen with camera access. Its documentation does not say what it sends to Perfect Corp's servers, whether frames leave the device, or how it behaves on iOS Safari, and the consent text names Perfect Corp only as the processor of uploaded photos. Settle this and the wording before launch. The file input stays as the way to avoid the kit.
 11. Accounts (section 12b): legal review of the sign up wording where it names Brevo and Google.
 12. Whether a person at Interim ever looks at reflections the model rates `concern`, and the legal wording for sending flagged text to Gemini.
@@ -372,6 +372,24 @@ In the style of the Round 1 winners, publish measured results.
 * how often the eligibility rules prevented a paid failure
 
 Measured on the sample personas (front photo only, no density), live on 2026-10-23: a baseline cost 38 units (2.09 dollars: hair length 2, face shape 10, skin tone 20, three hair style previews 6), and a check in cost 8 units (0.44 dollars: hair length 2, three previews 6). Ten runs cost 140 units (7.70 dollars), and the balance fell by exactly that.
+
+Exploratory spike log summary, 20–27 October 2026, for the tools used in the product. These are historical development attempts, including deliberately unsuitable portraits, generated inputs and setup faults, not a representative user test. The source is the local, ignored `apps/api/.spike/results.jsonl`; raw task ids and signed links are not published. Sample-persona runs and other experiments outside this log are not in these denominators. Recompute by grouping log rows by `tool`, counting every non-`success` row as unsuccessful, and taking the median non-null `seconds` among successful rows.
+
+| Tool | Logged attempts | Unsuccessful | Median successful call, seconds |
+| --- | ---: | ---: | ---: |
+| `hair_type` | 3 | 3/3 (100.0%) | — |
+| `hair_density` | 28 | 18/28 (64.3%) | 10 |
+| `hair_length` | 20 | 5/20 (25.0%) | 10 |
+| `face_shape` | 17 | 6/17 (35.3%) | 10 |
+| `skin_tone` | 24 | 9/24 (37.5%) | 11 |
+| `hairstyle` | 19 | 0/19 (0.0%) | 11 |
+| `hair_volume` | 3 | 0/3 (0.0%) | 11 |
+| `hair_color` | 1 | 0/1 (0.0%) | 14 |
+| `beard_style` | 4 | 0/4 (0.0%) | 13 |
+| `makeup_brows` | 4 | 0/4 (0.0%) | 11.5 |
+| `cloth_v4` | 3 | 0/3 (0.0%) | 25 |
+
+Timing starts before upload and ends at the final poll, rounded to whole seconds. It excludes photo preparation and result-image download and is not pure render time. Some tools have only a handful of attempts; do not treat a zero observed failure count as reliability evidence. Hair type succeeded in other experiments (integration notes), but no success appears in this log subset. Representative per-tool error rates, pure render medians and the share of paid failures prevented by eligibility remain unmeasured.
 
 Product measures, tracked in the build and reported in the readme:
 

@@ -1,5 +1,9 @@
 {
   "common": {
+    "supportEmail": "sakawahab03@gmail.com",
+    "information": "Informações",
+    "privacy": "Privacidade",
+    "serviceTerms": "Termos de uso",
     "appName": "Interim",
     "tagline": "Ajuda você a continuar se sentindo como você enquanto seu corpo muda.",
     "back": "Voltar",
@@ -104,6 +108,7 @@
     "outdated": "O texto do consentimento mudou. Recarregue esta página e leia de novo."
   },
   "ready": {
+    "ledgerAction": "Ver unidades utilizadas",
     "title": "Tudo pronto",
     "intro": "O Interim tem o que precisa para começar.",
     "summaryTitle": "Suas escolhas",
@@ -526,6 +531,7 @@
     "stubble": "Barba por fazer"
   },
   "card": {
+    "traceUnits": "Gastas: {units} unidades",
     "title": "Seu cartão de etapa",
     "situationLabel": "Situação",
     "stageLabel": "Onde você está agora",
@@ -679,5 +685,75 @@
     "cardBanner": "Pessoa simulada, gravada em {date}. Nada nesta página é ao vivo.",
     "backAction": "Voltar à demonstração",
     "startAction": "Comece o seu"
+  },
+  "ledger": {
+    "title": "Unidades utilizadas",
+    "intro": "Veja as unidades usadas nas medições e prévias deste perfil.",
+    "spent": "Gastas",
+    "held": "Reservadas para chamadas em curso",
+    "units": "{units} unidades",
+    "totalsHelp": "As unidades reservadas ficam separadas, ainda não foram gastas. São unidades do serviço, não uma conta para você.",
+    "eventsTitle": "Histórico de chamadas",
+    "eventsHelp": "Uma chamada pode aparecer ao reservar unidades e ao terminar. Só o total gasto conta as cobranças concluídas.",
+    "empty": "Nenhuma chamada foi registrada para este perfil.",
+    "measurePurpose": "Para medir uma mudança.",
+    "previewPurpose": "Para criar uma prévia.",
+    "otherPurpose": "Para processar uma foto.",
+    "otherTool": "Ferramenta de fotos",
+    "events": {
+      "reserve": "Reservadas: {units} unidades",
+      "settle": "Gastas: {units} unidades",
+      "release": "Liberadas: {units} unidades"
+    }
+  },
+  "privacy": {
+    "title": "Privacidade no Interim",
+    "intro": "O Interim usa suas informações para manter sua conta, comparar registros e criar seus cartões.",
+    "data": {
+      "title": "O que guardamos",
+      "body": "Também guardamos seu e-mail, dados de acesso, escolhas e consentimento. As senhas são guardadas como hashes. As reflexões salvas são criptografadas."
+    },
+    "processors": {
+      "title": "Quem usa os dados",
+      "body": "O Cloudflare R2 armazena fotos e prévias. A Brevo envia os e-mails da conta. Se você escolher entrar com o Google, ele gerencia esse acesso. Suas escolhas podem revelar informações sensíveis: compartilhe apenas o que for confortável."
+    },
+    "retention": {
+      "title": "Por quanto tempo",
+      "body": "Cada novo registro reinicia o prazo do histórico. Suas respostas e o texto dos cartões ficam até você excluir o perfil. Os dados da conta ficam até você excluir a conta."
+    },
+    "choices": {
+      "title": "Suas escolhas",
+      "body": "No perfil, você pode exportar dados, mudar a conservação das fotos ou excluir o perfil. Pode excluir a conta nos ajustes. Links compartilhados mostram prévias e textos selecionados, nunca fotos originais nem reflexões. Você pode desativar um link. Registros de unidades sem conteúdo pessoal permanecem após a exclusão."
+    },
+    "cookies": {
+      "title": "Cookies e notificações",
+      "body": "Os cookies mantêm sua sessão e lembram o idioma e o tema. As notificações ficam desativadas até você escolher recebê-las. Você pode desativá-las nos ajustes."
+    },
+    "contact": "Para perguntas sobre seus dados, fale com o Interim:"
+  },
+  "serviceTerms": {
+    "title": "Termos de uso",
+    "intro": "O Interim oferece ideias práticas para sua aparência e suas roupas. Estes termos explicam como usar o serviço.",
+    "adults": {
+      "title": "Somente para adultos",
+      "body": "Use o Interim apenas se tiver pelo menos {age} anos. Leia as informações de privacidade e as opções de consentimento antes de adicionar fotos."
+    },
+    "photos": {
+      "title": "Suas fotos",
+      "body": "Envie apenas fotos suas que você tenha permissão para usar. Não inclua outras pessoas. Você permite que o Interim e os prestadores indicados no consentimento usem as fotos para oferecer os recursos solicitados."
+    },
+    "previews": {
+      "title": "Prévias e sugestões",
+      "body": "As prévias não garantem resultado nem caimento. Os tamanhos usam suas respostas e as tabelas do catálogo. Confira os detalhes antes de comprar. Para dúvidas de saúde, fale com um médico ou enfermeiro."
+    },
+    "account": {
+      "title": "Conta e compartilhamento",
+      "body": "Mantenha seus dados de acesso em sigilo. Quem tiver um link compartilhado pode ver seu conteúdo até ele expirar ou você desativá-lo. Você pode exportar ou excluir seu perfil e excluir sua conta."
+    },
+    "availability": {
+      "title": "Disponibilidade",
+      "body": "O Interim é um protótipo. Os recursos podem mudar ou ficar indisponíveis e os resultados podem estar errados. As pessoas da demonstração são simuladas. O Interim não faz pedidos nem recebe pagamentos."
+    },
+    "contact": "Para perguntas sobre o uso do Interim, entre em contato:"
   }
 }

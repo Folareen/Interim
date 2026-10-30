@@ -74,6 +74,9 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
         <Link href={`/reflect/${id}`} className={secondaryClass}>
           {reflect('readyAction')}
         </Link>
+        <Link href={`/ledger/${id}`} className={secondaryClass}>
+          {t('ledgerAction')}
+        </Link>
         <Link href={`/settings/${id}`} className={secondaryClass}>
           {t('editAction')}
         </Link>

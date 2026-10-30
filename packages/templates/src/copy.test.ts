@@ -60,8 +60,8 @@ describe('translations', () => {
   });
 
   it('leaves no translation identical to English except names and shared words', () => {
-    // `demo.checkInLine` is two marks and a comma, so it reads the same in every language.
-    const allowed = new Set(['common.appName', 'ready.situationLabel', 'notifications.title', 'demo.checkInLine']);
+    // The contact address is unchanged across languages; `demo.checkInLine` is only marks and punctuation.
+    const allowed = new Set(['common.appName', 'common.supportEmail', 'ready.situationLabel', 'notifications.title', 'demo.checkInLine']);
     for (const locale of liveLocales.filter((l) => l !== 'en' && l !== 'pcm')) {
       for (const [path, text] of entries(messages[locale])) {
         if (allowed.has(path) || path.startsWith('common.appName')) continue;

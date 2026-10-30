@@ -29,7 +29,7 @@ The worker is its own process that takes runs and safety reviews off the queue. 
 | `pnpm dev`, `dev:api`, `dev:web`, `dev:worker` | Run everything (web, api and worker), or one process |
 
 ## Environment
-Variables are listed in `.env.example`. The API validates them once at startup (`apps/api/src/config/env.ts`). Only `NEXT_PUBLIC_*` reaches the browser. Never put the YouCam or Gemini keys there.
+Variables are listed in `.env.example`. The API validates them once at startup (`apps/api/src/config/env.ts`). The privacy and terms pages use the public contact address in the message catalogs. Set `SUPPORT_EMAIL` on the web deployment only to override it; an unset or empty value uses the catalog address. Their wording still needs operator and legal review (spec section 17). Only `NEXT_PUBLIC_*` reaches the browser. Never put the YouCam or Gemini keys there.
 
 ## Replay and the capture flow
 With the default `YOUCAM_MODE=replay` there are no recorded YouCam responses for your own photos, so a run you start from the app ends in "no recorded answer for these photos". That is the safe default, not a fault. Tests write synthetic fixtures into a temporary directory (`apps/api/src/test/youcam-fixtures.ts`) and run the whole loop in replay. Recording fixtures for the sample personas is a live batch: state its cost, agree a cap and run it with `--max-units` first.

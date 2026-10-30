@@ -1,5 +1,9 @@
 {
   "common": {
+    "supportEmail": "sakawahab03@gmail.com",
+    "information": "Information",
+    "privacy": "Privacy",
+    "serviceTerms": "Terms of use",
     "appName": "Interim",
     "tagline": "Helps you feel like yourself while your body changes.",
     "back": "Back",
@@ -104,6 +108,7 @@
     "outdated": "The consent text has changed. Reload this page and read it again."
   },
   "ready": {
+    "ledgerAction": "View unit costs",
     "title": "You are set up",
     "intro": "Interim has what it needs to start.",
     "summaryTitle": "Your choices",
@@ -526,6 +531,7 @@
     "stubble": "Stubble"
   },
   "card": {
+    "traceUnits": "Spent: {units} units",
     "title": "Your Stage Card",
     "situationLabel": "Situation",
     "stageLabel": "Where you are now",
@@ -679,5 +685,75 @@
     "cardBanner": "Simulated person, recorded on {date}. Nothing on this page is live.",
     "backAction": "Back to the demo",
     "startAction": "Start your own"
+  },
+  "ledger": {
+    "title": "Unit costs",
+    "intro": "See the units used for this profile’s measurements and previews.",
+    "spent": "Spent",
+    "held": "Held for calls in progress",
+    "units": "{units} units",
+    "totalsHelp": "Held units are set aside, not spent. These are service units, not a bill for you.",
+    "eventsTitle": "Call history",
+    "eventsHelp": "A call can appear when units are held and again when it finishes. Only the spent total counts completed charges.",
+    "empty": "No calls have been recorded for this profile.",
+    "measurePurpose": "To measure a change.",
+    "previewPurpose": "To make a preview.",
+    "otherPurpose": "To process a photo.",
+    "otherTool": "Photo tool",
+    "events": {
+      "reserve": "Held: {units} units",
+      "settle": "Spent: {units} units",
+      "release": "Released: {units} units"
+    }
+  },
+  "privacy": {
+    "title": "Privacy at Interim",
+    "intro": "Interim uses your information to keep your account, compare check ins and make your cards.",
+    "data": {
+      "title": "What we keep",
+      "body": "We also keep your email, sign-in details, choices and consent record. Passwords are stored as hashes. Saved reflections are encrypted."
+    },
+    "processors": {
+      "title": "Who processes it",
+      "body": "Cloudflare R2 stores photos and previews. Brevo sends account emails. If you choose Google sign-in, Google handles that sign-in. Your choices can reveal sensitive information, so share only what you are comfortable sharing."
+    },
+    "retention": {
+      "title": "How long we keep it",
+      "body": "A new check in restarts the history period. Your answers and card text stay until you delete the profile. Account details stay until you delete your account."
+    },
+    "choices": {
+      "title": "Your choices",
+      "body": "From your profile you can export your data, change photo storage choices or delete the profile. Account settings let you delete your account. Share links show previews and selected card text, never original photos or reflections. You can stop a link. Unit records without personal content remain after deletion."
+    },
+    "cookies": {
+      "title": "Cookies and notifications",
+      "body": "Cookies keep you signed in and remember your language and theme. Notifications are off until you choose them. You can turn them off in settings."
+    },
+    "contact": "For questions about your data, contact Interim:"
+  },
+  "serviceTerms": {
+    "title": "Terms of use",
+    "intro": "Interim offers practical ideas for your appearance and clothes. These terms explain how to use it.",
+    "adults": {
+      "title": "Adults only",
+      "body": "Use Interim only if you are at least {age} years old. Read the privacy information and consent choices before adding photos."
+    },
+    "photos": {
+      "title": "Your photos",
+      "body": "Upload only photos of yourself that you have permission to use. Keep other people out of the frame. You allow Interim and the processors named in the consent screen to use them to provide the features you request."
+    },
+    "previews": {
+      "title": "Previews and suggestions",
+      "body": "Previews do not promise a result or a fit. Sizes use what you report and the catalog’s size charts. Check details before buying. For health questions, speak to a doctor or nurse."
+    },
+    "account": {
+      "title": "Your account and sharing",
+      "body": "Keep your sign-in details private. Anyone with a share link can see what it includes until it expires or you stop it. You can export your profile or delete it, and delete your account."
+    },
+    "availability": {
+      "title": "Availability",
+      "body": "Interim is a prototype. Features may change or be unavailable, and results can be wrong. Demo people are simulated. Interim does not place orders or take payments."
+    },
+    "contact": "For questions about using Interim, contact:"
   }
 }

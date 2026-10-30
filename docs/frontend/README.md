@@ -17,6 +17,8 @@ From the ready screen, "Start a check in" opens `/capture/[id]`: the capture wiz
 
 From the ready screen of a situation that uses fit, "Choose clothes to try on" opens `/clothes/[id]`: the sample catalog with a save or remove button on each piece. Saved pieces are shown on the body photo at each check in, and the Stage Card lists them with a shopping list and what to hold off buying (docs/agent.md). A card with nothing saved links here.
 
+The ready screen and owner’s Stage Card link to `/ledger/[id]`. It reads the owner-protected ledger endpoint on the server and validates the response with `ledgerViewSchema`. Spent and held totals are separate, and the history shows reserve, settle and release events without adding them together. Each event names its tool, purpose, units and date. The card trace also shows the units each tool step spent, including zero for reused results.
+
 The ready screen has a plain link to `/api/profiles/[id]/export.zip`, which downloads the person's data with their renders. It is a link and not a script, so it works without JavaScript.
 
 From the ready screen, "Reflection" opens `/reflect/[id]`: one prompt, a text box, the saved reflections with a delete on each, and a permanent "Need to talk to someone?" link. The device runs the exact crisis check before it sends, so the contacts card (`CrisisContacts`, region from the browser, changeable) shows at once; the server checks again. A flagged profile also shows the card on the ready screen until the person closes it. The Stage Card offers the screen after a check in that reports a lot of change.
@@ -26,6 +28,8 @@ Words for today is chosen on the settings screen (off, or one of four sets). Whi
 The Stage Card makes share links (`ShareCard`): a new link is shown once with a copy button, because the API keeps only a hash, and later visits list the links that still work with a stop button each. `/s/[token]` is the share view for someone signed out. It calls the API without the person's cookie, answers 404 for a link that is unknown, expired or revoked, and sets `noindex` and `no-referrer`.
 
 `/demo` is open to anyone and lists the sample people with their check ins; `/demo/cards/[id]` shows one recorded card. Both are server components that call the API without the person's cookie, and the card page renders the same `StageCardBody` as `/cards/[id]` with nothing that changes data. The welcome screen links to it.
+
+`/privacy` and `/terms` are public server-rendered pages linked from the shared footer, including before signup and consent. Privacy reuses the consent catalog’s processor and photo-retention wording. The public contact address lives in the message catalogs and is the same in every language. An optional `SUPPORT_EMAIL` deployment override is validated by the web server; an unset or empty override uses the catalog address. The pages describe the implemented prototype, and the wording still needs the review tracked in spec section 17.
 
 Before a screen is done, check it in both themes at 320px and 390px wide, with the keyboard only, and with an axe audit that reports no violations.
 

@@ -313,14 +313,24 @@ export type CreateSnapshotInput = z.infer<typeof createSnapshotSchema>;
 /** One ledger row as the API returns it. */
 export const ledgerEntrySchema = z.object({
   id: z.string().uuid(),
-  profileRef: z.string().uuid(),
   runId: z.string().uuid().nullable(),
   tool: z.string(),
   kind: z.enum(['reserve', 'settle', 'release']),
   units: z.number().int().nonnegative(),
   taskId: z.string().nullable(),
+  createdAt: z.iso.datetime(),
 });
 export type LedgerEntry = z.infer<typeof ledgerEntrySchema>;
+
+/** The profile's ledger events and current totals; reservations are separate from spent units. */
+export const ledgerViewSchema = z.object({
+  entries: z.array(ledgerEntrySchema),
+  totals: z.object({
+    reservedUnits: z.number().int().nonnegative(),
+    settledUnits: z.number().int().nonnegative(),
+  }),
+});
+export type LedgerView = z.infer<typeof ledgerViewSchema>;
 
 /**
  * How a stage is placed from what was measured or reported (docs/product/spec.md sections 4 and 6).
