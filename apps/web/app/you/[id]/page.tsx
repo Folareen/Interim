@@ -35,7 +35,7 @@ export default async function You({ params }: { params: Promise<{ id: string }> 
       <div className="mt-6 grid items-start gap-5 xl:grid-cols-2">
         <section className="workspace-card overflow-hidden">
           <h2 className="px-5 pt-5 text-[1.1rem]">{settings('title')}</h2>
-          <dl className="divide-y divide-border px-5">
+          <dl className="px-5">
             <div className="flex flex-wrap items-baseline justify-between gap-2 py-4">
               <dt className="text-[0.95rem] text-muted">{ready('toneLabel')}</dt>
               <dd className="text-[0.95rem] font-medium">{setup(`tones.${profile.tone}.label`)}</dd>
@@ -49,22 +49,22 @@ export default async function You({ params }: { params: Promise<{ id: string }> 
           </dl>
           <Link
             href={`/settings/${id}`}
-            className="flex min-h-14 items-center justify-between gap-4 border-t border-border px-5 py-3 text-[0.95rem] font-semibold text-accent hover:bg-tint"
+            className="flex min-h-14 items-center justify-between gap-4 px-5 py-3 text-[0.95rem] font-semibold text-accent hover:bg-tint"
           >
             {ready('editAction')}
-            <span aria-hidden="true">↗</span>
+            <span aria-hidden="true">›</span>
           </Link>
           <Link
             href={`/account?profile=${id}`}
-            className="flex min-h-14 items-center justify-between gap-4 border-t border-border px-5 py-3 text-[0.95rem] font-semibold text-accent hover:bg-tint"
+            className="flex min-h-14 items-center justify-between gap-4 px-5 py-3 text-[0.95rem] font-semibold text-accent hover:bg-tint"
           >
             {account('title')}
-            <span aria-hidden="true">↗</span>
+            <span aria-hidden="true">›</span>
           </Link>
         </section>
         <details className="workspace-card p-5">
           <summary className="min-h-11 cursor-pointer">{t('dataTitle')}</summary>
-          <div className="space-y-4 border-t border-border pt-4">
+          <div className="space-y-4 pt-4">
             <p className="text-[0.95rem] text-muted">{ready('exportBody')}</p>
             <a href={`/api/profiles/${id}/export.zip`} download className={secondaryClass}>
               {ready('exportAction')}

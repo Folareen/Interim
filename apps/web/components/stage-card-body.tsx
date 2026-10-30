@@ -75,7 +75,7 @@ export async function StageCardBody({
       <h1 className="text-[1.75rem] leading-[1.2] sm:text-[2rem]">{t('title')}</h1>
       <p className="mt-2 text-muted">{date(card.takenAt)}</p>
 
-      <section className="mt-5 border-l-2 border-accent pl-4">
+      <section className="mt-5 rounded-2xl bg-tint p-4">
         <p lang={card.locale} className="font-serif text-[1.15rem] leading-relaxed">
           {card.companionNote.text}
         </p>

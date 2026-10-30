@@ -33,7 +33,7 @@ export async function Shell({
     <div className={navigation ? 'workspace' : ''}>
       <div className="mx-auto flex min-h-dvh w-full max-w-[76rem] flex-col px-5 pt-[env(safe-area-inset-top)] sm:px-8 lg:px-10">
         <header
-          className={`flex items-center justify-between gap-3 border-b border-border ${navigation ? 'min-h-16 py-2' : 'min-h-20 py-3'}`}
+          className={`flex items-center justify-between gap-3 ${navigation ? 'min-h-16 py-2' : 'min-h-20 py-3'}`}
         >
           <Link href="/" className="shrink-0 font-serif text-[1.5rem] font-medium tracking-tight">
             {t('appName')}
@@ -65,7 +65,7 @@ export async function Shell({
           }
         >
           {navigation && (
-            <aside className="hidden border-r border-border pr-5 pt-7 lg:block">
+            <aside className="hidden pr-5 pt-7 lg:block">
               <div className="sticky top-7">
                 <WorkspaceNav profileId={profileId} active={active} />
               </div>
@@ -113,7 +113,7 @@ export async function Shell({
               )}
               {children}
             </main>
-            <footer className="mt-8 border-t border-border py-5">
+            <footer className="mt-8 py-5">
               <nav
                 aria-label={t('information')}
                 className="flex flex-wrap gap-x-6 text-[0.9rem] text-muted"
@@ -130,7 +130,7 @@ export async function Shell({
         </div>
       </div>
       {navigation && (
-        <div className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-lg rounded-[1.5rem] border border-outline bg-surface p-1 lg:hidden">
+        <div className="mobile-navigation fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-lg rounded-[1.5rem] bg-surface p-1 lg:hidden">
           <div className="mx-auto max-w-lg">
             <WorkspaceNav profileId={profileId} active={active} mobile />
           </div>

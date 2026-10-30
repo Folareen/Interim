@@ -2,10 +2,9 @@
 export function LandingIllustration({ kind }: { kind: 'care' | 'everyday' | 'record' }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 360 230" fill="none" className="h-auto w-full text-accent">
-      <path d="M26 211h308" stroke="currentColor" strokeOpacity=".25" />
       {kind === 'care' && (
         <>
-          <path d="M106 199V91c0-38 25-65 62-65s62 27 62 65v108" className="fill-surface" />
+          <path d="M106 199V91c0-38 25-65 62-65s62 27 62 65v108" className="fill-peach" />
           <path
             d="M136 114c-17-48 4-70 34-70 35 0 48 29 35 72"
             stroke="currentColor"
@@ -29,7 +28,7 @@ export function LandingIllustration({ kind }: { kind: 'care' | 'everyday' | 'rec
             width="69"
             height="94"
             rx="12"
-            className="fill-bg"
+            className="fill-butter"
             stroke="currentColor"
             strokeOpacity=".3"
             transform="rotate(8 246 65)"
@@ -46,7 +45,7 @@ export function LandingIllustration({ kind }: { kind: 'care' | 'everyday' | 'rec
         <>
           <path
             d="M83 64l39-22c15 19 43 19 59 0l39 22 31 50-37 23-14-19v92H102v-92l-14 19-36-23z"
-            className="fill-surface"
+            className="fill-butter"
             stroke="currentColor"
             strokeWidth="2"
             strokeLinejoin="round"
@@ -57,7 +56,12 @@ export function LandingIllustration({ kind }: { kind: 'care' | 'everyday' | 'rec
             strokeWidth="2"
             strokeOpacity=".35"
           />
-          <path d="M258 83h43v127h-43z" className="fill-bg" stroke="currentColor" strokeWidth="2" />
+          <path
+            d="M258 83h43v127h-43z"
+            className="fill-peach"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
           <path
             d="M258 102h16m-16 20h25m-25 20h16m-16 20h25m-25 20h16"
             stroke="currentColor"
@@ -80,7 +84,7 @@ export function LandingIllustration({ kind }: { kind: 'care' | 'everyday' | 'rec
             height="171"
             rx="14"
             transform="rotate(-8 58 37)"
-            className="fill-bg"
+            className="fill-lilac"
             stroke="currentColor"
             strokeOpacity=".35"
           />

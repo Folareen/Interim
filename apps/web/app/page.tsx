@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { primaryClass, secondaryClass } from '@/components/button';
+import { LandingMotion } from '@/components/landing-motion';
 import { LandingIllustration } from '@/components/landing-illustration';
 import { Shell } from '@/components/shell';
 import { getMe, getProfiles } from '@/lib/server-api';
@@ -50,20 +51,17 @@ export default async function Home() {
   ]);
   return (
     <Shell wide>
-      <div className="landing">
+      <div id="landing" className="landing">
+        <LandingMotion />
         <section className="grid items-center gap-10 pt-5 pb-10 sm:gap-12 sm:pt-10 sm:pb-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-16">
-          <div className="max-w-xl">
-            <p className="landing-kicker">{t('eyebrow')}</p>
-            <h1 className="mt-4 text-[2.65rem] leading-[1.04] sm:text-[3.5rem] xl:text-[4.2rem]">
+          <div data-reveal className="max-w-xl">
+            <h1 className="text-[2.65rem] leading-[1.04] sm:text-[3.5rem] xl:text-[4.2rem]">
               {welcome('title')}
             </h1>
             <p className="mt-5 max-w-lg text-[1.05rem] leading-relaxed text-muted">{t('intro')}</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link href="/signup" className={`${primaryClass} sm:w-auto`}>
+              <Link href="/signup" className={`${primaryClass} landing-cta sm:w-auto`}>
                 {welcome('start')}
-                <span aria-hidden="true" className="ml-3">
-                  ↗
-                </span>
               </Link>
               <Link href="/demo" className={`${secondaryClass} sm:w-auto`}>
                 {welcome('demoLink')}
@@ -76,7 +74,10 @@ export default async function Home() {
               {welcome('haveAccount')}
             </Link>
           </div>
-          <figure className="relative mx-auto w-full max-w-lg rounded-[2rem] bg-tint px-5 pt-6 pb-5 sm:px-7 sm:pt-8">
+          <figure
+            data-reveal
+            className="landing-portraits relative mx-auto w-full max-w-lg rounded-[2rem] bg-tint px-5 pt-6 pb-5 sm:px-7 sm:pt-8"
+          >
             <div className="grid grid-cols-[1fr_0.85fr] items-start gap-4">
               <figure>
                 <img
@@ -103,14 +104,13 @@ export default async function Home() {
                 </figcaption>
               </figure>
             </div>
-            <figcaption className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-outline pt-4 text-[0.9rem] text-muted">
+            <figcaption className="mt-5 flex flex-wrap items-center justify-between gap-2 pt-4 text-[0.9rem] text-muted">
               <span>{demo('simulated')}</span>
               <Link
                 href="/demo"
                 className="inline-flex min-h-11 items-center gap-2 font-semibold text-accent underline underline-offset-4"
               >
                 {welcome('demoLink')}
-                <span aria-hidden="true">↗</span>
               </Link>
             </figcaption>
           </figure>
@@ -118,7 +118,7 @@ export default async function Home() {
 
         <nav
           aria-label={t('onThisPage')}
-          className="flex flex-wrap gap-x-6 border-y border-border py-2 text-[0.9rem] font-medium text-accent"
+          className="flex flex-wrap gap-x-6 gap-y-1 py-2 text-[0.9rem] font-medium text-accent"
         >
           <a
             href="#situations"
@@ -141,14 +141,11 @@ export default async function Home() {
         </nav>
 
         <section className="landing-section grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-          <div className="max-w-2xl">
-            <p className="landing-kicker">{t('problemLabel')}</p>
-            <h2 className="mt-4 text-[2rem] leading-[1.12] sm:text-[2.75rem]">
-              {t('problemTitle')}
-            </h2>
+          <div data-reveal className="max-w-2xl">
+            <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('problemTitle')}</h2>
             <p className="mt-5 max-w-xl text-muted">{t('problemBody')}</p>
           </div>
-          <div className="rounded-[2rem] bg-surface p-5 sm:p-8">
+          <div data-reveal className="landing-art rounded-[2rem] bg-butter p-5 sm:p-8">
             <LandingIllustration kind="record" />
             <p className="mt-4 max-w-sm font-serif text-[1.35rem] leading-snug">
               {t('problemNote')}
@@ -156,21 +153,19 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="situations" className="landing-section border-t border-border">
-          <div className="max-w-2xl">
-            <p className="landing-kicker">{t('peopleLink')}</p>
-            <h2 className="mt-4 text-[2rem] leading-[1.12] sm:text-[2.75rem]">
-              {t('peopleTitle')}
-            </h2>
+        <section id="situations" className="landing-section">
+          <div data-reveal className="max-w-2xl">
+            <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('peopleTitle')}</h2>
             <p className="mt-4 text-muted">{t('peopleBody')}</p>
           </div>
           <div className="mt-9 grid gap-6 lg:grid-cols-2 lg:items-start">
             {groups.map(({ key, label, situations }) => (
               <article
                 key={key}
-                className={`overflow-hidden rounded-[1.5rem] border border-border ${key === 'care' ? 'bg-tint' : 'bg-surface lg:mt-16'}`}
+                data-reveal
+                className={`audience-card overflow-hidden rounded-[1.5rem] ${key === 'care' ? 'bg-tint' : 'bg-peach lg:mt-16'}`}
               >
-                <div className="mx-auto max-w-sm px-5 pt-5">
+                <div className="landing-art mx-auto max-w-sm px-5 pt-5">
                   <LandingIllustration kind={key} />
                 </div>
                 <div className="px-5 pt-3 pb-6 sm:px-7 sm:pb-7">
@@ -178,15 +173,12 @@ export default async function Home() {
                   <p className="mt-3 text-[0.95rem] text-muted">{t(`${key}Body`)}</p>
                   <ul className="mt-5 grid gap-x-4 gap-y-2 sm:grid-cols-2">
                     {situations.map((key) => (
-                      <li
-                        key={key}
-                        className="border-b border-border py-2 text-[0.9rem] font-medium"
-                      >
+                      <li key={key} className="py-1 text-[0.95rem]">
                         {labels(key)}
                       </li>
                     ))}
                   </ul>
-                  <details className="mt-5 border-t border-border pt-3">
+                  <details className="mt-5 pt-3">
                     <summary className="min-h-11 cursor-pointer text-[0.9rem] font-semibold text-accent">
                       {t('exploreCases')}
                     </summary>
@@ -207,39 +199,31 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="how-it-works" className="landing-section border-t border-border">
-          <p className="landing-kicker">{t('howLink')}</p>
-          <h2 className="mt-4 max-w-2xl text-[2rem] leading-[1.12] sm:text-[2.75rem]">
+        <section id="how-it-works" className="landing-section">
+          <h2 data-reveal className="max-w-2xl text-[2rem] leading-[1.12] sm:text-[2.75rem]">
             {t('howTitle')}
           </h2>
-          <ol className="mt-9 grid gap-7 lg:grid-cols-3 lg:gap-10">
-            {(['choose', 'photos', 'return'] as const).map((key, index) => (
-              <li key={key} className="border-t border-outline pt-5">
-                <span
-                  aria-hidden="true"
-                  className="font-serif text-[2.5rem] leading-none text-accent"
-                >
-                  0{index + 1}
-                </span>
-                <h3 className="mt-5 text-[1.15rem]">{t(`${key}Title`)}</h3>
+          <ol className="mt-9 grid gap-4 lg:grid-cols-3 lg:gap-5">
+            {(['choose', 'photos', 'return'] as const).map((key) => (
+              <li key={key} data-reveal className={`rounded-[1.5rem] p-5 sm:p-6 step-${key}`}>
+                <h3 className="text-[1.15rem]">{t(`${key}Title`)}</h3>
                 <p className="mt-3 text-[0.95rem] text-muted">{t(`${key}Body`)}</p>
               </li>
             ))}
           </ol>
         </section>
 
-        <section id="different" className="landing-section border-t border-border">
+        <section id="different" className="landing-section">
           <div className="grid gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-            <div className="max-w-xl">
-              <p className="landing-kicker">{t('differenceLink')}</p>
-              <h2 className="mt-4 text-[2rem] leading-[1.12] sm:text-[2.75rem]">
+            <div data-reveal className="max-w-xl">
+              <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">
                 {t('differentTitle')}
               </h2>
               <p className="mt-5 text-muted">{t('differentBody')}</p>
             </div>
-            <dl className="divide-y divide-border rounded-[1.5rem] border border-border bg-surface px-5 sm:px-7">
+            <dl className="rounded-[1.5rem] bg-surface px-5 sm:px-7">
               {(['timeline', 'grounded', 'relevant', 'limits'] as const).map((key) => (
-                <div key={key} className="py-5">
+                <div key={key} data-reveal className="py-5">
                   <dt className="text-[1.05rem] font-semibold">{t(`${key}Title`)}</dt>
                   <dd className="mt-2 text-[0.95rem] text-muted">{t(`${key}Body`)}</dd>
                 </div>
@@ -248,11 +232,11 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="landing-section grid gap-7 border-t border-border lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <section className="landing-section grid gap-7 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('questionsTitle')}</h2>
-          <div className="divide-y divide-border">
+          <div className="space-y-3">
             {(['typing', 'privacy', 'medical'] as const).map((key) => (
-              <details key={key} className="py-4">
+              <details key={key} className="rounded-2xl bg-surface p-5">
                 <summary className="min-h-11 cursor-pointer text-base font-semibold">
                   {t(`${key}Question`)}
                 </summary>
@@ -272,16 +256,19 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="mb-5 rounded-[2rem] bg-tint px-5 py-9 sm:px-10 sm:py-12 lg:flex lg:items-center lg:justify-between lg:gap-12">
+        <section
+          data-reveal
+          className="mb-5 rounded-[2rem] bg-peach px-5 py-9 sm:px-10 sm:py-12 lg:flex lg:items-center lg:justify-between lg:gap-12"
+        >
           <div className="max-w-xl">
             <h2 className="text-[2rem] leading-[1.12] sm:text-[2.5rem]">{t('closingTitle')}</h2>
             <p className="mt-3 text-[0.95rem] text-muted">{t('closingBody')}</p>
           </div>
-          <Link href="/signup" className={`${primaryClass} mt-6 sm:w-fit lg:mt-0 lg:shrink-0`}>
+          <Link
+            href="/signup"
+            className={`${primaryClass} landing-cta mt-6 sm:w-fit lg:mt-0 lg:shrink-0`}
+          >
             {welcome('start')}
-            <span aria-hidden="true" className="ml-3">
-              ↗
-            </span>
           </Link>
         </section>
         <p className="max-w-2xl py-5 text-[0.9rem] text-muted">{welcome('footnote')}</p>

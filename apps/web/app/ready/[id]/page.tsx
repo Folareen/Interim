@@ -58,7 +58,7 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
         </div>
       )}
       <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_17rem]">
-        <section className="rounded-card bg-tint p-4 sm:p-5 xl:col-start-2 xl:row-start-1">
+        <section className="rounded-card bg-butter p-4 sm:p-5 xl:col-start-2 xl:row-start-1">
           {inProgress && (
             <p role="status" className="mb-4 text-[0.95rem]">
               {t('processingTitle')}
@@ -93,7 +93,7 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
                   <img
                     src={latest.renderUrls[preview.renderId]}
                     alt={cardText('previewAlt')}
-                    className="aspect-[4/3] max-h-[26rem] w-full border-y border-border object-cover object-top"
+                    className="aspect-[4/3] max-h-[26rem] w-full object-cover object-top"
                   />
                 </Link>
               ) : (
@@ -112,7 +112,7 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
                   href={`/cards/${latest.id}`}
                   className="mt-2 inline-flex min-h-11 items-center gap-2 text-[0.95rem] font-semibold text-accent"
                 >
-                  {t('openCard')} <span aria-hidden="true">↗</span>
+                  {t('openCard')} <span aria-hidden="true">›</span>
                 </Link>
               </div>
             </>
@@ -137,11 +137,12 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
           )}
         </section>
         <Link
+          data-tone="peach"
           href={`/reflect/${id}`}
           className="workspace-card flex min-h-16 items-center justify-between gap-3 px-5 py-3 text-[0.95rem] font-semibold text-accent xl:col-start-2"
         >
           {reflect('readyAction')}
-          <span aria-hidden="true">↗</span>
+          <span aria-hidden="true">›</span>
         </Link>
         {preferences?.wordsSet && (
           <div className="xl:col-start-2">

@@ -36,6 +36,7 @@ export async function WorkspaceNav({
       {destinations.map(({ key, href, path }) => (
         <Link
           key={key}
+          data-section={key}
           href={href}
           aria-current={active === key ? 'page' : undefined}
           className={`flex min-h-14 items-center rounded-[1.15rem] text-muted transition-colors hover:bg-tint hover:text-text ${mobile ? 'flex-col justify-center gap-1 px-1 py-2.5 text-[0.9rem]' : 'gap-3 px-4 py-3'}`}
