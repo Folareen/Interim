@@ -18,11 +18,15 @@ import { Actions } from '@/components/actions';
 import { Button, secondaryClass } from '@/components/button';
 import { ChoiceRow } from '@/components/choice-row';
 import { Notice } from '@/components/notice';
+import { Select } from '@/components/select';
 import { ApiError, createSnapshot, createUploads, putPhoto, startRun } from '@/lib/api';
 import { type KitMode, openCameraKit } from '@/lib/camera-kit';
 import { checkPhoto } from '@/lib/photo-check';
 
-type Step = { type: 'photo'; kind: PhotoKind; optional: boolean } | { type: 'questions' } | { type: 'review' };
+type Step =
+  | { type: 'photo'; kind: PhotoKind; optional: boolean }
+  | { type: 'questions' }
+  | { type: 'review' };
 type Photos = Partial<Record<PhotoKind, { blob: Blob; url: string }>>;
 
 // The hair type capture takes the front and both sides in one go, in this order.
@@ -38,20 +42,28 @@ function kitModeFor(kind: PhotoKind, isBaseline: boolean): KitMode | undefined {
 }
 
 /**
- * The capture wizard: one photo at a time, then the check in questions, then a review. Each photo
+ * The capture wizard asks questions, then takes one photo at a time, followed by review. Each photo
  * is checked on the device before it is kept, and nothing is uploaded until the person sends. The
  * server checks every photo again, so these checks only save a round trip.
  */
-export function CaptureWizard({ profileId, plan, locale }: { profileId: string; plan: CapturePlan; locale: LiveLocale }) {
+export function CaptureWizard({
+  profileId,
+  plan,
+  locale,
+}: {
+  profileId: string;
+  plan: CapturePlan;
+  locale: LiveLocale;
+}) {
   const t = useTranslations('capture');
   const problems = useTranslations('photoProblems');
   const common = useTranslations('common');
   const router = useRouter();
 
   const steps: Step[] = [
+    { type: 'questions' },
     ...plan.required.map((kind): Step => ({ type: 'photo', kind, optional: false })),
     ...plan.optional.map((kind): Step => ({ type: 'photo', kind, optional: true })),
-    { type: 'questions' },
     { type: 'review' },
   ];
   const photoSteps = steps.filter((s) => s.type === 'photo').length;
@@ -91,7 +103,7 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
     return { ...photos, ...added };
   }
 
-  // Steps are already in order, so the next one is the next photo not yet taken, or the questions.
+  // Steps are already in order, so the next one is the next photo not yet taken, or the review.
   function advance(from: Photos) {
     const next = steps.findIndex((s, i) => i > index && (s.type !== 'photo' || !from[s.kind]));
     setIndex(next === -1 ? steps.length - 1 : next);
@@ -120,7 +132,11 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
       onPhotos: (captured) => {
         closeKit.current?.();
         closeKit.current = undefined;
-        void accept(kinds.flatMap((kind, i) => (captured[i] ? [[kind, captured[i]] as [PhotoKind, Blob]] : [])));
+        void accept(
+          kinds.flatMap((kind, i) =>
+            captured[i] ? [[kind, captured[i]] as [PhotoKind, Blob]] : [],
+          ),
+        );
       },
       onFailure: (reason) => {
         closeKit.current?.();
@@ -139,7 +155,8 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
   }
 
   const missingRequired = plan.required.find((kind) => !photos[kind]);
-  const answered = (!plan.asksChange || changed !== undefined) && (!plan.asksSize || size !== undefined);
+  const answered =
+    (!plan.asksChange || changed !== undefined) && (!plan.asksSize || size !== undefined);
 
   async function send() {
     setBusy('sending');
@@ -150,7 +167,9 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
       return photo ? [{ kind, blob: photo.blob }] : [];
     });
     try {
-      const { uploads } = await createUploads(profileId, { uploads: entries.map((e) => ({ kind: e.kind, sizeBytes: e.blob.size })) });
+      const { uploads } = await createUploads(profileId, {
+        uploads: entries.map((e) => ({ kind: e.kind, sizeBytes: e.blob.size })),
+      });
       await Promise.all(
         uploads.map((upload) => {
           const entry = entries.find((e) => e.kind === upload.kind);
@@ -173,8 +192,13 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
         if (kind) retake(kind);
         return;
       }
-      if (cause instanceof ApiError && cause.status === 403) return router.push(`/consent/${profileId}`);
-      setMessage(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
+      if (cause instanceof ApiError && cause.status === 403)
+        return router.push(`/consent/${profileId}`);
+      setMessage(
+        common(
+          cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError',
+        ),
+      );
     }
   }
 
@@ -187,17 +211,52 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
     return (
       <div className="flex flex-1 flex-col">
         <div className="mt-8 flex-1 space-y-5 pb-8">
-          <p className="text-[0.9rem] text-muted">{t('photoOf', { current: position, total: photoSteps })}</p>
+          <p className="text-[0.9rem] text-muted">
+            {t('photoOf', { current: position, total: photoSteps })}
+          </p>
           <h2 ref={heading} tabIndex={-1} className="text-[1.5rem] outline-none">
             {t(`kinds.${kind}.title`)}
           </h2>
           <p>{t(`kinds.${kind}.help`)}</p>
           {problem && <Notice>{problems(problem)}</Notice>}
           {message && <Notice>{message}</Notice>}
-          {busy === 'camera' && <div id="YMK-module" className="mx-auto w-full overflow-hidden rounded-card" />}
+          {!photo && !busy && (
+            <div className="mx-auto flex aspect-[4/3] w-full max-w-sm items-center justify-center rounded-card border border-border bg-tint">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 160 140"
+                fill="none"
+                className="h-36 w-40 text-outline"
+              >
+                <rect
+                  x="20"
+                  y="8"
+                  width="120"
+                  height="124"
+                  rx="35"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeDasharray="5 5"
+                />
+                <circle cx="80" cy="52" r="22" stroke="currentColor" strokeWidth="1.5" />
+                <path
+                  d="M40 115c0-26 16-40 40-40s40 14 40 40"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+              </svg>
+            </div>
+          )}
+          {busy === 'camera' && (
+            <div id="YMK-module" className="mx-auto w-full overflow-hidden rounded-card" />
+          )}
           {busy === 'checking' && <p role="status">{t('checking')}</p>}
           {photo && (
-            <img src={photo.url} alt={t('photoAlt', { kind: t(`kinds.${kind}.title`) })} className="w-full rounded-card border border-border" />
+            <img
+              src={photo.url}
+              alt={t('photoAlt', { kind: t(`kinds.${kind}.title`) })}
+              className="w-full rounded-card border border-border"
+            />
           )}
           {!photo && !busy && (
             <div className="space-y-3">
@@ -206,7 +265,9 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
                   {t(kind === 'front' && plan.isBaseline ? 'cameraAllAction' : 'cameraAction')}
                 </Button>
               )}
-              <label className={`${secondaryClass} relative cursor-pointer has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent`}>
+              <label
+                className={`${secondaryClass} relative cursor-pointer has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent`}
+              >
                 {t('fileAction')}
                 <input
                   type="file"
@@ -221,7 +282,11 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
               </label>
               {step.optional && (
                 <>
-                  <Button variant="secondary" onClick={() => advance(photos)} aria-describedby="skip-help">
+                  <Button
+                    variant="secondary"
+                    onClick={() => advance(photos)}
+                    aria-describedby="skip-help"
+                  >
                     {t('skipAction')}
                   </Button>
                   <p id="skip-help" className="text-[0.9rem] text-muted">
@@ -233,6 +298,15 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
           )}
         </div>
         <Actions>
+          {index > 0 && (
+            <Button
+              variant="secondary"
+              onClick={() => setIndex(index - 1)}
+              disabled={busy !== undefined}
+            >
+              {common('back')}
+            </Button>
+          )}
           {photo && (
             <Button variant="secondary" onClick={() => retake(kind)}>
               {t('retake')}
@@ -264,28 +338,58 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
           </h2>
           {plan.asksChange && (
             <fieldset className="space-y-3">
-              <legend className="mb-3 text-[1.25rem] font-medium font-serif">{t('changedTitle')}</legend>
+              <legend className="mb-3 text-[1.25rem] font-medium font-serif">
+                {t('changedTitle')}
+              </legend>
               {changes.map((key) => (
-                <ChoiceRow key={key} kind="radio" name="changed" label={t(`changed.${key}`)} checked={changed === key} onChange={() => setChanged(key)} />
+                <ChoiceRow
+                  key={key}
+                  kind="radio"
+                  name="changed"
+                  label={t(`changed.${key}`)}
+                  checked={changed === key}
+                  onChange={() => setChanged(key)}
+                />
               ))}
             </fieldset>
           )}
           {plan.asksSize && (
             <fieldset className="space-y-3">
-              <legend className="mb-1 text-[1.25rem] font-medium font-serif">{t('sizeTitle')}</legend>
-              <p className="mb-3 text-[0.95rem] text-muted">{t('sizeHelp')}</p>
-              {sizeLadder.map((key) => (
-                <ChoiceRow key={key} kind="radio" name="size" label={key} labelLang="en" checked={size === key} onChange={() => setSize(key)} />
-              ))}
+              <legend className="mb-1 text-[1.25rem] font-medium font-serif">
+                {t('sizeTitle')}
+              </legend>
+              <p id="size-help" className="mb-3 text-[0.95rem] text-muted">
+                {t('sizeHelp')}
+              </p>
+              <Select
+                id="current-size"
+                label={t('sizeTitle')}
+                value={size}
+                placeholder={t('sizeHelp')}
+                describedBy="size-help"
+                options={sizeLadder.map((value) => ({ value, label: value }))}
+                onValueChange={setSize}
+              />
             </fieldset>
           )}
           <fieldset className="space-y-3">
-            <legend className="mb-1 text-[1.25rem] font-medium font-serif">{t('momentTitle')}</legend>
-            <p className="mb-3 text-[0.95rem] text-muted">{t('momentHelp')}</p>
-            <ChoiceRow kind="radio" name="moment" label={t('momentNone')} checked={moment === 'none'} onChange={() => setMoment('none')} />
-            {momentSchema.options.map((key) => (
-              <ChoiceRow key={key} kind="radio" name="moment" label={t(`moments.${key}`)} checked={moment === key} onChange={() => setMoment(key)} />
-            ))}
+            <legend className="mb-1 text-[1.25rem] font-medium font-serif">
+              {t('momentTitle')}
+            </legend>
+            <p id="moment-help" className="mb-3 text-[0.95rem] text-muted">
+              {t('momentHelp')}
+            </p>
+            <Select<Moment | 'none'>
+              id="next-moment"
+              label={t('momentTitle')}
+              value={moment}
+              describedBy="moment-help"
+              options={[
+                { value: 'none', label: t('momentNone') },
+                ...momentSchema.options.map((value) => ({ value, label: t(`moments.${value}`) })),
+              ]}
+              onValueChange={setMoment}
+            />
           </fieldset>
         </div>
         <Actions>
@@ -309,8 +413,16 @@ export function CaptureWizard({ profileId, plan, locale }: { profileId: string; 
         <ul className="grid grid-cols-2 gap-4">
           {(Object.keys(photos) as PhotoKind[]).map((kind) => (
             <li key={kind} className="space-y-2">
-              <img src={photos[kind]?.url} alt={t('photoAlt', { kind: t(`kinds.${kind}.title`) })} className="aspect-[3/4] w-full rounded-card border border-border object-cover" />
-              <Button variant="secondary" onClick={() => retake(kind)} disabled={busy === 'sending'}>
+              <img
+                src={photos[kind]?.url}
+                alt={t('photoAlt', { kind: t(`kinds.${kind}.title`) })}
+                className="aspect-[3/4] w-full rounded-card border border-border object-cover"
+              />
+              <Button
+                variant="secondary"
+                onClick={() => retake(kind)}
+                disabled={busy === 'sending'}
+              >
                 {t('retake')}
               </Button>
             </li>

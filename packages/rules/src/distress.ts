@@ -19,7 +19,7 @@ const patterns: Record<LiveLocale, RegExp> = {
     'better off dead',
     'better off without me',
     'no reason to live',
-    `don${apostrophe}t want to (?:be here|live|wake up)`,
+    `don${apostrophe}t (?:want to|wanna) (?:be here|live|wake up)`,
     `can${apostrophe}t go on`,
     'self[- ]?harm(?:ing)?',
     'hurt(?:ing)? myself',

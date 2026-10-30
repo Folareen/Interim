@@ -36,7 +36,11 @@ export function SetupForm({ situation }: { situation: TemplateKey }) {
       await savePreferences(created.current, { ...current, locale, tone, headCovering });
       router.push(`/consent/${created.current}`);
     } catch (cause) {
-      setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
+      setError(
+        common(
+          cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError',
+        ),
+      );
       setWorking(false);
     }
   }
@@ -44,21 +48,24 @@ export function SetupForm({ situation }: { situation: TemplateKey }) {
   return (
     <form onSubmit={submit} className="flex flex-1 flex-col">
       <div className="mt-8 space-y-9 pb-8">
-        <fieldset className="space-y-3">
-          <legend className="mb-3 text-[1.15rem] font-semibold">{t('toneTitle')}</legend>
-          {toneOrder.map((key) => (
-            <ChoiceRow
-              key={key}
-              kind="radio"
-              name="tone"
-              value={key}
-              label={t(`tones.${key}.label`)}
-              description={t(`tones.${key}.description`)}
-              checked={tone === key}
-              onChange={() => setTone(key)}
-            />
-          ))}
-        </fieldset>
+        <details className="rounded-card border border-border bg-surface p-4">
+          <summary className="min-h-11 cursor-pointer font-semibold">{t('toneTitle')}</summary>
+          <fieldset className="mt-3 space-y-3">
+            <legend className="sr-only">{t('toneTitle')}</legend>
+            {toneOrder.map((key) => (
+              <ChoiceRow
+                key={key}
+                kind="radio"
+                name="tone"
+                value={key}
+                label={t(`tones.${key}.label`)}
+                description={t(`tones.${key}.description`)}
+                checked={tone === key}
+                onChange={() => setTone(key)}
+              />
+            ))}
+          </fieldset>
+        </details>
 
         <fieldset className="space-y-3">
           <legend className="mb-3 text-[1.15rem] font-semibold">{t('hairTitle')}</legend>

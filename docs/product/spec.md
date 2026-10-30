@@ -23,7 +23,7 @@ There are no admin or care team roles in this build.
 * **Head covering.** A profile setting: the person covers their hair. It turns off every tool that changes or removes what is on the head (rule 4 of section 7). Asked once at setup in neutral words, off by default, changeable at any time.
 * **Language.** The profile's language, from the live languages (section 13). English by default.
 * **Moment.** What the person is getting ready for, from a fixed list: back_to_work, family_event, date, photos, video_call, going_out, everyday. Optional on any snapshot, the baseline included.
-* **Companion note.** The first block of a Stage Card. Rules in [overview.md](overview.md#the-companion).
+* **Companion note.** A short note alongside the previews on a Stage Card. Rules in [overview.md](overview.md#the-companion).
 * **Words for today.** One passage a day from a fixed library, from the set the person chose (off by default).
 * **Stage.** A named point on the template path. Each template defines its own stages.
 * **Render.** One generated image from a YouCam try on tool, linked to its inputs.
@@ -169,6 +169,10 @@ Every step is stored as a trace entry with the tool, inputs, outputs, cost and a
 
 ## 9. Stage Card
 
+The signed-in workspace uses Today, My looks and You (frontend rules own the routes). Today offers one update or resumes an unfinished run. Fit updates can choose clothes before capture; the questions precede the photos. Results lead with previews, then expandable changes, advice, shopping and trace. My looks pages through past results. Account and data controls live under You.
+
+Optional result help has translated topic buttons that need no typing or model. Separately consented written questions classify a supported topic; answers use reviewed UI text and existing measurements, never model prose. It cannot start renders, decide eligibility, change preferences or invent measurements. [llm.md](../llm.md#optional-result-help) owns limits, failure behaviour and crisis handling.
+
 Fields:
 
 * title and date
@@ -183,7 +187,7 @@ Fields:
 * trace summary (what the agent decided and why)
 * what to say, two or three fixed lines, shown only for moments with other people
 * one line suggesting a professional for health questions and a link to someone to talk to, shown only on sensitive situations
-* actions: approve list, share link, change tone, delete
+* actions: confirm the looks, share link, return to Today; preferences, export and deletion live under You
 
 Words for today is shown on the home screen, not on the card, so a shared card never reveals the person's faith. A share link shows only the looks, the advice a reader can act on, the clothes and the shopping list (architecture.md section 9).
 
@@ -242,6 +246,7 @@ Photos of a face and body are biometric data, and the situation a person picks c
 * Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos, and, only for a reflection the safety check flags, that text and nothing else about the person. The consent screen lists them together, each naming its processor, and the person accepts all of them with one tick; the API records each acceptance.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
 * The words for today choice and the head covering setting can imply a person's religion or culture. Both are stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
+* Optional written result-help questions need a separate per-message Google acceptance. Only the question and interface language are sent, without card contents, photos or history. They are not stored, logged or included in replay fixtures. Topic buttons remain available without that acceptance.
 * Reflections are saved to the account, encrypted, so the person can come back to them. They are deleted with the profile, included in the export, never shown on a share link, never logged, never sold or used for advertising, and never given to the planner. The only time reflection text reaches a model is when the safety check flags it for review (section 13), and the consent screen says so.
 * Retention has two modes, and the person chooses on the consent screen. Keep my history is preselected, because comparisons over months need the photos, and the person can change it. Delete after 30 days: photos and renders are deleted 30 days after capture. Keep my history: photos and renders are kept until the person deletes them, or until 24 months after the last check in, whichever comes first. Every new check in restarts the 24 months. The setting can be switched off at any time, and then the 30 days count from each photo's capture date. For the templates that run over months (weight_change, hair_loss_ahead, textured_growth) the screen explains that keeping history is what makes comparisons and earlier looks possible. In both modes measurements, stage, self report and card text stay until the profile is deleted.
 * Photos are stored encrypted. A render that expires keeps its card text and trace but not its image.

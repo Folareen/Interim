@@ -25,6 +25,9 @@ import {
   type RunView,
   type UploadsResponse,
   type WordsView,
+  type AssistantRequest,
+  type AssistantReply,
+  assistantReplySchema,
   captureProblemBodySchema,
   meSchema,
   notificationSettingsSchema,
@@ -39,6 +42,16 @@ import {
   uploadsResponseSchema,
   wordsViewSchema,
 } from '@interim/types';
+
+/** Interprets a consented question; never starts a photo run or performs an action. */
+export async function askAboutCard(
+  cardId: string,
+  input: AssistantRequest,
+): Promise<AssistantReply> {
+  return assistantReplySchema.parse(
+    await (await send(`/cards/${encodeURIComponent(cardId)}/assistant`, 'POST', input)).json(),
+  );
+}
 
 /**
  * A failed call to the API. `status` is `'network'` when no response arrived at all. `problem` is
@@ -70,8 +83,14 @@ async function send(path: string, method: string, body?: unknown): Promise<Respo
     throw new ApiError('network', 'Could not reach the API');
   }
   if (!response.ok) {
-    const problem = captureProblemBodySchema.safeParse(await response.json().catch(() => undefined));
-    throw new ApiError(response.status, `The API answered ${response.status}`, problem.success ? problem.data : undefined);
+    const problem = captureProblemBodySchema.safeParse(
+      await response.json().catch(() => undefined),
+    );
+    throw new ApiError(
+      response.status,
+      `The API answered ${response.status}`,
+      problem.success ? problem.data : undefined,
+    );
   }
   return response;
 }
@@ -91,7 +110,9 @@ export async function getPreferences(id: string): Promise<Preferences> {
  * @param date The person's local date as YYYY-MM-DD.
  */
 export async function getWords(id: string, date: string): Promise<WordsView> {
-  return wordsViewSchema.parse(await (await send(`/profiles/${id}/words?date=${date}`, 'GET')).json());
+  return wordsViewSchema.parse(
+    await (await send(`/profiles/${id}/words?date=${date}`, 'GET')).json(),
+  );
 }
 
 /** Replaces the profile's companion settings. */
@@ -105,15 +126,25 @@ export async function getPushKey(): Promise<PushKey> {
 }
 
 /** The notification choices saved for one device. */
-export async function getNotifications(id: string, endpoint: string): Promise<NotificationSettings> {
+export async function getNotifications(
+  id: string,
+  endpoint: string,
+): Promise<NotificationSettings> {
   return notificationSettingsSchema.parse(
-    await (await send(`/profiles/${id}/notifications?endpoint=${encodeURIComponent(endpoint)}`, 'GET')).json(),
+    await (
+      await send(`/profiles/${id}/notifications?endpoint=${encodeURIComponent(endpoint)}`, 'GET')
+    ).json(),
   );
 }
 
 /** Saves one device's notification choices. With both kinds off the server forgets the device. */
-export async function saveNotifications(id: string, input: SaveNotificationsInput): Promise<NotificationSettings> {
-  return notificationSettingsSchema.parse(await (await send(`/profiles/${id}/notifications`, 'PUT', input)).json());
+export async function saveNotifications(
+  id: string,
+  input: SaveNotificationsInput,
+): Promise<NotificationSettings> {
+  return notificationSettingsSchema.parse(
+    await (await send(`/profiles/${id}/notifications`, 'PUT', input)).json(),
+  );
 }
 
 /** Records the person's consent. */
@@ -183,7 +214,9 @@ export async function confirmRecovery(input: ConfirmEmailChangeInput): Promise<M
 
 /** Makes a new set of recovery codes, replacing the old. They are returned once and cannot be read again. */
 export async function createRecoveryCodes(input: NewRecoveryCodesInput): Promise<RecoveryCodes> {
-  return recoveryCodesSchema.parse(await (await send('/auth/recovery-codes', 'POST', input)).json());
+  return recoveryCodesSchema.parse(
+    await (await send('/auth/recovery-codes', 'POST', input)).json(),
+  );
 }
 
 /** Signs this browser out. */
@@ -197,8 +230,13 @@ export async function deleteAccount(password?: string): Promise<void> {
 }
 
 /** Asks for one upload link per photo. */
-export async function createUploads(profileId: string, input: CreateUploadsInput): Promise<UploadsResponse> {
-  return uploadsResponseSchema.parse(await (await send(`/profiles/${profileId}/uploads`, 'POST', input)).json());
+export async function createUploads(
+  profileId: string,
+  input: CreateUploadsInput,
+): Promise<UploadsResponse> {
+  return uploadsResponseSchema.parse(
+    await (await send(`/profiles/${profileId}/uploads`, 'POST', input)).json(),
+  );
 }
 
 /** Sends a photo straight to storage on a link from `createUploads`. The bytes never pass through the API. */
@@ -213,8 +251,13 @@ export async function putPhoto(url: string, photo: Blob): Promise<void> {
 }
 
 /** Stores a snapshot from uploaded photos and the check in answers. Returns its id. */
-export async function createSnapshot(profileId: string, input: CreateSnapshotInput): Promise<string> {
-  return snapshotCreatedSchema.parse(await (await send(`/profiles/${profileId}/snapshots`, 'POST', input)).json()).id;
+export async function createSnapshot(
+  profileId: string,
+  input: CreateSnapshotInput,
+): Promise<string> {
+  return snapshotCreatedSchema.parse(
+    await (await send(`/profiles/${profileId}/snapshots`, 'POST', input)).json(),
+  ).id;
 }
 
 /** Starts the agent for a snapshot. Starting it again returns the same run. */
@@ -244,7 +287,9 @@ export async function fetchRun(runId: string): Promise<RunView> {
 
 /** Saves a reflection. The answer says whether the contacts card should show. */
 export async function saveReflection(profileId: string, text: string): Promise<ReflectionCreated> {
-  return reflectionCreatedSchema.parse(await (await send(`/profiles/${profileId}/reflections`, 'POST', { text })).json());
+  return reflectionCreatedSchema.parse(
+    await (await send(`/profiles/${profileId}/reflections`, 'POST', { text })).json(),
+  );
 }
 
 /** Deletes one reflection. */

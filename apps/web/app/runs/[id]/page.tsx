@@ -16,7 +16,7 @@ export default async function Run({ params }: { params: Promise<{ id: string }> 
   if (!run) notFound();
   if (run.cardId) redirect(`/cards/${run.cardId}`);
   return (
-    <Shell>
+    <Shell profileId={run.profileId}>
       <RunProgress initial={run} />
     </Shell>
   );

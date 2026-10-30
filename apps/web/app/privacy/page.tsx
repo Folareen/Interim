@@ -9,7 +9,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Privacy() {
-  const [t, consent] = await Promise.all([getTranslations('privacy'), getTranslations('consent')]);
+  const [t, consent, assistant] = await Promise.all([
+    getTranslations('privacy'),
+    getTranslations('consent'),
+    getTranslations('assistant'),
+  ]);
   return (
     <Shell backHref="/">
       <PageHeading title={t('title')} intro={t('intro')} />
@@ -22,6 +26,7 @@ export default async function Privacy() {
               <>
                 <p className="mt-3">{consent('helperYoucam')}</p>
                 <p className="mt-3">{consent('helperGoogle')}</p>
+                <p className="mt-3">{assistant('privacy')}</p>
               </>
             )}
             {section === 'retention' && (

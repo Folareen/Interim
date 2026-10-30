@@ -545,6 +545,41 @@ export const runViewSchema = z.object({
 });
 export type RunView = z.infer<typeof runViewSchema>;
 
+/** The most recent run of an owned profile, including work still in progress. */
+export const latestRunSchema = z.object({ run: runViewSchema.nullable() });
+export type LatestRun = z.infer<typeof latestRunSchema>;
+
+/** Read-only help topics; none can start a run or change a profile. */
+export const assistantTopicSchema = z.enum([
+  'changes',
+  'previews',
+  'sizes',
+  'photos',
+  'tone',
+  'sharing',
+]);
+export type AssistantTopic = z.infer<typeof assistantTopicSchema>;
+
+/** A written question is sent only after explicit approval to share this message with Google. */
+export const assistantRequestSchema = z.object({
+  message: z.string().trim().min(1).max(1000),
+  locale: liveLocaleSchema,
+  acceptGoogle: z.literal(true),
+});
+export type AssistantRequest = z.infer<typeof assistantRequestSchema>;
+
+/** Only a validated topic leaves the model boundary; the interface supplies reviewed translations. */
+export const assistantReplySchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('topic'), topic: assistantTopicSchema }),
+  z.object({ kind: z.literal('clarify') }),
+  z.object({ kind: z.literal('unavailable') }),
+  z.object({ kind: z.literal('support') }),
+]);
+export type AssistantReply = z.infer<typeof assistantReplySchema>;
+
+/** Whether written questions can run under the current replay and model settings. */
+export const assistantConfigSchema = z.object({ available: z.boolean() });
+
 /** The look an option shows: a preview of a style, or an earlier render from this person's own photos. */
 export const optionLabelSchema = z.enum(['preview', 'earlier_look']);
 export type OptionLabel = z.infer<typeof optionLabelSchema>;

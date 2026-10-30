@@ -20,6 +20,8 @@ pnpm dev
 
 The web app runs on port 3000, the API on 4000, and a separate worker handles queued work. The privacy and terms pages include Interim’s public contact address. `SUPPORT_EMAIL` can override it for a deployment.
 
+The signed-in workspace groups daily actions in Today, visual history in My looks, and settings and data controls in You. It adapts from bottom navigation on phones to a desktop sidebar. Translated help buttons work without typing; optional written result help has separate consent and cannot start image calls. See [frontend rules](docs/frontend/README.md) and [model limits](docs/llm.md#optional-result-help).
+
 ## Try the demo
 
 `/demo` opens without signing in and shows recorded Stage Cards for simulated people. It only reads stored data and cannot start paid calls. A deployment needs seeded sample profiles and their stored images; see [demo data](docs/development.md#demo-data).

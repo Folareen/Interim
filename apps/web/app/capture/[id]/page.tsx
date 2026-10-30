@@ -27,8 +27,15 @@ export default async function Capture({ params }: { params: Promise<{ id: string
   });
   const [t, locale] = await Promise.all([getTranslations('capture'), getLocale()]);
   return (
-    <Shell backHref={`/ready/${id}`}>
-      <PageHeading title={t('title')} intro={t('intro')} />
+    <Shell
+      profileId={id}
+      backHref={
+        templates[profile.templateKey].usesFit && profile.bodyPhotos
+          ? `/update/${id}`
+          : `/ready/${id}`
+      }
+    >
+      <PageHeading title={t('title')} />
       <CaptureWizard profileId={id} plan={plan} locale={locale} />
     </Shell>
   );
