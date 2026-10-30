@@ -18,7 +18,7 @@ pnpm db:migrate
 pnpm dev
 ```
 
-The web app runs on port 3000, the API on 4000, and a separate worker handles queued work. Set the public `SUPPORT_EMAIL` before publishing the privacy and terms pages.
+The web app runs on port 3000, the API on 4000, and a separate worker handles queued work. The privacy and terms pages include Interim’s public contact address. `SUPPORT_EMAIL` can override it for a deployment.
 
 ## Try the demo
 

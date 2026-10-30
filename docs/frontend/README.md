@@ -29,7 +29,7 @@ The Stage Card makes share links (`ShareCard`): a new link is shown once with a 
 
 `/demo` is open to anyone and lists the sample people with their check ins; `/demo/cards/[id]` shows one recorded card. Both are server components that call the API without the person's cookie, and the card page renders the same `StageCardBody` as `/cards/[id]` with nothing that changes data. The welcome screen links to it.
 
-`/privacy` and `/terms` are public server-rendered pages linked from the shared footer, including before signup and consent. Privacy reuses the consent catalog’s processor and photo-retention wording. `SUPPORT_EMAIL` is validated by the web server and supplies the public contact link; set it before publishing. The pages describe the implemented prototype, and the wording still needs the review tracked in spec section 17.
+`/privacy` and `/terms` are public server-rendered pages linked from the shared footer, including before signup and consent. Privacy reuses the consent catalog’s processor and photo-retention wording. The public contact address lives in the message catalogs and is the same in every language. An optional `SUPPORT_EMAIL` deployment override is validated by the web server; an unset or empty override uses the catalog address. The pages describe the implemented prototype, and the wording still needs the review tracked in spec section 17.
 
 Before a screen is done, check it in both themes at 320px and 390px wide, with the keyboard only, and with an axe audit that reports no violations.
 
