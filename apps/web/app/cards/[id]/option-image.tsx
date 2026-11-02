@@ -13,24 +13,28 @@ export function OptionImage({
   photoUrl,
   label,
   previewAlt,
+  photoLabel,
 }: {
   previewUrl: string;
   photoUrl: string | null;
   label: string;
   /** What the preview shows, when it is not a look. */
   previewAlt?: string;
+  /** What the person's own photo is called, when it is not from a check in. */
+  photoLabel?: string;
 }) {
   const t = useTranslations('card');
   const [showingPhoto, setShowingPhoto] = useState(false);
+  const photoName = photoLabel ?? t('photoAlt');
   return (
     <div className="space-y-3">
       <div className="relative">
         <img
           src={showingPhoto && photoUrl ? photoUrl : previewUrl}
-          alt={showingPhoto ? t('photoAlt') : (previewAlt ?? t('previewAlt'))}
+          alt={showingPhoto ? photoName : (previewAlt ?? t('previewAlt'))}
           className="aspect-[3/4] w-full rounded-card border border-border object-cover"
         />
-        <span className="absolute top-3 left-3 rounded-lg bg-bg px-3 py-1 text-[0.9rem] font-semibold">{showingPhoto ? t('photoAlt') : label}</span>
+        <span className="absolute top-3 left-3 rounded-lg bg-bg px-3 py-1 text-[0.9rem] font-semibold">{showingPhoto ? photoName : label}</span>
       </div>
       {photoUrl && (
         <Button variant="secondary" onClick={() => setShowingPhoto((current) => !current)} aria-pressed={showingPhoto}>

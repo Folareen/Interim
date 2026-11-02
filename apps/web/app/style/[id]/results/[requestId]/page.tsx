@@ -51,6 +51,7 @@ export default async function StyleResults({ params }: { params: Promise<{ id: s
                   photoUrl={request.currentUrl}
                   label={t('previewLabel')}
                   previewAlt={t('previewAlt')}
+                  photoLabel={t('currentAlt')}
                 />
                 <SaveButton previewId={item.preview.id} initiallySaved={item.preview.saved} />
               </>
