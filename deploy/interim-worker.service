@@ -1,0 +1,17 @@
+[Unit]
+Description=Interim worker
+After=network-online.target redis-server.service
+Wants=network-online.target
+
+[Service]
+User=interim
+WorkingDirectory=/opt/interim/apps/api
+EnvironmentFile=/etc/interim/env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node --enable-source-maps dist/worker
+Restart=always
+RestartSec=3
+MemoryMax=450M
+
+[Install]
+WantedBy=multi-user.target

@@ -14,6 +14,7 @@ Each topic has one owner doc. Link to it instead of repeating it.
 | [agent.md](agent.md) | Implementation notes for the agent module |
 | [llm.md](llm.md) | Model provider, prompts, guardrails |
 | [integrations/youcam.md](integrations/youcam.md) | YouCam client, modes, costs, open questions |
+| [deployment.md](deployment.md) | Running Interim on one VPS: services, HTTPS, Neon, R2, first deployment and updates |
 | [development.md](development.md) | Local setup, scripts, testing |
 | [git.md](git.md) | Branches, commits, pull requests |
 
