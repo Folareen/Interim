@@ -1,4 +1,4 @@
-# Add this to /etc/caddy/Caddyfile (with HOST replaced, for example 104-207-90-150.sslip.io) and reload Caddy.
+# Add this to /etc/caddy/Caddyfile (with HOST replaced, for example interim.example.com) and reload Caddy.
 # Caddy gets and renews the certificate by itself. Responses are not buffered, so progress streams live.
 HOST {
 	encode zstd gzip
