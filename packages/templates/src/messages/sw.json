@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Mtu wa kuigizwa, imerekodiwa tarehe {date}. Hakuna kitu kwenye ukurasa huu kinachofanyika moja kwa moja.",
     "backAction": "Rudi kwenye onyesho",
-    "startAction": "Anza yako"
+    "startAction": "Anza yako",
+    "styleTitle": "Maonyesho ya awali ya mtindo",
+    "styleIntro": "Watu na mavazi ya kuigizwa, vilivyorekodiwa kutokana na matumizi halisi ya Interim."
   },
   "ledger": {
     "title": "Vipimo vya huduma",
@@ -901,6 +903,10 @@
     "tryOthers": "Jaribu mavazi mengine",
     "savedTitle": "Mitindo iliyohifadhiwa",
     "savedIntro": "Maonyesho ya awali uliyochagua kuyahifadhi.",
-    "savedEmpty": "Bado hakuna kilichohifadhiwa. Hifadhi onyesho la awali unalopenda na litaonekana hapa."
+    "savedEmpty": "Bado hakuna kilichohifadhiwa. Hifadhi onyesho la awali unalopenda na litaonekana hapa.",
+    "sampleTitle": "Huna picha karibu?",
+    "sampleHelp": "Jaribu kwanza na watu na mavazi ya kuigizwa. Huhitaji picha zako mwenyewe.",
+    "sampleOne": "Mavazi ya mitaani na ya kawaida maridadi",
+    "sampleTwo": "Jinzi, rangi za udongo na nyeusi"
   }
 }

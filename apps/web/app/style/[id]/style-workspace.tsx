@@ -1,7 +1,7 @@
 'use client';
 
 import { STYLE_MAX_REFERENCES } from '@interim/rules';
-import type { CaptureProblem, StylePhotoView } from '@interim/types';
+import type { CaptureProblem, StylePhotoView, StyleSampleSet } from '@interim/types';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ import { Notice } from '@/components/notice';
 import {
   ApiError,
   addStylePhoto,
+  addStyleSamples,
   createStyleRequest,
   createStyleUploads,
   deleteStylePhoto,
@@ -68,6 +69,23 @@ export function StyleWorkspace({ profileId, initial }: { profileId: string; init
           setChosen((set) => (set.size < STYLE_MAX_REFERENCES ? new Set(set).add(added.id) : set));
         }
       }
+    } catch (cause) {
+      fail(cause);
+    } finally {
+      setBusy(undefined);
+    }
+  }
+
+  async function useSample(set: StyleSampleSet) {
+    setBusy('adding');
+    setProblem(undefined);
+    setMessage(undefined);
+    try {
+      const { photos: added } = await addStyleSamples(profileId, set);
+      const ids = new Set(added.map((p) => p.id));
+      setPhotos((all) => [...added.filter((p) => p.role === 'current'), ...added.filter((p) => p.role === 'reference'), ...all.filter((p) => !ids.has(p.id))]);
+      // Choose exactly the outfits that came with the set, so "Show me" works at once.
+      setChosen(new Set(added.filter((p) => p.role === 'reference').slice(0, STYLE_MAX_REFERENCES).map((p) => p.id)));
     } catch (cause) {
       fail(cause);
     } finally {
@@ -152,6 +170,21 @@ export function StyleWorkspace({ profileId, initial }: { profileId: string; init
   return (
     <div className="mt-8 flex flex-1 flex-col">
       <div className="space-y-10 pb-8">
+        <section aria-labelledby="style-samples" className="workspace-card p-4 sm:p-5">
+          <h2 id="style-samples" className="text-[1.15rem]">
+            {t('sampleTitle')}
+          </h2>
+          <p className="mt-2 text-[0.95rem] text-muted">{t('sampleHelp')}</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Button variant="secondary" onClick={() => void useSample('one')} disabled={busy !== undefined}>
+              {t('sampleOne')}
+            </Button>
+            <Button variant="secondary" onClick={() => void useSample('two')} disabled={busy !== undefined}>
+              {t('sampleTwo')}
+            </Button>
+          </div>
+        </section>
+
         <section aria-labelledby="style-references">
           <h2 id="style-references" className="text-[1.25rem]">
             {t('referencesTitle')}

@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Simulated person, recorded on {date}. Nothing on this page is live.",
     "backAction": "Back to the demo",
-    "startAction": "Start your own"
+    "startAction": "Start your own",
+    "styleTitle": "Style previews",
+    "styleIntro": "Simulated people and outfits, recorded from real runs of Interim."
   },
   "ledger": {
     "title": "Unit costs",
@@ -901,6 +903,10 @@
     "tryOthers": "Try other outfits",
     "savedTitle": "Saved looks",
     "savedIntro": "The previews you chose to keep.",
-    "savedEmpty": "Nothing saved yet. Save a preview you like and it will be here."
+    "savedEmpty": "Nothing saved yet. Save a preview you like and it will be here.",
+    "sampleTitle": "No photos handy?",
+    "sampleHelp": "Try it first with simulated people and outfits. You don’t need any photos of your own.",
+    "sampleOne": "Streetwear and smart casual",
+    "sampleTwo": "Denim, earth tones and black"
   }
 }

@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Ènìyàn àfarawé, a gbà á sílẹ̀ ní {date}. Kò sí ohun tó ń ṣẹlẹ̀ lọ́wọ́lọ́wọ́ lórí ojú-ìwé yìí.",
     "backAction": "Padà sí àfihàn",
-    "startAction": "Bẹ̀rẹ̀ ti ìwọ"
+    "startAction": "Bẹ̀rẹ̀ ti ìwọ",
+    "styleTitle": "Àkọ́wò ìrísí",
+    "styleIntro": "Àwọn èèyàn àti aṣọ àfarawé, tí a ṣe àkọsílẹ̀ wọn láti inú lílo Interim gidi."
   },
   "ledger": {
     "title": "Àwọn ẹyọ iṣẹ́",
@@ -901,6 +903,10 @@
     "tryOthers": "Gbìyànjú àwọn aṣọ mìíràn",
     "savedTitle": "Àwọn ìrísí tí a fipamọ́",
     "savedIntro": "Àwọn àkọ́wò tí o yàn láti pamọ́.",
-    "savedEmpty": "Kò tíì sí nǹkan tí a fipamọ́. Fi àkọ́wò tí o fẹ́ràn pamọ́, yóò sì hàn níbí."
+    "savedEmpty": "Kò tíì sí nǹkan tí a fipamọ́. Fi àkọ́wò tí o fẹ́ràn pamọ́, yóò sì hàn níbí.",
+    "sampleTitle": "Kò sí fọ́tò lọ́wọ́?",
+    "sampleHelp": "Kọ́kọ́ gbìyànjú rẹ̀ pẹ̀lú àwọn èèyàn àti aṣọ àfarawé. O kò nílò fọ́tò tìrẹ.",
+    "sampleOne": "Aṣọ ìgboro àti aṣọ àìlápọ̀ tó dára",
+    "sampleTwo": "Denim, àwọ̀ erùpẹ̀ àti dúdú"
   }
 }

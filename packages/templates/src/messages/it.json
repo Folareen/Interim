@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Persona simulata, registrata il {date}. Nulla in questa pagina è in diretta.",
     "backAction": "Torna alla demo",
-    "startAction": "Inizia il tuo"
+    "startAction": "Inizia il tuo",
+    "styleTitle": "Anteprime di stile",
+    "styleIntro": "Persone e outfit simulati, registrati da usi reali di Interim."
   },
   "ledger": {
     "title": "Unità usate",
@@ -901,6 +903,10 @@
     "tryOthers": "Prova altri outfit",
     "savedTitle": "Look salvati",
     "savedIntro": "Le anteprime che hai scelto di tenere.",
-    "savedEmpty": "Ancora nulla di salvato. Salva un’anteprima che ti piace e comparirà qui."
+    "savedEmpty": "Ancora nulla di salvato. Salva un’anteprima che ti piace e comparirà qui.",
+    "sampleTitle": "Non hai foto a portata di mano?",
+    "sampleHelp": "Provalo prima con persone e outfit simulati. Non servono foto tue.",
+    "sampleOne": "Streetwear e smart casual",
+    "sampleTwo": "Denim, toni terra e nero"
   }
 }

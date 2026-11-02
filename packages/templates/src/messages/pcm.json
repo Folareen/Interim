@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Simulated pesin, dem record am for {date}. Nothing for dis page dey live.",
     "backAction": "Go back to di demo",
-    "startAction": "Start your own"
+    "startAction": "Start your own",
+    "styleTitle": "Style previews",
+    "styleIntro": "Simulated pipo and outfits, wey dem record from real use of Interim."
   },
   "ledger": {
     "title": "Units wey we use",
@@ -901,6 +903,10 @@
     "tryOthers": "Try other outfits",
     "savedTitle": "Saved looks",
     "savedIntro": "Di previews wey you choose to keep.",
-    "savedEmpty": "Nothing dey saved yet. Save preview wey you like and e go show here."
+    "savedEmpty": "Nothing dey saved yet. Save preview wey you like and e go show here.",
+    "sampleTitle": "You no get photos for hand?",
+    "sampleHelp": "Try am first with simulated pipo and outfits. You no need any photo of your own.",
+    "sampleOne": "Streetwear and smart casual",
+    "sampleTwo": "Denim, earth colours and black"
   }
 }

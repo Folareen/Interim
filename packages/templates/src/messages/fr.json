@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Personne simulée, enregistrée le {date}. Rien sur cette page n’est en direct.",
     "backAction": "Retour à la démo",
-    "startAction": "Commencer pour vous"
+    "startAction": "Commencer pour vous",
+    "styleTitle": "Aperçus de style",
+    "styleIntro": "Personnes et tenues simulées, enregistrées lors de vraies utilisations d’Interim."
   },
   "ledger": {
     "title": "Unités utilisées",
@@ -901,6 +903,10 @@
     "tryOthers": "Essayer d’autres tenues",
     "savedTitle": "Looks enregistrés",
     "savedIntro": "Les aperçus que vous avez choisi de garder.",
-    "savedEmpty": "Rien d’enregistré pour l’instant. Enregistrez un aperçu qui vous plaît et il apparaîtra ici."
+    "savedEmpty": "Rien d’enregistré pour l’instant. Enregistrez un aperçu qui vous plaît et il apparaîtra ici.",
+    "sampleTitle": "Pas de photos sous la main ?",
+    "sampleHelp": "Essayez d’abord avec des personnes et des tenues simulées. Vous n’avez besoin d’aucune photo à vous.",
+    "sampleOne": "Streetwear et tenue chic décontractée",
+    "sampleTwo": "Denim, tons terre et noir"
   }
 }

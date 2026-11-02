@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Mutum na kwaikwayo, an naɗa a {date}. Babu wani abu a wannan shafin da ke kai tsaye.",
     "backAction": "Koma zuwa demo",
-    "startAction": "Fara naka"
+    "startAction": "Fara naka",
+    "styleTitle": "Samfotin salo",
+    "styleIntro": "Mutane da kayan sawa na kwaikwayo, da aka nada daga ainihin amfani da Interim."
   },
   "ledger": {
     "title": "Raka’o’in sabis",
@@ -901,6 +903,10 @@
     "tryOthers": "Gwada wasu kaya",
     "savedTitle": "Salon da aka ajiye",
     "savedIntro": "Samfotin da ka zaɓa ka riƙe.",
-    "savedEmpty": "Babu abin da aka ajiye tukuna. Ajiye samfotin da kake so zai bayyana a nan."
+    "savedEmpty": "Babu abin da aka ajiye tukuna. Ajiye samfotin da kake so zai bayyana a nan.",
+    "sampleTitle": "Ba ka da hotuna a hannu?",
+    "sampleHelp": "Fara gwadawa da mutane da kayan sawa na kwaikwayo. Ba ka bukatar hotunan kanka.",
+    "sampleOne": "Kayan titi da na ado mai sauƙi",
+    "sampleTwo": "Denim, launukan ƙasa da baƙi"
   }
 }

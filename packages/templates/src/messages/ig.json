@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Onye e ṅomiri, e dekọrọ ya na {date}. Ọ dịghị ihe na-eme ugbu a na peeji a.",
     "backAction": "Laghachi na ngosi ahụ",
-    "startAction": "Malite nke gị"
+    "startAction": "Malite nke gị",
+    "styleTitle": "Nlele tupu oge nke ụdị",
+    "styleIntro": "Ndị mmadụ na uwe e ṹdị, e dekọrọ site n’ojiji Interim n’ezie."
   },
   "ledger": {
     "title": "Nkeji ọrụ",
@@ -901,6 +903,10 @@
     "tryOthers": "Nwaa uwe ndị ọzọ",
     "savedTitle": "Ọdịdị ndị echekwara",
     "savedIntro": "Nlele tupu oge ndị ị họọrọ idebe.",
-    "savedEmpty": "Ọ dịbeghị ihe echekwara. Chekwaa nlele tupu oge ị hụrụ n’anya, ọ ga-apụta ebe a."
+    "savedEmpty": "Ọ dịbeghị ihe echekwara. Chekwaa nlele tupu oge ị hụrụ n’anya, ọ ga-apụta ebe a.",
+    "sampleTitle": "Enweghị foto n’aka?",
+    "sampleHelp": "Buru ụzọ nwaa ya na ndị mmadụ na uwe e ṹdị. Ị chọghị foto nke gị.",
+    "sampleOne": "Uwe ámá na uwe ọkwa dị mfe",
+    "sampleTwo": "Denim, ụcha ala na oji"
   }
 }

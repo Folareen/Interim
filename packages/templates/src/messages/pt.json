@@ -728,7 +728,9 @@
     "checkInLine": "{stage}, {date}",
     "cardBanner": "Pessoa simulada, gravada em {date}. Nada nesta página é ao vivo.",
     "backAction": "Voltar à demonstração",
-    "startAction": "Comece o seu"
+    "startAction": "Comece o seu",
+    "styleTitle": "Prévias de estilo",
+    "styleIntro": "Pessoas e looks simulados, gravados de usos reais do Interim."
   },
   "ledger": {
     "title": "Unidades utilizadas",
@@ -901,6 +903,10 @@
     "tryOthers": "Experimentar outros looks",
     "savedTitle": "Looks salvos",
     "savedIntro": "As prévias que você escolheu guardar.",
-    "savedEmpty": "Nada salvo ainda. Salve uma prévia de que gostar e ela aparecerá aqui."
+    "savedEmpty": "Nada salvo ainda. Salve uma prévia de que gostar e ela aparecerá aqui.",
+    "sampleTitle": "Sem fotos à mão?",
+    "sampleHelp": "Experimente primeiro com pessoas e looks simulados. Você não precisa de nenhuma foto sua.",
+    "sampleOne": "Streetwear e casual elegante",
+    "sampleTwo": "Jeans, tons terrosos e preto"
   }
 }

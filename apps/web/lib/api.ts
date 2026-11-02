@@ -26,7 +26,9 @@ import {
   type SaveNotificationsInput,
   type ShareCreated,
   type RunView,
+  type StylePhotoList,
   type StylePhotoView,
+  type StyleSampleSet,
   type StyleRequestCreated,
   type StyleUploadsResponse,
   type UploadsResponse,
@@ -45,6 +47,7 @@ import {
   shareCreatedSchema,
   runViewSchema,
   snapshotCreatedSchema,
+  stylePhotoListSchema,
   stylePhotoViewSchema,
   styleRequestCreatedSchema,
   styleUploadsResponseSchema,
@@ -262,6 +265,13 @@ export async function createStyleUploads(
 export async function addStylePhoto(profileId: string, input: AddStylePhotoInput): Promise<StylePhotoView> {
   return stylePhotoViewSchema.parse(
     await (await send(`/profiles/${profileId}/style/photos`, 'POST', input)).json(),
+  );
+}
+
+/** Adds a set of simulated outfits and a simulated person, so a first try needs no photos. */
+export async function addStyleSamples(profileId: string, set: StyleSampleSet): Promise<StylePhotoList> {
+  return stylePhotoListSchema.parse(
+    await (await send(`/profiles/${profileId}/style/samples`, 'POST', { set })).json(),
   );
 }
 
