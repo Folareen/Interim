@@ -27,7 +27,7 @@ export default async function You({ params }: { params: Promise<{ id: string }> 
     getTranslations('consent'),
   ]);
   return (
-    <Shell profileId={id} active="you" wide>
+    <Shell profileId={id} kind={profile.kind} active="you" wide>
       <div className="flex items-start justify-between gap-4">
         <PageHeading title={t('you')} />
         <SignOut compact />

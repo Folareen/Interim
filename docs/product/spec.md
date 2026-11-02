@@ -15,7 +15,7 @@ There are no admin or care team roles in this build.
 ## 3. Core concepts
 
 * **Account.** A sign in: an email address plus a password, a link sent by email or Google. Every profile belongs to an account.
-* **Profile.** One person's ledger, created from a situation template.
+* **Profile.** One person's ledger, either a check in profile created from a situation template or a style profile, which has no template (section 4a). The two kinds never share routes: check in routes answer 409 for a style profile.
 * **Snapshot.** One dated set of photos with the measurements and self report taken with them. The first snapshot is the baseline.
 * **Measurement.** One value from one YouCam tool, with the tool name and the snapshot it came from. Its cost is found in the unit ledger through the task id.
 * **Self report.** What the person tells Interim at a check in: whether anything changed (none, some, a lot) and, for fit templates, their current size.
@@ -28,7 +28,8 @@ There are no admin or care team roles in this build.
 * **Stage.** A named point on the template path. Each template defines its own stages.
 * **Render.** One generated image from a YouCam try on tool, linked to its inputs.
 * **Stage Card.** The final output of a run.
-* **Run.** One execution of the agent for one snapshot.
+* **Run.** One execution of the agent for one snapshot, or the render of one style request.
+* **Style request.** One current photo and one to three reference photos. Its run makes one preview per reference.
 * **Unit ledger.** An append only record of reserved, settled and released unit costs. It holds no personal data and survives profile deletion.
 
 ## 4. Templates
@@ -66,6 +67,17 @@ Every run stores the template key and version it used, so an old card can be exp
 Stage keys are internal and never shown. Display labels are written separately in template config and pass the language scan. Exact stage thresholds are tuned during the spike. They live in template config and can change without code changes.
 
 For weight_change, face_fullness and after_surgery the stage is placed from the self report, not from a measurement. The card says "reported".
+
+## 4a. Style previews
+
+A style profile has no template, stages, snapshots, measurements or cards. The product reasons are in [overview.md](overview.md#style-previews).
+
+* **Photos.** Each has a role: `reference` (an outfit the person has worn or likes) or `current` (the person now). Upload handling is section 5's: JPEG, PNG or HEIC up to 12 MB, EXIF stripped, long side capped at 1000 px, short side at least 480 px, hash taken after normalisation. A current photo also passes the light and sharpness check, on the device and again on the server. A reference only has to be readable, since it is an outfit and not the person. The same picture added twice in one role is stored once.
+* **Request.** One current photo and one to three references, chosen by the person. The latest current photo is the one in use.
+* **Run.** One run per request, and one `cloth_v4` call per reference through the gateway, with `garment_category: full_body`, `change_shoes: false` and `filter_multi_person: strict`. Each costs 2 units, so the run's budget is 2 units per reference, capped by the per run cap. Whether a request may start is plain code in `packages/rules` (`stylePreviewPlan`): current consent, one to three references, and a remaining budget. The rest of section 7 is about check in clothes and does not apply. The same ledger scopes, call cache, replay mode and fail closed rule apply. A reference with no recording or a blocked tool is skipped alone; a spent budget stops the rest; the run fails only when no preview was made.
+* **Previews and saving.** A preview is labelled as one and is never described as fit or size. The person saves the ones they like. There are no share links for style previews.
+* **Retention.** Photos and previews follow section 12's two modes, counted from when they were added because there is no check in. They are deleted with the profile and included in the export.
+* **Not built.** Reading style from several references, any model that sees these photos, chat refinement, single garment choice and shopping (section 17).
 
 ## 5. Capture requirements
 
@@ -243,17 +255,18 @@ Each YouCam error maps to a plain sentence for the user and a next action for th
 Photos of a face and body are biometric data, and the situation a person picks can imply something about their health. Interim treats both as sensitive.
 
 * Interim is for adults only, as a deliberate choice. Photos of a face and body are biometric data, what a person picks can imply a health condition, and their photos go to two outside processors, so serving minors would need parental consent and legal review in each country. People confirm they are 18 or older before the first upload. This is a confirmation, not age verification.
+* The consent screen for a style profile names Perfect Corp (YouCam) as receiving the person's photo and each outfit photo only to preview outfits, and says Google receives nothing from style previews. It has no Google statement to accept, and the API asks for that acceptance only for check in profiles. The text is `CONSENT_VERSION` 5.
 * Consent screen before the first upload, in plain language. It says what is stored, for how long and who processes it: Perfect Corp (YouCam) receives photos to run tools, and Google (Gemini) receives measurements, the situation key, the moment and the tone, never photos, and, only for a reflection the safety check flags, that text and nothing else about the person. The consent screen lists them together, each naming its processor, and the person accepts all of them with one tick; the API records each acceptance.
 * Interim does not ask for health information. Because the chosen situation can still imply it, that choice is stored with the profile, never shared, never used for advertising, and deleted with the profile.
 * The words for today choice and the head covering setting can imply a person's religion or culture. Both are stored on the profile, never sent to the model, never shown on a share link, and deleted with the profile.
 * Optional written result-help questions need a separate per-message Google acceptance. Only the question and interface language are sent, without card contents, photos or history. They are not stored, logged or included in replay fixtures. Topic buttons remain available without that acceptance.
 * Reflections are saved to the account, encrypted, so the person can come back to them. They are deleted with the profile, included in the export, never shown on a share link, never logged, never sold or used for advertising, and never given to the planner. The only time reflection text reaches a model is when the safety check flags it for review (section 13), and the consent screen says so.
 * Retention has two modes, and the person chooses on the consent screen. Keep my history is preselected, because comparisons over months need the photos, and the person can change it. Delete after 30 days: photos and renders are deleted 30 days after capture. Keep my history: photos and renders are kept until the person deletes them, or until 24 months after the last check in, whichever comes first. Every new check in restarts the 24 months. The setting can be switched off at any time, and then the 30 days count from each photo's capture date. For the templates that run over months (weight_change, hair_loss_ahead, textured_growth) the screen explains that keeping history is what makes comparisons and earlier looks possible. In both modes measurements, stage, self report and card text stay until the profile is deleted.
-* Photos are stored encrypted. A render that expires keeps its card text and trace but not its image.
+* Photos are stored encrypted. A render that expires keeps its card text and trace but not its image. A style photo that expires is deleted with the requests and previews made from it; an expired preview alone loses its image.
 * YouCam deletes uploaded files after 24 hours, so Interim keeps its own copy and uploads again when needed.
 * One tap to delete a profile and everything in it. One tap to export the profile as a file (measurements, cards, photos). Deletion completes within 24 hours, and backups age out within 7 days.
 * The unit ledger keeps no personal data, so it is not deleted with a profile. It records only tool, units and time under a random reference.
-* Only the person in the photo can be photographed. The consent text says so.
+* Only the person in the photo can be photographed. The consent text says so. For style previews it says the photo of the person is of them, and that the outfit photos are theirs or images they have the right to use. Interim cannot check who is in a reference, so that statement is the control (section 17).
 * Share links show renders and card text, never original photos. They expire, can be revoked by the person, and are not indexed by search engines. Opening one gives no access to the profile.
 * No data is sold or used for advertising. No lead generation from profiles. No health records are collected.
 * A privacy policy and terms page are part of the app. A suspected breach is reported to affected people within 72 hours.
@@ -349,6 +362,10 @@ No MCP server and no partner keys. Every caller is the person, through the app, 
 23. No profile can be created, read or changed without a signed in account, and one account never sees another's.
 24. Deleting an account removes its profiles, photos, sessions and links.
 25. Repeated wrong passwords for one email are answered 429.
+26. A style request makes one preview per reference through the gateway, spends nothing in replay, and a reference with no recording makes no network call and holds no units while the others still render.
+27. A style profile adds a sample set and its previews replay with no network call. A style request the remaining budget cannot cover is refused before any run exists, and a check in route refuses a style profile with 409.
+28. Style photos and previews expire, are deleted with the profile, are included in the export and are kept by the bucket sweep while a row points at them.
+29. A style profile consents without the Google statement and a check in profile does not.
 
 ## 17. Spike: what is still open
 
@@ -366,6 +383,10 @@ This section owns every open question. What the live runs settled is in [integra
 10. YouCam's Camera Kit (`plugins-media.makeupar.com`) runs on the capture screen with camera access. Its documentation does not say what it sends to Perfect Corp's servers, whether frames leave the device, or how it behaves on iOS Safari, and the consent text names Perfect Corp only as the processor of uploaded photos. Settle this and the wording before launch. The file input stays as the way to avoid the kit.
 11. Accounts (section 12b): legal review of the sign up wording where it names Brevo and Google.
 12. Whether a person at Interim ever looks at reflections the model rates `concern`, and the legal wording for sending flagged text to Gemini.
+13. Style previews were checked on six synthetic outfits and three synthetic current photos only (31 units over two batches). Accessories transferred inconsistently (a chain was dropped once and kept once), and sleeves, shirt length and drape changed. One pair of trousers came out cream where the reference was brown. The inputs ended at the thighs, so shoes and a full head to toe outfit are untested, as are real photos, body preservation measured rather than judged by eye, and whether people find the previews useful.
+14. Head coverings with `full_body`: `cloth_v4` is not expected to change the head, and the spike references had no hats, but a covering was never tried. Style previews are offered to everyone until it is.
+15. Understanding taste from several references, listing style elements for the person to confirm, and conversational refinement ("keep the jacket"). They need a model that sees photos, which the contract forbids today (section 8), so they need a provider and privacy contract, consent wording, a bounded schema and a paid test first.
+16. Reference photos can show other people. The consent statement puts the right to use them on the person, and legal review of that wording is open with item 9.
 
 ## 18. Numbers and measures
 
@@ -377,6 +398,8 @@ In the style of the Round 1 winners, publish measured results.
 * how often the eligibility rules prevented a paid failure
 
 Measured on the sample personas (front photo only, no density), live on 2026-10-23: a baseline cost 38 units (2.09 dollars: hair length 2, face shape 10, skin tone 20, three hair style previews 6), and a check in cost 8 units (0.44 dollars: hair length 2, three previews 6). Ten runs cost 140 units (7.70 dollars), and the balance fell by exactly that.
+
+Style preview spike, 30 October 2026 (first batch; a second on 2 November 2026 recorded the demo set: 4 generated images at 1 unit and 6 previews through the app's own services at 2 units, 16 units or 0.88 dollars, all 10 tasks succeeded): one batch with a 20 unit cap spent 15 units (0.825 dollars) on 3 generated references (1 unit each) and 6 `cloth_v4` previews (2 units each). All 9 tasks succeeded. The clothes tasks took 18 to 25 seconds (median 20) from creation to downloaded result. A preview from an uploaded reference costs 2 units (0.11 dollars), so three cost 6 units (0.33 dollars). The synthetic inputs and results are in `packages/fixtures`; it says nothing about real photos (section 17, item 13).
 
 Exploratory spike log summary, 20–27 October 2026, for the tools used in the product. These are historical development attempts, including deliberately unsuitable portraits, generated inputs and setup faults, not a representative user test. The source is the local, ignored `apps/api/.spike/results.jsonl`; raw task ids and signed links are not published. Sample-persona runs and other experiments outside this log are not in these denominators. Recompute by grouping log rows by `tool`, counting every non-`success` row as unsuccessful, and taking the median non-null `seconds` among successful rows.
 

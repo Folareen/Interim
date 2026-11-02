@@ -14,6 +14,7 @@ import { ReflectionsModule } from './reflections/reflections.module';
 import { RunsModule } from './runs/runs.module';
 import { SharesModule } from './shares/shares.module';
 import { SnapshotsModule } from './snapshots/snapshots.module';
+import { StyleModule } from './style/style.module';
 import { TemplatesModule } from './templates/templates.module';
 import { YoucamModule } from './youcam/youcam.module';
 
@@ -28,6 +29,7 @@ import { YoucamModule } from './youcam/youcam.module';
     ProfilesModule,
     ReflectionsModule,
     SnapshotsModule,
+    StyleModule,
     RunsModule,
     SharesModule,
     TemplatesModule,

@@ -16,6 +16,7 @@ export async function Shell({
   backHref,
   children,
   profileId,
+  kind = 'situation',
   active = 'today',
   wide = false,
 }: {
@@ -23,6 +24,8 @@ export async function Shell({
   backHref?: string;
   children: ReactNode;
   profileId?: string;
+  /** Which kind of profile is open, since a style profile has its own destinations. */
+  kind?: 'situation' | 'style';
   active?: WorkspaceSection;
   wide?: boolean;
 }) {
@@ -67,7 +70,7 @@ export async function Shell({
           {navigation && (
             <aside className="hidden pr-5 pt-7 lg:block">
               <div className="sticky top-7">
-                <WorkspaceNav profileId={profileId} active={active} />
+                <WorkspaceNav profileId={profileId} kind={kind} active={active} />
               </div>
             </aside>
           )}
@@ -132,7 +135,7 @@ export async function Shell({
       {navigation && (
         <div className="mobile-navigation fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-lg rounded-[1.5rem] bg-surface p-1 lg:hidden">
           <div className="mx-auto max-w-lg">
-            <WorkspaceNav profileId={profileId} active={active} mobile />
+            <WorkspaceNav profileId={profileId} kind={kind} active={active} mobile />
           </div>
         </div>
       )}

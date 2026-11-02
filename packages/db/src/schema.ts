@@ -1,4 +1,5 @@
-import { boolean, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { boolean, check, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
 // docs/architecture.md section 5. Hard delete cascades from profile, except the ledger,
 // budget counters and deletion requests, which hold no personal data.
@@ -6,6 +7,8 @@ const id = () => uuid('id').primaryKey().defaultRandom();
 const createdAt = () => timestamp('created_at').notNull().defaultNow();
 
 export const photoKind = pgEnum('photo_kind', ['front', 'left', 'right', 'top', 'body']);
+export const profileKind = pgEnum('profile_kind', ['situation', 'style']);
+export const stylePhotoRole = pgEnum('style_photo_role', ['reference', 'current']);
 export const ledgerKind = pgEnum('ledger_kind', ['reserve', 'settle', 'release']);
 export const cacheOutcome = pgEnum('cache_outcome', ['success', 'blocked']);
 export const retention = pgEnum('retention', ['standard', 'extended']);
@@ -40,9 +43,13 @@ export const taskState = pgEnum('task_state', [
   'unknown',
 ]);
 
-export const profile = pgTable('profile', {
+export const profile = pgTable(
+  'profile',
+  {
   id: id(),
-  templateKey: text('template_key').notNull(),
+  // `situation` profiles follow a template; `style` profiles preview outfits and have none.
+  kind: profileKind('kind').notNull().default('situation'),
+  templateKey: text('template_key'),
   // Hash of the owner cookie token, or `sample`.
   ownerRef: text('owner_ref').notNull(),
   consentVersion: text('consent_version').notNull(),
@@ -59,7 +66,9 @@ export const profile = pgTable('profile', {
   bodyPhotos: boolean('body_photos').notNull().default(true),
   judgeSample: boolean('judge_sample').notNull().default(false),
   createdAt: createdAt(),
-});
+  },
+  (t) => [check('profile_template_matches_kind', sql`(${t.kind} = 'style') = (${t.templateKey} is null)`)],
+);
 
 export const consentEvent = pgTable('consent_event', {
   id: id(),
@@ -158,9 +167,11 @@ export const run = pgTable(
   'run',
   {
     id: id(),
-    snapshotId: uuid('snapshot_id').notNull().references(() => snapshot.id, { onDelete: 'cascade' }),
-    templateKey: text('template_key').notNull(),
-    templateVersion: integer('template_version').notNull(),
+    // A run belongs to a check in or to a style request, never both.
+    snapshotId: uuid('snapshot_id').references(() => snapshot.id, { onDelete: 'cascade' }),
+    styleRequestId: uuid('style_request_id').references(() => styleRequest.id, { onDelete: 'cascade' }),
+    templateKey: text('template_key'),
+    templateVersion: integer('template_version'),
     status: runStatus('status').notNull().default('queued'),
     stopReason: text('stop_reason'), // a trace reason code
     retake: text('retake'), // a capture problem code, when YouCam asked for a new photo
@@ -169,7 +180,59 @@ export const run = pgTable(
     createdAt: createdAt(),
   },
   // One run per snapshot, so starting it twice returns the same one.
-  (t) => [uniqueIndex('run_snapshot').on(t.snapshotId)],
+  (t) => [
+    uniqueIndex('run_snapshot').on(t.snapshotId),
+    uniqueIndex('run_style_request').on(t.styleRequestId),
+    check('run_one_subject', sql`(${t.snapshotId} is null) <> (${t.styleRequestId} is null)`),
+  ],
+);
+
+export const stylePhoto = pgTable(
+  'style_photo',
+  {
+    id: id(),
+    profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+    role: stylePhotoRole('role').notNull(),
+    objectKey: text('object_key').notNull(),
+    sha256: text('sha256').notNull(), // of the normalised file
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: createdAt(),
+  },
+  // The same picture uploaded twice is stored once.
+  (t) => [uniqueIndex('style_photo_profile_role_sha').on(t.profileId, t.role, t.sha256)],
+);
+
+export const styleRequest = pgTable('style_request', {
+  id: id(),
+  profileId: uuid('profile_id').notNull().references(() => profile.id, { onDelete: 'cascade' }),
+  currentPhotoId: uuid('current_photo_id').notNull().references(() => stylePhoto.id, { onDelete: 'cascade' }),
+  createdAt: createdAt(),
+});
+
+export const styleRequestReference = pgTable(
+  'style_request_reference',
+  {
+    requestId: uuid('request_id').notNull().references(() => styleRequest.id, { onDelete: 'cascade' }),
+    photoId: uuid('photo_id').notNull().references(() => stylePhoto.id, { onDelete: 'cascade' }),
+    position: integer('position').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.requestId, t.photoId] })],
+);
+
+export const stylePreview = pgTable(
+  'style_preview',
+  {
+    id: id(),
+    requestId: uuid('request_id').notNull().references(() => styleRequest.id, { onDelete: 'cascade' }),
+    referencePhotoId: uuid('reference_photo_id').notNull().references(() => stylePhoto.id, { onDelete: 'cascade' }),
+    inputHash: text('input_hash').notNull(),
+    objectKey: text('object_key'), // null once the image has expired
+    expiresAt: timestamp('expires_at').notNull(),
+    savedAt: timestamp('saved_at'), // null until the person saves it
+    createdAt: createdAt(),
+  },
+  // A retried job finds its preview instead of adding a second one.
+  (t) => [uniqueIndex('style_preview_request_reference').on(t.requestId, t.referencePhotoId)],
 );
 
 export const traceEntry = pgTable(

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { primaryClass } from '@/components/button';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
+import { profileHref } from '@/lib/profile-href';
 import { getMe, getProfiles } from '@/lib/server-api';
 import { ChangeEmail, DeleteAccount, RecoveryCodes, SignOut } from './account-actions';
 
@@ -51,10 +52,12 @@ export default async function Account({
             {profiles.map((profile) => (
               <li key={profile.id}>
                 <Link
-                  href={profile.consentCurrent ? `/ready/${profile.id}` : `/consent/${profile.id}`}
+                  href={profileHref(profile)}
                   className="flex min-h-14 items-center justify-between gap-4 px-4 py-3"
                 >
-                  <span className="font-semibold">{labels(profile.templateKey)}</span>
+                  <span className="font-semibold">
+                    {profile.kind === 'style' ? t('styleProfile') : labels(profile.templateKey)}
+                  </span>
                   <span className="text-accent">{t('open')}</span>
                 </Link>
               </li>

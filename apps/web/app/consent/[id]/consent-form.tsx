@@ -11,15 +11,19 @@ import { Notice } from '@/components/notice';
 import { ApiError, grantConsent } from '@/lib/api';
 
 const retentionOrder: Retention[] = ['standard', 'extended'];
-const confirmations = ['store', 'youcam', 'google', 'own'] as const;
-type Confirmation = (typeof confirmations)[number];
+const confirmations = {
+  situation: ['store', 'youcam', 'google', 'own'],
+  // Style previews send nothing to Google, so there is no statement to accept for it.
+  style: ['store', 'youcam', 'own'],
+} as const;
+type Confirmation = (typeof confirmations)[keyof typeof confirmations][number];
 
 /**
  * The consent screen: what is kept, who helps, how long photos stay, the four statements read
  * together, and one agreement to all of them. The button stays off until it is ticked. The API still
  * records each acceptance, because each processor is named in its own statement.
  */
-export function ConsentForm({ profileId, version }: { profileId: string; version: string }) {
+export function ConsentForm({ profileId, version, kind }: { profileId: string; version: string; kind: 'situation' | 'style' }) {
   const t = useTranslations('consent');
   const common = useTranslations('common');
   const router = useRouter();
@@ -28,11 +32,12 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string>();
 
+  const isStyle = kind === 'style';
   const label: Record<Confirmation, string> = {
     store: t('confirmStore'),
-    youcam: t('confirmYoucam'),
+    youcam: t(isStyle ? 'confirmYoucamStyle' : 'confirmYoucam'),
     google: t('confirmGoogle'),
-    own: t('confirmOwn'),
+    own: t(isStyle ? 'confirmOwnStyle' : 'confirmOwn'),
   };
   const complete = retention !== undefined && agreed;
 
@@ -48,10 +53,10 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
         retention,
         acceptStorage: true,
         acceptYoucam: true,
-        acceptGemini: true,
+        acceptGemini: isStyle ? undefined : true,
         acceptOwnPhotosOnly: true,
       });
-      router.push(`/ready/${profileId}`);
+      router.push(kind === 'style' ? `/style/${profileId}` : `/ready/${profileId}`);
     } catch (cause) {
       if (cause instanceof ApiError && cause.status === 409) setError(t('outdated'));
       else setError(common(cause instanceof ApiError && cause.status === 'network' ? 'networkError' : 'genericError'));
@@ -64,14 +69,14 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
       <div className="mt-8 space-y-9 pb-8">
         <section>
           <h2 className="text-[1.25rem]">{t('keepTitle')}</h2>
-          <p className="mt-2">{t('keepBody')}</p>
+          <p className="mt-2">{t(isStyle ? 'styleKeepBody' : 'keepBody')}</p>
         </section>
 
         <section>
           <h2 className="text-[1.25rem]">{t('helpersTitle')}</h2>
           <ul className="mt-3 space-y-3">
-            <li className="border-l-2 border-accent pl-4">{t('helperYoucam')}</li>
-            <li className="border-l-2 border-accent pl-4">{t('helperGoogle')}</li>
+            <li className="border-l-2 border-accent pl-4">{t(isStyle ? 'helperYoucamStyle' : 'helperYoucam')}</li>
+            <li className="border-l-2 border-accent pl-4">{t(isStyle ? 'helperGoogleStyle' : 'helperGoogle')}</li>
           </ul>
         </section>
 
@@ -84,7 +89,7 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
               name="retention"
               value={key}
               label={t(`retention.${key}.label`)}
-              description={t(`retention.${key}.description`)}
+              description={isStyle ? t(`retentionStyle.${key}`) : t(`retention.${key}.description`)}
               checked={retention === key}
               onChange={() => setRetention(key)}
             />
@@ -94,7 +99,7 @@ export function ConsentForm({ profileId, version }: { profileId: string; version
         <fieldset className="space-y-3">
           <legend className="mb-3 text-[1.25rem] font-medium font-serif">{t('confirmTitle')}</legend>
           <ul className="space-y-3 rounded-card border border-border bg-surface p-4">
-            {confirmations.map((key) => (
+            {confirmations[kind].map((key) => (
               <li key={key} className="border-l-2 border-accent pl-4">
                 {label[key]}
               </li>

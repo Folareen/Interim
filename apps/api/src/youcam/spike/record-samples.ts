@@ -142,7 +142,7 @@ async function main() {
   const rows: { persona: string; stage: number; units: number; card: boolean }[] = [];
   for (const persona of personas) {
     const profileId = randomUUID();
-    await db.insert(profile).values({ id: profileId, templateKey: 'hair_loss_ahead', ownerRef: 'sample', consentVersion: '4', consentedAt: new Date(), judgeSample: true });
+    await db.insert(profile).values({ id: profileId, templateKey: 'hair_loss_ahead', ownerRef: 'sample', consentVersion: '5', consentedAt: new Date(), judgeSample: true });
     for (const stage of stages) {
       const snapshotId = randomUUID();
       await db.insert(snapshot).values({ id: snapshotId, profileId, isBaseline: stage === 0, takenAt: new Date(Date.UTC(2026, 9, 1 + stage * 14)) });

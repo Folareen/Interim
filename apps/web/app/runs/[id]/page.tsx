@@ -15,8 +15,10 @@ export default async function Run({ params }: { params: Promise<{ id: string }> 
   const run = await getRun(id);
   if (!run) notFound();
   if (run.cardId) redirect(`/cards/${run.cardId}`);
+  if (run.styleRequestId && run.status === 'done')
+    redirect(`/style/${run.profileId}/results/${run.styleRequestId}`);
   return (
-    <Shell profileId={run.profileId}>
+    <Shell profileId={run.profileId} kind={run.styleRequestId ? 'style' : 'situation'} active={run.styleRequestId ? 'style' : 'today'}>
       <RunProgress initial={run} />
     </Shell>
   );

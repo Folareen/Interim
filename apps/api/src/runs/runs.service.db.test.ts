@@ -35,7 +35,7 @@ async function seed(opts: { consented?: boolean; owner?: string } = {}) {
     id: profileId,
     templateKey: 'hair_loss_ahead',
     ownerRef: opts.owner ?? alice.ref,
-    consentVersion: '4',
+    consentVersion: '5',
     consentedAt: opts.consented === false ? null : new Date(),
   });
   await db

@@ -4,9 +4,21 @@ Built for the YouCam API Skin AI and eCommerce VTO Hackathon (Perfect Corp, Devp
 
 ## One liner
 
-Interim helps you feel like yourself while your body changes.
+Here is the style I am going for. Here is me now. Help me make it work.
 
-## In short
+## Style previews
+
+The main way in. A person adds photos of outfits they have worn or looks they admire, then one photo of themselves now. Interim puts each outfit on that photo with YouCam's clothes try on, and the person saves the looks they like. Body change is one reason to use it, never a requirement: someone can simply explore a style.
+
+* Taste comes first. The references are the person's taste, not a body to return to, and nothing says one body suits a style better than another. Interim gives no rules about what a larger or smaller body should wear.
+* A preview shows the outfit as an idea on the photo. It makes no claim about size, fit, comfort or how clothes will feel, and it is labelled as a preview.
+* Direct transfer of an outfit from a reference is what is built. Understanding several references and adapting a style from them is not, and nor is chat refinement, shopping or sharing. Spec section 17 owns these open questions.
+* The model never sees these photos (see [llm.md](../llm.md)), and style previews send nothing to Google.
+* A photo of someone else in a reference is the person's to use only if they have the right to (consent, spec section 12).
+
+Check in profiles, below, remain for people who want to follow a change over time. They are a separate kind of profile and no longer the way in.
+
+## Check in profiles, in short
 
 Serious illness can change how someone looks within weeks: hair falls out, the face fills out, surgery leaves a new shape, skin changes colour. People still have to go to work, see family and be photographed, and almost nothing helps them through those months. Interim is built for them first.
 
@@ -137,7 +149,9 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * Product copy never uses the words patient, treatment, diagnosis, cure, heal or regrow, or their usual forms. The scan matches whole words, so "health" is fine. Internal stage keys are not user facing and are not scanned.
 * No forced positivity: never "stay positive", "be strong", "you've got this", "everything happens for a reason" or "look on the bright side".
 * No battle words: never fight, battle, beat, warrior or survivor, and no journey framing.
-* Earlier photos are a reference, never a goal. Interim never describes a change as a loss or the person's earlier look as better.
+* Earlier photos and outfits are a reference, never a goal. Interim never describes a change as a loss or the person's earlier look as better. Copy for style previews says "outfits you have worn" or "a style you love", never "used to look" or "old self".
+* No dressing rules by body size: Interim never assumes a larger body wants looser clothes, and never ranks styles by how they suit a body.
+* A style preview is never described as how clothes will fit, and no size is inferred from it.
 * No body is the goal. Interim never calls clothes slimming, never offers to hide or disguise part of the body, and never talks about problem areas. Weight gain and weight loss get the same tone.
 * Users choose a situation from a fixed list. There are no condition fields and no medication fields.
 * Density grades are described as visual categories, not health findings.
@@ -162,6 +176,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * No user research yet. The plan is in spec section 18.
 * Some US states (Illinois and Nevada from 2025) ban AI mental health care. Interim stays a cosmetic tool with a kind voice. The language rules and the on-device reflection keep it there.
 * Photographing yourself six ways at every check in may be too much, especially when unwell. The check in set is kept small for that reason.
+* Style previews are checked on six synthetic outfits and three synthetic photos only (`apps/api/.spike`, 31 units). Preference understanding, recommendation quality, accessories, shoes, head coverings and real-user results are untested.
 * A demo with a real person needs dated photos of one consenting person, which is harder for illness than for weight change, so the demo uses the synthetic sample profiles and shows real photos only with consent.
 * Medical and body image sensitivity needs careful wording on every screen.
 

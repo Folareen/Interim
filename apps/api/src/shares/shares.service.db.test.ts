@@ -33,7 +33,7 @@ async function seedCard(owner = alice.ref) {
   const lookId = randomUUID();
   const goneId = randomUUID();
   const clothId = randomUUID();
-  await db.insert(profile).values({ id: profileId, templateKey: 'after_surgery', ownerRef: owner, consentVersion: '4', consentedAt: new Date(), headCovering: true });
+  await db.insert(profile).values({ id: profileId, templateKey: 'after_surgery', ownerRef: owner, consentVersion: '5', consentedAt: new Date(), headCovering: true });
   await db.insert(snapshot).values({ id: snapshotId, profileId, stageKey: 'recovering' });
   await db.insert(run).values({ id: runId, snapshotId, templateKey: 'after_surgery', templateVersion: 1, budgetUnits: 40, status: 'done' });
   const future = new Date(Date.now() + 1e9);

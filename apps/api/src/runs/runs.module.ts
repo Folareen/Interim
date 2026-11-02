@@ -3,6 +3,7 @@ import { AgentModule } from '../agent/agent.module';
 import { env } from '../config/env';
 import { GuardModule } from '../guard/guard.module';
 import { StorageModule } from '../storage/storage.module';
+import { StyleRenderModule } from '../style/style-render.module';
 import { PROFILE_LOCK_REDIS_URL, ProfileLock } from './profile-lock';
 import { BullRunQueue, RUNS_REDIS_URL, RUN_QUEUE } from './run.queue';
 import { RunWorker } from './run.worker';
@@ -13,7 +14,7 @@ import { ModelModule } from '../agent/model.module';
 import { RateLimitService } from '../auth/rate-limit.service';
 
 @Module({
-  imports: [GuardModule, StorageModule, AgentModule, ModelModule],
+  imports: [GuardModule, StorageModule, AgentModule, ModelModule, StyleRenderModule],
   controllers: [RunsController],
   providers: [
     { provide: RUNS_REDIS_URL, useValue: env.REDIS_URL },

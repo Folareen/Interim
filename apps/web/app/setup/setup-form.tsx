@@ -31,7 +31,7 @@ export function SetupForm({ situation }: { situation: TemplateKey }) {
     setWorking(true);
     setError(undefined);
     try {
-      created.current ??= (await createProfile({ templateKey: situation, ageConfirmed: true })).id;
+      created.current ??= (await createProfile({ kind: 'situation', templateKey: situation, ageConfirmed: true })).id;
       const current = await getPreferences(created.current);
       await savePreferences(created.current, { ...current, locale, tone, headCovering });
       router.push(`/consent/${created.current}`);

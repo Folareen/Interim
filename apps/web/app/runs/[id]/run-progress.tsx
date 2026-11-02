@@ -51,13 +51,20 @@ export function RunProgress({ initial }: { initial: RunView }) {
 
   useEffect(() => {
     if (run.cardId) router.replace(`/cards/${run.cardId}`);
-  }, [run.cardId, router]);
+    if (run.styleRequestId && run.status === 'done')
+      router.replace(`/style/${run.profileId}/results/${run.styleRequestId}`);
+  }, [run.cardId, run.styleRequestId, run.status, run.profileId, router]);
 
   const failed = run.status === 'failed';
   const failure = run.stopReason === 'not_recorded' ? t('failedNotRecorded') : t('failedError');
+  const style = useTranslations('style');
+  const isStyle = run.styleRequestId !== null;
+  let heading: { title: string; intro?: string } = { title: t('title'), intro: t('intro') };
+  if (isStyle) heading = { title: style('runTitle'), intro: style('runIntro') };
+  if (failed) heading = { title: t('failedTitle') };
   return (
     <div className="flex flex-1 flex-col">
-      <PageHeading title={failed ? t('failedTitle') : t('title')} intro={failed ? undefined : t('intro')} />
+      <PageHeading title={heading.title} intro={heading.intro} />
       {failed && (
         <div className="mt-6 space-y-3">
           {run.retake ? (
@@ -87,7 +94,14 @@ export function RunProgress({ initial }: { initial: RunView }) {
         )}
       </section>
 
-      {failed && (
+      {failed && run.styleRequestId && (
+        <Actions>
+          <Link href={`/style/${run.profileId}`} className={primaryClass}>
+            {style('tryOthers')}
+          </Link>
+        </Actions>
+      )}
+      {failed && !run.styleRequestId && (
         <Actions>
           <Link href={`/capture/${run.profileId}`} className={run.retake ? primaryClass : secondaryClass}>
             {t('retakeAction')}

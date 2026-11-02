@@ -1,10 +1,11 @@
-import { type Db, run, snapshot } from '@interim/db';
+import { type Db, run, snapshot, styleRequest } from '@interim/db';
 import { Inject, Injectable, Logger, type OnApplicationShutdown } from '@nestjs/common';
 import { DelayedError, Worker } from 'bullmq';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import IORedis from 'ioredis';
 import { z } from 'zod';
 import { AgentService } from '../agent/agent.service';
+import { StyleRenderService } from '../style/style-render.service';
 import { DB } from '../db/db.token';
 import { ProfileLock } from './profile-lock';
 import { RUNS_REDIS_URL, RUN_QUEUE_NAME } from './run.queue';
@@ -28,6 +29,7 @@ export class RunWorker implements OnApplicationShutdown {
 
   constructor(
     @Inject(AgentService) private readonly agent: AgentService,
+    @Inject(StyleRenderService) private readonly style: StyleRenderService,
     @Inject(RUNS_REDIS_URL) private readonly redisUrl: string,
     @Inject(DB) private readonly db: Db,
     @Inject(ProfileLock) private readonly lock: ProfileLock,
@@ -39,12 +41,15 @@ export class RunWorker implements OnApplicationShutdown {
    */
   async process(runId: string): Promise<'done' | 'busy'> {
     const [row] = await this.db
-      .select({ profileId: snapshot.profileId })
+      .select({ profileId: sql<string>`coalesce(${snapshot.profileId}, ${styleRequest.profileId})`, styleRequestId: run.styleRequestId })
       .from(run)
-      .innerJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .leftJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .leftJoin(styleRequest, eq(styleRequest.id, run.styleRequestId))
       .where(eq(run.id, runId));
     if (!row) throw new Error(`Run ${runId} does not exist`);
-    const outcome = await this.lock.run(row.profileId, () => this.agent.run(runId));
+    const outcome = await this.lock.run(row.profileId, () =>
+      row.styleRequestId ? this.style.render(runId) : this.agent.run(runId),
+    );
     return outcome.kind === 'busy' ? 'busy' : 'done';
   }
 

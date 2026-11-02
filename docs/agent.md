@@ -19,6 +19,6 @@ Code: `apps/api/src/agent` (the loop, the planner and its prompt, the trace writ
 ## Not built yet
 - Photos of the sample personas edited for templates 2 to 5 (a fuller face, a changed skin colour). The persona tests use the existing hair stage edits and their recorded answers, so the face and skin readings come from the unedited stage, and no stage change by measurement is exercised for those two.
 - The cover strategy: hat and scarf try on are not used (spec section 7, rule 6), so `cover` has no tool.
-- Live confirmation of clothes. The sample catalog's pictures are YouCam generated stand-ins and no `cloth_v4` answer is recorded yet, so a run in replay notes `not_recorded` for each piece. The skin colour situation does not use fit, so it asks for no body photo and shows no clothes.
+- Live confirmation of clothes for the sample catalog, whose pictures are YouCam generated stand-ins. Some `cloth_v4` answers are recorded (`packages/fixtures/youcam/cloth_v4`), and a run in replay notes `not_recorded` for each piece without one. The skin colour situation does not use fit, so it asks for no body photo and shows no clothes.
 - Live confirmation of the looks. Their ids come from YouCam's hair transfer and beard style template lists, but only `male_short_curly` and `female_blunt_bob` have been rendered live.
 - Stage thresholds are provisional until the spike (spec section 17, item 2).

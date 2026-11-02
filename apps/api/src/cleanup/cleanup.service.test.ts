@@ -1,4 +1,4 @@
-import { type Db, account, authToken, deletionRequest, photo, profile, rateLimit, render, session, snapshot } from '@interim/db';
+import { type Db, account, authToken, deletionRequest, photo, profile, rateLimit, render, session, snapshot, stylePhoto, stylePreview, styleRequest } from '@interim/db';
 import { eq, sql } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { LedgerService } from '../ledger/ledger.service';
@@ -63,6 +63,63 @@ describe('expiry', () => {
     expect(report.expiredRenders).toBe(1);
     expect(storage.objects.has(key)).toBe(false);
     expect((await db.select().from(render))[0]?.objectKey).toBeNull();
+  });
+});
+
+describe('style expiry', () => {
+  /** An owned style profile with one request, one reference and one preview. */
+  async function style(photoExpires: Date, previewExpires: Date) {
+    const profileId = '9d8c7b6a-5f4e-4d3c-8b2a-1f0e9d8c7b6a';
+    await db.insert(profile).values({ id: profileId, kind: 'style', templateKey: null, ownerRef: 'o', consentVersion: '1' });
+    const ids = { current: crypto.randomUUID(), reference: crypto.randomUUID(), request: crypto.randomUUID() };
+    const keyOf = (id: string) => `photos/${profileId}/style/${id}.jpg`;
+    await db.insert(stylePhoto).values([
+      { id: ids.current, profileId, role: 'current', objectKey: keyOf(ids.current), sha256: 'c', expiresAt: photoExpires },
+      { id: ids.reference, profileId, role: 'reference', objectKey: keyOf(ids.reference), sha256: 'r', expiresAt: photoExpires },
+    ]);
+    await db.insert(styleRequest).values({ id: ids.request, profileId, currentPhotoId: ids.current });
+    const previewKey = `renders/${profileId}/style/${ids.request}/p.jpg`;
+    await db.insert(stylePreview).values({
+      requestId: ids.request,
+      referencePhotoId: ids.reference,
+      inputHash: 'h',
+      objectKey: previewKey,
+      expiresAt: previewExpires,
+    });
+    for (const key of [keyOf(ids.current), keyOf(ids.reference), previewKey]) await put(key, 10 * 60 * 1000);
+    return { keyOf, ids, previewKey };
+  }
+
+  it('removes the image of an expired preview but keeps the row and the photos', async () => {
+    const s = await style(new Date(now.getTime() + HOUR), ago(HOUR));
+
+    const report = await cleanup.run(now);
+
+    expect(report.expiredStyle).toBe(1);
+    expect(storage.objects.has(s.previewKey)).toBe(false);
+    expect(storage.objects.has(s.keyOf(s.ids.reference))).toBe(true);
+    expect((await db.select().from(stylePreview))[0]?.objectKey).toBeNull();
+  });
+
+  it('removes expired style photos with their previews, and the requests that used them', async () => {
+    await style(ago(HOUR), new Date(now.getTime() + HOUR));
+
+    await cleanup.run(now);
+
+    expect(keys()).toEqual([]);
+    expect(await db.select().from(stylePhoto)).toHaveLength(0);
+    expect(await db.select().from(styleRequest)).toHaveLength(0);
+    expect(await db.select().from(stylePreview)).toHaveLength(0);
+  });
+
+  it('keeps style files that rows point at when sweeping the bucket', async () => {
+    const s = await style(new Date(now.getTime() + HOUR), new Date(now.getTime() + HOUR));
+    await put(`photos/${'9d8c7b6a-5f4e-4d3c-8b2a-1f0e9d8c7b6a'}/style/stray.jpg`, 2 * HOUR);
+
+    const report = await cleanup.run(now);
+
+    expect(report.orphansDeleted).toBe(1);
+    expect(keys()).toEqual([s.keyOf(s.ids.current), s.keyOf(s.ids.reference), s.previewKey].sort());
   });
 });
 
@@ -173,6 +230,7 @@ describe('repeat runs', () => {
     expect(await cleanup.run(now)).toEqual({
       expiredPhotos: 0,
       expiredRenders: 0,
+      expiredStyle: 0,
       orphansDeleted: 0,
       missingPhotoIds: [],
       completedDeletions: 0,

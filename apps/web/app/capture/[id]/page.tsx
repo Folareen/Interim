@@ -16,7 +16,7 @@ export default async function Capture({ params }: { params: Promise<{ id: string
   const { id } = await params;
   if (!(await getMe())) redirect('/signin');
   const profile = await getProfile(id);
-  if (!profile) notFound();
+  if (!profile || profile.kind !== 'situation') notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
 
   // The same rule the server applies, so the screen never asks for a photo the server would refuse.

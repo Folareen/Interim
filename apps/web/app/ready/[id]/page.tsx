@@ -27,6 +27,7 @@ export default async function Ready({ params }: { params: Promise<{ id: string }
   const profile = await getProfile(id);
   if (!profile) notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
+  if (profile.kind === 'style') redirect(`/style/${id}`);
   const [cards, { run }, reflections, preferences, t, cardText, reflect, format, locale] =
     await Promise.all([
       getCards(id),

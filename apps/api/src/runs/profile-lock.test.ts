@@ -4,6 +4,7 @@ import { sql } from 'drizzle-orm';
 import type IORedis from 'ioredis';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AgentService } from '../agent/agent.service';
+import type { StyleRenderService } from '../style/style-render.service';
 import { connectTestRedis } from '../test/redis';
 import { createTestDb } from '../test/test-db';
 import { ProfileLock } from './profile-lock';
@@ -120,7 +121,8 @@ describe('RunWorker', () => {
       }),
     };
     const lock = new ProfileLock(url);
-    const worker = new RunWorker(agent as unknown as AgentService, url, db, lock);
+    const style = { render: vi.fn() };
+    const worker = new RunWorker(agent as unknown as AgentService, style as unknown as StyleRenderService, url, db, lock);
 
     const [a, b, c] = await Promise.all([worker.process(runs.a), worker.process(runs.b), worker.process(runs.c)]);
 

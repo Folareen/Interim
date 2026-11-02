@@ -15,3 +15,4 @@ export * from './model-text';
 export * from './garments';
 export * from './advice';
 export * from './notifications';
+export * from './style';

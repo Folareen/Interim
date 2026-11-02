@@ -86,7 +86,7 @@ async function checkIn(opts: {
       id: profileId,
       templateKey: opts.templateKey,
       ownerRef: 'o',
-      consentVersion: '4',
+      consentVersion: '5',
       consentedAt: new Date(),
       headCovering: opts.headCovering ?? false,
       bodyPhotos: opts.bodyPhotos ?? true,

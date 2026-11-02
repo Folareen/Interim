@@ -16,7 +16,7 @@ export default async function Update({ params }: { params: Promise<{ id: string 
   const { id } = await params;
   if (!(await getMe())) redirect('/signin');
   const profile = await getProfile(id);
-  if (!profile) notFound();
+  if (!profile || profile.kind !== 'situation') notFound();
   if (!profile.consentCurrent) redirect(`/consent/${id}`);
   if (!templates[profile.templateKey].usesFit || !profile.bodyPhotos) redirect(`/capture/${id}`);
   const [items, t] = await Promise.all([getGarments(id), getTranslations('workspace')]);

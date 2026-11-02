@@ -5,7 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { PageHeading } from '@/components/page-heading';
 import { Shell } from '@/components/shell';
 import { isToolKey } from '@/lib/labels';
-import { getLedger, getMe } from '@/lib/server-api';
+import { getLedger, getMe, getProfile } from '@/lib/server-api';
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations('ledger'))('title') };
@@ -14,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Ledger({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!(await getMe())) redirect('/signin');
-  const view = await getLedger(id);
-  if (!view) notFound();
+  const [view, profile] = await Promise.all([getLedger(id), getProfile(id)]);
+  if (!view || !profile) notFound();
   const [t, tools, format] = await Promise.all([
     getTranslations('ledger'),
     getTranslations('tools'),
@@ -27,7 +27,7 @@ export default async function Ledger({ params }: { params: Promise<{ id: string 
   ] as const;
 
   return (
-    <Shell profileId={id} active="you" backHref={`/you/${id}`}>
+    <Shell profileId={id} kind={profile.kind} active="you" backHref={`/you/${id}`}>
       <PageHeading title={t('title')} intro={t('intro')} />
       <dl className="mt-8 divide-y divide-border rounded-card border border-border bg-surface">
         {totals.map(([label, units]) => (

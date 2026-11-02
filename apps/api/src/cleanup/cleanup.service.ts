@@ -1,4 +1,4 @@
-import { type Db, authToken, deletionRequest, photo, profile, rateLimit, render, session } from '@interim/db';
+import { type Db, authToken, deletionRequest, photo, profile, rateLimit, render, session, stylePhoto, stylePreview } from '@interim/db';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { and, asc, gt, inArray, isNotNull, isNull, lte } from 'drizzle-orm';
 import { DB } from '../db/db.token';
@@ -16,6 +16,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 export interface CleanupReport {
   expiredPhotos: number;
   expiredRenders: number;
+  /** Style photos and previews, which expire on the same rule as check in photos and renders. */
+  expiredStyle: number;
   orphansDeleted: number;
   /** Photos whose row exists but whose file does not. Nothing can restore them. */
   missingPhotoIds: string[];
@@ -43,6 +45,7 @@ export class CleanupService {
   async run(now = new Date()): Promise<CleanupReport> {
     const expiredPhotos = await this.expirePhotos(now);
     const expiredRenders = await this.expireRenders(now);
+    const expiredStyle = await this.expireStyle(now);
     const { orphansDeleted, missingPhotoIds } = await this.reconcileBucket(now);
     // Deletion requests hold no profile reference, so they are completed as a group: any request
     // made before this run started has had its objects swept by now.
@@ -51,7 +54,7 @@ export class CleanupService {
     const reconciledTasks = await this.tasks.reconcile(now);
 
     if (missingPhotoIds.length > 0) this.log.warn(`Photos with missing files: ${missingPhotoIds.join(', ')}`);
-    return { expiredPhotos, expiredRenders, orphansDeleted, missingPhotoIds, completedDeletions, purgedSignInRows, reconciledTasks };
+    return { expiredPhotos, expiredRenders, expiredStyle, orphansDeleted, missingPhotoIds, completedDeletions, purgedSignInRows, reconciledTasks };
   }
 
   /** Deletes the file first, then the row, so a failed delete is retried on the next run. */
@@ -82,6 +85,41 @@ export class CleanupService {
       if (batch.length === 0) return total;
       await this.storage.deleteMany(batch.flatMap((r) => (r.key ? [r.key] : [])));
       await this.db.update(render).set({ objectKey: null }).where(inArray(render.id, batch.map((r) => r.id)));
+      total += batch.length;
+    }
+  }
+
+  /**
+   * A preview that expires loses its image; a style photo that expires loses its file and row, and the
+   * requests and previews that used it go with it, so their images are deleted first.
+   */
+  private async expireStyle(now: Date): Promise<number> {
+    let total = 0;
+    for (;;) {
+      const batch = await this.db
+        .select({ id: stylePreview.id, key: stylePreview.objectKey })
+        .from(stylePreview)
+        .where(and(lte(stylePreview.expiresAt, now), isNotNull(stylePreview.objectKey)))
+        .limit(BATCH);
+      if (batch.length === 0) break;
+      await this.storage.deleteMany(batch.flatMap((p) => (p.key ? [p.key] : [])));
+      await this.db.update(stylePreview).set({ objectKey: null }).where(inArray(stylePreview.id, batch.map((p) => p.id)));
+      total += batch.length;
+    }
+    for (;;) {
+      const batch = await this.db
+        .select({ id: stylePhoto.id, key: stylePhoto.objectKey })
+        .from(stylePhoto)
+        .where(lte(stylePhoto.expiresAt, now))
+        .limit(BATCH);
+      if (batch.length === 0) return total;
+      const ids = batch.map((p) => p.id);
+      const images = await this.db
+        .select({ key: stylePreview.objectKey })
+        .from(stylePreview)
+        .where(inArray(stylePreview.referencePhotoId, ids));
+      await this.storage.deleteMany([...batch.map((p) => p.key), ...images.flatMap((p) => (p.key ? [p.key] : []))]);
+      await this.db.delete(stylePhoto).where(inArray(stylePhoto.id, ids));
       total += batch.length;
     }
   }
@@ -140,6 +178,10 @@ export class CleanupService {
     const referenced = new Set([
       ...(await this.db.select({ key: photo.objectKey }).from(photo).where(inArray(photo.objectKey, keys))).map((r) => r.key),
       ...(await this.db.select({ key: render.objectKey }).from(render).where(inArray(render.objectKey, keys))).flatMap((r) =>
+        r.key ? [r.key] : [],
+      ),
+      ...(await this.db.select({ key: stylePhoto.objectKey }).from(stylePhoto).where(inArray(stylePhoto.objectKey, keys))).map((r) => r.key),
+      ...(await this.db.select({ key: stylePreview.objectKey }).from(stylePreview).where(inArray(stylePreview.objectKey, keys))).flatMap((r) =>
         r.key ? [r.key] : [],
       ),
     ]);

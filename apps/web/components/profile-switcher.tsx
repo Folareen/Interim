@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { profileHref } from '@/lib/profile-href';
 import { getProfiles } from '@/lib/server-api';
 
 /** Keeps multiple situations within reach without sending the person through account settings. */
@@ -11,15 +12,16 @@ export async function ProfileSwitcher({ profileId }: { profileId: string }) {
   ]);
   const current = profiles.find((profile) => profile.id === profileId);
   if (!current) return null;
-  if (profiles.length === 1)
-    return <p className="text-[0.9rem] text-muted">{labels(current.templateKey)}</p>;
+  const labelOf = (profile: (typeof profiles)[number]) =>
+    profile.kind === 'style' ? t('styleProfile') : labels(profile.templateKey);
+  if (profiles.length === 1) return <p className="text-[0.9rem] text-muted">{labelOf(current)}</p>;
   return (
     <details className="relative max-w-full">
       <summary
         className="flex min-h-11 w-fit cursor-pointer list-none items-center gap-2 rounded-full border border-border bg-surface px-3 py-2 text-[0.9rem] text-muted"
         aria-label={t('switchSituation')}
       >
-        {labels(current.templateKey)}
+        {labelOf(current)}
         <svg
           aria-hidden="true"
           viewBox="0 0 16 16"
@@ -35,11 +37,11 @@ export async function ProfileSwitcher({ profileId }: { profileId: string }) {
         {profiles.map((profile) => (
           <li key={profile.id}>
             <Link
-              href={profile.consentCurrent ? `/ready/${profile.id}` : `/consent/${profile.id}`}
+              href={profileHref(profile)}
               aria-current={profile.id === profileId ? 'true' : undefined}
               className="block min-h-11 rounded-lg px-3 py-2 hover:bg-tint"
             >
-              {labels(profile.templateKey)}
+              {labelOf(profile)}
             </Link>
           </li>
         ))}
