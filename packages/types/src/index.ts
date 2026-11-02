@@ -900,3 +900,11 @@ export type StyleSaved = z.infer<typeof styleSavedSchema>;
 /** What `POST /profiles/:id/style/requests` returns: the request and the run that makes its previews. */
 export const styleRequestCreatedSchema = z.object({ requestId: z.string().uuid(), runId: z.string().uuid() });
 export type StyleRequestCreated = z.infer<typeof styleRequestCreatedSchema>;
+
+/** The two sets of simulated people and outfits a profile can start from, so a first try needs no photos. */
+export const styleSampleSetSchema = z.enum(['one', 'two']);
+export type StyleSampleSet = z.infer<typeof styleSampleSetSchema>;
+
+/** Body of POST /profiles/:id/style/samples. */
+export const addStyleSamplesSchema = z.object({ set: styleSampleSetSchema });
+export type AddStyleSamplesInput = z.infer<typeof addStyleSamplesSchema>;

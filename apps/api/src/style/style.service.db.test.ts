@@ -16,6 +16,7 @@ import { writeYoucamFixture } from '../test/youcam-fixtures';
 import { YoucamClient } from '../youcam/youcam.client';
 import { YoucamGateway, youcamFixtureKey } from '../youcam/youcam.gateway';
 import { StyleRenderService } from './style-render.service';
+import { sampleSets } from './style-samples';
 import { StyleService } from './style.service';
 
 const alice = { ref: 'alice' };
@@ -42,7 +43,7 @@ beforeEach(async () => {
   const ledger = new LedgerService(db, { perProfile: 500, perDay: 2000, perSourcePerDay: 100 }, {} as ProfilesService);
   const client = new YoucamClient({ apiKey: '', baseUrl: 'https://youcam.test', mode: 'replay', liveCallsEnabled: false, fixturesDir: dir, retryBaseMs: 0 });
   const gateway = new YoucamGateway(db, client, storage.asService(), ledger, { firstPollMs: 0, maxPollMs: 0, timeoutMs: 1000 });
-  style = new StyleService(db, storage.asService(), ledger, { enqueue }, { runBudgetCap: 50 }, { maxUploadBytes: 12 * 1024 * 1024 });
+  style = new StyleService(db, storage.asService(), ledger, { enqueue }, { runBudgetCap: 50 }, { maxUploadBytes: 12 * 1024 * 1024 }, { dir: '/unused', sets: sampleSets });
   renderer = new StyleRenderService(db, gateway, ledger);
 });
 

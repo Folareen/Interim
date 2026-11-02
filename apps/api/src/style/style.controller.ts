@@ -1,8 +1,10 @@
 import {
   addStylePhotoSchema,
+  addStyleSamplesSchema,
   createStyleRequestSchema,
   createStyleUploadsSchema,
   type AddStylePhotoInput,
+  type AddStyleSamplesInput,
   type CreateStyleRequestInput,
   type CreateStyleUploadsInput,
 } from '@interim/types';
@@ -40,6 +42,15 @@ export class StyleController {
     @CurrentOwner() owner: Owner,
   ) {
     return this.style.addPhoto(id, owner, body);
+  }
+
+  @Post('profiles/:id/style/samples')
+  addSamples(
+    @Param('id', idPipe) id: string,
+    @Body(new ZodPipe(addStyleSamplesSchema)) body: AddStyleSamplesInput,
+    @CurrentOwner() owner: Owner,
+  ) {
+    return this.style.addSamples(id, owner, body);
   }
 
   @Get('profiles/:id/style/photos')

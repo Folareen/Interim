@@ -3,6 +3,7 @@ import { type Db, profile, run, stylePhoto, stylePreview, styleRequest, styleReq
 import { STYLE_PREVIEW_UNITS, expiresAt, hasCurrentConsent, photoQualityProblem, stylePreviewPlan } from '@interim/rules';
 import type {
   AddStylePhotoInput,
+  AddStyleSamplesInput,
   CreateStyleRequestInput,
   CreateStyleUploadsInput,
   StylePhotoList,
@@ -11,6 +12,8 @@ import type {
   StyleUploadsResponse,
 } from '@interim/types';
 import { ConflictException, ForbiddenException, Inject, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import { and, desc, eq, inArray, isNotNull } from 'drizzle-orm';
 import { DB } from '../db/db.token';
 import type { Owner } from '../guard/owner.service';
@@ -21,6 +24,7 @@ import { captureError } from '../snapshots/capture-error';
 import { normalisePhoto } from '../snapshots/photo';
 import { UPLOAD_CONFIG, type UploadConfig } from '../snapshots/snapshots.service';
 import { StorageService } from '../storage/storage.service';
+import { STYLE_SAMPLES, type StyleSamplesConfig } from './style-samples';
 
 const rawKey = (profileId: string, uploadId: string) => `raw/${profileId}/${uploadId}`;
 const photoKey = (profileId: string, photoId: string) => `photos/${profileId}/style/${photoId}.jpg`;
@@ -35,6 +39,7 @@ export class StyleService {
     @Inject(RUN_QUEUE) private readonly queue: RunQueue,
     @Inject(RUNS_CONFIG) private readonly runs: RunsConfig,
     @Inject(UPLOAD_CONFIG) private readonly upload: UploadConfig,
+    @Inject(STYLE_SAMPLES) private readonly samples: StyleSamplesConfig,
   ) {}
 
   /**
@@ -64,8 +69,28 @@ export class StyleService {
     const raw = await this.storage.readCapped(rawKey(profileId, input.uploadId), this.upload.maxUploadBytes);
     if (raw === undefined) throw captureError('not_uploaded');
     if (raw === 'too_large') throw captureError('too_large');
+    const stored = await this.storePhoto(profileId, current.retention, input.role, raw);
+    await this.storage.delete(rawKey(profileId, input.uploadId)).catch(() => undefined);
+    return stored;
+  }
+
+  /**
+   * Adds the simulated references and current photo of a sample set, so a first try needs no photos
+   * of the person's own. Adding a set twice stores nothing new.
+   */
+  async addSamples(profileId: string, owner: Owner, input: AddStyleSamplesInput): Promise<StylePhotoList> {
+    const current = await this.styleProfile(profileId, owner);
+    const set = this.samples.sets[input.set];
+    const added = [];
+    for (const file of set.references) added.push(await this.storePhoto(profileId, current.retention, 'reference', await this.sample(file)));
+    added.push(await this.storePhoto(profileId, current.retention, 'current', await this.sample(set.current)));
+    return { photos: added };
+  }
+
+  // Normalises, checks and stores one photo, returning the existing one for a picture already added.
+  private async storePhoto(profileId: string, retention: 'standard' | 'extended', role: 'reference' | 'current', raw: Buffer) {
     const normalised = await normalisePhoto(raw);
-    if (input.role === 'current') {
+    if (role === 'current') {
       const problem = photoQualityProblem(normalised);
       if (problem) throw captureError(problem);
     }
@@ -73,7 +98,7 @@ export class StyleService {
     const [existing] = await this.db
       .select({ id: stylePhoto.id })
       .from(stylePhoto)
-      .where(and(eq(stylePhoto.profileId, profileId), eq(stylePhoto.role, input.role), eq(stylePhoto.sha256, normalised.sha256)));
+      .where(and(eq(stylePhoto.profileId, profileId), eq(stylePhoto.role, role), eq(stylePhoto.sha256, normalised.sha256)));
     let id = existing?.id;
     if (!id) {
       id = randomUUID();
@@ -83,14 +108,17 @@ export class StyleService {
       await this.db.insert(stylePhoto).values({
         id,
         profileId,
-        role: input.role,
+        role,
         objectKey,
         sha256: normalised.sha256,
-        expiresAt: expiresAt(current.retention, new Date()),
+        expiresAt: expiresAt(retention, new Date()),
       });
     }
-    await this.storage.delete(rawKey(profileId, input.uploadId)).catch(() => undefined);
-    return { id, role: input.role, url: await this.urlOf(profileId, id) };
+    return { id, role, url: await this.urlOf(profileId, id) };
+  }
+
+  private sample(file: string): Promise<Buffer> {
+    return readFile(path.join(this.samples.dir, file));
   }
 
   /** The profile's style photos, newest first. */
