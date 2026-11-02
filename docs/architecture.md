@@ -56,7 +56,8 @@ interim/
 
 * **profiles.** Create profiles from templates. Delete and export profiles and everything under them.
 * **snapshots.** Presigned uploads, photo normalisation, server side capture checks, self report, store snapshots.
-* **runs.** Start a run, stream progress, return the Stage Card.
+* **runs.** Start a run, stream progress, return the Stage Card. The worker hands a style run to `StyleRenderService`.
+* **style.** Style photos, preview requests and saved previews for style profiles ([spec section 4a](product/spec.md#4a-style-previews)). Its worker half, `StyleRenderService`, sits in its own module so runs can import it.
 * **templates.** Load template configuration and expose it read only.
 * **ledger.** Append only unit ledger, reservations and budget counters.
 * **youcam.** The only module allowed to talk to YouCam. See section 6.
@@ -72,7 +73,7 @@ interim/
 
 Each table has a primary key and a created timestamp. Deletion is a hard delete, recorded in `deletion_request`. The Drizzle schema mirrors this section.
 
-* **profile.** id, template_key, owner_ref (`account:<account id>`, or `sample` for demo mode), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
+* **profile.** id, kind (`situation` or `style`; a check constraint keeps template_key null exactly for `style`), template_key (null for a style profile), owner_ref (`account:<account id>`, or `sample` for demo mode), consent_version, consented_at (null until consent), retention (standard or extended), locale (only live languages are accepted), tone (practical, warm or light), words_set (null while off), head_covering (default off), body_photos (starts from the template), judge_sample flag. words_set and head_covering are read only through the preferences routes.
 * **account.** id, email (lower case, unique), email_verified_at, password_hash (scrypt, null without a password), google_sub (unique), created. Deleting a person's account deletes their profiles through `ProfilesService.remove`, which also removes the files.
 * **session.** id, account_id (cascade), token_hash (unique), expires_at.
 * **auth_token.** id, email, purpose (verify_email, magic_link, reset_password, change_email or recover_account), account_id (set for the last two, which move an existing account), token_hash (unique), expires_at, used_at. Keyed by email because a sign in link can create the account.
@@ -84,9 +85,12 @@ Each table has a primary key and a created timestamp. Deletion is a hard delete,
 * **photo.** id, snapshot_id, kind (front, left, right, top, body), object_key, sha256 of the normalised file, expires_at.
 * **measurement.** id, snapshot_id, tool, value_json (a `MeasuredValue`, not YouCam's raw result), reliable, youcam_task_id. One per tool per snapshot. `reliable` is false when YouCam's own read of the photo was not all good, and such a reading never places a stage. Cost is read from the ledger through the task id.
 * **render.** id, snapshot_id, tool, strategy (null for a clothes render), garment_sku (set for a clothes render), input_hash, object_key (null once expired), label (preview or earlier_look), expires_at. One per snapshot and input hash.
-* **run.** id, snapshot_id (unique: one run per snapshot), template_key, template_version, status (queued, running, done or failed), stop_reason (a trace reason code), retake (a capture problem code, when YouCam asked for a new photo), budget_units, source_hash. Spent units are summed from the ledger.
+* **run.** id, snapshot_id (unique: one run per snapshot) or style_request_id (unique: one run per request), never both, template_key and template_version (null for a style run), status (queued, running, done or failed), stop_reason (a trace reason code), retake (a capture problem code, when YouCam asked for a new photo), budget_units, source_hash. Spent units are summed from the ledger.
 * **trace_entry.** id, run_id, seq, step (observe, measure, place, decide, act, compose or stop), tool (null when none), inputs_json (no personal data; the decide step keeps the strategy and the fact it cites), outputs_ref, cost_units, reason (a code the web app translates, never text).
 * **stage_card.** id, run_id (unique), profile_id, card_json, approved_at. The card stores keys and values, never display text for stages, tools or numbers; the web app writes those in the person's language.
+* **style_photo.** id, profile_id (cascade), role (reference or current), object_key (`photos/<profile>/style/<id>.jpg`), sha256 (of the normalised file), expires_at. One per profile, role and hash.
+* **style_request.** id, profile_id, current_photo_id. **style_request_reference.** request_id, photo_id, position (primary key on request and photo).
+* **style_preview.** id, request_id, reference_photo_id, input_hash, object_key (`renders/<profile>/style/<request>/<id>.jpg`, null once expired), expires_at, saved_at (null until the person saves it). One per request and reference. Deleting a photo cascades to its requests and previews, so cleanup deletes their files first.
 * **youcam_task.** id (our request id), profile_id, run_id, tool, cache_key, state (intent, created, polling, done, failed, unknown), youcam_task_id, updated. Unique on run and cache key, so a redelivered job finds its task.
 * **ledger_entry.** id, profile_ref, run_id, tool, kind (reserve, settle or release), units, task_id. `profile_ref` is a random id with no foreign key. Ledger rows hold no personal data and are not deleted with the profile.
 * **budget_counter.** scope (run, profile, day, source), reserved_units, settled_units. Locked in a transaction while reserving.
@@ -125,7 +129,7 @@ Four parts.
 * **Composer (model plus code).** Builds the Stage Card from tool outputs. The model writes explanation text with placeholders such as `{m:<id>}`. Code inserts all numbers, dates, sizes and image references.
 * **Trace writer (code).** Stores a trace entry for each step with a one line reason.
 
-The model never sees raw photos, only measurement records and render references. Its text is validated and scanned before it is saved (spec sections 8 and 13, [llm.md](llm.md)). The loop has a hard step limit and a hard budget limit.
+The model never sees raw photos, only measurement records and render references. Style previews call no model at all. Its text is validated and scanned before it is saved (spec sections 8 and 13, [llm.md](llm.md)). The loop has a hard step limit and a hard budget limit.
 
 ## 8. Job queue
 
@@ -140,7 +144,7 @@ BullMQ on Redis.
 
 ## 9. HTTP API
 
-* POST /profiles with a template key and an age confirmation (signed in; the profile belongs to the account)
+* POST /profiles with `kind` (`situation` with a template key, or `style`) and an age confirmation (signed in; the profile belongs to the account)
 * GET /profiles (the caller's own) and GET /profiles/:id
 * POST /profiles/:id/consent (grant or withdraw)
 * GET and PUT /profiles/:id/preferences (language, tone, words for today set, body photos, head covering)
@@ -158,6 +162,8 @@ BullMQ on Redis.
 * GET /cards/:id (the card with short lived links to its renders, the front photo and the body photo)
 * GET /notifications/key (the public key a browser subscribes with, or null while push is off), GET, PUT and DELETE /profiles/:id/notifications (one device's choices, found by its subscription address; the person only; PUT with both kinds off deletes the subscription)
 * GET /profiles/:id/garments (the sample catalog with the profile's saved pieces marked and a link to each picture), PUT and DELETE /profiles/:id/garments/:sku (save or remove; both repeat safely; only for a template that uses fit)
+* POST /profiles/:id/style/uploads (size per file; one presigned PUT link each), POST /profiles/:id/style/photos (an upload id and a role; normalises and stores, returns the existing photo for a repeat), GET /profiles/:id/style/photos, DELETE /profiles/:id/style/photos/:photoId (style profiles only, 409 otherwise; need current consent except for reading and deleting)
+* POST /profiles/:id/style/requests (a current photo and one to three references; checks `stylePreviewPlan`, then queues a run; returns the request and run ids), GET /style/requests/:id (the photos and each reference's preview or none), PUT and DELETE /style/previews/:id/saved, GET /profiles/:id/style/saved
 * GET /profiles/:id/cards (newest first)
 * POST /cards/:id/approve
 * POST /cards/:id/share (creates a link that expires after 7 days; the token is returned once, only its hash is stored), GET /cards/:id/shares (the links that still work)
@@ -176,6 +182,7 @@ All routes check consent version and ownership. Share links expire, can be revok
 
 ## 10. Web app
 
+* **Style workspace.** For a style profile: Style (`/style/[id]`, with `/style/new` to start one and `/style/[id]/results/[requestId]` for previews), Saved (`/style/[id]/saved`) and You. Signed in people with no profile land on `/style/new`; check in profiles are reached from a link there and on the welcome page.
 * **Workspace.** Today (`/ready/[id]`), My looks (`/looks/[id]`) and You (`/you/[id]`), with shared profile navigation and situation switching. `/update/[id]` combines optional fit-clothes selection with capture; settings and data controls live under You.
 * **Pages.** Welcome, sign in, sign up, email link, forgot and reset password, link confirmation, account, language, situation, setup (tone, head covering, age), consent, ready and settings, clothes (fit templates only), then capture wizard, run progress, Stage Card, ledger view, share view (`/s/[token]`), demo (`/demo`, `/demo/cards/[id]`), privacy policy, terms.
 * **Capture wizard.** Asks for what `capturePlan` in `packages/rules` says, the same rule the server applies. Uses the YouCam JS Camera Kit for the front, both sides (one hair type capture) and the top photo (its five second countdown is the timer), and a plain file input for the body photo and whenever the kit does not load or the camera is refused. Runs `photoQualityProblem` on each photo on the device and blocks upload on failure. The PWA install and camera permission flow is tested on iOS Safari and Android Chrome.

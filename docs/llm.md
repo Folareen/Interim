@@ -2,7 +2,7 @@
 
 Google Gemini through the Vercel AI SDK (`ai` + `@ai-sdk/google`). Env: `GOOGLE_GENERATIVE_AI_API_KEY`, `LLM_MODEL` (default `gemini-3.8-flash`; `gemini-2.5-flash` is closed to new keys). Call the model only through the agent module so the provider stays swappable.
 
-Guardrails (no raw photos, restricted tools, banned-word scan, placeholder validator): [architecture.md](architecture.md) section 7. Parse model output with zod like any external input ([typescript.md](typescript.md)).
+Guardrails (no raw photos, restricted tools, banned-word scan, placeholder validator): [architecture.md](architecture.md) section 7. Style previews call no model, and no photo, outfit or style reaches one; reading style from photos would change that contract and is an open question (spec section 17, item 15). Parse model output with zod like any external input ([typescript.md](typescript.md)).
 
 ## Prompts
 Keep prompts in `apps/api/src/agent/prompts/` as versioned files (`planner.v2.ts`, `PLANNER_PROMPT_VERSION`). The planner prompt embeds the banned word list from `packages/rules` rather than a copy. The model replies with JSON (strategy, the fact it cites, the note), which is parsed with zod and checked by `modelTextProblem` before use.
