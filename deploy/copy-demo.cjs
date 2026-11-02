@@ -4,6 +4,7 @@
 // Usage (all variables required):
 //   SRC_DATABASE_URL SRC_R2_ENDPOINT SRC_R2_BUCKET SRC_R2_ACCESS_KEY_ID SRC_R2_SECRET_ACCESS_KEY
 //   DST_DATABASE_URL DST_R2_ENDPOINT DST_R2_BUCKET DST_R2_ACCESS_KEY_ID DST_R2_SECRET_ACCESS_KEY
+// Optional: SRC_R2_KEY_PREFIX and DST_R2_KEY_PREFIX (for example prod/), which let both sides share one bucket.
 //   node deploy/copy-demo.cjs
 const path = require('node:path');
 const api = (name) => require(require.resolve(name, { paths: [path.resolve(__dirname, '../apps/api')] }));
@@ -12,8 +13,9 @@ const { S3Client, GetObjectCommand, PutObjectCommand, HeadObjectCommand } = api(
 
 const need = ['DATABASE_URL', 'R2_ENDPOINT', 'R2_BUCKET', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'];
 for (const side of ['SRC', 'DST']) for (const n of need) if (!process.env[`${side}_${n}`]) { console.error(`Missing ${side}_${n}`); process.exit(1); }
-if (process.env.SRC_R2_BUCKET === process.env.DST_R2_BUCKET && process.env.SRC_R2_ENDPOINT === process.env.DST_R2_ENDPOINT) {
-  console.error('The source and target bucket are the same. Production needs its own bucket.');
+const prefix = { SRC: process.env.SRC_R2_KEY_PREFIX ?? '', DST: process.env.DST_R2_KEY_PREFIX ?? '' };
+if (process.env.SRC_R2_BUCKET === process.env.DST_R2_BUCKET && process.env.SRC_R2_ENDPOINT === process.env.DST_R2_ENDPOINT && prefix.SRC === prefix.DST) {
+  console.error('The source and target share a bucket and a prefix, so they would overwrite each other. Give the target a prefix such as prod/.');
   process.exit(1);
 }
 const s3 = (side) => new S3Client({ region: 'auto', endpoint: process.env[`${side}_R2_ENDPOINT`], credentials: { accessKeyId: process.env[`${side}_R2_ACCESS_KEY_ID`], secretAccessKey: process.env[`${side}_R2_SECRET_ACCESS_KEY`] } });
@@ -59,9 +61,9 @@ const steps = [
   const to = s3('DST');
   let copied = 0, present = 0;
   for (const Key of keys) {
-    try { await to.send(new HeadObjectCommand({ Bucket: process.env.DST_R2_BUCKET, Key })); present++; continue; } catch { /* not there yet */ }
-    const object = await from.send(new GetObjectCommand({ Bucket: process.env.SRC_R2_BUCKET, Key }));
-    await to.send(new PutObjectCommand({ Bucket: process.env.DST_R2_BUCKET, Key, Body: Buffer.from(await object.Body.transformToByteArray()), ContentType: 'image/jpeg' }));
+    try { await to.send(new HeadObjectCommand({ Bucket: process.env.DST_R2_BUCKET, Key: prefix.DST + Key })); present++; continue; } catch { /* not there yet */ }
+    const object = await from.send(new GetObjectCommand({ Bucket: process.env.SRC_R2_BUCKET, Key: prefix.SRC + Key }));
+    await to.send(new PutObjectCommand({ Bucket: process.env.DST_R2_BUCKET, Key: prefix.DST + Key, Body: Buffer.from(await object.Body.transformToByteArray()), ContentType: 'image/jpeg' }));
     copied++;
   }
   console.log(`images: ${copied} copied, ${present} already there, ${keys.size} in all`);

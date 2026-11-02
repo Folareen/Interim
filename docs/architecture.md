@@ -231,10 +231,10 @@ Server environment variables, by name:
 ## 14. Deployment
 
 * **Web.** Vercel, or the same VPS as the API ([deployment.md](deployment.md)).
-* **API and worker.** One VPS or AWS ECS service with two processes, as systemd services on the VPS. Not serverless.
+* **API and worker.** One VPS or AWS ECS service with two processes, run by PM2 on the VPS. Not serverless.
 * **Database.** Managed PostgreSQL, such as Neon.
 * **Redis.** On the same host for the hackathon, listening on localhost only.
-* **Object storage.** Cloudflare R2, one bucket per environment, because the cleanup job deletes what its own database does not know. Expiry is enforced by the cleanup queue from each row's `expires_at`, because retention can slide and a bucket lifecycle rule cannot. Accessed through the S3 API, so the provider can change with env vars only.
+* **Object storage.** Cloudflare R2, one bucket, with a key prefix per environment (`R2_KEY_PREFIX`) when environments share it, because the cleanup job deletes what its own database does not know. Expiry is enforced by the cleanup queue from each row's `expires_at`, because retention can slide and a bucket lifecycle rule cannot. Accessed through the S3 API, so the provider can change with env vars only.
 * **Environments.** Local, and one production like environment. Demo mode is the way in on the public link.
 
 ## 15. Observability
