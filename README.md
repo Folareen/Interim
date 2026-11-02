@@ -4,6 +4,8 @@ Interim is built first for people going through body changes: hair loss, a chang
 
 **Style previews** are the main flow ([spec section 4a](docs/product/spec.md#4a-style-previews)): bring outfits you have worn or admire, add a photo of you now, and YouCam's clothes try on shows how each outfit could look on you. Your taste stays at the centre. Previews are ideas, never a promise of size or fit, and no model sees the photos. Every profile also has a private place to write a reflection, optional words for the day, and a link to someone to talk to. **Check in profiles** follow a change over time: photos and self-reports become a Stage Card with a companion note in a tone you choose, measured changes from YouCam's hair, skin and face analysis, hairstyle previews, clothing sizes from the size you report, and practical advice. Eleven situations and ten languages share one engine. Eligibility, consent, safety and budgets are plain code; the model plans and writes, never measures or sees photos.
 
+Live: **https://interim.afolarin.cv** (replay only, so it cannot spend YouCam units). Open `/demo` without signing in, or follow [Testing instructions](#testing-instructions).
+
 ## Run locally
 
 Node 22, pnpm 10, Docker and configured storage are required. Full instructions are in [development](docs/development.md).
@@ -24,6 +26,8 @@ The signed-in workspace groups daily actions in Today, visual history in My look
 
 ## Testing instructions
 
+On the live site, sign up with an email (a confirmation link is sent) or use Google, then follow steps 3 and 4. To run it yourself:
+
 1. Follow [Run locally](#run-locally). Keep `YOUCAM_MODE=replay` and `MAIL_MODE=log`, so no live call is made and no email is sent.
 2. Open http://localhost:3000, choose **Get started** and sign up. With `MAIL_MODE=log` the API prints the confirmation link in its console; open it, then sign in.
 3. Confirm you are an adult, accept the consent text, and on the style screen choose **Streetwear and smart casual** or **Denim, earth tones and black**. These add simulated people and outfits whose previews are recorded.
@@ -39,7 +43,7 @@ Interactive runs in replay require matching recorded inputs and parameters. New 
 
 ## Eligibility at a glance
 
-These are implemented gates, not promises that an external tool will succeed. The [rules](packages/rules/src/eligibility.ts) and [spec section 7](docs/product/spec.md#7-eligibility-rules) own the detail.
+These are implemented gates, not promises that an external tool will succeed. The [rules](packages/rules/src/eligibility.ts) and [spec section 7](docs/product/spec.md#7-tool-eligibility-rules) own the detail.
 
 | Tool or action | Required conditions |
 | --- | --- |
