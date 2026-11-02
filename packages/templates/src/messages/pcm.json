@@ -6,7 +6,7 @@
     "privacy": "Privacy matter",
     "serviceTerms": "Rules to use am",
     "appName": "Interim",
-    "tagline": "See di style wey you like for your body, as you be today.",
+    "tagline": "Feel like yourself for di style wey you love, as your body dey change.",
     "back": "Go back",
     "continue": "Continue",
     "tryAgain": "Try again",
@@ -26,8 +26,8 @@
     "hidePassword": "Hide password"
   },
   "welcome": {
-    "title": "Bring di style wey you like. See am for your body today.",
-    "intro": "Add outfits wey you don wear before or looks wey you like, then photo of you now. Interim go show those outfits for your body, so you fit decide wetin sweet you.",
+    "title": "Your body dey change. Your style still na your own.",
+    "intro": "Dem build Interim first for pipo wey dey pass through body changes, including through sickness or di care for am. Bring outfits wey you love, add photo of you now, and see how those styles fit look for your body.",
     "reassurance": "Na you dey choose wetin to share, and you fit delete everything anytime.",
     "start": "Start",
     "footnote": "Interim na about how you dey look and wetin to wear. E no dey give medical advice.",
@@ -35,15 +35,15 @@
     "demoLink": "Try di demo"
   },
   "landing": {
-    "intro": "Your taste still dey di middle. Try styles for your own photo and keep di looks wey you like.",
+    "intro": "Hair, face, skin, weight, after surgery or baby: as your body dey change, clothes fit start to feel strange. Interim dey help you keep your style, for your own pace.",
     "onThisPage": "Explore Interim",
-    "peopleLink": "Follow one change",
+    "peopleLink": "Who e be for",
     "howLink": "How e dey work",
     "problemTitle": "Style wey you like, for your body today",
     "problemBody": "Maybe outfits dey wey you love to wear, or looks wey you like now. Interim go put dem for current photo of you, so you fit see wetin fit work, without anybody tell you wetin your body suppose wear.",
     "problemNote": "Na you dey decide wetin be like you.",
-    "peopleTitle": "You wan follow one change as time dey go?",
-    "peopleBody": "Interim also get check-in profiles for appearance changes, including changes wey serious sickness bring. Dem dey keep photos and looks wey get date together, and dem no be di same as style previews.",
+    "peopleTitle": "Dem build am first for body changes",
+    "peopleBody": "Interim start with pipo wey their look dey change because of serious sickness or di care for am, and e dey for every change wey dey make familiar clothes feel strange. Pick wetin dey change. Nothing to explain and no sickness to name.",
     "careBody": "Hair dey fall, face or skin colour dey change, body get different shape. Start with wetin dey change; you no need name any condition or medicine.",
     "everydayBody": "Weight changes, after baby, midlife, grey hair or growing out one style. Explore options for where you dey now.",
     "exploreCases": "Explore these situations",
@@ -64,7 +64,11 @@
     "closingBody": "Add photo of you and di outfits wey you like to start.",
     "peopleAction": "Start check-in profile",
     "heroReference": "Di style wey I dey go for",
-    "heroPreview": "Preview for your body"
+    "heroPreview": "Preview for your body",
+    "moreTitle": "More than outfits",
+    "moreBody": "Companion note for di tone wey you choose. Private place to write reflection. Words for today, if you want. And link to somebody wey you fit talk to, any time wey you need am.",
+    "fitQuestion": "E go show me how clothes go fit?",
+    "fitAnswer": "Preview dey show how outfit fit look for your photo. E no dey show size, how e go fit or comfort. For size, Interim dey use di one wey you tell am and size chart."
   },
   "language": {
     "title": "Choose your language",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Try di demo",
-    "intro": "Dem be simulated pipo. Dem record each card from real use of Interim, so nothing here dey live and nothing dey spend.",
+    "intro": "Dem be simulated pipo. Dem record each card from real use of Interim, so nothing here dey live.",
     "simulated": "Simulated pesin",
     "recordedOn": "Dem record am for {date}",
     "checkInsTitle": "Check ins",

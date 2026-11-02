@@ -6,7 +6,7 @@
     "privacy": "Sirri",
     "serviceTerms": "Sharuɗɗan amfani",
     "appName": "Interim",
-    "tagline": "Ka ga salon da kake so a jikinka, yadda kake a yau.",
+    "tagline": "Ka ji kamar kanka a salon da kake so, yayin da jikinka ke canzawa.",
     "back": "Koma baya",
     "continue": "Ci gaba",
     "tryAgain": "Sake gwadawa",
@@ -26,8 +26,8 @@
     "hidePassword": "Daina nuna kalmar sirri"
   },
   "welcome": {
-    "title": "Kawo salon da kake so. Ka gan shi a jikinka yau.",
-    "intro": "Ƙara kayan sawa da ka taɓa sawa ko salon da kake sha’awa, sannan hotonka na yanzu. Interim yana nuna waɗannan kayan a jikinka, don ka yanke shawarar abin da ya dace da kai.",
+    "title": "Jikinka yana canzawa. Salonka naka ne har yanzu.",
+    "intro": "An gina Interim da farko don mutanen da ke fuskantar sauyin jiki, har da na rashin lafiya ko kulawarta. Kawo kayan sawa da kake so, ƙara hotonka na yanzu, ka ga yadda waɗannan salo za su iya zama a jikinka.",
     "reassurance": "Ku ne ke zaɓar abin da za ku bayar, kuma kuna iya share komai a kowane lokaci.",
     "start": "Fara",
     "footnote": "Interim yana magana ne kan yadda kuke da abin da za ku sa. Ba ya ba da shawarar likita.",
@@ -35,15 +35,15 @@
     "demoLink": "Gwada demo"
   },
   "landing": {
-    "intro": "Ɗanɗanonka yana nan a tsakiya. Gwada salo a hotonka kuma ka riƙe salon da kake so.",
+    "intro": "Gashi, fuska, fata, nauyi, bayan tiyata ko haihuwa: idan jiki ya canza, kaya na iya zama baƙo. Interim yana taimaka maka ka riƙe salonka, a hankalinka.",
     "onThisPage": "Duba Interim",
-    "peopleLink": "Bin diddigin canji",
+    "peopleLink": "Ga su wane ne",
     "howLink": "Yadda yake aiki",
     "problemTitle": "Salon da kake so, a jikinka yau",
     "problemBody": "Wataƙila akwai kayan da ka so sakawa, ko salon da kake sha’awa yanzu. Interim yana sanya su a hotonka na yanzu, don ka ga abin da zai iya dacewa, ba tare da wani ya gaya maka abin da jikinka ya kamata ya sa ba.",
     "problemNote": "Kai ne ke yanke shawarar abin da yake kama da kai.",
-    "peopleTitle": "Kana son bin diddigin canji a tsawon lokaci?",
-    "peopleBody": "Interim yana kuma bayar da bayanan dubawa don canje-canjen kamanni, har da waɗanda rashin lafiya mai tsanani ke kawowa. Suna tara hotuna da salo masu kwanan wata kuma sun bambanta da samfotin salo.",
+    "peopleTitle": "An gina shi da farko don sauyin jiki",
+    "peopleBody": "Interim ya fara ne da mutanen da kamanninsu ke canzawa saboda rashin lafiya mai tsanani ko kulawarta, kuma an yi shi don kowane sauyi da ke sa kayan da aka saba su zama baƙo. Zaɓi abin da ke canzawa. Babu abin da za a bayyana kuma babu cutar da za a ambata.",
     "careBody": "Zubar gashi, sauyin fuska ko launin fata, ko wata siffar jiki. Fara da abin da ke canzawa ba tare da faɗin wata cuta ko magani ba.",
     "everydayBody": "Sauyin nauyi, bayan haihuwa, tsakiyar shekaru, furfura ko barin gashi ya yi tsawo. Duba zaɓuɓɓuka don halinka na yanzu.",
     "exploreCases": "Duba waɗannan yanayi",
@@ -64,7 +64,11 @@
     "closingBody": "Ƙara hotonka da kayan da kake so don farawa.",
     "peopleAction": "Buɗe bayanan dubawa",
     "heroReference": "Salon da nake nema",
-    "heroPreview": "Samfoti a jikinka"
+    "heroPreview": "Samfoti a jikinka",
+    "moreTitle": "Fiye da kayan sawa",
+    "moreBody": "Rubutun abokin tafiya da sautin da ka zaɓa. Wuri na sirri don rubuta tunani. Kalmomin yau, idan kana so. Da hanyar magana da wani, a duk lokacin da ka buƙata.",
+    "fitQuestion": "Zai nuna min yadda kaya ke zama a jiki?",
+    "fitAnswer": "Samfoti yana nuna yadda kaya zai iya kama a hotonka. Ba ya nuna girma, yadda zai zauna ko jin daɗi. Don girma, Interim yana amfani da wanda ka bayar da teburin girma."
   },
   "language": {
     "title": "Ku zaɓi harshenku",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Gwada demo",
-    "intro": "Waɗannan mutane ne na kwaikwayo. An naɗi kowane kati daga ainihin amfani da Interim, don haka babu abin da ke faruwa kai tsaye kuma ba a kashe komai ba.",
+    "intro": "Waɗannan mutane ne na kwaikwayo. An nadi kowane kati daga ainihin amfani da Interim, don haka babu abin da ke gudana kai tsaye a nan.",
     "simulated": "Mutum na kwaikwayo",
     "recordedOn": "An naɗa a {date}",
     "checkInsTitle": "Dubawa",

@@ -19,7 +19,12 @@ export default async function Reflect({ params }: { params: Promise<{ id: string
   const [view, t] = await Promise.all([getReflections(id), getTranslations('reflect')]);
   if (!view) notFound();
   return (
-    <Shell profileId={id} backHref={`/ready/${id}`}>
+    <Shell
+      profileId={id}
+      kind={profile.kind}
+      active={profile.kind === 'style' ? 'style' : 'today'}
+      backHref={profile.kind === 'style' ? `/style/${id}` : `/ready/${id}`}
+    >
       <PageHeading title={t('title')} intro={t('intro')} />
       <ReflectForm
         profileId={id}

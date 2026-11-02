@@ -134,19 +134,6 @@ export default async function Home() {
           </a>
         </nav>
 
-        <section className="landing-section grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-          <div data-reveal className="max-w-2xl">
-            <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('problemTitle')}</h2>
-            <p className="mt-5 max-w-xl text-muted">{t('problemBody')}</p>
-          </div>
-          <div data-reveal className="landing-art rounded-[2rem] bg-butter p-5 sm:p-8">
-            <LandingIllustration kind="record" />
-            <p className="mt-4 max-w-sm font-serif text-[1.35rem] leading-snug">
-              {t('problemNote')}
-            </p>
-          </div>
-        </section>
-
         <section id="situations" className="landing-section">
           <div data-reveal className="max-w-2xl">
             <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('peopleTitle')}</h2>
@@ -199,6 +186,19 @@ export default async function Home() {
           </div>
         </section>
 
+        <section className="landing-section grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+          <div data-reveal className="max-w-2xl">
+            <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('problemTitle')}</h2>
+            <p className="mt-5 max-w-xl text-muted">{t('problemBody')}</p>
+          </div>
+          <div data-reveal className="landing-art rounded-[2rem] bg-butter p-5 sm:p-8">
+            <LandingIllustration kind="record" />
+            <p className="mt-4 max-w-sm font-serif text-[1.35rem] leading-snug">
+              {t('problemNote')}
+            </p>
+          </div>
+        </section>
+
         <section id="how-it-works" className="landing-section">
           <h2 data-reveal className="max-w-2xl text-[2rem] leading-[1.12] sm:text-[2.75rem]">
             {t('howTitle')}
@@ -213,10 +213,17 @@ export default async function Home() {
           </ol>
         </section>
 
+        <section id="more" className="landing-section">
+          <div data-reveal className="rounded-[2rem] bg-tint px-5 py-9 sm:px-10 sm:py-12 lg:grid lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+            <h2 className="text-[2rem] leading-[1.12] sm:text-[2.5rem]">{t('moreTitle')}</h2>
+            <p className="mt-4 max-w-xl text-[1.05rem] leading-relaxed text-muted lg:mt-0">{t('moreBody')}</p>
+          </div>
+        </section>
+
         <section className="landing-section grid gap-7 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('questionsTitle')}</h2>
           <div className="space-y-3">
-            {(['typing', 'privacy', 'medical'] as const).map((key) => (
+            {(['fit', 'typing', 'privacy', 'medical'] as const).map((key) => (
               <details key={key} className="rounded-2xl bg-surface p-5">
                 <summary className="min-h-11 cursor-pointer text-base font-semibold">
                   {t(`${key}Question`)}
