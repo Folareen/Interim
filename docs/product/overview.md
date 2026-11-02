@@ -176,7 +176,7 @@ Interim is cosmetic and practical. It is not therapy and never says or implies i
 * No user research yet. The plan is in spec section 18.
 * Some US states (Illinois and Nevada from 2025) ban AI mental health care. Interim stays a cosmetic tool with a kind voice. The language rules and the on-device reflection keep it there.
 * Photographing yourself six ways at every check in may be too much, especially when unwell. The check in set is kept small for that reason.
-* Style previews are checked on three synthetic outfits and two synthetic photos only (`apps/api/.spike`, 15 units). Preference understanding, recommendation quality, accessories, shoes, head coverings and real-user results are untested.
+* Style previews are checked on six synthetic outfits and three synthetic photos only (`apps/api/.spike`, 31 units). Preference understanding, recommendation quality, accessories, shoes, head coverings and real-user results are untested.
 * A demo with a real person needs dated photos of one consenting person, which is harder for illness than for weight change, so the demo uses the synthetic sample profiles and shows real photos only with consent.
 * Medical and body image sensitivity needs careful wording on every screen.
 

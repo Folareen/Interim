@@ -163,6 +163,7 @@ BullMQ on Redis.
 * GET /notifications/key (the public key a browser subscribes with, or null while push is off), GET, PUT and DELETE /profiles/:id/notifications (one device's choices, found by its subscription address; the person only; PUT with both kinds off deletes the subscription)
 * GET /profiles/:id/garments (the sample catalog with the profile's saved pieces marked and a link to each picture), PUT and DELETE /profiles/:id/garments/:sku (save or remove; both repeat safely; only for a template that uses fit)
 * POST /profiles/:id/style/uploads (size per file; one presigned PUT link each), POST /profiles/:id/style/photos (an upload id and a role; normalises and stores, returns the existing photo for a repeat), GET /profiles/:id/style/photos, DELETE /profiles/:id/style/photos/:photoId (style profiles only, 409 otherwise; need current consent except for reading and deleting)
+* POST /profiles/:id/style/samples (a set name; adds that set's simulated outfits and person from `packages/fixtures/own`, found beside `YOUCAM_FIXTURES_DIR`, so a first try needs no photos; repeats safely)
 * POST /profiles/:id/style/requests (a current photo and one to three references; checks `stylePreviewPlan`, then queues a run; returns the request and run ids), GET /style/requests/:id (the photos and each reference's preview or none), PUT and DELETE /style/previews/:id/saved, GET /profiles/:id/style/saved
 * GET /profiles/:id/cards (newest first)
 * POST /cards/:id/approve

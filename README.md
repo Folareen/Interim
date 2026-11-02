@@ -1,8 +1,8 @@
 # Interim
 
-Interim helps you feel like yourself while your body changes. Built first for people whose appearance changes with serious illness, for the YouCam API Skin AI and eCommerce VTO Hackathon.
+Here is the style I am going for. Here is me now. Help me make it work. Interim previews outfits you have worn or like on a current photo of you, using YouCam's clothes try on, and keeps the looks you save. It also offers check in profiles for people following an appearance change over time, built first for changes through serious illness. Made for the YouCam API Skin AI and eCommerce VTO Hackathon.
 
-A mobile web app turns photos and self-reports into a Stage Card: a companion note, measured changes, eligible previews, clothing sizes, practical advice and a decision trace with unit costs. Eleven situations and ten languages share one engine. Eligibility, consent, safety and budgets are plain code; the model plans and writes, never measures or sees photos.
+**Style previews** are the main flow ([spec section 4a](docs/product/spec.md#4a-style-previews)): add up to three outfit photos and a photo of you, and each outfit is placed on your photo. Previews are ideas, never a promise of size or fit, and no model sees the photos. **Check in profiles** turn photos and self-reports into a Stage Card: a companion note, measured changes, eligible previews, clothing sizes, practical advice and a decision trace with unit costs. Eleven situations and ten languages share one engine. Eligibility, consent, safety and budgets are plain code; the model plans and writes, never measures or sees photos.
 
 ## Run locally
 
@@ -22,9 +22,18 @@ The web app runs on port 3000, the API on 4000, and a separate worker handles qu
 
 The signed-in workspace groups daily actions in Today, visual history in My looks, and settings and data controls in You. It adapts from bottom navigation on phones to a desktop sidebar. Translated help buttons work without typing; optional written result help has separate consent and cannot start image calls. See [frontend rules](docs/frontend/README.md) and [model limits](docs/llm.md#optional-result-help).
 
+## Testing instructions
+
+1. Follow [Run locally](#run-locally). Keep `YOUCAM_MODE=replay` and `MAIL_MODE=log`, so no unit is spent and no email is sent.
+2. Open http://localhost:3000, choose **Get started** and sign up. With `MAIL_MODE=log` the API prints the confirmation link in its console; open it, then sign in.
+3. Confirm you are an adult, accept the consent text, and on the style screen choose **Streetwear and smart casual** or **Denim, earth tones and black**. These add simulated people and outfits whose previews are recorded.
+4. Choose **Show me**. Three previews appear beside the outfit and the person, each with a before and after control and a save button. Saved looks are under **Saved**.
+
+Your own photos need a live recording to preview (see below), so in replay they end in "no recorded answer". That is the safe default, not a fault.
+
 ## Try the demo
 
-`/demo` opens without signing in and shows recorded Stage Cards for simulated people. It only reads stored data and cannot start paid calls. A deployment needs seeded sample profiles and their stored images; see [demo data](docs/development.md#demo-data).
+`/demo` opens without signing in. It shows six recorded style previews (three outfits on each of two simulated people) and recorded Stage Cards for simulated people. It only reads stored data and cannot start paid calls. A deployment needs seeded sample profiles and their stored images; see [demo data](docs/development.md#demo-data).
 
 Interactive runs in replay require matching recorded inputs and parameters. New photos can fail with a missing recording. Synthetic inputs are described in [the fixture guide](packages/fixtures/own/README.md). A planner recording is used when it matches; otherwise replay uses the fixed note for the chosen tone.
 
