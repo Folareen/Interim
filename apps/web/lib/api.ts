@@ -1,9 +1,12 @@
 import {
+  type AddStylePhotoInput,
   type CaptureProblemBody,
   type ChangeEmailInput,
   type ConfirmEmailChangeInput,
   type ConsentRequest,
   type CreateProfileInput,
+  type CreateStyleRequestInput,
+  type CreateStyleUploadsInput,
   type CreateSnapshotInput,
   type CreateUploadsInput,
   type LinkToken,
@@ -23,6 +26,9 @@ import {
   type SaveNotificationsInput,
   type ShareCreated,
   type RunView,
+  type StylePhotoView,
+  type StyleRequestCreated,
+  type StyleUploadsResponse,
   type UploadsResponse,
   type WordsView,
   type AssistantRequest,
@@ -39,6 +45,9 @@ import {
   shareCreatedSchema,
   runViewSchema,
   snapshotCreatedSchema,
+  stylePhotoViewSchema,
+  styleRequestCreatedSchema,
+  styleUploadsResponseSchema,
   uploadsResponseSchema,
   wordsViewSchema,
 } from '@interim/types';
@@ -237,6 +246,43 @@ export async function createUploads(
   return uploadsResponseSchema.parse(
     await (await send(`/profiles/${profileId}/uploads`, 'POST', input)).json(),
   );
+}
+
+/** Asks for one upload link per style photo. */
+export async function createStyleUploads(
+  profileId: string,
+  input: CreateStyleUploadsInput,
+): Promise<StyleUploadsResponse> {
+  return styleUploadsResponseSchema.parse(
+    await (await send(`/profiles/${profileId}/style/uploads`, 'POST', input)).json(),
+  );
+}
+
+/** Stores an uploaded file as a reference or current photo. The same picture twice returns the first. */
+export async function addStylePhoto(profileId: string, input: AddStylePhotoInput): Promise<StylePhotoView> {
+  return stylePhotoViewSchema.parse(
+    await (await send(`/profiles/${profileId}/style/photos`, 'POST', input)).json(),
+  );
+}
+
+/** Deletes a style photo and the previews made from it. */
+export async function deleteStylePhoto(profileId: string, photoId: string): Promise<void> {
+  await send(`/profiles/${profileId}/style/photos/${photoId}`, 'DELETE');
+}
+
+/** Starts previews of one to three references on the current photo. */
+export async function createStyleRequest(
+  profileId: string,
+  input: CreateStyleRequestInput,
+): Promise<StyleRequestCreated> {
+  return styleRequestCreatedSchema.parse(
+    await (await send(`/profiles/${profileId}/style/requests`, 'POST', input)).json(),
+  );
+}
+
+/** Saves a preview, or takes it off the saved list. */
+export async function setStylePreviewSaved(previewId: string, saved: boolean): Promise<void> {
+  await send(`/style/previews/${previewId}/saved`, saved ? 'PUT' : 'DELETE');
 }
 
 /** Sends a photo straight to storage on a link from `createUploads`. The bytes never pass through the API. */

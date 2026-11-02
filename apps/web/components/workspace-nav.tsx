@@ -2,32 +2,40 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
 /** The task destinations shared by the mobile bar and desktop sidebar. */
-export type WorkspaceSection = 'today' | 'looks' | 'you';
+export type WorkspaceSection = 'today' | 'looks' | 'you' | 'style' | 'saved';
 
 /** Navigation stays visible while the content changes, so a task always has a way back. */
 export async function WorkspaceNav({
   profileId,
+  kind = 'situation',
   active,
   mobile = false,
 }: {
   profileId: string;
+  kind?: 'situation' | 'style';
   active: WorkspaceSection;
   mobile?: boolean;
 }) {
   const t = await getTranslations('workspace');
-  const destinations = [
-    { key: 'today', href: `/ready/${profileId}`, path: 'M3 10l9-7 9 7v10H3z M9 20v-7h6v7' },
-    {
-      key: 'looks',
-      href: `/looks/${profileId}`,
-      path: 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z',
-    },
-    {
-      key: 'you',
-      href: `/you/${profileId}`,
-      path: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2',
-    },
-  ] as const;
+  const home = 'M3 10l9-7 9 7v10H3z M9 20v-7h6v7';
+  const grid = 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z';
+  const you = {
+    key: 'you',
+    href: `/you/${profileId}`,
+    path: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2',
+  } as const;
+  const destinations =
+    kind === 'style'
+      ? ([
+          { key: 'style', href: `/style/${profileId}`, path: home },
+          { key: 'saved', href: `/style/${profileId}/saved`, path: grid },
+          you,
+        ] as const)
+      : ([
+          { key: 'today', href: `/ready/${profileId}`, path: home },
+          { key: 'looks', href: `/looks/${profileId}`, path: grid },
+          you,
+        ] as const);
   return (
     <nav
       aria-label={t('navigation')}

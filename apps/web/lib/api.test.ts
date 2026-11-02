@@ -1,5 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, createProfile, deleteProfile, deleteReflection, dismissContacts, getPreferences, grantConsent, saveReflection } from './api';
+import {
+  ApiError,
+  addStylePhoto,
+  createProfile,
+  createStyleRequest,
+  deleteProfile,
+  deleteReflection,
+  dismissContacts,
+  getPreferences,
+  grantConsent,
+  saveReflection,
+  setStylePreviewSaved,
+} from './api';
 
 const fetchMock = vi.fn<typeof fetch>();
 const json = (body: unknown, status = 200) =>
@@ -7,6 +19,7 @@ const json = (body: unknown, status = 200) =>
 
 const profile = {
   id: '12373736-c2c3-4394-8a5b-df5169fa5e08',
+  kind: 'situation',
   templateKey: 'going_grey',
   consentCurrent: false,
   retention: 'standard',
@@ -25,19 +38,19 @@ afterEach(() => vi.unstubAllGlobals());
 describe('api client', () => {
   it('posts to the same origin proxy and keeps only the fields it reads', async () => {
     fetchMock.mockResolvedValueOnce(json(profile, 201));
-    const created = await createProfile({ templateKey: 'going_grey', ageConfirmed: true });
+    const created = await createProfile({ kind: 'situation', templateKey: 'going_grey', ageConfirmed: true });
 
     const [url, init] = fetchMock.mock.calls[0] ?? [];
     expect(url).toBe('/api/profiles');
     expect(init?.method).toBe('POST');
-    expect(JSON.parse(String(init?.body))).toEqual({ templateKey: 'going_grey', ageConfirmed: true });
+    expect(JSON.parse(String(init?.body))).toEqual({ kind: 'situation', templateKey: 'going_grey', ageConfirmed: true });
     expect(created).toEqual({ ...profile, extra: undefined });
     expect(created).not.toHaveProperty('extra');
   });
 
   it('rejects a response that is not a profile instead of passing it on', async () => {
     fetchMock.mockResolvedValueOnce(json({ id: 'not-a-uuid' }));
-    await expect(createProfile({ templateKey: 'going_grey', ageConfirmed: true })).rejects.toThrow();
+    await expect(createProfile({ kind: 'situation', templateKey: 'going_grey', ageConfirmed: true })).rejects.toThrow();
   });
 
   it('reports a missing connection as a network error', async () => {
@@ -95,6 +108,40 @@ describe('reflections', () => {
     expect(fetchMock.mock.calls.map(([url, init]) => `${init?.method} ${String(url)}`)).toEqual([
       'DELETE /api/profiles/p1/reflections/r1',
       'POST /api/profiles/p1/reflections/contacts/dismiss',
+    ]);
+  });
+
+  it('starts previews with one current photo and the chosen references', async () => {
+    const ids = { requestId: '8f14e45f-ceea-467a-9b3c-0a1d2e3f4a5b', runId: '9f14e45f-ceea-467a-9b3c-0a1d2e3f4a5b' };
+    fetchMock.mockResolvedValueOnce(json(ids, 201));
+    const current = '1f14e45f-ceea-467a-9b3c-0a1d2e3f4a5b';
+    const reference = '2f14e45f-ceea-467a-9b3c-0a1d2e3f4a5b';
+
+    expect(await createStyleRequest('p1', { currentPhotoId: current, referencePhotoIds: [reference] })).toEqual(ids);
+
+    const [url, init] = fetchMock.mock.calls[0] ?? [];
+    expect(url).toBe('/api/profiles/p1/style/requests');
+    expect(JSON.parse(String(init?.body))).toEqual({ currentPhotoId: current, referencePhotoIds: [reference] });
+  });
+
+  it('rejects a style photo answer that is not a photo, and surfaces a capture problem', async () => {
+    fetchMock.mockResolvedValueOnce(json({ id: 'not-a-uuid' }));
+    await expect(addStylePhoto('p1', { uploadId: '3f14e45f-ceea-467a-9b3c-0a1d2e3f4a5b', role: 'current' })).rejects.toThrow();
+
+    fetchMock.mockResolvedValueOnce(json({ code: 'too_dark' }, 422));
+    await expect(addStylePhoto('p1', { uploadId: '3f14e45f-ceea-467a-9b3c-0a1d2e3f4a5b', role: 'current' })).rejects.toMatchObject({
+      status: 422,
+      problem: { code: 'too_dark' },
+    });
+  });
+
+  it('saves and unsaves a preview with PUT and DELETE', async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
+    await setStylePreviewSaved('v1', true);
+    await setStylePreviewSaved('v1', false);
+    expect(fetchMock.mock.calls.map(([url, init]) => `${init?.method} ${String(url)}`)).toEqual([
+      'PUT /api/style/previews/v1/saved',
+      'DELETE /api/style/previews/v1/saved',
     ]);
   });
 });

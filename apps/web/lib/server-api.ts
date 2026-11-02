@@ -12,6 +12,9 @@ import {
   type ReflectionsView,
   type RunView,
   type ShareList,
+  type StylePhotoList,
+  type StyleRequestView,
+  type StyleSaved,
   type SharedCard,
   authConfigSchema,
   cardSummaryListSchema,
@@ -29,6 +32,9 @@ import {
   runViewSchema,
   shareListSchema,
   sharedCardSchema,
+  stylePhotoListSchema,
+  styleRequestViewSchema,
+  styleSavedSchema,
 } from '@interim/types';
 import { cookies } from 'next/headers';
 
@@ -184,6 +190,34 @@ export async function getReflections(profileId: string): Promise<ReflectionsView
     return undefined;
   if (!response.ok) throw new Error(`The API answered ${response.status}`);
   return reflectionsViewSchema.parse(await response.json());
+}
+
+async function getStyle(path: string): Promise<unknown | undefined> {
+  const response = await fetch(`${apiOrigin}${path}`, {
+    headers: { cookie: (await cookies()).toString() },
+    cache: 'no-store',
+  });
+  if ([400, 401, 403, 404, 409].includes(response.status)) return undefined;
+  if (!response.ok) throw new Error(`The API answered ${response.status}`);
+  return response.json();
+}
+
+/** The profile's style photos, or undefined when it is not the person's or is not a style profile. */
+export async function getStylePhotos(profileId: string): Promise<StylePhotoList | undefined> {
+  const body = await getStyle(`/profiles/${encodeURIComponent(profileId)}/style/photos`);
+  return body === undefined ? undefined : stylePhotoListSchema.parse(body);
+}
+
+/** A style request with its previews, or undefined when it is not the person's. */
+export async function getStyleRequest(requestId: string): Promise<StyleRequestView | undefined> {
+  const body = await getStyle(`/style/requests/${encodeURIComponent(requestId)}`);
+  return body === undefined ? undefined : styleRequestViewSchema.parse(body);
+}
+
+/** The profile's saved previews, or undefined when it is not the person's. */
+export async function getStyleSaved(profileId: string): Promise<StyleSaved | undefined> {
+  const body = await getStyle(`/profiles/${encodeURIComponent(profileId)}/style/saved`);
+  return body === undefined ? undefined : styleSavedSchema.parse(body);
 }
 
 /** The sample catalog with the pieces the profile saved marked, or undefined when the profile is not the person's or does not use clothes. */

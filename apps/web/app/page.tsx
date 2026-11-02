@@ -5,6 +5,7 @@ import { primaryClass, secondaryClass } from '@/components/button';
 import { LandingMotion } from '@/components/landing-motion';
 import { LandingIllustration } from '@/components/landing-illustration';
 import { Shell } from '@/components/shell';
+import { profileHref } from '@/lib/profile-href';
 import { getMe, getProfiles } from '@/lib/server-api';
 
 const groups = [
@@ -37,14 +38,13 @@ export default async function Home() {
   if (await getMe()) {
     const profiles = await getProfiles();
     const current = profiles.find((profile) => profile.consentCurrent) ?? profiles[0];
-    if (!current) redirect('/situation');
-    redirect(current.consentCurrent ? `/ready/${current.id}` : `/consent/${current.id}`);
+    if (!current) redirect('/style/new');
+    redirect(profileHref(current));
   }
-  const [welcome, t, demo, workspace, situation, labels, common] = await Promise.all([
+  const [welcome, t, demo, situation, labels, common] = await Promise.all([
     getTranslations('welcome'),
     getTranslations('landing'),
     getTranslations('demo'),
-    getTranslations('workspace'),
     getTranslations('situation'),
     getTranslations('templateLabels'),
     getTranslations('common'),
@@ -81,26 +81,26 @@ export default async function Home() {
             <div className="grid grid-cols-[1fr_0.85fr] items-start gap-4">
               <figure>
                 <img
-                  src="/demo/look-before.jpg"
+                  src="/demo/style-reference.jpg"
                   alt={demo('simulated')}
                   width={640}
                   height={853}
                   className="aspect-[3/4] w-full rounded-[5rem_5rem_1rem_1rem] object-cover"
                 />
                 <figcaption className="mt-3 text-[0.9rem] text-muted">
-                  {workspace('photoReference')}
+                  {t('heroReference')}
                 </figcaption>
               </figure>
               <figure className="pt-14 sm:pt-20">
                 <img
-                  src="/demo/look-preview.jpg"
+                  src="/demo/style-preview.jpg"
                   alt={demo('simulated')}
                   width={640}
                   height={853}
                   className="aspect-[3/4] w-full rounded-[1rem_1rem_4rem_4rem] object-cover"
                 />
                 <figcaption className="mt-3 text-[0.9rem] text-muted">
-                  {workspace('anotherMoment')}
+                  {t('heroPreview')}
                 </figcaption>
               </figure>
             </div>
@@ -132,12 +132,6 @@ export default async function Home() {
           >
             {t('howLink')}
           </a>
-          <a
-            href="#different"
-            className="inline-flex min-h-11 items-center underline underline-offset-4"
-          >
-            {t('differenceLink')}
-          </a>
         </nav>
 
         <section className="landing-section grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
@@ -157,6 +151,12 @@ export default async function Home() {
           <div data-reveal className="max-w-2xl">
             <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">{t('peopleTitle')}</h2>
             <p className="mt-4 text-muted">{t('peopleBody')}</p>
+            <Link
+              href="/situation"
+              className="mt-4 inline-flex min-h-11 items-center text-[0.95rem] font-semibold text-accent underline underline-offset-4"
+            >
+              {t('peopleAction')}
+            </Link>
           </div>
           <div className="mt-9 grid gap-6 lg:grid-cols-2 lg:items-start">
             {groups.map(({ key, label, situations }) => (
@@ -211,25 +211,6 @@ export default async function Home() {
               </li>
             ))}
           </ol>
-        </section>
-
-        <section id="different" className="landing-section">
-          <div className="grid gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-            <div data-reveal className="max-w-xl">
-              <h2 className="text-[2rem] leading-[1.12] sm:text-[2.75rem]">
-                {t('differentTitle')}
-              </h2>
-              <p className="mt-5 text-muted">{t('differentBody')}</p>
-            </div>
-            <dl className="rounded-[1.5rem] bg-surface px-5 sm:px-7">
-              {(['timeline', 'grounded', 'relevant', 'limits'] as const).map((key) => (
-                <div key={key} data-reveal className="py-5">
-                  <dt className="text-[1.05rem] font-semibold">{t(`${key}Title`)}</dt>
-                  <dd className="mt-2 text-[0.95rem] text-muted">{t(`${key}Body`)}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
         </section>
 
         <section className="landing-section grid gap-7 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">

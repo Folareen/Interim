@@ -64,6 +64,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       notifications,
       workspace,
       assistant,
+      style,
     },
   ] = await Promise.all([getLocale(), getTheme(), getTranslations('common'), getMessages()]);
   return (
@@ -99,6 +100,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             notifications,
             workspace,
             assistant,
+            style,
           }}
         >
           {children}
