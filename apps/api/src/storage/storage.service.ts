@@ -17,6 +17,11 @@ export interface StorageConfig {
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
+  /**
+   * Put in front of every key, so environments can share a bucket. Cleanup deletes whatever its own
+   * database does not know, and with a prefix it can only ever see its own files. Empty or ending in `/`.
+   */
+  keyPrefix?: string;
 }
 export const STORAGE_CONFIG = Symbol('STORAGE_CONFIG');
 
@@ -33,9 +38,11 @@ export interface StoredObject {
 export class StorageService {
   private readonly client: S3Client;
   private readonly bucket: string;
+  private readonly prefix: string;
 
   constructor(@Inject(STORAGE_CONFIG) config: StorageConfig) {
     this.bucket = config.bucket;
+    this.prefix = config.keyPrefix ?? '';
     this.client = new S3Client({
       endpoint: config.endpoint,
       region: config.region,
@@ -44,11 +51,16 @@ export class StorageService {
     });
   }
 
+  // Callers use plain keys; only this class knows about the prefix.
+  private full(key: string): string {
+    return this.prefix + key;
+  }
+
   /** A short-lived PUT link that only accepts a body of exactly `sizeBytes`. */
   async presignPut(key: string, sizeBytes: number) {
     const url = await getSignedUrl(
       this.client,
-      new PutObjectCommand({ Bucket: this.bucket, Key: key, ContentLength: sizeBytes }),
+      new PutObjectCommand({ Bucket: this.bucket, Key: this.full(key), ContentLength: sizeBytes }),
       { expiresIn: PRESIGN_TTL_SECONDS },
     );
     return { url, expiresInSeconds: PRESIGN_TTL_SECONDS };
@@ -56,7 +68,7 @@ export class StorageService {
 
   /** A short-lived link the browser can show an image from. Photos and renders are never public. */
   async presignGet(key: string) {
-    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
+    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: this.full(key) }), {
       expiresIn: PRESIGN_TTL_SECONDS,
     });
   }
@@ -67,7 +79,7 @@ export class StorageService {
    */
   async readCapped(key: string, maxBytes: number): Promise<Buffer | 'too_large' | undefined> {
     try {
-      const object = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+      const object = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: this.full(key) }));
       if (!object.Body || (object.ContentLength ?? 0) > maxBytes) return 'too_large';
       return Buffer.from(await object.Body.transformToByteArray());
     } catch (error) {
@@ -78,23 +90,23 @@ export class StorageService {
 
   async put(key: string, body: Buffer, contentType: string): Promise<void> {
     await this.client.send(
-      new PutObjectCommand({ Bucket: this.bucket, Key: key, Body: body, ContentType: contentType }),
+      new PutObjectCommand({ Bucket: this.bucket, Key: this.full(key), Body: body, ContentType: contentType }),
     );
   }
 
   async delete(key: string): Promise<void> {
-    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: this.full(key) }));
   }
 
-  /** Lists every object under a prefix, one page (up to 1000 keys) at a time. */
+  /** Lists every object under a prefix, one page (up to 1000 keys) at a time. Keys come back without the environment prefix. */
   async *list(prefix: string): AsyncGenerator<StoredObject[]> {
     let token: string | undefined;
     do {
       const page = await this.client.send(
-        new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix, ContinuationToken: token }),
+        new ListObjectsV2Command({ Bucket: this.bucket, Prefix: this.full(prefix), ContinuationToken: token }),
       );
       const objects = (page.Contents ?? []).flatMap((o) =>
-        o.Key && o.LastModified ? [{ key: o.Key, lastModified: o.LastModified }] : [],
+        o.Key && o.LastModified ? [{ key: o.Key.slice(this.prefix.length), lastModified: o.LastModified }] : [],
       );
       if (objects.length > 0) yield objects;
       token = page.NextContinuationToken;
@@ -104,7 +116,7 @@ export class StorageService {
   /** Deletes the keys in batches of 1000. Keys that do not exist are not an error. */
   async deleteMany(keys: string[]): Promise<void> {
     for (let i = 0; i < keys.length; i += 1000) {
-      const batch = keys.slice(i, i + 1000).map((Key) => ({ Key }));
+      const batch = keys.slice(i, i + 1000).map((key) => ({ Key: this.full(key) }));
       const result = await this.client.send(
         new DeleteObjectsCommand({ Bucket: this.bucket, Delete: { Objects: batch, Quiet: true } }),
       );

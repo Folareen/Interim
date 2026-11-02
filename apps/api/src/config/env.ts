@@ -10,6 +10,7 @@ const envSchema = z
     R2_ENDPOINT: z.string().url(),
     R2_BUCKET: z.string().min(1),
     R2_REGION: z.string().min(1),
+    R2_KEY_PREFIX: z.string().regex(/^([a-z0-9][a-z0-9-]*\/)?$/, 'Use a prefix such as prod/ (lower case, ending in a slash), or leave it empty').default(''), // lets environments share a bucket; see docs/deployment.md
     R2_ACCESS_KEY_ID: z.string().min(1),
     R2_SECRET_ACCESS_KEY: z.string().min(1),
     YOUCAM_API_KEY: z.string().default(''),

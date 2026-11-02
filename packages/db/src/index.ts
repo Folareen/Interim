@@ -6,7 +6,10 @@ export * from './schema';
 
 /** Opens a pooled Postgres connection typed with the schema. Call once at startup. */
 export function createDb(databaseUrl: string) {
-  const pool = new Pool({ connectionString: databaseUrl });
+  const pool = new Pool({ connectionString: databaseUrl, max: 8, keepAlive: true });
+  // A managed database such as Neon drops idle connections when it pauses. The pool opens a new one on
+  // the next query, so the dropped one must not take the process down with an unhandled error event.
+  pool.on('error', () => undefined);
   return { db: drizzle(pool, { schema }), pool };
 }
 
