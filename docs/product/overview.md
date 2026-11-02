@@ -4,15 +4,18 @@ Built for the YouCam API Skin AI and eCommerce VTO Hackathon (Perfect Corp, Devp
 
 ## One liner
 
-Here is the style I am going for. Here is me now. Help me make it work.
+Interim helps you keep your style, and feel like yourself, while your body changes.
+
+The working promise for styling: here is the style I am going for, here is me now, help me make it work.
 
 ## Style previews
 
-The main way in. A person adds photos of outfits they have worn or looks they admire, then one photo of themselves now. Interim puts each outfit on that photo with YouCam's clothes try on, and the person saves the looks they like. Body change is one reason to use it, never a requirement: someone can simply explore a style.
+The main way in, built first for people going through body changes (see [Who it serves](#who-it-serves)). A person adds photos of outfits they have worn or looks they admire, then one photo of themselves now. Interim puts each outfit on that photo with YouCam's clothes try on, and the person saves the looks they like. Body change is one reason to use it, never a requirement: someone can simply explore a style.
 
 * Taste comes first. The references are the person's taste, not a body to return to, and nothing says one body suits a style better than another. Interim gives no rules about what a larger or smaller body should wear.
 * A preview shows the outfit as an idea on the photo. It makes no claim about size, fit, comfort or how clothes will feel, and it is labelled as a preview.
 * Direct transfer of an outfit from a reference is what is built. Understanding several references and adapting a style from them is not, and nor is chat refinement, shopping or sharing. Spec section 17 owns these open questions.
+* Reflections, words for today and the link to someone to talk to belong to the profile, so a style profile has them too. The companion note belongs to a Stage Card, so only check in profiles have it.
 * The model never sees these photos (see [llm.md](../llm.md)), and style previews send nothing to Google.
 * A photo of someone else in a reference is the person's to use only if they have the right to (consent, spec section 12).
 
