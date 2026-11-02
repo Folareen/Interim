@@ -1,4 +1,4 @@
-import { type Db, photo, profile, render, run, snapshot, stageCard, traceEntry } from '@interim/db';
+import { type Db, photo, profile, render, run, snapshot, stageCard, styleRequest, traceEntry } from '@interim/db';
 import { hasCurrentConsent } from '@interim/rules';
 import { templates } from '@interim/templates';
 import {
@@ -11,7 +11,7 @@ import {
   traceReasonSchema,
 } from '@interim/types';
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { and, asc, desc, eq, inArray } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import {
   type Observable,
   concatMap,
@@ -113,7 +113,8 @@ export class RunsService {
       .innerJoin(profile, eq(profile.id, stageCard.profileId))
       .innerJoin(run, eq(run.id, stageCard.runId))
       .where(and(eq(stageCard.id, cardId), eq(profile.ownerRef, owner.ref)));
-    if (!row) throw new NotFoundException();
+    // Only check in runs write cards, so a card without a snapshot cannot exist.
+    if (!row?.snapshotId) throw new NotFoundException();
     const { snapshotId } = row;
     const card = stageCardSchema.parse(row.card);
 
@@ -200,8 +201,9 @@ export class RunsService {
     const [row] = await this.db
       .select({ snapshotId: run.snapshotId })
       .from(run)
-      .innerJoin(snapshot, eq(snapshot.id, run.snapshotId))
-      .innerJoin(profile, eq(profile.id, snapshot.profileId))
+      .leftJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .leftJoin(styleRequest, eq(styleRequest.id, run.styleRequestId))
+      .innerJoin(profile, eq(profile.id, sql`coalesce(${snapshot.profileId}, ${styleRequest.profileId})`))
       .where(and(eq(run.id, runId), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();
     return row;
@@ -209,9 +211,10 @@ export class RunsService {
 
   private async view(runId: string): Promise<RunView> {
     const [found] = await this.db
-      .select({ run, profileId: snapshot.profileId })
+      .select({ run, profileId: sql<string>`coalesce(${snapshot.profileId}, ${styleRequest.profileId})` })
       .from(run)
-      .innerJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .leftJoin(snapshot, eq(snapshot.id, run.snapshotId))
+      .leftJoin(styleRequest, eq(styleRequest.id, run.styleRequestId))
       .where(eq(run.id, runId));
     if (!found) throw new NotFoundException();
     const { run: row, profileId } = found;
@@ -231,6 +234,7 @@ export class RunsService {
       stopReason: traceReasonSchema.nullable().parse(row.stopReason),
       retake: captureProblemSchema.nullable().parse(row.retake),
       cardId: card?.id ?? null,
+      styleRequestId: row.styleRequestId,
       trace: trace.map((t) => ({
         seq: t.seq,
         step: t.step,

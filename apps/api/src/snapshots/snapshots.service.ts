@@ -165,6 +165,8 @@ export class SnapshotsService {
 
   private async requireConsent(profileId: string, owner: Owner) {
     const current = await this.profiles.get(profileId, owner);
+    // Check ins follow a situation template, which style profiles do not have.
+    if (current.kind === 'style') throw new ConflictException('This profile does not use check ins.');
     if (!current.consentCurrent) throw new ForbiddenException('Please accept the current consent text first.');
     return current;
   }

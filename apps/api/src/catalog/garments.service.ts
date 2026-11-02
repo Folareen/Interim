@@ -64,6 +64,7 @@ export class GarmentsService {
       .from(profile)
       .where(and(eq(profile.id, profileId), eq(profile.ownerRef, owner.ref)));
     if (!row) throw new NotFoundException();
+    if (!row.templateKey) throw new ConflictException('This profile does not use clothes.');
     if (!templates[templateKeySchema.parse(row.templateKey)].usesFit) throw new ConflictException('This situation does not use clothes.');
   }
 }

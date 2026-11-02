@@ -251,7 +251,7 @@ describe('delete account', () => {
     const { session: token } = await signedUp();
     const signedIn = (await sessions.resolve(reqWith({ [SESSION_COOKIE]: token }))) ?? { accountId: '', email: '' };
     const owner = { ref: `account:${signedIn.accountId}` };
-    const made = await profiles.create(owner, { templateKey: 'going_grey', ageConfirmed: true });
+    const made = await profiles.create(owner, { kind: 'situation', templateKey: 'going_grey', ageConfirmed: true });
     const [snap] = await db.insert(snapshot).values({ profileId: made.id }).returning();
     await db.insert(photo).values({ snapshotId: snap?.id ?? '', kind: 'front', objectKey: `photos/${made.id}/s/front.jpg`, sha256: 'x', expiresAt: new Date(Date.now() + 1e9) });
     await storage.put(`photos/${made.id}/s/front.jpg`, Buffer.from('x'));
@@ -307,7 +307,7 @@ describe('profile ownership', () => {
       const signedIn = (await sessions.resolve(reqWith({ [SESSION_COOKIE]: token }))) ?? { accountId: '', email: '' };
       return { ref: `account:${signedIn.accountId}` };
     };
-    const mine = await profiles.create(await ownerOf(first.session), { templateKey: 'going_grey', ageConfirmed: true });
+    const mine = await profiles.create(await ownerOf(first.session), { kind: 'situation', templateKey: 'going_grey', ageConfirmed: true });
     expect(await profiles.list(await ownerOf(second.session))).toEqual([]);
     await expect(profiles.get(mine.id, await ownerOf(second.session))).rejects.toThrow();
     expect((await profiles.get(mine.id, await ownerOf(first.session))).id).toBe(mine.id);

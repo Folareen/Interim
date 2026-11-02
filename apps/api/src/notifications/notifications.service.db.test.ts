@@ -42,7 +42,7 @@ beforeEach(async () => {
 async function makeProfile(values: Partial<typeof profile.$inferInsert> = {}) {
   const [row] = await db
     .insert(profile)
-    .values({ templateKey: 'going_grey', ownerRef: alice.ref, consentVersion: '4', wordsSet: 'gentle', ...values })
+    .values({ templateKey: 'going_grey', ownerRef: alice.ref, consentVersion: '5', wordsSet: 'gentle', ...values })
     .returning({ id: profile.id });
   if (!row) throw new Error('no profile');
   return row.id;

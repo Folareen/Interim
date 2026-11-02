@@ -1,9 +1,10 @@
-import { type Db, consentEvent, deletionRequest, garment, photo, profile, render, snapshot } from '@interim/db';
+import { type Db, consentEvent, deletionRequest, garment, photo, profile, render, snapshot, stylePhoto, stylePreview, styleRequest } from '@interim/db';
 import { CONSENT_VERSION, expiresAt, hasCurrentConsent } from '@interim/rules';
 import { templates, wordsForDay } from '@interim/templates';
 import { liveLocaleSchema } from '@interim/types';
 import type { ConsentRequest, CreateProfileInput, Preferences, Retention } from '@interim/types';
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -22,6 +23,7 @@ const MAX_RENDER_BYTES = 20 * 1024 * 1024;
 // (words_set, head_covering). Those are only read through the preferences, words and export paths.
 const visible = {
   id: profile.id,
+  kind: profile.kind,
   templateKey: profile.templateKey,
   consentVersion: profile.consentVersion,
   consentedAt: profile.consentedAt,
@@ -46,12 +48,17 @@ export class ProfilesService {
   async create(owner: Owner, input: CreateProfileInput) {
     const [row] = await this.db
       .insert(profile)
-      .values({
-        templateKey: input.templateKey,
-        ownerRef: owner.ref,
-        consentVersion: CONSENT_VERSION,
-        bodyPhotos: templates[input.templateKey].bodyPhotosByDefault,
-      })
+      .values(
+        input.kind === 'style'
+          ? { kind: 'style', templateKey: null, ownerRef: owner.ref, consentVersion: CONSENT_VERSION, bodyPhotos: false }
+          : {
+              kind: 'situation',
+              templateKey: input.templateKey,
+              ownerRef: owner.ref,
+              consentVersion: CONSENT_VERSION,
+              bodyPhotos: templates[input.templateKey].bodyPhotosByDefault,
+            },
+      )
       .returning(visible);
     if (!row) throw new Error('Profile insert returned no row');
     return withConsentState(row);
@@ -85,6 +92,9 @@ export class ProfilesService {
       throw new ConflictException(`Current consent version is ${CONSENT_VERSION}`);
     }
     const current = await this.get(id, owner);
+    if (input.action === 'grant' && current.kind === 'situation' && !input.acceptGemini) {
+      throw new BadRequestException('Situation profiles need the Google statement accepted.');
+    }
 
     const change =
       input.action === 'grant'
@@ -159,6 +169,13 @@ export class ProfilesService {
 
   // Standard counts 30 days from each capture; keep history counts 24 months from the last check in (spec section 12).
   private async reapplyRetention(tx: Parameters<Parameters<Db['transaction']>[0]>[0], id: string, to: Retention) {
+    // Style photos and previews count from when they were made, since a style profile has no check ins.
+    const window = to === 'extended' ? sql`interval '24 months'` : sql`interval '30 days'`;
+    await tx.execute(sql`update ${stylePhoto} set expires_at = created_at + ${window} where profile_id = ${id}`);
+    await tx.execute(sql`
+      update ${stylePreview} set expires_at = ${stylePreview.createdAt} + ${window}
+      from ${styleRequest} r where ${stylePreview.requestId} = r.id and r.profile_id = ${id}`);
+
     const snapshotIds = tx.select({ id: snapshot.id }).from(snapshot).where(eq(snapshot.profileId, id));
     if (to === 'extended') {
       const [{ last } = { last: null }] = await tx
@@ -186,7 +203,11 @@ export class ProfilesService {
     for (const { key, ...rest } of await this.renderRows(id)) {
       if (key) renders.push({ ...rest, url: await this.storage.presignGet(key) });
     }
-    return { ...data, renders };
+    const stylePreviews = [];
+    for (const { key, ...rest } of await this.stylePreviewRows(id)) {
+      if (key) stylePreviews.push({ ...rest, url: await this.storage.presignGet(key) });
+    }
+    return { ...data, renders, stylePreviews };
   }
 
   /**
@@ -207,7 +228,16 @@ export class ProfilesService {
       files[file] = image;
       renders.push({ ...rest, file });
     }
-    files['export.json'] = strToU8(JSON.stringify({ ...data, ...extra, renders }, null, 2));
+    const stylePreviews = [];
+    for (const { key, ...rest } of await this.stylePreviewRows(id)) {
+      if (!key) continue;
+      const image = await this.storage.readCapped(key, MAX_RENDER_BYTES);
+      if (!image || image === 'too_large') continue;
+      const file = `style-previews/${rest.id}.jpg`;
+      files[file] = image;
+      stylePreviews.push({ ...rest, file });
+    }
+    files['export.json'] = strToU8(JSON.stringify({ ...data, ...extra, renders, stylePreviews }, null, 2));
     // Images are already compressed, so storing them is faster and no bigger.
     return zipSync(files, { level: 0 });
   }
@@ -222,6 +252,16 @@ export class ProfilesService {
     const preferences = await this.preferences(id, owner);
     const garments = await this.db.select({ sku: garment.catalogSku, savedAt: garment.savedAt }).from(garment).where(eq(garment.profileId, id));
     return { exportedAt: new Date(), profile: current, preferences, consentEvents, garments };
+  }
+
+  /** Every style preview of the profile, newest first. `key` is null once the image has expired. */
+  private stylePreviewRows(profileId: string) {
+    return this.db
+      .select({ id: stylePreview.id, saved: sql<boolean>`${stylePreview.savedAt} is not null`, createdAt: stylePreview.createdAt, key: stylePreview.objectKey })
+      .from(stylePreview)
+      .innerJoin(styleRequest, eq(styleRequest.id, stylePreview.requestId))
+      .where(eq(styleRequest.profileId, profileId))
+      .orderBy(desc(stylePreview.createdAt));
   }
 
   /** Every render of the profile, newest check in first. `key` is null once the image has expired. */

@@ -12,7 +12,7 @@ const owner = { ref: 'alice' };
 const consent = (retention: 'standard' | 'extended') =>
   ({
     action: 'grant',
-    version: '4',
+    version: '5',
     retention,
     acceptStorage: true,
     acceptYoucam: true,
@@ -42,7 +42,7 @@ async function newProfile(
   retention: 'standard' | 'extended' = 'standard',
   templateKey: 'going_grey' | 'after_surgery' = 'going_grey',
 ) {
-  const { id } = await profiles.create(owner, { templateKey, ageConfirmed: true });
+  const { id } = await profiles.create(owner, { kind: 'situation', templateKey, ageConfirmed: true });
   await profiles.consent(id, owner, consent(retention));
   return id;
 }
@@ -72,7 +72,7 @@ describe('baseline', () => {
   });
 
   it('refuses before the person has consented', async () => {
-    const { id } = await profiles.create(owner, { templateKey: 'going_grey', ageConfirmed: true });
+    const { id } = await profiles.create(owner, { kind: 'situation', templateKey: 'going_grey', ageConfirmed: true });
     await expect(snapshots.createUploads(id, owner, { uploads: [{ kind: 'front', sizeBytes: 10 }] })).rejects.toThrow(ForbiddenException);
   });
 

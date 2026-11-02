@@ -4,6 +4,7 @@ Two synthetic people for testing and for the demo, made with YouCam's own image 
 
 - `a/`: a woman in five hair stages (full, thinner, short, none, growing back) plus left and right views for the baseline. The baseline views are the set that passed YouCam's hair type detection. Each later stage is an image to image edit of the first photo, so the face, clothes and background stay the same.
 - `b/`: a man with three front photos (the face slightly, then noticeably, fuller), left and right views, and three body photos at three builds, all edited from the first photo of each kind.
+- `style/`: three generated outfit references (a tracksuit, layered streetwear, smart casual) for style previews, saved unresized so a normalised upload hashes the same. Their recorded previews on `b/body-1.jpg` and `b/body-2.jpg` are in `../youcam/cloth_v4`.
 - `garments/`: four generated garment pictures. The sample catalog uses them (resized) as the reference pictures for clothes try on.
 
 The recorded answers for these photos are in `../youcam` and `../planner`, named by the pipeline's cache keys, which hash the photos. Do not resize or re-encode a file, or its recording is no longer found.

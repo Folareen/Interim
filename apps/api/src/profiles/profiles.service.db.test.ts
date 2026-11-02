@@ -1,6 +1,6 @@
 import { type Db, consentEvent, deletionRequest, photo, profile, render, snapshot } from '@interim/db';
 import type { ConsentRequest } from '@interim/types';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { strFromU8, unzipSync } from 'fflate';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -12,7 +12,7 @@ const alice = { ref: 'alice' };
 const bob = { ref: 'bob' };
 const grant = (retention: 'standard' | 'extended'): ConsentRequest => ({
   action: 'grant',
-  version: '4',
+  version: '5',
   retention,
   acceptStorage: true,
   acceptYoucam: true,
@@ -34,7 +34,7 @@ beforeEach(async () => {
   profiles = new ProfilesService(db, storage.asService());
 });
 
-const create = () => profiles.create(alice, { templateKey: 'going_grey', ageConfirmed: true });
+const create = () => profiles.create(alice, { kind: 'situation', templateKey: 'going_grey', ageConfirmed: true });
 
 describe('create, get and list', () => {
   it('starts without consent and never exposes the owner ref', async () => {
@@ -57,13 +57,31 @@ describe('consent', () => {
     const { id } = await create();
 
     const granted = await profiles.consent(id, alice, grant('extended'));
-    expect(granted).toMatchObject({ consentCurrent: true, retention: 'extended', consentVersion: '4' });
+    expect(granted).toMatchObject({ consentCurrent: true, retention: 'extended', consentVersion: '5' });
 
-    const withdrawn = await profiles.consent(id, alice, { action: 'withdraw', version: '4' });
+    const withdrawn = await profiles.consent(id, alice, { action: 'withdraw', version: '5' });
     expect(withdrawn).toMatchObject({ consentCurrent: false, consentedAt: null });
 
     const events = await db.select().from(consentEvent);
     expect(events.map((e) => e.action).sort()).toEqual(['grant', 'withdraw']);
+  });
+
+  it('lets a style profile consent without the Google statement, which only situation profiles are asked', async () => {
+    const style = await profiles.create(alice, { kind: 'style', ageConfirmed: true });
+    const withoutGoogle: ConsentRequest = {
+      action: 'grant',
+      version: '5',
+      retention: 'standard',
+      acceptStorage: true,
+      acceptYoucam: true,
+      acceptOwnPhotosOnly: true,
+    };
+    expect(style).toMatchObject({ kind: 'style', templateKey: null, bodyPhotos: false });
+
+    await expect(profiles.consent(style.id, alice, withoutGoogle)).resolves.toMatchObject({ consentCurrent: true });
+
+    const { id } = await create();
+    await expect(profiles.consent(id, alice, withoutGoogle)).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('does not let another owner consent', async () => {
@@ -99,7 +117,7 @@ describe('preferences', () => {
     const { id } = await create();
     expect(await profiles.preferences(id, alice)).toEqual({ locale: 'en', tone: 'warm', wordsSet: null, bodyPhotos: true, headCovering: false });
 
-    const surgery = await profiles.create(alice, { templateKey: 'after_surgery', ageConfirmed: true });
+    const surgery = await profiles.create(alice, { kind: 'situation', templateKey: 'after_surgery', ageConfirmed: true });
     expect(surgery.bodyPhotos).toBe(false);
   });
 

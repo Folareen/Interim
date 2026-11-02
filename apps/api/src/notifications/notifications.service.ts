@@ -105,6 +105,7 @@ export class NotificationsService {
         lastCheckInAt: pushSubscription.lastCheckInAt,
         locale: profile.locale,
         templateKey: profile.templateKey,
+        kind: profile.kind,
         wordsSet: profile.wordsSet,
         lastCheckIn: max(snapshot.takenAt),
       })
@@ -118,15 +119,16 @@ export class NotificationsService {
       const clock = localClock(now, row.timeZone);
       const locale = liveLocaleSchema.parse(row.locale);
       const text = messages[locale].notifications;
-      const url = `/ready/${row.profileId}`;
+      const url = row.kind === 'style' ? `/style/${row.profileId}` : `/ready/${row.profileId}`;
       const due: { payload: Payload; mark: 'lastWordsAt' | 'lastCheckInAt' }[] = [];
 
       if (row.wordsSet && wordsDue({ wordsAt: row.wordsAt, lastSentAt: row.lastWordsAt }, clock, now)) {
         const passage = row.showPassage ? wordsForDay(row.wordsSet, clock.date, locale).text : null;
         due.push({ payload: { title: messages[locale].common.appName, body: passage ?? text.push.words, tag: 'words', url }, mark: 'lastWordsAt' });
       }
-      const everyDays = templates[templateKeySchema.parse(row.templateKey)].checkInEveryDays;
-      if (row.checkIn && checkInDue({ lastCheckInAt: row.lastCheckIn, everyDays, lastSentAt: row.lastCheckInAt }, clock, now)) {
+      // Style profiles have no check ins, so only words for today can be due for them.
+      const everyDays = row.templateKey ? templates[templateKeySchema.parse(row.templateKey)].checkInEveryDays : undefined;
+      if (row.checkIn && everyDays !== undefined && checkInDue({ lastCheckInAt: row.lastCheckIn, everyDays, lastSentAt: row.lastCheckInAt }, clock, now)) {
         due.push({ payload: { title: messages[locale].common.appName, body: text.push.checkIn, tag: 'check-in', url }, mark: 'lastCheckInAt' });
       }
 

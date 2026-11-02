@@ -43,7 +43,7 @@ const card = (takenAt: string): StageCard => ({
 /** One profile with one card per date, oldest date first. */
 async function seed(ownerRef: string, judgeSample: boolean, dates: string[]) {
   const profileId = randomUUID();
-  await db.insert(profile).values({ id: profileId, templateKey: 'hair_loss_ahead', ownerRef, consentVersion: '4', consentedAt: new Date(), judgeSample });
+  await db.insert(profile).values({ id: profileId, templateKey: 'hair_loss_ahead', ownerRef, consentVersion: '5', consentedAt: new Date(), judgeSample });
   const cardIds: string[] = [];
   for (const date of dates) {
     const snapshotId = randomUUID();

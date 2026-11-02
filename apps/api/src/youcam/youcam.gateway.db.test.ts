@@ -36,7 +36,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await db.execute(sql`truncate profile, budget_counter, ledger_entry cascade`);
-  await db.insert(profile).values({ id: profileId, templateKey: 'hair_loss_ahead', ownerRef: 'o', consentVersion: '4' });
+  await db.insert(profile).values({ id: profileId, templateKey: 'hair_loss_ahead', ownerRef: 'o', consentVersion: '5' });
   await db.insert(snapshot).values({ id: snapshotId, profileId });
   await db.insert(run).values({ id: runId, snapshotId, templateKey: 'hair_loss_ahead', templateVersion: 1, budgetUnits: 50 });
   dir = await mkdtemp(path.join(tmpdir(), 'youcam-'));

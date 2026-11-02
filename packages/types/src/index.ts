@@ -79,10 +79,10 @@ export const retentionSchema = z.enum(['standard', 'extended']);
 export type Retention = z.infer<typeof retentionSchema>;
 
 /** Body of POST /profiles. The age confirmation must be an explicit `true`. */
-export const createProfileSchema = z.object({
-  templateKey: templateKeySchema,
-  ageConfirmed: z.literal(true),
-});
+export const createProfileSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('situation'), templateKey: templateKeySchema, ageConfirmed: z.literal(true) }),
+  z.object({ kind: z.literal('style'), ageConfirmed: z.literal(true) }),
+]);
 export type CreateProfileInput = z.infer<typeof createProfileSchema>;
 
 /** Body of POST /profiles/:id/consent. Each processor line is accepted separately, and retention has no default (spec section 12). */
@@ -93,7 +93,8 @@ export const consentRequestSchema = z.discriminatedUnion('action', [
     retention: retentionSchema,
     acceptStorage: z.literal(true),
     acceptYoucam: z.literal(true),
-    acceptGemini: z.literal(true),
+    // Style profiles send nothing to Google, so only situation profiles are asked; the API enforces that.
+    acceptGemini: z.literal(true).optional(),
     acceptOwnPhotosOnly: z.literal(true),
   }),
   z.object({ action: z.literal('withdraw'), version: z.string().min(1) }),
@@ -161,9 +162,8 @@ export const toneSchema = z.enum(['practical', 'warm', 'light']);
 export type Tone = z.infer<typeof toneSchema>;
 
 /** A profile as `GET /profiles/:id` returns it. Only the fields the app reads. */
-export const profileSchema = z.object({
+const profileBase = z.object({
   id: z.string().uuid(),
-  templateKey: templateKeySchema,
   consentCurrent: z.boolean(),
   retention: retentionSchema,
   tone: toneSchema,
@@ -171,6 +171,10 @@ export const profileSchema = z.object({
   /** Whether a first set of photos is already stored, so the next check in is not the baseline. */
   hasBaseline: z.boolean(),
 });
+export const profileSchema = z.discriminatedUnion('kind', [
+  profileBase.extend({ kind: z.literal('situation'), templateKey: templateKeySchema }),
+  profileBase.extend({ kind: z.literal('style') }),
+]);
 export type Profile = z.infer<typeof profileSchema>;
 
 /** `GET /profiles`: the caller's profiles, newest first. */
@@ -541,6 +545,8 @@ export const runViewSchema = z.object({
   stopReason: traceReasonSchema.nullable(),
   retake: captureProblemSchema.nullable(),
   cardId: z.string().uuid().nullable(),
+  /** Set for a style run, which ends in previews instead of a card. */
+  styleRequestId: z.string().uuid().nullable(),
   trace: z.array(traceLineSchema),
 });
 export type RunView = z.infer<typeof runViewSchema>;
@@ -823,3 +829,74 @@ export type Me = z.infer<typeof meSchema>;
 /** `GET /auth/config`: which sign-in methods this deployment offers. */
 export const authConfigSchema = z.object({ google: z.boolean() });
 export type AuthConfig = z.infer<typeof authConfigSchema>;
+
+/** What a style photo is for: a look the person likes, or how they look now. */
+export const styleRoleSchema = z.enum(['reference', 'current']);
+export type StyleRole = z.infer<typeof styleRoleSchema>;
+
+/** Body of POST /profiles/:id/style/requests: one current photo and up to three references to preview on it. */
+export const createStyleRequestSchema = z.object({
+  currentPhotoId: z.string().uuid(),
+  referencePhotoIds: z.array(z.string().uuid()).min(1).max(3),
+});
+export type CreateStyleRequestInput = z.infer<typeof createStyleRequestSchema>;
+
+/** Body of POST /profiles/:id/style/uploads: one presigned link per file, sized up front so the link can pin it. */
+export const createStyleUploadsSchema = z.object({
+  uploads: z.array(z.object({ sizeBytes: z.number().int().positive() })).min(1).max(4),
+});
+export type CreateStyleUploadsInput = z.infer<typeof createStyleUploadsSchema>;
+
+/** What the style uploads route returns: one short lived PUT link per file. */
+export const styleUploadsResponseSchema = z.object({
+  uploads: z.array(z.object({ uploadId: z.string().uuid(), method: z.literal('PUT'), url: z.string().url() })),
+});
+export type StyleUploadsResponse = z.infer<typeof styleUploadsResponseSchema>;
+
+/** Body of POST /profiles/:id/style/photos: turns an uploaded file into a stored reference or current photo. */
+export const addStylePhotoSchema = z.object({ uploadId: z.string().uuid(), role: styleRoleSchema });
+export type AddStylePhotoInput = z.infer<typeof addStylePhotoSchema>;
+
+/** A stored style photo with a short lived link to show it. */
+export const stylePhotoViewSchema = z.object({
+  id: z.string().uuid(),
+  role: styleRoleSchema,
+  url: z.string().url(),
+});
+export type StylePhotoView = z.infer<typeof stylePhotoViewSchema>;
+
+/** `GET /profiles/:id/style/photos`: the profile's photos, newest first. */
+export const stylePhotoListSchema = z.object({ photos: z.array(stylePhotoViewSchema) });
+export type StylePhotoList = z.infer<typeof stylePhotoListSchema>;
+
+/**
+ * `GET /style/requests/:id`: the current photo and, for each reference, its preview when one was
+ * made. A reference without a preview was not recorded, was blocked or ran out of budget; the run's
+ * trace says which.
+ */
+export const styleRequestViewSchema = z.object({
+  id: z.string().uuid(),
+  profileId: z.string().uuid(),
+  runId: z.string().uuid(),
+  currentUrl: z.string().url(),
+  items: z.array(
+    z.object({
+      referenceId: z.string().uuid(),
+      referenceUrl: z.string().url(),
+      preview: z.object({ id: z.string().uuid(), url: z.string().url(), saved: z.boolean() }).nullable(),
+    }),
+  ),
+});
+export type StyleRequestView = z.infer<typeof styleRequestViewSchema>;
+
+/** `GET /profiles/:id/style/saved`: every saved preview with the reference it came from. */
+export const styleSavedSchema = z.object({
+  previews: z.array(
+    z.object({ id: z.string().uuid(), url: z.string().url(), referenceUrl: z.string().url(), requestId: z.string().uuid() }),
+  ),
+});
+export type StyleSaved = z.infer<typeof styleSavedSchema>;
+
+/** What `POST /profiles/:id/style/requests` returns: the request and the run that makes its previews. */
+export const styleRequestCreatedSchema = z.object({ requestId: z.string().uuid(), runId: z.string().uuid() });
+export type StyleRequestCreated = z.infer<typeof styleRequestCreatedSchema>;
