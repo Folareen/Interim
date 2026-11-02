@@ -6,6 +6,12 @@ Interim is built first for people going through body changes: hair loss, a chang
 
 Live: **https://interim.afolarin.cv** (replay only, so it cannot spend YouCam units). Open `/demo` without signing in, or follow [Testing instructions](#testing-instructions).
 
+## YouCam APIs used
+
+- **AI clothes try on (`cloth_v4`, full outfit):** the core of style previews. Each outfit photo is placed on a current photo of you.
+- **Hair, face and skin analysis** (hair length, density and type, face shape, skin tone) and **hairstyle, colour and beard previews:** used by check in profiles to measure change and preview looks.
+- **An agent loop** plans which YouCam calls to make within the person's consent and budget, and explains the result in their language. Eligibility, budgets and consent are plain code; the model never sees a photo ([architecture](docs/architecture.md)).
+
 ## Run locally
 
 Node 22, pnpm 10, Docker and configured storage are required. Full instructions are in [development](docs/development.md).
