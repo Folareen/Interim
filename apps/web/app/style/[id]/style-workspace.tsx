@@ -5,7 +5,7 @@ import type { CaptureProblem, StylePhotoView, StyleSampleSet } from '@interim/ty
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Actions } from '@/components/actions';
 import { Button, secondaryClass } from '@/components/button';
 import { Notice } from '@/components/notice';
@@ -24,7 +24,7 @@ import { checkPhoto } from '@/lib/photo-check';
  * Where the person brings the style they are going for and a photo of themselves now, then asks
  * for previews. The latest "me now" photo is the one used; outfits are chosen one by one.
  */
-export function StyleWorkspace({ profileId, initial }: { profileId: string; initial: StylePhotoView[] }) {
+export function StyleWorkspace({ profileId, initial, after }: { profileId: string; initial: StylePhotoView[]; after?: ReactNode }) {
   const t = useTranslations('style');
   const common = useTranslations('common');
   const problems = useTranslations('photoProblems');
@@ -251,6 +251,7 @@ export function StyleWorkspace({ profileId, initial }: { profileId: string; init
             {t('otherWayLink')}
           </Link>
         </p>
+        {after}
         {problem && <Notice>{problems(problem)}</Notice>}
         {message && <Notice>{message}</Notice>}
       </div>

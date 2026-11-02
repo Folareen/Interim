@@ -6,7 +6,7 @@
     "privacy": "Confidentialité",
     "serviceTerms": "Conditions d’utilisation",
     "appName": "Interim",
-    "tagline": "Voyez le style que vous aimez sur vous, tel que vous êtes aujourd’hui.",
+    "tagline": "Sentez-vous vous-même dans le style que vous aimez, pendant que votre corps change.",
     "back": "Retour",
     "continue": "Continuer",
     "tryAgain": "Réessayer",
@@ -26,8 +26,8 @@
     "hidePassword": "Masquer le mot de passe"
   },
   "welcome": {
-    "title": "Apportez le style que vous aimez. Voyez-le sur vous aujourd’hui.",
-    "intro": "Ajoutez des tenues que vous avez portées ou des looks que vous admirez, puis une photo de vous aujourd’hui. Interim prévisualise ces tenues sur vous, pour que vous décidiez ce qui vous convient.",
+    "title": "Votre corps change. Votre style reste le vôtre.",
+    "intro": "Interim est conçu d’abord pour les personnes dont le corps change, y compris à cause d’une maladie ou de ses soins. Apportez les tenues que vous aimez, ajoutez une photo de vous aujourd’hui et voyez comment ces styles pourraient vous aller.",
     "reassurance": "Vous choisissez ce que vous partagez, et vous pouvez tout supprimer à tout moment.",
     "start": "Commencer",
     "footnote": "Interim parle de votre apparence et de ce que vous portez. Il ne donne pas de conseils médicaux.",
@@ -35,15 +35,15 @@
     "demoLink": "Essayer la démo"
   },
   "landing": {
-    "intro": "Votre goût reste au centre. Essayez des styles sur votre propre photo et gardez les looks qui vous plaisent.",
+    "intro": "Cheveux, visage, peau, poids, après une opération ou une naissance : quand votre corps change, les vêtements peuvent sembler étrangers. Interim vous aide à garder votre style, à votre rythme.",
     "onThisPage": "Découvrir Interim",
-    "peopleLink": "Suivre un changement",
+    "peopleLink": "Pour qui",
     "howLink": "Comment ça marche",
     "problemTitle": "Un style que vous aimez, sur vous aujourd’hui",
     "problemBody": "Peut-être avez-vous des tenues que vous aimiez porter, ou des looks que vous admirez. Interim les place sur une photo actuelle de vous, pour voir ce qui pourrait fonctionner, sans que personne ne vous dise ce que votre corps devrait porter.",
     "problemNote": "C’est vous qui décidez de ce qui vous ressemble.",
-    "peopleTitle": "Suivre un changement dans le temps ?",
-    "peopleBody": "Interim propose aussi des profils de suivi pour les changements d’apparence, y compris ceux liés à une maladie grave. Ils réunissent des photos et des looks datés, et sont distincts des aperçus de style.",
+    "peopleTitle": "Conçu d’abord pour les changements du corps",
+    "peopleBody": "Interim est né pour les personnes dont l’apparence change à cause d’une maladie grave ou de ses soins, et il est fait pour tout changement qui rend des vêtements familiers étrangers. Choisissez ce qui change. Rien à expliquer, aucune maladie à nommer.",
     "careBody": "Perte de cheveux, visage ou teint qui change, nouvelle silhouette. Partez de ce qui change, sans nommer de maladie ni de médicament.",
     "everydayBody": "Poids qui change, après un bébé, milieu de vie, cheveux gris ou changement de style. Explorez des options pour aujourd’hui.",
     "exploreCases": "Explorer ces situations",
@@ -64,7 +64,11 @@
     "closingBody": "Ajoutez une photo de vous et les tenues qui vous plaisent pour commencer.",
     "peopleAction": "Créer un profil de suivi",
     "heroReference": "Le style que vous visez",
-    "heroPreview": "Un aperçu sur vous"
+    "heroPreview": "Un aperçu sur vous",
+    "moreTitle": "Plus que des tenues",
+    "moreBody": "Un mot d’accompagnement sur le ton que vous choisissez. Un espace privé pour écrire une réflexion. Des mots du jour, en option. Et un lien vers quelqu’un à qui parler, quand vous en avez besoin.",
+    "fitQuestion": "Vais-je voir si les vêtements me vont ?",
+    "fitAnswer": "Un aperçu montre l’effet d’une tenue sur votre photo. Il ne montre ni la taille, ni la coupe, ni le confort. Pour les tailles, Interim utilise celle que vous indiquez et un guide des tailles."
   },
   "language": {
     "title": "Choisissez votre langue",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Essayer la démo",
-    "intro": "Ce sont des personnes simulées. Chaque carte a été enregistrée lors d’une vraie utilisation d’Interim : rien n’est en direct et rien n’est dépensé.",
+    "intro": "Ce sont des personnes simulées. Chaque fiche a été enregistrée lors d’une vraie utilisation d’Interim : rien n’est en direct ici.",
     "simulated": "Personne simulée",
     "recordedOn": "Enregistré le {date}",
     "checkInsTitle": "Suivis",

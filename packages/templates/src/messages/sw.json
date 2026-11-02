@@ -6,7 +6,7 @@
     "privacy": "Faragha",
     "serviceTerms": "Masharti ya matumizi",
     "appName": "Interim",
-    "tagline": "Ona mtindo unaoupenda ukiwa juu yako, kama ulivyo leo.",
+    "tagline": "Jisikie kama wewe katika mtindo unaoupenda, mwili wako unapobadilika.",
     "back": "Rudi",
     "continue": "Endelea",
     "tryAgain": "Jaribu tena",
@@ -26,8 +26,8 @@
     "hidePassword": "Ficha nenosiri"
   },
   "welcome": {
-    "title": "Leta mtindo unaoupenda. Uone juu yako leo.",
-    "intro": "Ongeza mavazi ambayo umewahi kuvaa au mitindo unayoipenda, kisha picha yako ya sasa. Interim huonyesha mavazi hayo juu yako, ili uamue kinachokufaa.",
+    "title": "Mwili wako unabadilika. Mtindo wako bado ni wako.",
+    "intro": "Interim imeundwa kwanza kwa watu wanaopitia mabadiliko ya mwili, ikiwemo kutokana na ugonjwa au huduma yake. Leta mavazi unayopenda, ongeza picha yako ya sasa, na uone jinsi mitindo hiyo inavyoweza kuonekana juu yako.",
     "reassurance": "Wewe unachagua cha kushiriki, na unaweza kufuta kila kitu wakati wowote.",
     "start": "Anza",
     "footnote": "Interim inahusu unavyoonekana na cha kuvaa. Haitoi ushauri wa kimatibabu.",
@@ -35,15 +35,15 @@
     "demoLink": "Jaribu onyesho"
   },
   "landing": {
-    "intro": "Ladha yako inabaki katikati. Jaribu mitindo kwenye picha yako mwenyewe na uhifadhi mitindo unayopenda.",
+    "intro": "Nywele, uso, ngozi, uzito, baada ya upasuaji au mtoto: mwili unapobadilika, nguo zinaweza kuhisi ngeni. Interim inakusaidia kuendeleza mtindo wako, kwa kasi yako.",
     "onThisPage": "Gundua Interim",
-    "peopleLink": "Kufuatilia mabadiliko",
+    "peopleLink": "Ni ya nani",
     "howLink": "Inavyofanya kazi",
     "problemTitle": "Mtindo unaoupenda, juu yako leo",
     "problemBody": "Huenda kuna mavazi uliyopenda kuvaa, au mitindo unayoipenda sasa. Interim huyaweka kwenye picha yako ya sasa, ili uone kinachoweza kufaa, bila mtu yeyote kukwambia mwili wako unapaswa kuvaa nini.",
     "problemNote": "Wewe ndiye unayeamua kinachokufaa.",
-    "peopleTitle": "Unataka kufuatilia mabadiliko kwa muda?",
-    "peopleBody": "Interim pia hutoa wasifu wa ukaguzi kwa mabadiliko ya mwonekano, ikiwemo yale yanayotokana na ugonjwa mbaya. Huweka picha na mitindo yenye tarehe pamoja na ni tofauti na maonyesho ya awali ya mtindo.",
+    "peopleTitle": "Imeundwa kwanza kwa mabadiliko ya mwili",
+    "peopleBody": "Interim ilianza na watu ambao mwonekano wao unabadilika kutokana na ugonjwa mbaya au huduma yake, na imetengenezwa kwa kila mabadiliko yanayofanya nguo ulizozoea zihisi ngeni. Chagua kinachobadilika. Hakuna cha kueleza wala ugonjwa wa kutaja.",
     "careBody": "Kupoteza nywele, uso au rangi ya ngozi kubadilika, umbo jipya la mwili. Anza na kinachobadilika bila kutaja ugonjwa au dawa.",
     "everydayBody": "Mabadiliko ya uzito, baada ya mtoto, umri wa kati, mvi au kukuza mtindo. Chunguza chaguo za hali yako ya sasa.",
     "exploreCases": "Chunguza hali hizi",
@@ -64,7 +64,11 @@
     "closingBody": "Ongeza picha yako na mavazi unayopenda ili kuanza.",
     "peopleAction": "Anzisha wasifu wa ukaguzi",
     "heroReference": "Mtindo ninaoutaka",
-    "heroPreview": "Onyesho la awali juu yako"
+    "heroPreview": "Onyesho la awali juu yako",
+    "moreTitle": "Zaidi ya mavazi",
+    "moreBody": "Ujumbe wa msindikizaji kwa sauti unayochagua. Mahali pa faragha pa kuandika tafakari. Maneno ya leo, ukipenda. Na kiungo cha kuzungumza na mtu, wakati wowote unapohitaji.",
+    "fitQuestion": "Je, itaonyesha jinsi nguo zinavyonitosha?",
+    "fitAnswer": "Onyesho la awali linaonyesha jinsi vazi linavyoweza kuonekana kwenye picha yako. Halionyeshi ukubwa, jinsi linavyotosha wala faraja. Kwa ukubwa, Interim hutumia ule unaoutaja na jedwali la ukubwa."
   },
   "language": {
     "title": "Chagua lugha yako",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Jaribu onyesho",
-    "intro": "Hawa ni watu wa kuigizwa. Kila kadi ilirekodiwa kutoka matumizi halisi ya Interim, kwa hiyo hakuna kinachofanyika moja kwa moja na hakuna kinachotumika.",
+    "intro": "Hawa ni watu wa kuigizwa. Kila kadi ilirekodiwa kutokana na matumizi halisi ya Interim, kwa hivyo hakuna kinachofanyika moja kwa moja hapa.",
     "simulated": "Mtu wa kuigizwa",
     "recordedOn": "Imerekodiwa tarehe {date}",
     "checkInsTitle": "Ukaguzi",

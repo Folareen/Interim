@@ -6,7 +6,7 @@
     "privacy": "Privacidad",
     "serviceTerms": "Condiciones de uso",
     "appName": "Interim",
-    "tagline": "Mira el estilo que te gusta sobre ti, tal como eres hoy.",
+    "tagline": "Siéntete tú en el estilo que te gusta, mientras tu cuerpo cambia.",
     "back": "Atrás",
     "continue": "Continuar",
     "tryAgain": "Intentar de nuevo",
@@ -26,8 +26,8 @@
     "hidePassword": "Ocultar contraseña"
   },
   "welcome": {
-    "title": "Trae el estilo que te gusta. Míralo sobre ti hoy.",
-    "intro": "Añade conjuntos que has usado o looks que admiras y, después, una foto tuya de ahora. Interim muestra esos conjuntos sobre ti para que decidas qué te convence.",
+    "title": "Tu cuerpo está cambiando. Tu estilo sigue siendo tuyo.",
+    "intro": "Interim está pensado ante todo para personas que atraviesan cambios en el cuerpo, también por una enfermedad o su cuidado. Trae los conjuntos que te gustan, añade una foto tuya de ahora y mira cómo esos estilos podrían quedarte.",
     "reassurance": "Usted decide qué compartir y puede borrarlo todo en cualquier momento.",
     "start": "Empezar",
     "footnote": "Interim trata de su aspecto y de qué ponerse. No da consejos médicos.",
@@ -35,15 +35,15 @@
     "demoLink": "Prueba la demo"
   },
   "landing": {
-    "intro": "Tu gusto sigue en el centro. Prueba estilos en tu propia foto y guarda los looks que te gusten.",
+    "intro": "Pelo, rostro, piel, peso, tras una operación o un bebé: cuando tu cuerpo cambia, la ropa puede sentirse extraña. Interim te ayuda a mantener tu estilo, a tu ritmo.",
     "onThisPage": "Explorar Interim",
-    "peopleLink": "Seguir un cambio",
+    "peopleLink": "Para quién es",
     "howLink": "Cómo funciona",
     "problemTitle": "Un estilo que te gusta, sobre ti hoy",
     "problemBody": "Quizá hay conjuntos que te encantaba llevar, o looks que admiras ahora. Interim los pone sobre una foto actual tuya para que veas qué podría funcionar, sin que nadie te diga qué debería vestir tu cuerpo.",
     "problemNote": "Tú decides qué se siente como tú.",
-    "peopleTitle": "¿Quieres seguir un cambio con el tiempo?",
-    "peopleBody": "Interim también ofrece perfiles de seguimiento para cambios de apariencia, incluidos los que llegan con una enfermedad grave. Reúnen fotos y looks con fecha y son independientes de las vistas previas de estilo.",
+    "peopleTitle": "Pensado ante todo para los cambios del cuerpo",
+    "peopleBody": "Interim nació para personas cuya apariencia cambia por una enfermedad grave o su cuidado, y sirve para cualquier cambio que haga que la ropa conocida se sienta extraña. Elige lo que está cambiando. No hay nada que explicar ni ninguna enfermedad que nombrar.",
     "careBody": "Pérdida de pelo, cambios en el rostro o el tono de piel, otra forma del cuerpo. Empieza por lo que cambia, sin nombrar una enfermedad ni un medicamento.",
     "everydayBody": "Cambios de peso, después de un bebé, mediana edad, canas o dejar crecer un estilo. Explora opciones para tu momento actual.",
     "exploreCases": "Explorar estas situaciones",
@@ -64,7 +64,11 @@
     "closingBody": "Añade una foto tuya y los conjuntos que te gusten para empezar.",
     "peopleAction": "Crear un perfil de seguimiento",
     "heroReference": "El estilo que busco",
-    "heroPreview": "Una vista previa sobre ti"
+    "heroPreview": "Una vista previa sobre ti",
+    "moreTitle": "Más que conjuntos",
+    "moreBody": "Una nota de acompañamiento en el tono que elijas. Un lugar privado para escribir una reflexión. Palabras de hoy, si quieres. Y un enlace para hablar con alguien, cuando lo necesites.",
+    "fitQuestion": "¿Me mostrará cómo me queda la ropa?",
+    "fitAnswer": "Una vista previa muestra cómo podría verse un conjunto en tu foto. No muestra talla, ajuste ni comodidad. Para las tallas, Interim usa la que indicas y una tabla de tallas."
   },
   "language": {
     "title": "Elija su idioma",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Prueba la demo",
-    "intro": "Son personas simuladas. Cada tarjeta se grabó en un uso real de Interim, así que nada aquí es en vivo y no se gasta nada.",
+    "intro": "Son personas simuladas. Cada ficha se grabó en un uso real de Interim, así que nada aquí es en directo.",
     "simulated": "Persona simulada",
     "recordedOn": "Grabado el {date}",
     "checkInsTitle": "Seguimientos",

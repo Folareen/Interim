@@ -6,7 +6,7 @@
     "privacy": "Privacy",
     "serviceTerms": "Terms of use",
     "appName": "Interim",
-    "tagline": "Preview the style you love on you, as you are today.",
+    "tagline": "Feel like yourself in the style you love, as your body changes.",
     "back": "Back",
     "continue": "Continue",
     "tryAgain": "Try again",
@@ -26,8 +26,8 @@
     "hidePassword": "Hide password"
   },
   "welcome": {
-    "title": "Bring the style you love. See it on you today.",
-    "intro": "Add outfits you have worn or looks you admire, then a photo of you now. Interim previews those outfits on you, so you can decide what feels right.",
+    "title": "Your body is changing. Your style is still yours.",
+    "intro": "Interim is built first for people going through body changes, including through illness or its care. Bring outfits you love, add a photo of you now, and see how those styles could look on you.",
     "reassurance": "You choose what to share, and you can delete everything at any time.",
     "start": "Get started",
     "footnote": "Interim is about how you look and what to wear. It does not give medical advice.",
@@ -35,15 +35,15 @@
     "demoLink": "Try the demo"
   },
   "landing": {
-    "intro": "Your taste stays at the centre. Try styles on your own photo and keep the looks you like.",
+    "intro": "Hair, face, skin, weight, after surgery or a baby: when your body changes, clothes can feel unfamiliar. Interim helps you keep your style, at your own pace.",
     "onThisPage": "Explore Interim",
-    "peopleLink": "Following a change",
+    "peopleLink": "Who it is for",
     "howLink": "How it works",
     "problemTitle": "A style you love, on you today",
     "problemBody": "Maybe there are outfits you loved wearing, or looks you admire now. Interim puts them on a current photo of you, so you can see what could work, without anyone telling you what your body should wear.",
     "problemNote": "You decide what feels like you.",
-    "peopleTitle": "Following a change over time?",
-    "peopleBody": "Interim also offers check-in profiles for appearance changes, including changes through serious illness. They keep dated photos and looks together and are separate from style previews.",
+    "peopleTitle": "Built first for body changes",
+    "peopleBody": "Interim started with people whose appearance changes through serious illness or its care, and it is made for every change that makes familiar clothes feel unfamiliar. Pick what is changing. There is nothing to explain and no condition to name.",
     "careBody": "Hair loss, a changing face or skin tone, a different body shape. Start with what is changing, without naming a condition or a medicine.",
     "everydayBody": "Weight changes, life after a baby, midlife, going grey or growing out a style. Explore options for where you are now.",
     "exploreCases": "Explore these situations",
@@ -64,7 +64,11 @@
     "closingBody": "Add a photo of you and the outfits you like to begin.",
     "peopleAction": "Start a check-in profile",
     "heroReference": "The style you’re going for",
-    "heroPreview": "A preview on you"
+    "heroPreview": "A preview on you",
+    "moreTitle": "More than outfits",
+    "moreBody": "A companion note in the tone you choose. A private place to write a reflection. Optional words for the day. And a link to someone to talk to, whenever you need it.",
+    "fitQuestion": "Will it show me how clothes fit?",
+    "fitAnswer": "A preview shows how an outfit could look on your photo. It does not show size, fit or comfort. For sizes, Interim uses the size you report and a size chart."
   },
   "language": {
     "title": "Choose your language",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Try the demo",
-    "intro": "These are simulated people. Each card was recorded from a real run of Interim, so nothing here is live and nothing is spent.",
+    "intro": "These are simulated people. Each card was recorded from a real run of Interim, so nothing here is live.",
     "simulated": "Simulated person",
     "recordedOn": "Recorded on {date}",
     "checkInsTitle": "Check ins",

@@ -6,7 +6,7 @@
     "privacy": "Nzuzo",
     "serviceTerms": "Usoro ojiji",
     "appName": "Interim",
-    "tagline": "Lee ụdị ị hụrụ n’anya n’ahụ gị, dị ka ị dị taa.",
+    "tagline": "Nwee mmetụta dị ka onwe gị n’ụdị ị hụrụ n’anya, ka ahụ gị na-agbanwe.",
     "back": "Laghachi",
     "continue": "Gaa n’ihu",
     "tryAgain": "Nwaa ọzọ",
@@ -26,8 +26,8 @@
     "hidePassword": "Kwụsị igosi paswọọdụ"
   },
   "welcome": {
-    "title": "Wetara ụdị ị hụrụ n’anya. Hụ ya n’ahụ gị taa.",
-    "intro": "Tinye uwe ị yiwo ma ọ bụ ọdịdị ị na-enwe mmasị na ya, mgbe ahụ foto gị ugbu a. Interim na-egosi uwe ndị ahụ n’ahụ gị, ka ị kpebie ihe kwesịrị gị.",
+    "title": "Ahụ gị na-agbanwe. Ụdị gị ka bụ nke gị.",
+    "intro": "E wuru Interim buru ụzọ maka ndị na-agafe mgbanwe ahụ, gụnyere nke ọrịa ma ọ bụ nlekọta ya na-ewetara. Weta uwe ị hụrụ n’anya, tinye foto gị ugbu a, hụ otú ụdị ndị ahụ nwere ike isi dị n’ahụ gị.",
     "reassurance": "Ị na-ahọrọ ihe ị ga-ekekọrịta, ị nwekwara ike ihichapụ ihe niile n’oge ọ bụla.",
     "start": "Malite",
     "footnote": "Interim bụ maka ka i si adị na ihe ị ga-eyi. Ọ naghị enye ndụmọdụ dọkịta.",
@@ -35,15 +35,15 @@
     "demoLink": "Nwaa ngosi ahụ"
   },
   "landing": {
-    "intro": "Uto gị ka dị n’etiti. Nwaa ụdị dị iche iche na foto gị ma debe ọdịdị ndị ị hụrụ n’anya.",
+    "intro": "Ntutu, ihu, akpụkpọ ahụ, ibu, mgbe a gwụsịrị ịwa ahụ ma ọ bụ mgbe a mụsịrị nwa: mgbe ahụ na-agbanwe, uwe nwere ike ịdị ka ihe ọhụrụ. Interim na-enyere gị aka idebe ụdị gị, n’ọsọ gị.",
     "onThisPage": "Chọpụta Interim",
-    "peopleLink": "Soro mgbanwe",
+    "peopleLink": "Maka onye ka ọ bụ",
     "howLink": "Otú o si arụ ọrụ",
     "problemTitle": "Ụdị ị hụrụ n’anya, n’ahụ gị taa",
     "problemBody": "Ikekwe e nwere uwe ị hụrụ n’anya iyi, ma ọ bụ ọdịdị ị na-enwe mmasị na ya ugbu a. Interim na-etinye ha na foto gị nke ugbu a, ka ị hụ ihe nwere ike ịdị mma, na-enweghị onye na-agwa gị ihe ahụ gị kwesịrị iyi.",
     "problemNote": "Ọ bụ gị na-ekpebi ihe dị ka gị.",
-    "peopleTitle": "Ị chọrọ ịso mgbanwe n’oge ụfọdụ?",
-    "peopleBody": "Interim na-enyekwa profaịlụ nlele maka mgbanwe ọdịdị, gụnyere ndị ọrịa siri ike na-eweta. Ha na-eke foto na ọdịdị nwere ụbọchị ọnụ, ha dịkwa iche na nlele tupu oge nke ụdị.",
+    "peopleTitle": "E wuru ya buru ụzọ maka mgbanwe ahụ",
+    "peopleBody": "Interim malitere site n’ndị ọdịdị ha na-agbanwe n’ihi ọrịa siri ike ma ọ bụ nlekọta ya, a mekwara ya maka mgbanwe ọ bụla na-eme ka uwe amaara dị ka ihe ọhụrụ. Họrọ ihe na-agbanwe. Ọ dịghị ihe ị ga-akọwa ma ọ dịghị ọrịa ị ga-ekwu.",
     "careBody": "Ntutu na-apụ, ihu ma ọ bụ ụcha akpụkpọ na-agbanwe, ụdị ahụ ọhụrụ. Malite na ihe na-agbanwe, na-akpọghị aha ọrịa ma ọ bụ ọgwụ.",
     "everydayBody": "Mgbanwe ibu, mgbe a mụsịrị nwa, etiti afọ ndụ, isi awọ ma ọ bụ ịhapụ ntutu ka ọ too ogologo. Chọpụta nhọrọ maka ebe ị nọ ugbu a.",
     "exploreCases": "Chọpụta ọnọdụ ndị a",
@@ -64,7 +64,11 @@
     "closingBody": "Tinye foto gị na uwe ndị ị hụrụ n’anya ka ị malite.",
     "peopleAction": "Malite profaịlụ nlele",
     "heroReference": "Ụdị m na-achọ",
-    "heroPreview": "Nlele tupu oge n’ahụ gị"
+    "heroPreview": "Nlele tupu oge n’ahụ gị",
+    "moreTitle": "Karịa uwe",
+    "moreBody": "Ozi enyi n’ụdị olu ị họọrọ. Ebe nzuzo ị ga-ede echiche. Okwu taa, ma ọ bụrụ na ịchọrọ. Na njikọ iji gwa onye okwu, mgbe ọ bụla ịchọrọ ya.",
+    "fitQuestion": "Ọ ga-egosi m otú uwe si dị n’ahụ m?",
+    "fitAnswer": "Nlele tupu oge na-egosi otú uwe nwere ike isi dị na foto gị. Ọ naghị egosi nha, otú o si tọọ ma ọ bụ ntụrụndụ. Maka nha, Interim na-eji nke ị kwuru na tebụl nha."
   },
   "language": {
     "title": "Họrọ asụsụ gị",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Nwaa ngosi ahụ",
-    "intro": "Ndị a bụ ndị e ṅomiri. E dekọrọ kaadị ọ bụla site n’ojiji Interim n’ezie, ya mere ọ dịghị ihe na-eme ugbu a ebe a, e nweghị ihe e ji.",
+    "intro": "Ndị a bụ ndị mmadụ e ṹdị. E dekọrọ kaadị ọ bụla site n’ojiji Interim n’ezie, ya mere ọ dịghị ihe na-eme ozugbo ebe a.",
     "simulated": "Onye e ṅomiri",
     "recordedOn": "E dekọrọ ya na {date}",
     "checkInsTitle": "Nlele",

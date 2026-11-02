@@ -6,7 +6,7 @@
     "privacy": "Àṣírí",
     "serviceTerms": "Àwọn òfin ìlò",
     "appName": "Interim",
-    "tagline": "Wo ìrísí tí o fẹ́ràn lára rẹ, bí o ṣe wà lónìí.",
+    "tagline": "Máa ní ìmọ̀lára bí ara rẹ nínú ìrísí tí o fẹ́ràn, bí ara rẹ ṣe ń yípadà.",
     "back": "Padà",
     "continue": "Tẹ̀síwájú",
     "tryAgain": "Gbìyànjú lẹ́ẹ̀kan sí i",
@@ -26,8 +26,8 @@
     "hidePassword": "Má ṣe fi ọ̀rọ̀ aṣínà hàn"
   },
   "welcome": {
-    "title": "Mú ìrísí tí o fẹ́ràn wá. Wò ó lára rẹ lónìí.",
-    "intro": "Fi aṣọ tí o ti wọ̀ rí tàbí ìrísí tí o nífẹ̀ẹ́ sí kún un, lẹ́yìn náà fọ́tò rẹ ti àkókò yìí. Interim yóò fi àwọn aṣọ náà hàn lára rẹ, kí o lè pinnu ohun tó bá ọ mu.",
+    "title": "Ara rẹ ń yípadà. Ìrísí rẹ ṣì jẹ́ tìrẹ.",
+    "intro": "A kọ́ Interim ní àkọ́kọ́ fún àwọn tó ń la àyípadà ara kọjá, pẹ̀lú èyí tó jẹ mọ́ àìsàn tàbí ohun tí wọ́n ń ṣe fún un. Mú aṣọ tí o fẹ́ràn wá, fi fọ́tò rẹ ti àkókò yìí kún un, kí o sì wo bí àwọn ìrísí náà ṣe lè rí lára rẹ.",
     "reassurance": "Ìwọ ni o yan ohun tí o fẹ́ pín, o sì lè pa gbogbo rẹ̀ rẹ́ nígbàkúgbà.",
     "start": "Bẹ̀rẹ̀",
     "footnote": "Interim jẹ́ nípa bí o ṣe rí àti ohun tí o lè wọ̀. Kì í fúnni ní ìmọ̀ràn dókítà.",
@@ -35,15 +35,15 @@
     "demoLink": "Gbìyànjú àfihàn"
   },
   "landing": {
-    "intro": "Ìfẹ́ rẹ ni ó wà ní àárín. Gbìyànjú àwọn ìrísí lórí fọ́tò tìrẹ, kí o sì pa àwọn ìrísí tí o fẹ́ràn mọ́.",
+    "intro": "Irun, ojú, awọ ara, ìwọ̀n ara, lẹ́yìn iṣẹ́ abẹ tàbí ọmọ: nígbà tí ara bá yípadà, aṣọ lè dà bí àjèjì. Interim ń ràn ọ́ lọ́wọ́ láti máa tọ́jú ìrísí rẹ, ní ìyára tìrẹ.",
     "onThisPage": "Ṣàwárí Interim",
-    "peopleLink": "Títẹ̀lé ìyípadà",
+    "peopleLink": "Fún ta ni",
     "howLink": "Bí ó ṣe ń ṣiṣẹ́",
     "problemTitle": "Ìrísí tí o fẹ́ràn, lára rẹ lónìí",
     "problemBody": "Bóyá aṣọ wà tí o fẹ́ràn láti wọ̀, tàbí ìrísí tí o nífẹ̀ẹ́ sí báyìí. Interim yóò gbé wọn sórí fọ́tò rẹ ti àkókò yìí, kí o lè rí ohun tó lè bá ọ mu, láìsí pé ẹnikẹ́ni sọ ohun tí ara rẹ yẹ kí ó wọ̀ fún ọ.",
     "problemNote": "Ìwọ ni o máa pinnu ohun tó dà bí ìwọ.",
-    "peopleTitle": "Ṣé o fẹ́ tẹ̀lé ìyípadà ní ìgbà pípẹ́?",
-    "peopleBody": "Interim tún ní àwọn àkọọ́lẹ̀ àyẹ̀wò fún àwọn ìyípadà ìrísí, pẹ̀lú àwọn tí àìsàn líle ń mú wá. Wọ́n máa ń pa àwọn fọ́tò àti ìrísí tí ó ní déètì pọ̀, wọ́n sì yàtọ̀ sí àkọ́wò ìrísí.",
+    "peopleTitle": "A kọ́ ọ ní àkọ́kọ́ fún àyípadà ara",
+    "peopleBody": "Interim bẹ̀rẹ̀ pẹ̀lú àwọn tí ìrísí wọn ń yípadà nítorí àìsàn líle tàbí ohun tí wọ́n ń ṣe fún un, a sì ṣe é fún gbogbo àyípadà tó ń mú kí aṣọ àmọ̀ dà bí àjèjì. Yan ohun tó ń yípadà. Kò sí nǹkan láti ṣàlàyé, kò sì sí àìsàn láti dárúkọ.",
     "careBody": "Pípàdánù irun, ojú tàbí awọ ara tó ń yí padà, ìrísí ara tuntun. Bẹ̀rẹ̀ pẹ̀lú ohun tó ń yí padà, láìsọ orúkọ àrùn tàbí oògùn.",
     "everydayBody": "Ìyípadà ìwọ̀n ara, lẹ́yìn bíbí ọmọ, àárín ọjọ́ orí, ewú tàbí jíjẹ́ kí irun gùn. Ṣàwárí yíyàn fún bí o ṣe wà báyìí.",
     "exploreCases": "Ṣàwárí àwọn ipò wọ̀nyí",
@@ -64,7 +64,11 @@
     "closingBody": "Fi fọ́tò rẹ àti àwọn aṣọ tí o fẹ́ràn kún un láti bẹ̀rẹ̀.",
     "peopleAction": "Bẹ̀rẹ̀ àkọ́ọ̀lẹ̀ àyẹ̀wò",
     "heroReference": "Ìrísí tí mo ń lépa",
-    "heroPreview": "Àkọ́wò lára rẹ"
+    "heroPreview": "Àkọ́wò lára rẹ",
+    "moreTitle": "Ju aṣọ lọ",
+    "moreBody": "Ọ̀rọ̀ alábàákẹ́gbẹ́ ní ohùn tí o yàn. Ibi àdáni láti kọ ìrònú sí. Ọ̀rọ̀ òní, tí o bá fẹ́. Àti ọ̀nà láti bá ẹnì kan sọ̀rọ̀, nígbà tí o bá nílò rẹ̀.",
+    "fitQuestion": "Ṣé yóò fi bí aṣọ ṣe máa bá mi mu hàn?",
+    "fitAnswer": "Àkọ́wò máa ń fi bí aṣọ ṣe lè rí lórí fọ́tò rẹ hàn. Kì í fi ìwọ̀n, bí ó ṣe bá ọ mu tàbí ìtura hàn. Fún ìwọ̀n, Interim máa ń lo èyí tí o sọ àti àtẹ ìwọ̀n."
   },
   "language": {
     "title": "Yan èdè rẹ",
@@ -721,7 +725,7 @@
   },
   "demo": {
     "title": "Gbìyànjú àfihàn",
-    "intro": "Àwọn ènìyàn àfarawé ni wọ̀nyí. A gba káàdì kọ̀ọ̀kan sílẹ̀ látinú lílò Interim gidi, nítorí náà kò sí ohun tó ń ṣẹlẹ̀ lọ́wọ́lọ́wọ́ níbí, a kò sì ná nǹkan kan.",
+    "intro": "Àwọn èèyàn àfarawé ni. A ṣe àkọsílẹ̀ káàdì kọ̀ọ̀kan láti inú lílo Interim gidi, nítorí náà kò sí nǹkan tó ń ṣẹlẹ̀ lọ́wọ́lọ́wọ́ níbí.",
     "simulated": "Ènìyàn àfarawé",
     "recordedOn": "A gbà á sílẹ̀ ní {date}",
     "checkInsTitle": "Àyẹ̀wò",
