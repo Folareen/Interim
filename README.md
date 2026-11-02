@@ -6,6 +6,12 @@ Interim is built first for people going through body changes: hair loss, a chang
 
 Live: **https://interim.afolarin.cv** (replay only, so it cannot spend YouCam units). Open `/demo` without signing in, or follow [Testing instructions](#testing-instructions).
 
+## YouCam APIs used
+
+- **AI clothes try on (`cloth_v4`, full outfit):** the core of style previews. Each outfit photo is placed on a current photo of you.
+- **Hair, face and skin analysis** (hair length, density and type, face shape, skin tone) and **hairstyle, colour and beard previews:** used by check in profiles to measure change and preview looks.
+- **An agent loop** plans which YouCam calls to make within the person's consent and budget, and explains the result in their language. Eligibility, budgets and consent are plain code; the model never sees a photo ([architecture](docs/architecture.md)).
+
 ## Run locally
 
 Node 22, pnpm 10, Docker and configured storage are required. Full instructions are in [development](docs/development.md).
@@ -41,31 +47,15 @@ Your own photos need a live recording to preview (see below), so in replay they 
 
 Interactive runs in replay require matching recorded inputs and parameters. New photos can fail with a missing recording. Synthetic inputs are described in [the fixture guide](packages/fixtures/own/README.md). A planner recording is used when it matches; otherwise replay uses the fixed note for the chosen tone.
 
-## Eligibility at a glance
+## Built to be safe and in your control
 
-These are implemented gates, not promises that an external tool will succeed. The [rules](packages/rules/src/eligibility.ts) and [spec section 7](docs/product/spec.md#7-tool-eligibility-rules) own the detail.
-
-| Tool or action | Required conditions |
-| --- | --- |
-| Any paid call | Current consent, live mode enabled, available units and all applicable budget caps; recorded results are reused first. |
-| Hair measurements | Head covering off; density additionally needs its capture view. Missing or unreliable measurements fall back to self-report or the previous stage. |
-| Hairstyle, volume or colour previews | Head covering off. Volume also needs a reliable density reading. |
-| Beard preview | Growing a beard situation. |
-| Clothes preview | A fit-enabled situation, body photos enabled, a stored body photo and saved catalog pieces. Size comes from self-report and the catalog chart. |
-| Tool refused for a photo | Skip it or request a new photo according to the error; do not keep spending on the same blocked tool. |
-| Hat or scarf preview | Unavailable: tested tools did not reliably preserve the person. |
-
-Replay is the default. **A live batch needs an agreed unit and dollar cap and `--max-units`.** No command above starts one. API keys stay in the API, and only `apps/api/src/youcam` calls YouCam.
-
-## What remains open
-
-- Performance and fairness on consenting people’s phone selfies, including skin tones, hair textures and head coverings.
-- Whether face and skin readings track real changes, rather than only generated examples or lighting tests.
-- Skin analysis ZIP results are not part of the product flow. Hat and scarf previews are deliberately unavailable.
-- Camera Kit privacy questions, review of privacy/consent wording, and native-speaker review.
-- Manual checks of the deployed demo, authentication, phone layouts, screen readers, sharing and deletion.
-
-The app has profile export/deletion, revocable sharing, a unit ledger screen and public privacy/terms pages. These features do not establish legal readiness or real-user validation. [Spec section 17](docs/product/spec.md#17-spike-what-is-still-open) owns the open questions.
+- **Consent first.** No photo is sent to YouCam until you have accepted the current consent text. Change the text and everyone is asked again.
+- **Rules in code, not in a model.** Consent, eligibility and budgets are plain code in [`packages/rules`](packages/rules). The model plans and explains; it never sees a photo and never measures anything. [Spec section 7](docs/product/spec.md#7-tool-eligibility-rules) has the detail.
+- **Only the right tool for the photo.** Each YouCam tool runs only when its conditions are met, for example a hairstyle preview needs the head covering off. A refused photo is skipped or re-requested, never retried at a cost.
+- **Spending is capped.** Every run has a unit budget, a ledger records each call, and recorded results are reused before anything new is requested. Replay is the default, so the live site cannot spend units. Live batches need an agreed cap and `--max-units`.
+- **Your data is yours.** Export or delete everything at any time, revoke shared links, and photos expire on a schedule. Privacy and terms pages are public.
+- **Keys stay private.** API keys live only in the API, and only `apps/api/src/youcam` calls YouCam.
+- **Ten languages**, with translated help buttons that work without typing.
 
 ## Project and checks
 
@@ -75,4 +65,4 @@ TypeScript monorepo: Next.js PWA in `apps/web`, NestJS API and worker in `apps/a
 pnpm lint && pnpm typecheck && pnpm test
 ```
 
-Redis-dependent tests require a local Redis instance; without it they skip locally and fail in CI. Tests and fixture replay do not make live YouCam calls. Documentation starts at [docs/README.md](docs/README.md).
+Redis-dependent tests require a local Redis instance; without it they skip locally and fail in CI. Tests and fixture replay do not make live YouCam calls. Documentation starts at [docs/README.md](docs/README.md); research notes are in [spec section 17](docs/product/spec.md#17-spike-what-is-still-open).
